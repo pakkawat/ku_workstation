@@ -1,0 +1,9 @@
+User index
+<hr>
+<% @users.each do |user| %>
+<h2><%= link_to user.ku_id, user %></h2>
+<p><%= user.firstname %></p>
+<hr>
+<% end %>
+
+<p><%= link_to "Add new user", new_user_path %></p>

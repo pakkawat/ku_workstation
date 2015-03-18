@@ -1,0 +1,8 @@
+add new user
+<hr>
+
+<%= form_for @user, url: new_user_path, html: { method: :put } do |f| %>
+<p>
+  <%= f.label :ku_id,'Ku ID' %>: <%= f.text_field :ku_id %>
+</p>
+<% end %>
