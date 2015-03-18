@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   get 'welcome/index'
   root 'welcome#index'
   resources :users
+  match '/teacher', to: 'users#teacher', via: :get
+  match '/student', to: 'users#student', via: :get
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

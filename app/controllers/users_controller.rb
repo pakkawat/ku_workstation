@@ -32,4 +32,12 @@ class UsersController < ApplicationController
   def destroy
 
   end
+
+  def teacher
+    #render :text => "<h1>render teacher</h1>"
+  end
+
+  def student
+
+  end
 end
