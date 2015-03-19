@@ -54,6 +54,10 @@
 </div>
 <br>
 <br>
+<% flash.each do |key, value| %>
+<p><%= value %></p>
+<% end %>
+<br>
 <br>
 <%= yield %>
 

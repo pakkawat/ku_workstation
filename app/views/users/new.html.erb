@@ -6,6 +6,14 @@
         <div class="span12" align="center" >
           <h2><b>Add User</b></h2>
 <%= form_for @user, url: new_user_path, html: { method: :put } do |f| %>
+<% if @user.errors.any? %>
+	<h2>Errors:</h2>
+	<ul>
+		<% @user.errors.full_messages.each do |message| %>
+			<li><%= message %></li>
+		<% end %>
+	</ul>
+<% end %>
 <table cellspacing='0' style="width:40%;">
 	<tr>
 		<td align="left"><%= f.label :ku_id,'Ku ID' %></td><td align="center"><%= f.text_field :ku_id %></td>
