@@ -13,16 +13,18 @@ class UsersController < ApplicationController
 
   def create
     @user = KuUser.new(params[:user])
+    render plain: params[:user].inspect
     #@user.save
-    if @user.save
-      redirect_to users_path, :notice => "User was saved"
-    else
-      render "new"
-    end
+    #if @user.save
+      #redirect_to users_path, :notice => "User was saved"
+      #render "edit"
+    #else
+      #render "new"
+    #end
   end
 
   def edit
-    @user = KuUser.find(params[:id])
+    @user = KuUser.find(params[:id])    
   end
 
   def update
@@ -32,12 +34,11 @@ class UsersController < ApplicationController
       redirect_to users_path, :notice => "User has been updated"
     else
       render "edit"
+    end
   end
 
   def destroy
-    @user = KuUser.find(params[:id])
-    @user.destroy
-    redirect_to users_path, :notice => "User has been deleted"
+    
   end
 
   def teacher
@@ -47,4 +48,9 @@ class UsersController < ApplicationController
   def student
 
   end
+
+  private
+    def user_params
+      #params.require(:user).permit(:ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :status, :campus)
+    end
 end

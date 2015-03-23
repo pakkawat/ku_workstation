@@ -5,11 +5,11 @@
       <div class="row">
         <div class="span12" align="center" >
           <h2><b>Add User</b></h2>
-<%= form_for @user, :as => :post, :url => users_path(@user) do |f| %>
-<% if @user.errors.any? %>
+<%= form_for @KuUser do |f| %>
+<% if @KuUser.errors.any? %>
 	<h2>Errors:</h2>
 	<ul>
-		<% @user.errors.full_messages.each do |message| %>
+		<% @KuUser.errors.full_messages.each do |message| %>
 			<li><%= message %></li>
 		<% end %>
 	</ul>

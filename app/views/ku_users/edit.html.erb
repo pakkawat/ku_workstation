@@ -4,12 +4,12 @@
     <div class="gallery">
       <div class="row">
         <div class="span12" align="center" >
-          <h2><b>Add User</b></h2>
-<%= form_for @user, :as => :post, :url => users_path(@user) do |f| %>
-<% if @user.errors.any? %>
+          <h2><b>Edit User</b></h2>
+<%= form_for @KuUser do |f| %>
+<% if @KuUser.errors.any? %>
 	<h2>Errors:</h2>
 	<ul>
-		<% @user.errors.full_messages.each do |message| %>
+		<% @KuUser.errors.full_messages.each do |message| %>
 			<li><%= message %></li>
 		<% end %>
 	</ul>
@@ -55,7 +55,7 @@
 		<td align="left"><%= f.label :status,'Status' %></td><td align="center"><%= f.select :status, [['Currently studying','1'],['Female','2']] %></td>
 	</tr>
 	<tr>
-		<td align="center" colspan="2"><%= f.submit "Add User" %></td>
+		<td align="center" colspan="2"><%= f.submit "Update User" %></td>
 	</tr>
 </table>
 <% end %>
