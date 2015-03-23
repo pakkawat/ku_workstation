@@ -1,0 +1,55 @@
+<%= form_for @KuUser do |f| %>
+<% if @KuUser.errors.any? %>
+        <h2>Errors:</h2>
+        <ul>
+                <% @KuUser.errors.full_messages.each do |message| %>
+                        <li><%= message %></li>
+                <% end %>
+        </ul>
+<% end %>
+<table cellspacing='0' style="width:40%;">
+        <tr>
+                <td align="left"><%= f.label :ku_id,'Ku ID' %></td><td align="center"><%= f.text_field :ku_id %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :username,'Username' %></td><td align="center"><%= f.text_field :username %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :password,'Password' %></td><td align="center"><%= f.text_field :password %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :password_confirmation,'Password confirmation' %></td><td align="center"><%= f.text_field :password_confirmation %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :firstname,'Firstname' %></td><td align="center"><%= f.text_field :firstname %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :lastname,'Lastname' %></td><td align="center"><%= f.text_field :lastname %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :email,'Email' %></td><td align="center"><%= f.text_field :email %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :sex,'Sex' %></td><td align="center"><%= f.select :sex, [['Male','1'],['Female','2']] %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :degree_level,'Degree Level' %></td><td align="center"><%= f.select :degree_level, [['Master','1'],['Female','2']] %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :campus,'Campus' %></td><td align="center"><%= f.select :campus, [['Bangkhen','1'],['Female','2']] %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :faculty,'Faculty' %></td><td align="center"><%= f.select :faculty, [['Science','1'],['Female','2']] %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :major_field,'Major Field' %></td><td align="center"><%= f.select :major_field, [['Computer Science (XD60)','1'],['Female','2']] %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :status,'Status' %></td><td align="center"><%= f.select :status, [['Currently studying','1'],['Female','2']] %></td>
+        </tr>
+        <tr>
+                <td align="center" colspan="2"><%= f.submit "Add User" %></td>
+        </tr>
+</table>
+<% end %>
+

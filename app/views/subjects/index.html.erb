@@ -1,0 +1,12 @@
+User index
+<hr>
+<% @KuUsers.each do |user| %>
+<h2><%= link_to user.ku_id, user %></h2>
+<p><%= user.firstname %></p>
+<p><%= link_to "Edit", edit_ku_user_path(user) %> | 
+<%= link_to "Delete", ku_user_path(user),  method: :delete, data: { confirm: "You sure?" } %>
+</p>
+<hr>
+<% end %>
+
+<p><%= link_to "Add new user", new_ku_user_path %></p>

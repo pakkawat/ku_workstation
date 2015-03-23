@@ -1,9 +1,13 @@
 # Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
 one:
-  ku_id: 1
-  subject_id: 1
+  ku_id: MyString
+  subject_id: MyString
+  ku_user_id: 
+  subject_id: 
 
 two:
-  ku_id: 1
-  subject_id: 1
+  ku_id: MyString
+  subject_id: MyString
+  ku_user_id: 
+  subject_id: 
