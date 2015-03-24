@@ -1,21 +1,21 @@
 class KuUsersController < ApplicationController
   def index
-    @KuUsers = KuUser.all  
+    @kuusers = KuUser.all  
   end
   
   def show
-    @KuUser = KuUser.find(params[:id])
+    @kuuser = KuUser.find(params[:id])
   end
 
   def new
-    @KuUser = KuUser.new
+    @kuuser = KuUser.new
   end
 
   def create
-    @KuUser = KuUser.new(ku_user_params)
+    @kuuser = KuUser.new(ku_user_params)
     #render plain: ku_user_params.inspect
     #@KuUser.save
-    if @KuUser.save
+    if @kuuser.save
       redirect_to ku_users_path, :notice => "User was saved"
     else
       render "new"
@@ -23,13 +23,13 @@ class KuUsersController < ApplicationController
   end
 
   def edit
-    @KuUser = KuUser.find(params[:id])
+    @kuuser = KuUser.find(params[:id])
   end
 
   def update
-    @KuUser = KuUser.find(params[:id])
+    @kuuser = KuUser.find(params[:id])
 
-    if @KuUser.update_attributes(ku_user_params)
+    if @kuuser.update_attributes(ku_user_params)
       redirect_to ku_users_path, :notice => "User has been updated"
     else
       render "edit"
@@ -37,8 +37,8 @@ class KuUsersController < ApplicationController
   end
 
   def destroy
-    @user = KuUser.find(params[:id])
-    @user.destroy
+    @kuuser = KuUser.find(params[:id])
+    @kuuser.destroy
     redirect_to ku_users_path, :notice => "User has been deleted"
   end
 

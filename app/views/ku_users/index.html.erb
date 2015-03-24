@@ -1,6 +1,6 @@
 User index
 <hr>
-<% @KuUsers.each do |user| %>
+<% @kuusers.each do |user| %>
 <h2><%= link_to user.ku_id, user %></h2>
 <p><%= user.firstname %></p>
 <p><%= link_to "Edit", edit_ku_user_path(user) %> | 

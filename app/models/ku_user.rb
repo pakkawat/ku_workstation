@@ -1,6 +1,7 @@
 class KuUser < ActiveRecord::Base
   #attr_accessible :ku_id, :username, :password, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :campus, :major_field, :status
   has_many :user_subjects
+  has_many :subjects, through: :user_subjects
   before_save { self.email = email.downcase }
   validates :ku_id, presence: true, length: { maximum: 15 }  
   validates :username, presence: true, length: { maximum: 50 }
