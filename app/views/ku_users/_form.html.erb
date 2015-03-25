@@ -1,12 +1,5 @@
 <%= form_for @kuuser do |f| %>
-<% if @kuuser.errors.any? %>
-        <h2>Errors:</h2>
-        <ul>
-                <% @kuuser.errors.full_messages.each do |message| %>
-                        <li><%= message %></li>
-                <% end %>
-        </ul>
-<% end %>
+<%= render 'shared/error_messages', object: f.object %>
 <table cellspacing='0' style="width:40%;">
         <tr>
                 <td align="left"><%= f.label :ku_id,'Ku ID' %></td><td align="center"><%= f.text_field :ku_id %></td>

@@ -1,12 +1,5 @@
 <%= form_for @subject do |f| %>
-<% if @subject.errors.any? %>
-        <h2>Errors:</h2>
-        <ul>
-                <% @subject.errors.full_messages.each do |message| %>
-                        <li><%= message %></li>
-                <% end %>
-        </ul>
-<% end %>
+<%= render 'shared/error_messages', object: f.object %>
 <table cellspacing='0' style="width:40%;">
         <tr>
                 <td align="left"><%= f.label :subject_id,'Subject ID' %></td><td align="center"><%= f.text_field :subject_id %></td>
