@@ -43,16 +43,11 @@ ActiveRecord::Schema.define(version: 20150323124137) do
   end
 
   create_table "user_subjects", force: :cascade do |t|
-    t.string   "ku_id"
-    t.integer  "subject_id"
-    t.integer  "ku_user_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer "ku_user_id"
+    t.integer "subject_id"
   end
 
   add_index "user_subjects", ["ku_user_id"], name: "index_user_subjects_on_ku_user_id", using: :btree
   add_index "user_subjects", ["subject_id"], name: "index_user_subjects_on_subject_id", using: :btree
 
-  add_foreign_key "user_subjects", "ku_users"
-  add_foreign_key "user_subjects", "subjects"
 end
