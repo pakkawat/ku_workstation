@@ -6,24 +6,26 @@
         <div class="span12" align="center" >
           <h2><b>Log in</b></h2>
             <%= form_for(:session, url: login_path) do |f| %>
-		        <tr>
-		          <td align="left"><%= f.label :username,'Username' %></td><td align="center"><%= f.text_field :username %></td>
-		        </tr>
-		        <tr>
-		          <td align="left"><%= f.label :password,'Password' %></td><td align="center"><%= f.text_field :password %></td>
-		        </tr>
-            <tr>
-              <td></td>
-              <td>
-              <%= f.label :remember_me do %>
-                <%= f.check_box :remember_me %>
-                <span>Remember me on this computer</span>
-              <% end %>
-              </td>
-            </tr>
-		        <tr>
-              <td align="center" colspan="2"><%= f.submit "Log in" %></td>
-        		</tr>
+            <table cellspacing='0' style="width:40%;">
+  		        <tr>
+  		          <td align="left"><%= f.label :username,'Username' %></td><td align="center"><%= f.text_field :username %></td>
+  		        </tr>
+  		        <tr>
+  		          <td align="left"><%= f.label :password,'Password' %></td><td align="center"><%= f.text_field :password %></td>
+  		        </tr>
+              <tr>
+                <td></td>
+                <td>
+                <%= f.label :remember_me do %>
+                  <%= f.check_box :remember_me %>
+                  <span>Remember me on this computer</span>
+                <% end %>
+                </td>
+              </tr>
+  		        <tr>
+                <td align="center" colspan="2"><%= f.submit "Log in" %></td>
+          		</tr>
+            </table>
             <% end %>
         </div>
       </div>

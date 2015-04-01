@@ -50,7 +50,9 @@
           <li><%= link_to "Log out", logout_path, method: :delete %></li>
         </ul>
         <% else %>
-          <li><%= link_to "Log in", login_path %></li>
+          <ul class="nav">
+            <li><%= link_to "Log in", login_path %></li>
+          </ul>
         <% end %>
         
       </div>
