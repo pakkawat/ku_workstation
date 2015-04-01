@@ -1,6 +1,9 @@
 class KuUsersController < ApplicationController
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
+  before_action :correct_user,   only: [:edit, :update]
+  before_action :admin_user,     only: :destroy
   def index
-    @kuusers = KuUser.all  
+    @kuusers = KuUser.paginate(page: params[:page])
   end
   
   def show
@@ -33,16 +36,17 @@ class KuUsersController < ApplicationController
     @kuuser = KuUser.find(params[:id])
 
     if @kuuser.update_attributes(ku_user_params)
-      redirect_to ku_users_path, :notice => "User has been updated"
+      flash[:success] = "User has been updated"
+      redirect_to @kuuser
     else
       render "edit"
     end
   end
 
   def destroy
-    @kuuser = KuUser.find(params[:id])
-    @kuuser.destroy
-    redirect_to ku_users_path, :notice => "User has been deleted"
+    @kuuserfind(params[:id]).destroy
+    flash[:success] = "User deleted"
+    redirect_to users_url
   end
 
   private
@@ -50,4 +54,25 @@ class KuUsersController < ApplicationController
       params.require(:ku_user).permit(:ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :status, :campus)
     end
 
+    # Before filters
+
+    # Confirms a logged-in user.
+    def logged_in_user
+      unless logged_in?
+        store_location
+        flash[:danger] = "Please log in."
+        redirect_to login_url
+      end
+    end
+
+    # Confirms the correct user.
+    def correct_user
+      @user = KuUser.find(params[:id])
+      redirect_to(root_url) unless current_user?(@user)
+    end
+    
+    # Confirms an admin user.
+    def admin_user
+      redirect_to(root_url) unless current_user.admin?
+    end
 end
