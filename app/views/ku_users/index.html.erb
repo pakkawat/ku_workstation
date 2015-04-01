@@ -1,10 +1,10 @@
 User index
 <hr>
 
-<%= will_paginate %>
+<%= will_paginate @kuusers %>
 
 <%= render @kuusers %>
 
-<%= will_paginate %>
+<%= will_paginate @kuusers %>
 
 <p><%= link_to "Add new user", new_ku_user_path %></p>

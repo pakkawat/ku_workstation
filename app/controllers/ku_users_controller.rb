@@ -3,7 +3,7 @@ class KuUsersController < ApplicationController
   before_action :correct_user,   only: [:edit, :update]
   before_action :admin_user,     only: :destroy
   def index
-    @kuusers = KuUser.paginate(page: params[:page])
+    @kuusers = KuUser.paginate(page: params[:page], per_page: 2)
   end
   
   def show
@@ -44,7 +44,7 @@ class KuUsersController < ApplicationController
   end
 
   def destroy
-    @kuuserfind(params[:id]).destroy
+    @kuuser.find(params[:id]).destroy
     flash[:success] = "User deleted"
     redirect_to users_url
   end
