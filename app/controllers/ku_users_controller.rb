@@ -16,7 +16,10 @@ class KuUsersController < ApplicationController
     #render plain: ku_user_params.inspect
     #@KuUser.save
     if @kuuser.save
-      redirect_to ku_users_path, :notice => "User was saved"
+      log_in @kuuser
+      #redirect_to ku_users_path, :notice => "Welcome "
+      flash[:success] = "Welcome to the Sample App!"
+      redirect_to @kuuser
     else
       render "new"
     end
