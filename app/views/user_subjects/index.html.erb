@@ -14,6 +14,9 @@
 <% @users.each do |user| %>
 <h2><%= link_to user.ku_id, user %></h2>
 <p><%= user.firstname %></p>
-
+<%= button_to "Add", { :controller => 'user_subjects',
+  :ku_user_id => @user.id,
+  :subject_id => @subject.id}, 
+  :method => :put %>
 <hr>
 <% end %>
