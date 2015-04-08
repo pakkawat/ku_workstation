@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   match '/teacher', to: 'users#teacher', via: :get
   match '/student', to: 'users#student', via: :get
   resources :subjects do
-    resources :ku_users
+    resources :user_subjects
   end
   get    'login'   => 'sessions#new'
   post   'login'   => 'sessions#create'
