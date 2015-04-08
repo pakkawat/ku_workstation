@@ -14,9 +14,10 @@
 <% @users.each do |user| %>
 <h2><%= link_to user.ku_id, user %></h2>
 <p><%= user.firstname %></p>
-<%= button_to "Add", { :controller => 'user_subjects',
-  :ku_user_id => @user.id,
-  :subject_id => @subject.id}, 
-  :method => :put %>
+<%= form_for subject_user_subjects_path do %>
+        <%= hidden_field_tag 'ku_user_id', user.id  %>
+        <%= hidden_field_tag 'subject_id', @subject.id  %>
+        <%= submit_tag "add" %>
+<% end %>
 <hr>
 <% end %>

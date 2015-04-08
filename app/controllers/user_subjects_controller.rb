@@ -5,6 +5,13 @@ class UserSubjectsController < ApplicationController
     @users = KuUser.where.not(id: @subjectusers)
   end
 
+  def create
+    @kuuser = KuUser.find(params[:ku_user_id])
+    @subject = Subject.find(params[:subject_id])
+    @subject.user_subjects.create(ku_user: @kuuser)
+    redirect_to subject_user_subjects_path(:subject_id => @subject.id)
+  end
+
   def update
     @kuuser = KuUser.find(params[:ku_user_id])
     @subject = Subject.find(params[:subject_id])
