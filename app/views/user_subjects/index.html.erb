@@ -1,0 +1,15 @@
+<h2><%= subject.subject_name %> index</h2>
+<hr>
+<% @subjectusers.each do |user| %>
+<h2><%= link_to user.ku_user_id, user %></h2>
+<p><%= user.firstname %></p>
+
+<hr>
+<% end %>
+
+<h2>User List</h2>
+<% @users.each do |user| %>
+<h2><%= link_to user.ku_user_id, user %></h2>
+<p><%= user.firstname %></p>
+
+<hr>
