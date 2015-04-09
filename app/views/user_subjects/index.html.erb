@@ -2,26 +2,8 @@
 <hr>
 <br>
 <h2>User in this subject</h2>
-<% @subjectusers.each do |user| %>
-<h2><%= link_to user.ku_id, user %></h2>
-<p><%= user.firstname %></p>
-<%= form_for subject_user_subjects_path, :html => {:method => :delete} do %>
-        <%= hidden_field_tag 'ku_user_id', user.id  %>
-        <%= hidden_field_tag 'subject_id', @subject.id  %>
-        <%= submit_tag "delete" %>
-<% end %>
-<hr>
-<% end %>
+<%= render partial: "subjectuser", collection: @subjectusers, as: :user %>
 <br>
 <br>
 <h2>User List</h2>
-<% @users.each do |user| %>
-<h2><%= link_to user.ku_id, user %></h2>
-<p><%= user.firstname %></p>
-<%= form_for subject_user_subjects_path do %>
-        <%= hidden_field_tag 'ku_user_id', user.id  %>
-        <%= hidden_field_tag 'subject_id', @subject.id  %>
-        <%= submit_tag "add" %>
-<% end %>
-<hr>
-<% end %>
+<%= render partial: "kuusers", collection: @kuusers, as: :user %>
