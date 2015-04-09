@@ -3,9 +3,9 @@
 <br>
 <h2>User in this subject</h2>
 <%= render partial: "subjectuser", collection: @subjectusers, as: :user %>
-<%= will_paginate @subjectusers %>
+<%= will_paginate @subjectusers, :param_name => 'subjectuser_page' %>
 <br>
 <br>
 <h2>User List</h2>
 <%= render partial: "kuusers", collection: @kuusers, as: :user %>
-<%= will_paginate @kuusers %>
+<%= will_paginate @kuusers, :param_name => 'kuuser_page' %>
