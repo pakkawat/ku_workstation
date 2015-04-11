@@ -1,12 +1,16 @@
 Rails.application.routes.draw do
+  #get 'program_files/index'
+
+  #get 'programs/index'
+
   get 'sessions/new'
 
   get 'welcome/index'
   root 'welcome#index'
-  resources :users
+  #resources :users
   resources :ku_users
-  match '/teacher', to: 'users#teacher', via: :get
-  match '/student', to: 'users#student', via: :get
+  #match '/teacher', to: 'users#teacher', via: :get
+  #match '/student', to: 'users#student', via: :get
   resources :subjects do
     resources :user_subjects
   end
@@ -14,6 +18,9 @@ Rails.application.routes.draw do
   post   'login'   => 'sessions#create'
   delete 'logout'  => 'sessions#destroy'
   match "/subjects/:subject_id/user_subjects", :to => "user_subjects#destroy", :via => "delete"
+  resources :programs do
+    resources :program_files
+  end
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

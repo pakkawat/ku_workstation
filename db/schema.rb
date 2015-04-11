@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150401133152) do
+ActiveRecord::Schema.define(version: 20150411113008) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,6 +36,23 @@ ActiveRecord::Schema.define(version: 20150401133152) do
   end
 
   add_index "ku_users", ["ku_id"], name: "index_ku_users_on_ku_id", unique: true, using: :btree
+
+  create_table "program_files", force: :cascade do |t|
+    t.integer  "program_id"
+    t.string   "file_path"
+    t.string   "file_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "program_files", ["program_id"], name: "index_program_files_on_program_id", using: :btree
+
+  create_table "programs", force: :cascade do |t|
+    t.string   "program_name"
+    t.text     "note"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
 
   create_table "subjects", force: :cascade do |t|
     t.string   "subject_id"
