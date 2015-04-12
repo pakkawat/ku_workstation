@@ -16,6 +16,7 @@ class ProgramsController < ApplicationController
     #render plain: ku_user_params.inspect
     #@KuUser.save
     if @program.save
+      create_file(@program)
       redirect_to programs_path, :notice => "Program was saved"
     else
       render "new"
@@ -40,6 +41,17 @@ class ProgramsController < ApplicationController
     @program = Program.find(params[:id])
     @program.destroy
     redirect_to programs_path, :notice => "Program has been deleted"
+  end
+
+  def create_file(@program)
+  	path = "/"+@program.program_name+"/file/path.txt"
+  	content = "data from the "+@program.program_name
+  	File.open(path, "w+") do |f|
+  		f.write(content)
+  	end
+
+  	@program_file = @program.program_files.build(file_path: path, file_name: @program.program_name)
+
   end
 
   private
