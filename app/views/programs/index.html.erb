@@ -1,2 +1,9 @@
-<h1>Programs#index</h1>
-<p>Find me in app/views/programs/index.html.erb</p>
+User index
+<hr>
+
+
+<%= render @programs %>
+
+<%= will_paginate @programs %>
+
+<p><%= link_to "Add new user", new_ku_user_path %></p>

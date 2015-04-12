@@ -1,0 +1,6 @@
+<h2><%= link_to program.id, program %></h2>
+<p><%= program.program_name %></p>
+<p><%= link_to "Edit", edit_program_path(program) %> | 
+<%= link_to "Delete", program_path(program),  method: :delete, data: { confirm: "You sure?" } %>
+</p>
+<hr>

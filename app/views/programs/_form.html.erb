@@ -1,0 +1,15 @@
+<%= form_for @program do |f| %>
+<%= render 'shared/error_messages', object: f.object %>
+<table cellspacing='0' style="width:40%;">
+        <tr>
+                <td align="left"><%= f.label :program_name,'Program Name' %></td><td align="center"><%= f.text_field :program_name %></td>
+        </tr>
+        <tr>
+                <td align="left"><%= f.label :note,'Note' %></td><td align="center"><%= f.text_area(:note, size: '50x10') %></td>
+        </tr>
+        <tr>
+                <td align="center" colspan="2"><%= f.submit "Add User" %></td>
+        </tr>
+</table>
+<% end %>
+
