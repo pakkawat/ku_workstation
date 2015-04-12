@@ -12,7 +12,7 @@ class ProgramsController < ApplicationController
   end
 
   def create
-    @program = Program.new(subject_params)
+    @program = Program.new(program_params)
     #render plain: ku_user_params.inspect
     #@KuUser.save
     if @program.save
