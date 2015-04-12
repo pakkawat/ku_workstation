@@ -1,3 +1,4 @@
+require 'fileutils'
 class ProgramsController < ApplicationController
   def index
     @programs = Program.all.paginate(page: params[:page], per_page: 2)
@@ -43,14 +44,22 @@ class ProgramsController < ApplicationController
     redirect_to programs_path, :notice => "Program has been deleted"
   end
 
-  def create_file(@program)
-  	path = "/"+@program.program_name+"/file/path.txt"
-  	content = "data from the "+@program.program_name
+  def create_file(program)
+  	directory = "public/cookbooks/"+program.program_name+"/kuy/"
+        name = "test.txt"
+        path = File.join(directory, name)
+        dirname = File.dirname(path)
+        unless File.directory?(dirname)
+          FileUtils.mkdir_p(dirname)
+        end
+        
+  	content = "data from the "+program.program_name
   	File.open(path, "w+") do |f|
   		f.write(content)
   	end
 
-  	@program_file = @program.program_files.build(file_path: path, file_name: @program.program_name)
+  	@program_file = ProgramFile.new(program_id: program.id, file_path: path, file_name: program.program_name)
+        @program_file.save
 
   end
 
