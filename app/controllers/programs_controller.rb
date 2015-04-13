@@ -45,21 +45,22 @@ class ProgramsController < ApplicationController
   end
 
   def create_file(program)
-  	directory = "public/cookbooks/"+program.program_name+"/kuy/"
-        name = "test.txt"
-        path = File.join(directory, name)
-        dirname = File.dirname(path)
-        unless File.directory?(dirname)
-          FileUtils.mkdir_p(dirname)
-        end
+  	directory = "public/cookbooks/"+program.program_name+"/"
+  	name = "test.txt"
+  	#path = File.join(directory, name)
+  	#dirname = File.dirname(path)
+  	#unless File.directory?(dirname)
+  		#FileUtils.mkdir_p(dirname)
+  	#end
         
-  	content = "data from the "+program.program_name
-  	File.open(path, "w+") do |f|
-  		f.write(content)
-  	end
+  	#content = "data from the "+program.program_name
+  	#File.open(path, "w+") do |f|
+  		#f.write(content)
+  	#end
 
-  	@program_file = ProgramFile.new(program_id: program.id, file_path: path, file_name: program.program_name)
-        @program_file.save
+  	#@program_file = ProgramFile.new(program_id: program.id, file_path: path, file_name: program.program_name)
+  	#@program_file.save
+  	FileUtils.cp 'public/cookbooks/cookbooktemp/', directory
 
   end
 
