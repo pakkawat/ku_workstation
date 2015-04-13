@@ -1,11 +1,11 @@
-testt CHANGELOG
+cookbooktemp CHANGELOG
 ===============
 
-This file is used to list changes made in each version of the testt cookbook.
+This file is used to list changes made in each version of the cookbooktemp cookbook.
 
 0.1.0
 -----
-- [your_name] - Initial release of testt
+- [your_name] - Initial release of cookbooktemp
 
 - - -
 Check the [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax) for help with Markdown.

@@ -1,5 +1,5 @@
 #
-# Cookbook Name:: testt
+# Cookbook Name:: cookbooktemp
 # Recipe:: default
 #
 # Copyright 2015, YOUR_COMPANY_NAME
