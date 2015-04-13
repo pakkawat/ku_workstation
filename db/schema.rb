@@ -71,4 +71,5 @@ ActiveRecord::Schema.define(version: 20150411113008) do
   add_index "user_subjects", ["ku_user_id"], name: "index_user_subjects_on_ku_user_id", using: :btree
   add_index "user_subjects", ["subject_id"], name: "index_user_subjects_on_subject_id", using: :btree
 
+  add_foreign_key "program_files", "programs"
 end

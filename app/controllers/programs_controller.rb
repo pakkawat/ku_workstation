@@ -6,6 +6,7 @@ class ProgramsController < ApplicationController
   
   def show
     @program = Program.find(params[:id])
+    #@program_files = @program.program_files.all
   end
 
   def new
@@ -40,13 +41,14 @@ class ProgramsController < ApplicationController
 
   def destroy
     @program = Program.find(params[:id])
+    FileUtils.rm_rf(@program.program_files.first.file_path)
     @program.destroy
     redirect_to programs_path, :notice => "Program has been deleted"
   end
 
   def create_file(program)
-  	directory = "public/cookbooks/"+program.program_name+"/"
-  	name = "test.txt"
+  	directory = "public/cookbooks/"+program.program_name
+  	#name = "test.txt"
   	#path = File.join(directory, name)
   	#dirname = File.dirname(path)
   	#unless File.directory?(dirname)
@@ -58,9 +60,9 @@ class ProgramsController < ApplicationController
   		#f.write(content)
   	#end
 
-  	#@program_file = ProgramFile.new(program_id: program.id, file_path: path, file_name: program.program_name)
-  	#@program_file.save
-  	FileUtils.cp 'public/cookbooks/cookbooktemp/', directory
+  	@program_file = ProgramFile.new(program_id: program.id, file_path: directory, file_name: program.program_name)
+  	@program_file.save
+  	FileUtils.cp_r('public/cookbooks/cookbooktemp/.', directory)
 
   end
 
