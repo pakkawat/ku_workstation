@@ -41,7 +41,8 @@ class ProgramsController < ApplicationController
 
   def destroy
     @program = Program.find(params[:id])
-    FileUtils.rm_rf(@program.program_files.first.file_path)
+    #FileUtils.rm_rf(@program.program_files.first.file_path)
+    FileUtils.rm_rf("public/cookbooks/"+@program.program_name)
     @program.destroy
     redirect_to programs_path, :notice => "Program has been deleted"
   end
@@ -63,7 +64,8 @@ class ProgramsController < ApplicationController
   	@program_file = ProgramFile.new(program_id: program.id, file_path: directory, file_name: program.program_name)
   	@program_file.save
   	FileUtils.cp_r('public/cookbooks/cookbooktemp/.', directory)
-
+    all_files = Dir.glob(directory)
+    render plain: all_files.inspect
   end
 
   private
