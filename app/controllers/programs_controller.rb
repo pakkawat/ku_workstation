@@ -19,7 +19,7 @@ class ProgramsController < ApplicationController
     #@KuUser.save
     if @program.save
       create_file(@program)
-      #redirect_to programs_path, :notice => "Program was saved"
+      redirect_to programs_path, :notice => "Program was saved"
     else
       render "new"
     end
@@ -66,7 +66,11 @@ class ProgramsController < ApplicationController
   	FileUtils.cp_r('public/cookbooks/cookbooktemp/.', directory)
     #all_files = Dir.glob(directory+"/*")
     all_files = Dir.glob(directory+'/**/*').select{ |e| File.file? e }
-    render plain: all_files.inspect
+    all_files.each do |file_name|
+      text = File.read(file_name)
+      new_contents = text.gsub("cookbooktemp", program.program_name)
+      File.open(file_name, "w") {|file| file.puts new_contents }
+    end
   end
 
   private
