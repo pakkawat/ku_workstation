@@ -7,6 +7,8 @@ class ProgramsController < ApplicationController
   def show
     @program = Program.find(params[:id])
     #@program_files = @program.program_files.all
+    directory = "public/cookbooks/"+@program.program_name
+    @all_files = Dir.glob(directory+'/**/*')
   end
 
   def new
