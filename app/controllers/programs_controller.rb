@@ -9,6 +9,7 @@ class ProgramsController < ApplicationController
     #@program_files = @program.program_files.all
     directory = "public/cookbooks/"+@program.program_name
     @all_files = Dir.glob(directory+'/**/*')
+    @all_directories = Dir.glob(directory+'/**/*').select{ |e| File.directory? e }
   end
 
   def new
