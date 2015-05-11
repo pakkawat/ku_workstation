@@ -1,6 +1,6 @@
 
 <% @all_files.each do |file| %>
-<%= file %><br>
+<%= file.gsub("public/cookbooks/"+@program.program_name, "") %><br>
 <% end %>
 <hr>
 <% @all_directories.each do |directory| %>
