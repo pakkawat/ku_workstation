@@ -5,6 +5,8 @@ class ProgramsController < ApplicationController
   end
   
   def show
+    if params[:subject].present?
+      render plain: params[:subject].inspect
     @program = Program.find(params[:id])
     #@program_files = @program.program_files.all
     directory = "public/cookbooks/"+@program.program_name
