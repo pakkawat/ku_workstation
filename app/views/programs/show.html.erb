@@ -7,7 +7,7 @@
 <%= directory %><br>
 <% end %>
 
-<% form_tag('programs/'+@program.id, :method=>'get' ) do %>
+<% form_tag('programs/'+@program.id.to_s, :method=>'get' ) do %>
  <p>
    Subject:<br />
    <%= text_field_tag "subject" %>

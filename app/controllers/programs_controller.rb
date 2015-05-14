@@ -7,10 +7,11 @@ class ProgramsController < ApplicationController
   def show
     if params[:subject].present?
       render plain: params[:subject].inspect
+    end
     @program = Program.find(params[:id])
     #@program_files = @program.program_files.all
     directory = "public/cookbooks/"+@program.program_name
-    @all_files = Dir.glob(directory+'/**/*')
+    @all_files = Dir.glob(directory+'/**/*').sort_by{|e| e}
     @all_directories = Dir.glob(directory+'/**/*').select{ |e| File.directory? e }
   end
 
