@@ -5,9 +5,9 @@ class ProgramsController < ApplicationController
   end
   
   def show
-    if params[:subject].present?
-      render plain: params[:subject].inspect
-    end
+    #if params[:subject].present?
+      #render plain: params[:subject].inspect
+    #end
     @program = Program.find(params[:id])
     #@program_files = @program.program_files.all
     directory = "public/cookbooks/"+@program.program_name
@@ -77,6 +77,14 @@ class ProgramsController < ApplicationController
       new_contents = text.gsub("cookbooktemp", program.program_name)
       File.open(file_name, "w") {|file| file.puts new_contents }
     end
+  end
+
+  def new_file
+    #if params[:subject].present?
+      #render plain: params[:subject].inspect
+    #end
+    @program = Program.find(params[:id])
+    redirect_to @program, :notice => "File was created"
   end
 
   private

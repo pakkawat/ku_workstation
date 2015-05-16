@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   resources :programs do
     resources :program_files
   end
+  match '/new_file', to: 'programs#new_file', via: :get
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
