@@ -41,11 +41,11 @@ xxxxxxxxxxxxxxxx
 	        <% @all_files.each do |file| %>
 	        	<tr>
 	        		<% if File.directory?(file) %>
-	        			<td align="left"><%= image_tag "icon_folder.png" %><%= file.gsub("public/cookbooks/"+@program.program_name, "") %></td>
+	        			<td align="left"><%= image_tag "icon_folder.png" %><%= file.gsub("public/cookbooks/"+@program.program_name+"/", "") %></td>
 	        			<td></td>
 	        			<td><button type="button">Delete</button></td>
 	        		<% else %>
-	        			<td align="left"><%= image_tag "icon_file.png" %><%= file.gsub("public/cookbooks/"+@program.program_name, "") %></td>
+	        			<td align="left"><%= image_tag "icon_file.png" %><%= file.gsub("public/cookbooks/"+@program.program_name+"/", "") %></td>
 	        			<td><button type="button">Edit</button></td>
 	        			<td><button type="button">Delete</button></td>
 	        		<% end %>
