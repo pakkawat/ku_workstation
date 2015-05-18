@@ -43,11 +43,11 @@ xxxxxxxxxxxxxxxx
 	        		<% if File.directory?(file) %>
 	        			<td align="left"><%= image_tag "icon_folder.png" %><%= file.gsub("public/cookbooks/"+@program.program_name+"/", "") %></td>
 	        			<td></td>
-	        			<td><%= button_to 'Delete', edit_delete_file_path, data: { confirm: "Are you sure?" }, params: {'path' => file.to_s} %></td>
+	        			<td><%= button_to 'Delete', delete_file_path, data: { confirm: "Are you sure?" }, params: {'path' => file.to_s, 'id' => @program.id.to_s} %></td>
 	        		<% else %>
 	        			<td align="left"><%= image_tag "icon_file.png" %><%= file.gsub("public/cookbooks/"+@program.program_name+"/", "") %></td>
 	        			<td><button type="button">Edit</button></td>
-	        			<td><button type="button">Delete</button></td>
+	        			<td><%= button_to 'Delete', delete_file_path, data: { confirm: "Are you sure?" }, params: {'path' => file.to_s, 'id' => @program.id.to_s} %></td>
 	        		<% end %>
 				</tr>
 			<% end %><!-- End all_filesloop -->

@@ -87,9 +87,9 @@ class ProgramsController < ApplicationController
     redirect_to @program, :notice => "File was created"
   end
 
-  def edit_delete_file
+  def delete_file
     if params[:path].present?
-      render plain: params[:path].inspect
+      render plain: params[:path].inspect+"-"+params[:id].inspect
     end
   end
 
