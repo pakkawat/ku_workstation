@@ -87,6 +87,12 @@ class ProgramsController < ApplicationController
     redirect_to @program, :notice => "File was created"
   end
 
+  def edit_delete_file
+    if params[:Delete].present?
+      render plain: params[:Delete].inspect
+    end
+  end
+
   private
     def program_params
       params.require(:program).permit(:program_name, :note)

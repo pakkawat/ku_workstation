@@ -37,13 +37,13 @@ xxxxxxxxxxxxxxxx
         <div class="span12" align="center" >
           <h2><b>All Files</b></h2>
 			<table cellspacing='0' style="width:40%;">
-			<%= form_tag('/new_file', :method=>'get' ) do %>
+			<%= form_tag('/edit_delete_file', :method=>'post' ) do %>
 	        <% @all_files.each do |file| %>
 	        	<tr>
 	        		<% if File.directory?(file) %>
 	        			<td align="left"><%= image_tag "icon_folder.png" %><%= file.gsub("public/cookbooks/"+@program.program_name+"/", "") %></td>
 	        			<td></td>
-	        			<td><button type="button">Delete</button></td>
+	        			<td><%= submit_tag ''+file.to_s, name: 'Delete', data: { confirm: "Are you sure?" } %></td>
 	        		<% else %>
 	        			<td align="left"><%= image_tag "icon_file.png" %><%= file.gsub("public/cookbooks/"+@program.program_name+"/", "") %></td>
 	        			<td><button type="button">Edit</button></td>
