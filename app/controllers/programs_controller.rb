@@ -88,8 +88,8 @@ class ProgramsController < ApplicationController
   end
 
   def edit_delete_file
-    if params[:Delete].present?
-      render plain: params[:Delete].inspect
+    if params[:path].present?
+      render plain: params[:path].inspect
     end
   end
 
