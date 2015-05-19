@@ -12,7 +12,7 @@ class ProgramsController < ApplicationController
     #@program_files = @program.program_files.all
     directory = "public/cookbooks/"+@program.program_name
     @all_files = Dir.glob(directory+'/**/*').sort_by{|e| e}
-    @all_directories = Dir.glob(directory+'/**/*').select{ |e| File.directory? e }
+    @all_directories = Dir.glob(directory+'/**/*').select{ |e| File.directory? e }.sort_by{|e| e}
   end
 
   def new
@@ -80,11 +80,11 @@ class ProgramsController < ApplicationController
   end
 
   def new_file
-    #if params[:subject].present?
-      #render plain: params[:subject].inspect
-    #end
-    @program = Program.find(params[:id])
-    redirect_to @program, :notice => "File was created"
+    if params[:name].present?
+      render plain: params[:type].inspect+"-"+params[:path].inspect+"-"+params[:name].inspect
+    end
+    #@program = Program.find(params[:id])
+    #redirect_to @program, :notice => "File was created"
   end
 
   def delete_file
