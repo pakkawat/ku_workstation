@@ -93,6 +93,10 @@ class ProgramsController < ApplicationController
     end
   end
 
+  def view_file
+    
+  end
+
   private
     def program_params
       params.require(:program).permit(:program_name, :note)

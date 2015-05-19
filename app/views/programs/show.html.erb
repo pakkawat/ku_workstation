@@ -1,12 +1,3 @@
-
-<% @all_directories.each do |directory| %>
-<%= directory %><br>
-<% end %>
-xxxxxxxxxxxxxxxx
-
-<hr>
-
-
 <div class="main">
   <div class="container">
     <!-- Gallery -->
@@ -54,7 +45,7 @@ xxxxxxxxxxxxxxxx
 	        			<td><%= button_to 'Delete', delete_file_path, data: { confirm: "Are you sure?" }, :class => "btn", params: {'path' => file.to_s, 'id' => @program.id.to_s} %></td>
 	        		<% else %>
 	        			<td align="left"><%= image_tag "icon_file.png" %><%= file.gsub("public/cookbooks/"+@program.program_name+"/", "") %></td>
-	        			<td><button type="button">Edit</button></td>
+	        			<td><%= button_to 'Edit', delete_file_path, :class => "btn btn-primary", params: {'path' => file.to_s, 'id' => @program.id.to_s} %></td>
 	        			<td><%= button_to 'Delete', delete_file_path, data: { confirm: "Are you sure?" }, :class => "btn", params: {'path' => file.to_s, 'id' => @program.id.to_s} %></td>
 	        		<% end %>
 				</tr>
