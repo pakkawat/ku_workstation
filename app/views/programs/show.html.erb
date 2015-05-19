@@ -24,13 +24,13 @@ xxxxxxxxxxxxxxxx
             </tr>
             <tr>
               <td align="left">Path</td>
-              <td align="center"><%= select_tag "path", options_for_select(@all_directories.map { |value| [ value.gsub("public/cookbooks/"+@program.program_name+"/", ""), value.gsub("public/cookbooks/"+@program.program_name+"/", "") ] }), include_blank: "/" %></td>
+              <td align="center"><%= select_tag "path", options_for_select(@all_directories.map { |value| [ value.gsub("public/cookbooks/"+@program.program_name+"/", ""), value ] }), include_blank: "/" %></td>
             </tr>
             <tr>
               <td align="left">Name</td><td align="center"><%= text_field_tag "name" %></td>
             </tr>
             <tr>
-              <td align="center" colspan="2"><%= submit_tag 'Create', class: '"btn btn-primary' %></td>
+              <td align="center" colspan="2"><%= submit_tag 'Create', class: 'btn btn-primary' %></td>
             </tr>
           </table>
           <% end %>
