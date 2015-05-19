@@ -94,7 +94,8 @@ class ProgramsController < ApplicationController
   end
 
   def view_file
-    
+    @program_id = params[:id]
+    @file_path = params[:path]    
   end
 
   private
