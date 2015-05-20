@@ -26,4 +26,5 @@
 
 
 </div>
-<%= javascript_include_tag '/public/ace/src-min/ace.js', '/public/ace/text_area_ace.js', 'data-turbolinks-track' => true %>
+<%= javascript_include_tag Dir.chdir(File.join(Rails.root, "public", "ace", "src-min")) { |d| Dir.glob("ace.js") } %>
+<%= javascript_include_tag Dir.chdir(File.join(Rails.root, "public", "ace")) { |d| Dir.glob("text_area_ace.js") } %>
