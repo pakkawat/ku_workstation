@@ -7,9 +7,16 @@
         <div class="span12" align="center" >
           <h2><b><%= @file_path.split("/")[-1] %></b></h2>
             <%= form_tag('/save_file', :method=>'post' ) do %>
-              <%= text_area_tag 'file_data', @data %>
-              <%= hidden_field_tag 'id', @program.id.to_s %>
+              <%= hidden_field_tag 'id', @program_id.to_s %>
               <%= hidden_field_tag 'path', @file_path.to_s %>
+            <table cellspacing='0' style="width:80%;">
+              <tr>
+                <td align="center"><%= text_area_tag 'file_data', @data, rows: 10, cols: 25 %></td>
+              </tr>
+              <tr>
+                <td align="center"><%= submit_tag 'Save', class: 'btn btn-primary' %></td>
+              </tr>
+            </table>
             <% end %>
         </div>
       </div>
