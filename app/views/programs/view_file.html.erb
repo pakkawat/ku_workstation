@@ -26,5 +26,4 @@
 
 
 </div>
-<%= javascript_include_tag Dir.chdir(File.join(Rails.root, "public", "ace", "src-min")) { |d| Dir.glob("ace.js") } %>
-<%= javascript_include_tag Dir.chdir(File.join(Rails.root, "public", "ace")) { |d| Dir.glob("text_area_ace.js") } %>
+<%= javascript_include_tag "ace/src-min/ace.js", "ace/text_area_ace.js" %>
