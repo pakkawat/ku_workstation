@@ -95,7 +95,16 @@ class ProgramsController < ApplicationController
 
   def view_file
     @program_id = params[:id]
-    @file_path = params[:path]    
+    @file_path = params[:path]
+    @data = File.read(@file_path)
+  end
+
+  def save_file
+    @program = Program.find(params[:id])
+    File.open(params[:path], "w+") do |f|
+      f.write(params[:file_data])
+    end
+    redirect_to @program, :notice => "File was saved"
   end
 
   private
