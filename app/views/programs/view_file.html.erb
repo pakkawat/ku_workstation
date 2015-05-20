@@ -11,7 +11,7 @@
               <%= hidden_field_tag 'path', @file_path.to_s %>
             <table cellspacing='0' style="width:80%;">
               <tr>
-                <td align="center">
+                <td>
                   <div id="editor"><%= @data %></div>
                   <%= text_area_tag 'file_data', @data, class: 'text_area_hidden' %>
                 </td>

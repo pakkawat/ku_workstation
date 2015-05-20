@@ -816,7 +816,6 @@ table.instance tr:hover td{
 #editor {
     /** Setting height is also important, otherwise editor wont showup**/
     height: 375px;
-    width: 500px;
 }
 
 .text_area_hidden{
