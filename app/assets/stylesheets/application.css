@@ -812,3 +812,13 @@ table.instance tr:hover td{
 .button_to{
 	margin: 0 0 0;
 }
+
+#editor {
+    /** Setting height is also important, otherwise editor wont showup**/
+    height: 375px;
+    width: 500px;
+}
+
+.text_area_hidden{
+	display: none;
+}

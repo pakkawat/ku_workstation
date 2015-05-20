@@ -11,7 +11,10 @@
               <%= hidden_field_tag 'path', @file_path.to_s %>
             <table cellspacing='0' style="width:80%;">
               <tr>
-                <td align="center"><%= text_area_tag 'file_data', @data, rows: 10, cols: 25 %></td>
+                <td align="center">
+                  <div id="editor"><%= @data %></div>
+                  <%= text_area_tag 'file_data', @data, class: 'text_area_hidden' %>
+                </td>
               </tr>
               <tr>
                 <td align="center"><%= submit_tag 'Save', class: 'btn btn-primary' %></td>
@@ -23,3 +26,4 @@
 
 
 </div>
+<%= javascript_include_tag '/public/ace/src-min/ace.js', '/public/ace/text_area_ace.js', 'data-turbolinks-track' => true %>
