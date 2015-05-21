@@ -86,7 +86,7 @@ class ProgramsController < ApplicationController
       if params[:path] == ""
         path = "public/cookbooks/"+@program.program_name+"/"
       else
-        path = params[:path]
+        path = params[:path]+"/"
       end
       full_path = path+params[:name]
       if params[:type] == "1"
