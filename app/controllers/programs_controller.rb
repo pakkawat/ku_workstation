@@ -82,16 +82,32 @@ class ProgramsController < ApplicationController
   def new_file
     @program = Program.find(params[:id])
     if params[:name].present?
+      path = ""
+      if params[:path] == "/"
+        path = "public/cookbooks/"+@program.program_name
+      else
+        path = params[:path]
+      end
+      full_path = path+params[:name]
       if params[:type] == "1"
-        flash[:success] = "Folder has been created at "+params[:path]+"/"+params[:name]
-        redirect_to @program
+        if File.exists?(full_path)
+          flash[:danger] = "Folder at "+full_path.gsub("public/cookbooks/"+@program.program_name)+" already exits."
+        else
+          FileUtils.mkdir_p(full_path)
+          flash[:success] = "Folder has been created at "+full_path.gsub("public/cookbooks/"+@program.program_name)
+        end
       else
         if params[:name].index(".").present? && params[:name][-1] != "."
-          flash[:success] = "File has been created at "+params[:path]+"/"+params[:name]
-          redirect_to @program
+          if File.exists?(full_path)
+            flash[:danger] = "File at "+full_path.gsub("public/cookbooks/"+@program.program_name)+" already exits."
+          else
+            File.open(full_path, "w+") do |f|
+              f.write("")
+            end
+            flash[:success] = "File has been created at "+full_path.gsub("public/cookbooks/"+@program.program_name)
+          end
         else
           flash[:danger] = "File name was incorrect format"
-          redirect_to @program
         end
       end #if params[:type] == "1"
       #render plain: params[:type].inspect+"-"+params[:path].inspect+"-"+params[:name].inspect
@@ -103,16 +119,20 @@ class ProgramsController < ApplicationController
         error_msg = "Please enter file name."
       end
       flash[:danger] = error_msg
-      redirect_to @program
     end
+    redirect_to @program
     #@program = Program.find(params[:id])
     #redirect_to @program, :notice => "File was created"
   end
 
   def delete_file
-    if params[:path].present?
-      render plain: params[:path].inspect+"-"+params[:id].inspect
-    end
+    #if params[:path].present?
+      #render plain: params[:path].inspect+"-"+params[:id].inspect
+    #end
+    @program = Program.find(params[:id])
+    FileUtils.rm_rf(params[:path])
+    flash[:success] = "File at "+params[:path].gsub("public/cookbooks/"+@program.program_name)+" has been deleted."
+    redirect_to @program
   end
 
   def view_file
