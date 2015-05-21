@@ -80,8 +80,30 @@ class ProgramsController < ApplicationController
   end
 
   def new_file
+    @program = Program.find(params[:id])
     if params[:name].present?
-      render plain: params[:type].inspect+"-"+params[:path].inspect+"-"+params[:name].inspect
+      if params[:type] == "1"
+        flash[:success] = "Folder has been created at "+params[:path]+"/"+params[:name]
+        redirect_to @program
+      else
+        if params[:name].index(".").present? && params[:name][-1] != "."
+          flash[:success] = "File has been created at "+params[:path]+"/"+params[:name]
+          redirect_to @program
+        else
+          flash[:danger] = "File name was incorrect format"
+          redirect_to @program
+        end
+      end #if params[:type] == "1"
+      #render plain: params[:type].inspect+"-"+params[:path].inspect+"-"+params[:name].inspect
+    else
+      error_msg = ""
+      if params[:type] == "1"
+        error_msg = "Please enter folder name."
+      else
+        error_msg = "Please enter file name."
+      end
+      flash[:danger] = error_msg
+      redirect_to @program
     end
     #@program = Program.find(params[:id])
     #redirect_to @program, :notice => "File was created"
