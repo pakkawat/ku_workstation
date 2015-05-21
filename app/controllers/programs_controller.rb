@@ -83,28 +83,28 @@ class ProgramsController < ApplicationController
     @program = Program.find(params[:id])
     if params[:name].present?
       path = ""
-      if params[:path] == "/"
-        path = "public/cookbooks/"+@program.program_name
+      if params[:path] == ""
+        path = "public/cookbooks/"+@program.program_name+"/"
       else
         path = params[:path]
       end
       full_path = path+params[:name]
       if params[:type] == "1"
         if File.exists?(full_path)
-          flash[:danger] = "Folder at "+full_path.gsub("public/cookbooks/"+@program.program_name)+" already exits."
+          flash[:danger] = "Folder at "+full_path.gsub("public/cookbooks/"+@program.program_name, "")+" already exits."
         else
           FileUtils.mkdir_p(full_path)
-          flash[:success] = "Folder has been created at "+full_path.gsub("public/cookbooks/"+@program.program_name)
+          flash[:success] = "Folder has been created at "+full_path.gsub("public/cookbooks/"+@program.program_name, "")
         end
       else
         if params[:name].index(".").present? && params[:name][-1] != "."
           if File.exists?(full_path)
-            flash[:danger] = "File at "+full_path.gsub("public/cookbooks/"+@program.program_name)+" already exits."
+            flash[:danger] = "File at "+full_path.gsub("public/cookbooks/"+@program.program_name, "")+" already exits."
           else
             File.open(full_path, "w+") do |f|
               f.write("")
             end
-            flash[:success] = "File has been created at "+full_path.gsub("public/cookbooks/"+@program.program_name)
+            flash[:success] = "File has been created at "+full_path.gsub("public/cookbooks/"+@program.program_name, "")
           end
         else
           flash[:danger] = "File name was incorrect format"
@@ -131,7 +131,7 @@ class ProgramsController < ApplicationController
     #end
     @program = Program.find(params[:id])
     FileUtils.rm_rf(params[:path])
-    flash[:success] = "File at "+params[:path].gsub("public/cookbooks/"+@program.program_name)+" has been deleted."
+    flash[:success] = "File at "+params[:path].gsub("public/cookbooks/"+@program.program_name, "")+" has been deleted."
     redirect_to @program
   end
 
