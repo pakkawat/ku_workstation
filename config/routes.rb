@@ -13,11 +13,13 @@ Rails.application.routes.draw do
   #match '/student', to: 'users#student', via: :get
   resources :subjects do
     resources :user_subjects
+    resources :programs_subjects
   end
   get    'login'   => 'sessions#new'
   post   'login'   => 'sessions#create'
   delete 'logout'  => 'sessions#destroy'
   match "/subjects/:subject_id/user_subjects", :to => "user_subjects#destroy", :via => "delete"
+  match "/subjects/:subject_id/programs_subjects", :to => "programs_subjects#destroy", :via => "delete"
   resources :programs do
     resources :program_files
   end
