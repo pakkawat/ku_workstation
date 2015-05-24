@@ -1,0 +1,37 @@
+<div class="main">
+  <div class="container">
+    <!-- Gallery -->
+    <div class="gallery">
+      <div class="row">
+        <div class="span12" align="center" >
+        <h2><b>Subject</b></h2>
+        <table style="width:100%;">
+          <tr>
+            <td align="left">Search: <input type="text" name="search"></td>
+            <td align="right">Sort by: <select style="width:80px;"><option>ID</option></select></td>
+          </tr>
+          <tr><td align="center" colspan="2"><h3><%= @subject.subject_name %></h3></td></tr>
+        </table>
+        <table cellspacing='0' class="instance">
+          <tr>
+            <th>User ID</th><th>Firstname</th><th>Lastname</th>
+          </tr>
+        <% @subject.ku_users.each do |user| %>
+          <tr>
+            <td><%= user.ku_id %></td><td><%= user.firstname %></td><td><%= user.lastname %></td>
+          </tr>
+        <% end %>
+        </table>
+        </div>
+      </div>
+
+    </div><!-- <div class="gallery"> -->
+
+    <!-- Buttons. Replace # with your link -->
+    <div class="buttons"></div>
+  </div>
+  <!-- End of container -->
+  <!-- Sponsors -->
+  <!-- Foot -->
+
+</div>

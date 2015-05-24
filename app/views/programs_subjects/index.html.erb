@@ -1,0 +1,11 @@
+<h2><%= @subject.subject_name %> index</h2>
+<hr>
+<br>
+<h2>Program in this subject</h2>
+<%= render partial: "subjectprogram", collection: @subjectprograms, as: :program %>
+<%= will_paginate @subjectprograms, :param_name => 'subjectprogram_page' %>
+<br>
+<br>
+<h2>Program List</h2>
+<%= render partial: "programs", collection: @programs, as: :program %>
+<%= will_paginate @programs, :param_name => 'program_page' %>
