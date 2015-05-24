@@ -4,13 +4,13 @@
     <div class="gallery">
       <div class="row">
         <div class="span12" align="center" >
-        <h2><b>Subject</b></h2>
+        <h2><b><%= @subject.subject_name %></b></h2>
         <table style="width:100%;">
           <tr>
             <td align="left">Search: <input type="text" name="search"></td>
             <td align="right">Sort by: <select style="width:80px;"><option>ID</option></select></td>
           </tr>
-          <tr><td align="center" colspan="2"><h3><%= @subject.subject_name %></h3></td></tr>
+          <tr><td align="center" colspan="2"><h3>Student list</h3></td></tr>
         </table>
         <table cellspacing='0' class="instance">
           <tr>
@@ -23,7 +23,32 @@
         <% end %>
         </table>
         </div>
-      </div>
+      </div><!-- <div class="row"> -->
+
+
+      <div class="row">
+        <div class="span12" align="center" >
+
+        <table style="width:100%;">
+          <tr>
+            <td align="left">Search: <input type="text" name="search"></td>
+            <td align="right">Sort by: <select style="width:80px;"><option>ID</option></select></td>
+          </tr>
+          <tr><td align="center" colspan="2"><h3>Program list</h3></td></tr>
+        </table>
+        <table cellspacing='0' class="instance">
+          <tr>
+            <th>Program ID</th><th>Program name</th><th>Note</th>
+          </tr>
+        <% @subject.programs.each do |program| %>
+          <tr>
+            <td><%= program.id %></td><td><%= program.program_name %></td><td><%= program.note %></td>
+          </tr>
+        <% end %>
+        </table>
+        </div>
+      </div><!-- <div class="row"> -->
+
 
     </div><!-- <div class="gallery"> -->
 
