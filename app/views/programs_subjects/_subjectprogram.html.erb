@@ -1,4 +1,4 @@
-<h2><%= link_to program.id, user %></h2>
+<h2><%= link_to program.id, program %></h2>
 <p><%= program.program_name %></p>
 <%= form_for subject_programs_subjects_path, :html => {:method => :delete} do %>
         <%= hidden_field_tag 'program_id', program.id  %>
