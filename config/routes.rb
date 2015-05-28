@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'users_programs/index'
+
   #get 'program_files/index'
 
   #get 'programs/index'
