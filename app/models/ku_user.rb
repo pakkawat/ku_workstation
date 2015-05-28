@@ -43,4 +43,13 @@ class KuUser < ActiveRecord::Base
   def forget
     update_attribute(:remember_digest, nil)
   end
+
+  def user_programs(reload=false)
+    @user_programs = nil if reload 
+    @user_programs ||=Program.all( 
+             :joins => "JOIN (SELECT program_id
+                              FROM   users_subjects, subjects_programs
+                              WHERE  users_subjects.subject_id = programs_subjects.subject_id AND users_subjects.ku_user_id = #{self.id}
+                        ) AS user_programs ON programs.program_id = user_programs.program_id")
+  end
 end

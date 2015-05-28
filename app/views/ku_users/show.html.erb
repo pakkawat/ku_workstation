@@ -1,1 +1,12 @@
 show
+<hr>
+        <table cellspacing='0' class="instance">
+          <tr>
+            <th>Program ID</th><th>Program Name</th><th>Note</th>
+          </tr>
+        <% @kuuser.user_programs.each do |program| %>
+          <tr>
+            <td><%= program.program_id %></td><td><%= program.program_name %></td><td><%= program.note %></td>
+          </tr>
+        <% end %>
+        </table>

@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   root 'welcome#index'
   #resources :users
   resources :ku_users
+  #match "/ku_users/:ku_user_id/user_programs", :to => "ku_users#user_programs", :via => "get"
   #match '/teacher', to: 'users#teacher', via: :get
   #match '/student', to: 'users#student', via: :get
   resources :subjects do
