@@ -1,8 +1,8 @@
 class UserSubjectsController < ApplicationController
   def index
     @subject = Subject.find(params[:subject_id])  
-    @subjectusers = @subject.ku_users.paginate(page: params[:subjectuser_page], per_page: 2)
-    @kuusers = KuUser.where.not(id: @subjectusers).paginate(page: params[:kuuser_page], per_page: 2)
+    @subjectusers = @subject.ku_users.paginate(page: params[:subjectuser_page], per_page: 2).order("ku_id DESC")
+    @kuusers = KuUser.where.not(id: @subject.ku_users).paginate(page: params[:kuuser_page], per_page: 2).order("ku_id DESC")
   end
 
   def create
