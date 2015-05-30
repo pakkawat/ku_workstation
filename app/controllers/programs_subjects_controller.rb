@@ -23,7 +23,7 @@ class ProgramsSubjectsController < ApplicationController
     str_temp = ""
     @subject = Subject.find(params[:subject_id])
     @subject.ku_users.each do |user|
-      str_temp += "ku_id: "user.ku_id " - Program Name: "
+      str_temp += "ku_id: " + user.ku_id + " - Program Name: "
       @subject.programs.each do |program|
         str_temp += program.program_name + ", "
       end
