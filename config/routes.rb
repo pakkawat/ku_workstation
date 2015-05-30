@@ -28,6 +28,7 @@ Rails.application.routes.draw do
   match '/delete_file', to: 'programs#delete_file', via: :post
   match '/programs/view_file', to: 'programs#view_file', via: :post
   match '/save_file', to: 'programs#save_file', via: :post
+  match '/apply_prgrams', to: 'programs_subjects#apply_prgrams', via: :post
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

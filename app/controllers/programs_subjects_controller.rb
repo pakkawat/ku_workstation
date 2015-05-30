@@ -18,4 +18,18 @@ class ProgramsSubjectsController < ApplicationController
     ProgramsSubject.find_by(program_id: @program.id, subject_id: @subject.id).destroy
     redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
   end
+
+  def apply_prgrams
+    str_temp = ""
+    @subject = Subject.find(params[:subject_id])
+    @subject.ku_users.each do |user|
+      str_temp += "ku_id: "user.ku_id " - Program Name: "
+      @subject.programs.each do |program|
+        str_temp += program.program_name + ", "
+      end
+      str_temp += "End "
+    end
+
+    render plain: str_temp.inspect
+  end
 end
