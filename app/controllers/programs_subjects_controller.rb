@@ -1,8 +1,8 @@
 class ProgramsSubjectsController < ApplicationController
   def index
     @subject = Subject.find(params[:subject_id])  
-    @subjectprograms = @subject.programs.paginate(page: params[:subjectprogram_page], per_page: 2).order("program_name DESC")
-    @programs = Program.where.not(id: @subject.programs).paginate(page: params[:program_page], per_page: 2).order("program_name DESC")
+    @subjectprograms = @subject.programs.paginate(page: params[:subjectprogram_page], per_page: 2).order("program_name ASC")
+    @programs = Program.where.not(id: @subject.programs).paginate(page: params[:program_page], per_page: 2).order("program_name ASC")
   end
 
   def create
