@@ -21,7 +21,7 @@ class UserSubjectsController < ApplicationController
   end
 
   private
-    def apply_programs_to_user
+    def apply_programs_to_user# add program to run_list
       str_temp = "ku_id: " + @kuuser.ku_id + " - Program Name: "
       @subject.programs.each do |program|
         str_temp += program.program_name + ", "
