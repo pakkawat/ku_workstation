@@ -28,6 +28,7 @@ class ProgramsSubjectsController < ApplicationController
       @subject.ku_users.each do |user|
         str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
         str_temp += " || "
+        user.update_column(:run_list, @kuuser.run_list.gsub("recipe[remove-" + program.program_name + "],", ""))
         # delete recipe[remove-xxx], from user.run_list
       end
 
