@@ -5,6 +5,8 @@
 <%= render partial: "subjectuser", collection: @subjectusers, as: :user %>
 <%= will_paginate @subjectusers, :param_name => 'subjectuser_page' %>
 <br>
+<%= button_to 'Apply', subject_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
+<hr>
 <br>
 <h2>User List</h2>
 <%= render partial: "kuusers", collection: @kuusers, as: :user %>

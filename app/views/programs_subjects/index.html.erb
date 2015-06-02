@@ -5,7 +5,7 @@
 <%= render partial: "subjectprogram", collection: @subjectprograms, as: :program %>
 <%= will_paginate @subjectprograms, :param_name => 'subjectprogram_page' %>
 <br>
-<%= button_to 'Apply', aapply_prgrams_to_all_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
+<%= button_to 'Apply', program_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
 <hr>
 <br>
 <br>
