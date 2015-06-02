@@ -36,6 +36,8 @@ class ProgramsSubjectsController < ApplicationController
 
     def add_program_to_run_list
       str_temp = ""
+      @program = Program.find(params[:program_id])
+      @subject = Subject.find(params[:subject_id])
       @subject.ku_users.each do |user|
         #str_temp += "ku_id: " + user.ku_id + " add recipe[" + @program.program_name + "] || "
         user.update_column(:run_list, user.run_list + "recipe[" + @program.program_name + "],")
@@ -45,6 +47,8 @@ class ProgramsSubjectsController < ApplicationController
 
     def add_remove_program_to_run_list
       str_temp = ""
+      @program = Program.find(params[:program_id])
+      @subject = Subject.find(params[:subject_id])
       @subject.ku_users.each do |user|
         user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
       end
