@@ -43,9 +43,11 @@ class UserSubjectsController < ApplicationController
   def subject_apply# send run_list to Chef-server and run sudo chef-clients then if any remove need update user.run_list
     str_temp = ""
     @subject = Subject.find(params[:subject_id])
-    @subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients 
-      str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
-      str_temp += " || "
+    @subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
+      if !user.run_list.blank?
+        str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
+        str_temp += " || "
+      end
     end
     KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: false)).each do |user|
       @subject.programs.each do |program|
