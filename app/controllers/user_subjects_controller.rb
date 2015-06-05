@@ -2,7 +2,7 @@ class UserSubjectsController < ApplicationController
   def index
     @subject = Subject.find(params[:subject_id])  
     @subjectusers = KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).paginate(page: params[:subjectuser_page], per_page: 2).order("ku_id ASC")
-    @kuusers = KuUser.where.not(id: @subjectusers).paginate(page: params[:kuuser_page], per_page: 2).order("ku_id ASC")
+    @kuusers = KuUser.where.not(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).paginate(page: params[:kuuser_page], per_page: 2).order("ku_id ASC")
   end
 
   def create
@@ -17,7 +17,7 @@ class UserSubjectsController < ApplicationController
         flash[:danger] = "Error1!!"
       end
     else
-      if @subject.user_subjects.save(ku_user: @kuuser)
+      if @subject.user_subjects.create(ku_user: @kuuser)
         add_program_to_run_list
         flash[:success] = @kuuser.ku_id + " has been added"
       else

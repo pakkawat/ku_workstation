@@ -2,7 +2,7 @@ class ProgramsSubjectsController < ApplicationController
   def index
     @subject = Subject.find(params[:subject_id])  
     @subjectprograms = Program.where(id: @subject.programs_subjects.select("program_id").where(program_enabled: true)).paginate(page: params[:subjectprogram_page], per_page: 2).order("program_name ASC")
-    @programs = Program.where.not(id: @subjectprograms).paginate(page: params[:program_page], per_page: 2).order("program_name ASC")
+    @programs = Program.where.not(id: @subject.programs_subjects.select("program_id").where(program_enabled: true)).paginate(page: params[:program_page], per_page: 2).order("program_name ASC")
   end
 
   def create
@@ -22,7 +22,7 @@ class ProgramsSubjectsController < ApplicationController
         flash[:danger] = "Error1!!"
       end
     else
-      if @subject.programs_subjects.save(program: @program)
+      if @subject.programs_subjects.create(program: @program)
         add_program_to_run_list
         flash[:success] = @program.program_name + " has been added"
       else
