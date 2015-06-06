@@ -1,6 +1,6 @@
 Rails.application.routes.draw do
   #get 'program_files/index'
-
+  #match '*page', to: 'pages#show', via: :get
   #get 'programs/index'
 
   get 'sessions/new'
@@ -21,9 +21,9 @@ Rails.application.routes.draw do
   delete 'logout'  => 'sessions#destroy'
   match "/subjects/:subject_id/user_subjects", :to => "user_subjects#destroy", :via => "delete"
   match "/subjects/:subject_id/programs_subjects", :to => "programs_subjects#destroy", :via => "delete"
-  resources :programs do
-    resources :program_files
-  end
+  #match "programs/:program_id/*program_file", :to => "program_files#show", :via => "get"
+  resources :programs
+  match "programs/:program_id/*program_files", :to => "program_files#show", :via => "get"
   match '/new_file', to: 'programs#new_file', via: :post
   match '/delete_file', to: 'programs#delete_file', via: :post
   match '/programs/view_file', to: 'programs#view_file', via: :post

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150524042333) do
+ActiveRecord::Schema.define(version: 20150605061956) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,6 +33,7 @@ ActiveRecord::Schema.define(version: 20150524042333) do
     t.integer  "campus"
     t.string   "remember_digest"
     t.boolean  "admin",           default: false
+    t.text     "run_list"
   end
 
   add_index "ku_users", ["ku_id"], name: "index_ku_users_on_ku_id", unique: true, using: :btree
@@ -57,6 +58,7 @@ ActiveRecord::Schema.define(version: 20150524042333) do
   create_table "programs_subjects", force: :cascade do |t|
     t.integer "program_id"
     t.integer "subject_id"
+    t.boolean "program_enabled", default: true
   end
 
   add_index "programs_subjects", ["program_id"], name: "index_programs_subjects_on_program_id", using: :btree
@@ -74,6 +76,7 @@ ActiveRecord::Schema.define(version: 20150524042333) do
   create_table "user_subjects", force: :cascade do |t|
     t.integer "ku_user_id"
     t.integer "subject_id"
+    t.boolean "user_enabled", default: true
   end
 
   add_index "user_subjects", ["ku_user_id"], name: "index_user_subjects_on_ku_user_id", using: :btree
