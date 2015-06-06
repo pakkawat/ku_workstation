@@ -53,12 +53,19 @@ class SubjectsController < ApplicationController
       @subject.programs.each do |program|
         @subject.ku_users.each do |user|
           #user.update_column(:run_list, user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"))
-          # 1. send run_list to chef-server
-          # 2. update run_list recipe[remove-xxx] to ''
+          
           str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],")
           str_temp += " || "
         end
       end
+      # 1. send run_list to chef-server
+      # 2. update run_list recipe[remove-xxx] to ''
+      #@subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
+        #if !user.run_list.blank?
+          #str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
+          #str_temp += " || "
+        #end
+      #end
       render plain: str_temp.inspect
     end
 end
