@@ -38,8 +38,9 @@ class SubjectsController < ApplicationController
 
   def destroy
     @subject = Subject.find(params[:id])
-    @subject.destroy
-    redirect_to subjects_path, :notice => "Subject has been deleted"
+    update_users_run_list
+    #@subject.destroy
+    #redirect_to subjects_path, :notice => "Subject has been deleted"
   end
 
   private
@@ -47,4 +48,17 @@ class SubjectsController < ApplicationController
       params.require(:subject).permit(:subject_id, :subject_name, :term, :year)
     end
 
+    def update_users_run_list
+      str_temp = ""
+      @subject.programs.each do |program|
+        @subject.ku_users.each do |user|
+          #user.update_column(:run_list, user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"))
+          # 1. send run_list to chef-server
+          # 2. update run_list recipe[remove-xxx] to ''
+          str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],")
+          str_temp += " || "
+        end
+      end
+      render plain: str_temp.inspect
+    end
 end
