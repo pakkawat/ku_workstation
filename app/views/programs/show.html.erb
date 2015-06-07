@@ -65,3 +65,8 @@
   <!-- Foot -->
 
 </div>
+<hr>
+<h2>Test</h2>
+<% @current_dir.each do |file| %>
+<%= link_to ""+file.to_s, send("#{file}_program_path", @program) %>
+<% end %>

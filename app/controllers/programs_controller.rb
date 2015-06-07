@@ -13,6 +13,8 @@ class ProgramsController < ApplicationController
     directory = "public/cookbooks/"+@program.program_name
     @all_files = Dir.glob(directory+'/**/*').sort_by{|e| e}
     @all_directories = Dir.glob(directory+'/**/*').select{ |e| File.directory? e }.sort_by{|e| e}
+
+    @current_dir = Dir.glob(directory).sort_by{|e| e}
   end
 
   def new
