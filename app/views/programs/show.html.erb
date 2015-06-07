@@ -68,5 +68,5 @@
 <hr>
 <h2>Test</h2>
 <% @current_dir.each do |file| %>
-<%= link_to ""+file.gsub("public/cookbooks/"+@program.program_name+"/", "").to_s, send(file.gsub("public/cookbooks/"+@program.program_name+"/", "").to_s+"_program_path", @program) %>
+<%= link_to file.gsub("public/cookbooks/"+@program.program_name+"/", "").to_s, program_path(@program)+"/"+file %><br>
 <% end %>
