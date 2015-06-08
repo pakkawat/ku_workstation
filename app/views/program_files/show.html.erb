@@ -1,6 +1,76 @@
-test show program_files
-<br>
-test param<br>
-<% @files.each do |file| %>
-<%= file %><br>
-<% end %>
+<div class="main">
+  <div class="container">
+    <!-- Gallery -->
+    <div class="gallery">
+
+	<% if File.file?(@current_file) %>
+		<div class="main">
+		  <div class="container">
+		    <!-- Gallery -->
+		    <div class="gallery">
+
+		      <div class="row">
+		        <div class="span12" align="center" >
+		          <h2><b><%= @file_path.split("/")[-1] %></b></h2>
+		            <%= form_tag('/save_file', :method=>'post' ) do %>
+		              <%= hidden_field_tag 'id', @program_id.to_s %>
+		              <%= hidden_field_tag 'path', @file_path.to_s %>
+		            <table cellspacing='0' style="width:80%;">
+		              <tr>
+		                <td>
+		                  <div id="editor"><%= @data %></div>
+		                  <%= text_area_tag 'file_data', @data, class: 'text_area_hidden' %>
+		                </td>
+		              </tr>
+		              <tr>
+		                <td align="center"><%= submit_tag 'Save', class: 'btn btn-primary' %></td>
+		              </tr>
+		            </table>
+		            <% end %>
+		        </div>
+		      </div>
+
+
+		</div>
+		<%= javascript_include_tag "ace/src-min/ace.js", "ace/text_area_ace.js" %>
+	<% elsif File.directory?(@current_file) %>
+		<div class="row">
+			<div class="span12" align="center" >
+			  <h2><b></b></h2>
+				<table cellspacing='0' class="instance">
+					<tr>
+						<th><%= @program.program_name+"/"+@path %></th>
+					</tr>
+			    <% @all_files.each do |file| %>
+			    	<tr>
+		    			<td align="left">
+		    				<% if File.directory?(file) %>
+		    					<%= image_tag "icon_folder.png" %>
+		    				<% else %>
+		    					<%= image_tag "icon_file.png" %>
+		    				<% end %>
+		    				<%= link_to file.gsub(@current_file, ""), program_path(@program)+"/"+@path+"/"+file.gsub(@current_file, "") %>
+		    			</td>
+
+		    			<td>
+		    				<%= button_to 'Delete', delete_file_path, data: { confirm: "Are you sure?" }, :class => "btn", params: {'path' => @current_file+"/"+file.gsub(@current_file, ""), 'id' => @program.id.to_s} %>
+		    			</td>
+					</tr>
+				<% end %><!-- End all_filesloop -->
+
+				</table>
+			</div>
+		</div>
+	<% else %>
+		File not found
+	<% end %>
+    </div><!-- End <div class="gallery"> -->
+
+    <!-- Buttons. Replace # with your link -->
+    <div class="buttons"></div>
+  </div>
+  <!-- End of container -->
+  <!-- Sponsors -->
+  <!-- Foot -->
+
+</div>
