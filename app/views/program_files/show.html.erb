@@ -47,7 +47,7 @@
 			    </tr>
 			    <tr>
 			      <td align="left">Path</td>
-			      <td align="center"><% #select_tag "path", options_for_select(@all_directories.map { |value| [ value.gsub("public/cookbooks/"+@program.program_name+"/", ""), value ] }), include_blank: "/" %></td>
+			      <td align="center"><%= select_tag "new_file_path", options_for_select(@all_files.map { |value| [ value.gsub(@current_file, ""), value ] }), include_blank: "/" %></td>
 			    </tr>
 			    <tr>
 			      <td align="left">Name</td><td align="center"><%= text_field_tag "name" %></td>

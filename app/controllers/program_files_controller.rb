@@ -20,7 +20,7 @@ class ProgramFilesController < ApplicationController
   	@program_dir = "public/cookbooks/"+@program.program_name+"/"
   	@path = params[:program_files]
   	@current_file = @program_dir+@path
-  	render plain: @current_file.inspect+" || Type: "+params[:type]+" || Name:"+params[:name]
+  	render plain: @current_file.inspect+" || Type: "+params[:type]+" || New Path: "+params[:new_file_path]+" || Name:"+params[:name]
   end
 
   def save_file
