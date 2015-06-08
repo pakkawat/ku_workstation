@@ -12,7 +12,7 @@
 		      <div class="row">
 		        <div class="span12" align="center" >
 		          <h2><b><%= @program.program_name+"/"+@path %></b></h2>
-		            <%= form_tag(program_path(@program)+"/"+@path+"/"+file.gsub(@current_file, ""), :method=>'post' ) do %>
+		            <%= form_tag(program_path(@program)+"/"+@path, :method=>'patch' ) do %>
 		              <% #hidden_field_tag 'id', @program_id.to_s %>
 		              <% #hidden_field_tag 'path', @file_path.to_s %>
 		            <table cellspacing='0' style="width:80%;">
@@ -34,6 +34,32 @@
 		</div>
 		<%= javascript_include_tag "ace/src-min/ace.js", "ace/text_area_ace.js" %>
 	<% elsif File.directory?(@current_file) %>
+
+
+		<div class="row">
+			<div class="span12" align="center" >
+			  <h2><b><%= @program.program_name %></b></h2>
+			  <%= form_tag(program_path(@program)+"/"+@path, :method=>'post' ) do %>
+			  <table cellspacing='0' style="width:40%;">
+			    <tr>
+			      <td align="left">Type</td>
+			      <td align="center"><%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1')) %></td>
+			    </tr>
+			    <tr>
+			      <td align="left">Path</td>
+			      <td align="center"><% #select_tag "path", options_for_select(@all_directories.map { |value| [ value.gsub("public/cookbooks/"+@program.program_name+"/", ""), value ] }), include_blank: "/" %></td>
+			    </tr>
+			    <tr>
+			      <td align="left">Name</td><td align="center"><%= text_field_tag "name" %></td>
+			    </tr>
+			    <tr>
+			      <td align="center" colspan="2"><%= submit_tag 'Create', class: 'btn btn-primary' %></td>
+			    </tr>
+			  </table>
+			  <% end %>
+			</div>
+		</div>
+
 		<div class="row">
 			<div class="span12" align="center" >
 			  <h2><b><%= @program.program_name+"/"+@path %></b></h2>
@@ -49,7 +75,7 @@
 		    				<% else %>
 		    					<%= image_tag "icon_file.png" %>
 		    				<% end %>
-		    				<%= link_to file.gsub(@current_file, ""), program_path(@program)+"/"+@path+"/"+file.gsub(@current_file, "") %>
+		    				<%= link_to file.gsub(@current_file, ""), program_path(@program)+"/"+@path+file.gsub(@current_file, "") %>
 		    			</td>
 
 		    			<td>
