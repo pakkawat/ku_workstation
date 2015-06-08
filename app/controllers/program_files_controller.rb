@@ -8,6 +8,7 @@ class ProgramFilesController < ApplicationController
   	@current_file = @program_dir+@path
   	if File.directory?(@current_file)
   	  @all_files = Dir.glob(@current_file+"/*").sort_by{|e| e}
+  	  @all_directory = Dir.glob(@current_file+"/*").select{ |e| File.directory? e }.sort_by{|e| e}#for dropdown
   	elsif File.file?(@current_file)
   	  @data = File.read(@current_file)
   	else
