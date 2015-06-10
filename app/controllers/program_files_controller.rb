@@ -85,6 +85,10 @@ class ProgramFilesController < ApplicationController
   	@program_dir = "public/cookbooks/"+@program.program_name+"/"
   	@path = params[:program_files]
   	@current_file_path = @program_dir+@path
-  	render plain: @current_file_path.inspect+" || Name:"+params[:name]
+  	#render plain: @current_file_path.inspect+" || Name:"+params[:name]
+  	FileUtils.rm_rf(@current_file_path)
+  	flash[:success] = "File successfully deleted."
+  	@current_file_path = @current_file_path.gsub(params[:name], "")
+  	redirect_to program_path(@program)+@current_file_path.gsub("public/cookbooks/"+@program.program_name, "")
   end
 end

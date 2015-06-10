@@ -79,7 +79,7 @@
 		    			</td>
 
 		    			<td>
-		    				<%= button_to 'Delete', program_path(@program)+"/"+@path+file.gsub(@current_file, ""), data: { confirm: "Are you sure?" }, :class => "btn", params: {'name' => file.gsub(@current_file, "")} %>
+		    				<%= button_to 'Delete', program_path(@program)+"/"+@path+file.gsub(@current_file, ""), data: { confirm: "Are you sure?" }, :class => "btn", :method => :delete, params: {'name' => file.gsub(@current_file, "")} %>
 		    			</td>
 					</tr>
 				<% end %><!-- End all_filesloop -->
