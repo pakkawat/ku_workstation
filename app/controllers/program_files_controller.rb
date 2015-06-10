@@ -22,7 +22,7 @@ class ProgramFilesController < ApplicationController
   	@path = params[:program_files]
   	@current_file_path = @program_dir+@path
   	full_path = ""
-  	render plain: @current_file_path.inspect+" || Type: "+params[:type]+" || New Path: "+params[:new_file_path]+" || Name:"+params[:name]
+  	#render plain: @current_file_path.inspect+" || Type: "+params[:type]+" || New Path: "+params[:new_file_path]+" || Name:"+params[:name]
   	if params[:name].blank?
   		error_msg = ""
   		if params[:type] == "1"
@@ -56,11 +56,16 @@ class ProgramFilesController < ApplicationController
   					flash[:success] = "File has been created at "+full_path.gsub("public/cookbooks/"+@program.program_name, "")
   				end
   			else
-  				flash[:danger] = "File name was incorrect format. Please choose a different name and try again."
+  				flash[:danger] = "File name was incorrect format. Please try again."
+  				if params[:new_file_path].blank?
+  					full_path = @current_file_path
+  				else
+  					full_path = params[:new_file_path]
+  				end
   			end
   		end
   	end
-  	redirect_to program_path(@program)+"/"+full_path.gsub("public/cookbooks/"+@program.program_name, "")
+  	redirect_to program_path(@program)+full_path.gsub("public/cookbooks/"+@program.program_name, "")
 
   end
 
