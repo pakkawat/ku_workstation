@@ -12,9 +12,9 @@ class ProgramsController < ApplicationController
     #@program_files = @program.program_files.all
     @directory = "public/cookbooks/"+@program.program_name
     #@all_files = Dir.glob(directory+'/**/*').sort_by{|e| e}
-    @all_directories = Dir.glob(directory+'/*').select{ |e| File.directory? e }.sort_by{|e| e}#for drop_down
+    @all_directories = Dir.glob(@directory+'/*').select{ |e| File.directory? e }.sort_by{|e| e}#for drop_down
 
-    @current_dir = Dir.glob(directory+"/*").sort_by{|e| e}
+    @current_dir = Dir.glob(@directory+"/*").sort_by{|e| e}
   end
 
   def new
