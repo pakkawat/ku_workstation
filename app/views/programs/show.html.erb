@@ -43,11 +43,11 @@
                 <% else %>
                   <%= image_tag "icon_file.png" %>
                 <% end %>
-                <%= link_to file.gsub(@current_file, ""), program_path(@program)+"/"+file.gsub(@current_file, "") %>
+                <%= link_to file.gsub(@directory, ""), program_path(@program)+"/"+file.gsub(@directory, "") %>
               </td>
 
               <td>
-                <%= button_to 'Delete', program_path(@program)+"/"+file.gsub(@current_file, ""), data: { confirm: "Are you sure?" }, :class => "btn", :method => :delete, params: {'name' => file.gsub(@current_file, "")} %>
+                <%= button_to 'Delete', program_path(@program)+"/"+file.gsub(@directory, ""), data: { confirm: "Are you sure?" }, :class => "btn", :method => :delete, params: {'name' => file.gsub(@directory, "")} %>
               </td>
           </tr>
         <% end %><!-- End all_filesloop -->
