@@ -8,7 +8,7 @@ class ProgramFilesController < ApplicationController
   	@current_file = @program_dir+@path
   	if File.directory?(@current_file)
   	  @all_files = Dir.glob(@current_file+"/*").sort_by{|e| e}
-  	  @all_directory = Dir.glob(@current_file+"/*").select{ |e| File.directory? e }.sort_by{|e| e}#for dropdown
+  	  @all_directories = Dir.glob(@current_file+"/*").select{ |e| File.directory? e }.sort_by{|e| e}#for dropdown
   	elsif File.file?(@current_file)
   	  @data = File.read(@current_file)
   	else
@@ -19,7 +19,12 @@ class ProgramFilesController < ApplicationController
   def new_file
   	@program = Program.find(params[:program_id])
   	@program_dir = "public/cookbooks/"+@program.program_name+"/"
-  	@path = params[:program_files]
+  	@path = ""
+  	if params[:program_files] == "create_from_loot_dir_form_tag" # form_tag view/programs/show.html.erb 
+  		@path = ""
+  	else
+  		@path = params[:program_files]
+  	end
   	@current_file_path = @program_dir+@path
   	full_path = ""
   	#render plain: @current_file_path.inspect+" || Type: "+params[:type]+" || New Path: "+params[:new_file_path]+" || Name:"+params[:name]
@@ -88,7 +93,7 @@ class ProgramFilesController < ApplicationController
   	#render plain: @current_file_path.inspect+" || Name:"+params[:name]
   	FileUtils.rm_rf(@current_file_path)
   	flash[:success] = "File successfully deleted."
-  	@current_file_path = @current_file_path.gsub(params[:name], "")
-  	redirect_to program_path(@program)+@current_file_path.gsub("public/cookbooks/"+@program.program_name, "")
+  	#@current_file_path = @current_file_path.chomp(params[:name])
+  	redirect_to program_path(@program)+@current_file_path.gsub("public/cookbooks/"+@program.program_name, "").chomp(params[:name])
   end
 end

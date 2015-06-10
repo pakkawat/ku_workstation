@@ -3,57 +3,60 @@
     <!-- Gallery -->
     <div class="gallery">
 
-      <div class="row">
-        <div class="span12" align="center" >
-          <h2><b><%= @program.program_name %></b></h2>
-          <%= form_tag('/new_file', :method=>'post' ) do %>
-          <table cellspacing='0' style="width:40%;">
-          	<%= hidden_field_tag 'id', @program.id.to_s %>
-            <tr>
-              <td align="left">Type</td>
-              <td align="center"><%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1')) %></td>
-            </tr>
-            <tr>
-              <td align="left">Path</td>
-              <td align="center"><%= select_tag "path", options_for_select(@all_directories.map { |value| [ value.gsub("public/cookbooks/"+@program.program_name+"/", ""), value ] }), include_blank: "/" %></td>
-            </tr>
-            <tr>
-              <td align="left">Name</td><td align="center"><%= text_field_tag "name" %></td>
-            </tr>
-            <tr>
-              <td align="center" colspan="2"><%= submit_tag 'Create', class: 'btn btn-primary' %></td>
-            </tr>
-          </table>
-          <% end %>
-        </div>
+
+    <div class="row">
+      <div class="span12" align="center" >
+        <h2><b><%= @program.program_name %></b></h2>
+        <%= form_tag(program_path(@program)+"/create_from_loot_dir_form_tag", :method=>'post' ) do %>
+        <table cellspacing='0' style="width:40%;">
+          <tr>
+            <td align="left">Type</td>
+            <td align="center"><%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1')) %></td>
+          </tr>
+          <tr>
+            <td align="left">Path</td>
+            <td align="center"><%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@current_file, ""), value ] }), include_blank: "/" %></td>
+          </tr>
+          <tr>
+            <td align="left">Name</td><td align="center"><%= text_field_tag "name" %></td>
+          </tr>
+          <tr>
+            <td align="center" colspan="2"><%= submit_tag 'Create', class: 'btn btn-primary' %></td>
+          </tr>
+        </table>
+        <% end %>
       </div>
+    </div>
 
+    <div class="row">
+      <div class="span12" align="center" >
+        <h2><b></b></h2>
+        <table cellspacing='0' class="instance">
+          <tr>
+            <th>/</th>
+          </tr>
+          <% @current_dir.each do |file| %>
+            <tr>
+              <td align="left">
+                <% if File.directory?(file) %>
+                  <%= image_tag "icon_folder.png" %>
+                <% else %>
+                  <%= image_tag "icon_file.png" %>
+                <% end %>
+                <%= link_to file.gsub(@current_file, ""), program_path(@program)+"/"+file.gsub(@current_file, "") %>
+              </td>
 
+              <td>
+                <%= button_to 'Delete', program_path(@program)+"/"+file.gsub(@current_file, ""), data: { confirm: "Are you sure?" }, :class => "btn", :method => :delete, params: {'name' => file.gsub(@current_file, "")} %>
+              </td>
+          </tr>
+        <% end %><!-- End all_filesloop -->
 
-      <div class="row">
-        <div class="span12" align="center" >
-          <h2><b></b></h2>
-			<table cellspacing='0' class="instance">
-				<tr>
-					<th>All Files</th>
-				</tr>
-	        <% @all_files.each do |file| %>
-	        	<tr>
-	        		<% if File.directory?(file) %>
-	        			<td align="left"><%= image_tag "icon_folder.png" %><%= file.gsub("public/cookbooks/"+@program.program_name+"/", "") %></td>
-	        			<td></td>
-	        			<td><%= button_to 'Delete', delete_file_path, data: { confirm: "Are you sure?" }, :class => "btn", params: {'path' => file.to_s, 'id' => @program.id.to_s} %></td>
-	        		<% else %>
-	        			<td align="left"><%= image_tag "icon_file.png" %><%= file.gsub("public/cookbooks/"+@program.program_name+"/", "") %></td>
-	        			<td><%= button_to 'Edit', programs_view_file_path, :class => "btn btn-primary", params: {'path' => file.to_s, 'id' => @program.id.to_s} %></td>
-	        			<td><%= button_to 'Delete', delete_file_path, data: { confirm: "Are you sure?" }, :class => "btn", params: {'path' => file.to_s, 'id' => @program.id.to_s} %></td>
-	        		<% end %>
-				</tr>
-			<% end %><!-- End all_filesloop -->
-
-			</table>
-        </div>
+        </table>
       </div>
+    </div>
+
+
 
     </div><!-- End <div class="gallery"> -->
 
