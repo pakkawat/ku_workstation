@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   match "programs/:program_id/*program_files", :to => "program_files#show", :via => "get", :constraints => { :program_files => /[^*]+/ }#fix dot in url and allows anything except *
   match "programs/:program_id/*program_files", :to => "program_files#save_file", :via => "patch", :constraints => { :program_files => /[^*]+/ }
   match "programs/:program_id/*program_files", :to => "program_files#new_file", :via => "post"
+  match "programs/:program_id/*program_files", :to => "program_files#delete_file", :via => "delete"
   match '/new_file', to: 'programs#new_file', via: :post
   match '/delete_file', to: 'programs#delete_file', via: :post
   match '/programs/view_file', to: 'programs#view_file', via: :post
