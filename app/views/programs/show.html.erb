@@ -43,7 +43,7 @@
                 <% else %>
                   <%= image_tag "icon_file.png" %>
                 <% end %>
-                <%= link_to file.gsub(@directory, ""), program_path(@program)+"/"+file.gsub(@directory, "") %>
+                <%= link_to file.gsub(@directory+"/", ""), program_path(@program)+file.gsub(@directory, "") %>
               </td>
 
               <td>
