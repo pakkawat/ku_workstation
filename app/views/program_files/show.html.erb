@@ -65,7 +65,14 @@
 			  <h2><b><%= @program.program_name+"/"+@path %></b></h2>
 				<table cellspacing='0' class="instance">
 					<tr>
-						<th><%= @program.program_name+"/"+@path %></th>
+						<th>
+							<%= link_to @program.program_name+" ", program_path(@program) %>/
+							<% temp_path = "" %>
+							<% @path.split("/").each do |p| %>
+								<% temp_path += "/"+p %>
+								<%= link_to " "+p+" ", program_path(@program)+temp_path %>/
+							<% end %>
+						</th>
 					</tr>
 			    <% @all_files.each do |file| %>
 			    	<tr>
