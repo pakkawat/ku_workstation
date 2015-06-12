@@ -11,7 +11,7 @@
 
 		      <div class="row">
 		        <div class="span12" align="center" >
-		          <h2><b><%= @program.program_name+"/"+@path %></b></h2>
+		          <h2><b><%= @path.split("/").last %></b></h2>
 		            <%= form_tag(program_path(@program)+"/"+@path, :method=>'patch' ) do %>
 		              <% #hidden_field_tag 'id', @program_id.to_s %>
 		              <% #hidden_field_tag 'path', @file_path.to_s %>

@@ -3,10 +3,10 @@ Rails.application.routes.draw do
   #match '*page', to: 'pages#show', via: :get
   #get 'programs/index'
 
-  get 'sessions/new'
+  #get 'sessions/new'
 
-  get 'welcome/index'
-  root 'welcome#index'
+  #get 'welcome/index'
+  root 'sessions#new'
   #resources :users
   resources :ku_users
   #match "/ku_users/:ku_user_id/user_programs", :to => "ku_users#user_programs", :via => "get"
