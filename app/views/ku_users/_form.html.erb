@@ -15,7 +15,7 @@
 
 
         <div class="control-group">
-                <%= f.label :username,'Ku ID', class: "control-label" %>
+                <%= f.label :username,'Username', class: "control-label" %>
                 <div class="controls">
                         <%= f.text_field :username, class: "form-control input-lg" %>
                         <p class="help-block">Username can contain any letters or numbers, without spaces</p>
@@ -24,7 +24,7 @@
 
 
         <div class="control-group">
-                <%= f.label :password,'Ku ID', class: "control-label" %>
+                <%= f.label :password,'Password', class: "control-label" %>
                 <div class="controls">
                         <%= f.text_field :password, class: "form-control input-lg" %>
                         <p class="help-block">Password should be at least 6 characters</p>
@@ -32,7 +32,7 @@
         </div>
         
         <div class="control-group">
-                <%= f.label :password_confirmation,'Ku ID', class: "control-label" %>
+                <%= f.label :password_confirmation,'Password confirmation', class: "control-label" %>
                 <div class="controls">
                         <%= f.text_field :password_confirmation, class: "form-control input-lg" %>
                         <p class="help-block">Please confirm password</p>
@@ -40,7 +40,7 @@
         </div>
         
         <div class="control-group">
-                <%= f.label :firstname,'Ku ID', class: "control-label" %>
+                <%= f.label :firstname,'Firstname', class: "control-label" %>
                 <div class="controls">
                         <%= f.text_field :firstname, class: "form-control input-lg" %>
                         <p class="help-block">Please provide your Firstname</p>
@@ -48,7 +48,7 @@
         </div>
         
         <div class="control-group">
-                <%= f.label :lastname,'Ku ID', class: "control-label" %>
+                <%= f.label :lastname,'Lastname', class: "control-label" %>
                 <div class="controls">
                         <%= f.text_field :lastname, class: "form-control input-lg" %>
                         <p class="help-block">Please provide your Lastname</p>
@@ -56,7 +56,7 @@
         </div>
 
         <div class="control-group">
-                <%= f.label :email,'Ku ID', class: "control-label" %>
+                <%= f.label :email,'Email', class: "control-label" %>
                 <div class="controls">
                         <%= f.text_field :email, class: "form-control input-lg" %>
                         <p class="help-block">Please provide your E-mail</p>
@@ -64,44 +64,44 @@
         </div>
 
         <div class="control-group">
-                <%= f.label :sex,'Ku ID', class: "control-label" %>
+                <%= f.label :sex,'Sex', class: "control-label" %>
                 <div class="controls">
-                        <%= f.select :sex, [['Male','1'],['Female','2']], class: "form-control input-lg" %>
+                        <%= f.select :sex, [['Male','1'],['Female','2']], {}, {class: "form-control input-lg"} %>
                 </div>
         </div>
 
         <div class="control-group">
-                <%= f.label :degree_level,'Ku ID', class: "control-label" %>
+                <%= f.label :degree_level,'Degree Level', class: "control-label" %>
                 <div class="controls">
-                        <%= f.select :degree_level, [['Master','1'],['Female','2']], class: "form-control input-lg" %>
+                        <%= f.select :degree_level, [['Master','1'],['Female','2']], {}, {class: "form-control input-lg"} %>
                 </div>
         </div>
 
         <div class="control-group">
-                <%= f.label :campus,'Ku ID', class: "control-label" %>
+                <%= f.label :campus,'Campus', class: "control-label" %>
                 <div class="controls">
-                        <%= f.select :campus, [['Bangkhen','1'],['Female','2']], class: "form-control input-lg" %>
+                        <%= f.select :campus, [['Bangkhen','1'],['Female','2']], {}, {class: "form-control input-lg"} %>
                 </div>
         </div>
 
         <div class="control-group">
-                <%= f.label :faculty,'Ku ID', class: "control-label" %>
+                <%= f.label :faculty,'Faculty', class: "control-label" %>
                 <div class="controls">
-                        <%= f.select :faculty, [['Science','1'],['Female','2']], class: "form-control input-lg" %>
+                        <%= f.select :faculty, [['Science','1'],['Female','2']], {}, {class: "form-control input-lg"} %>
                 </div>
         </div>
 
         <div class="control-group">
-                <%= f.label :major_field,'Ku ID', class: "control-label" %>
+                <%= f.label :major_field,'Major Field', class: "control-label" %>
                 <div class="controls">
-                        <%= f.select :major_field, [['Computer Science (XD60)','1'],['Female','2']], class: "form-control input-lg" %>
+                        <%= f.select :major_field, [['Computer Science (XD60)','1'],['Female','2']], {}, {class: "form-control input-lg"} %>
                 </div>
         </div>
 
         <div class="control-group">
-                <%= f.label :status,'Ku ID', class: "control-label" %>
+                <%= f.label :status,'Status', class: "control-label" %>
                 <div class="controls">
-                        <%= f.select :status, [['Currently studying','1'],['Female','2']], class: "form-control input-lg" %>
+                        <%= f.select :status, [['Currently studying','1'],['Female','2']], {}, {class: "form-control input-lg"} %>
                 </div>
         </div>
 
