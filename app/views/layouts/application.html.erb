@@ -8,58 +8,73 @@
 </head>
 <body>
 <!-- Navigation section -->
-<div class="navbar navbar-fixed-top">
-  <div class="navbar-inner">
-    <div class="container"> <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"> <span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </a>
-      <!-- Site name or Site logo. Replace "index.html" with your site link -->
-      <h1><a class="brand" href="index.html"><%= image_tag "ku-logo.jpg" %></a></h1>
-      <div class="nav-collapse">
-        <!-- Navigation links -->
-        <% if logged_in? %>
-        <ul class="nav">
-          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Program<i class="icon-caret-down"></i></a>
-            <ul class="dropdown-menu">
-              <!-- Sub links -->
-              <li><a href="admin-add-program.html">Add Program</a></li>
-              <li><a href="admin-program-list.html">Program List</a></li>
+<% if logged_in? %>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Program<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Add Program</a></li>
+              <li><a href="#">Program List</a></li>
             </ul>
           </li>
-          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Subject<i class="icon-caret-down"></i></a>
-            <ul class="dropdown-menu">
-              <!-- Sub links -->
-              <li><a href="admin-add-subject.html">Add Subject</a></li>
-              <li><a href="admin-subject-list.html">Subject List</a></li>
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Subject<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Add Subject</a></li>
+              <li><a href="#">Subject List</a></li>
             </ul>
           </li>
-          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">User<i class="icon-caret-down"></i></a>
-            <ul class="dropdown-menu">
-              <!-- Sub links -->
-              <li><a href="admin-add-user.html">Add User</a></li>
-              <li><a href="admin-teacher-list.html">Teacher List</a></li>
-              <li><a href="admin-student-list.html">Student List</a></li>
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">User<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Add User</a></li>
+              <li><a href="#">Teacher List</a></li>
+              <li><a href="#">Student List</a></li>
               <li><%= link_to "All Users", ku_users_path %></li>
             </ul>
           </li>
-          <li class="dropdown"> <a href="#" class="dropdown-toggle" data-toggle="dropdown">Instance<i class="icon-caret-down"></i></a>
-            <ul class="dropdown-menu">
-              <!-- Sub links -->
-              <li><a href="admin-teacher-instance.html">Teacher Instance</a></li>
-              <li><a href="admin-student-instance.html">Student Instance</a></li>
+
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Instance<span class="caret"></span></a>
+            <ul class="dropdown-menu" role="menu">
+              <li><a href="#">Teacher Instance</a></li>
+              <li><a href="#">Student Instance</a></li>
             </ul>
           </li>
+
           <li><a href="#">Contact</a></li>
           <li><%= link_to "Log out", logout_path, method: :delete %></li>
-        </ul>
-        <% else %>
-          <ul class="nav">
-            <li><%= link_to "Log in", login_path %></li>
-          </ul>
-        <% end %>
-        
-      </div>
-    </div>
-  </div>
-</div>
+
+        </ul><!-- <ul class="nav navbar-nav"> -->
+
+
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+<% else %>
+  <nav class="navbar navbar-default">
+    <div class="container-fluid">
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+
+          <li><%= link_to "Log in", login_path %></li>
+
+        </ul><!-- <ul class="nav navbar-nav"> -->
+      </div><!-- /.navbar-collapse -->
+    </div><!-- /.container-fluid -->
+  </nav>
+<% end %>
 
 <br>
 <br>
@@ -68,26 +83,19 @@
 <% end %>
 <br>
 <br>
-<%= yield %>
-
+<div class="container">
+  <%= yield %>
+</div>
 <!-- Footer -->
-<footer>
-  <div class="container">
-    <div class="row">
-      <div class="span4">
-        <p>&copy; 2014 kasetsart university</p>
-      </div>
-      <div class="span4">
-        <p><i class="icon-phone"></i> &nbsp;
-          00123 320 000 123 456</p>
-      </div>
-      <div class="span4">
-        <p><i class="icon-envelope"></i> &nbsp;
-          hello@ku.ac.th</p>
-      </div>
-    </div>
-    <div class="clearfix"></div>
-  </div>
+<footer class="footer">
+  <nav>
+    <ul>
+      <li>&copy; 2014 kasetsart university</li>
+      <li>00123 320 000 123 456</li>
+      <li>hello@ku.ac.th</li>
+    </ul>
+  </nav>
 </footer>
+
 </body>
 </html>
