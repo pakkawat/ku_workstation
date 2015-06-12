@@ -1,4 +1,6 @@
 source 'https://rubygems.org'
+gem 'bootstrap-sass', '~> 3.3.4'
+gem 'sprockets-rails', :require => 'sprockets/railtie'
 gem 'will_paginate',           '3.0.7'
 gem 'bootstrap-will_paginate', '0.0.10'
 gem 'bcrypt', '3.1.7'
