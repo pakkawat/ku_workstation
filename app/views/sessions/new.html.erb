@@ -39,3 +39,36 @@
   <!-- Foot -->
 
 </div>
+
+
+
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <div class="">
+            <div class="">
+                  <h3 class="text-center">Log in</h3>
+
+            </div>
+            <%= form_for(:session, url: login_path) do |f| %>
+                <fieldset>
+                    <div class="form-group">
+                        <%= f.text_field :username, :class => "form-control input-lg", :placeholder => "Username" %>
+                    </div>
+                    <div class="form-group">
+                        <%= f.text_field :password, :class => "form-control input-lg", :placeholder => "Password" %>
+                    </div>
+                    <div class="checkbox">
+                        <label>
+                            <%= f.label :remember_me do %>
+                              <%= f.check_box :remember_me %>Remember me on this computer
+                            <% end %>
+                        </label>
+                    </div>
+                    <%= f.submit "Log in", :class => "btn btn-lg btn-primary btn-block" %>
+                </fieldset>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</div>
