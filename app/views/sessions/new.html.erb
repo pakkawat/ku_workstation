@@ -1,74 +1,23 @@
-<div class="main">
-  <div class="container">
-    <!-- Gallery -->
-    <div class="gallery">
-      <div class="row">
-        <div class="span12" align="center" >
-          <h2><b>Log in</b></h2>
-            <%= form_for(:session, url: login_path) do |f| %>
-            <table cellspacing='0' style="width:40%;">
-  		        <tr>
-  		          <td align="left"><%= f.label :username,'Username' %></td><td align="center"><%= f.text_field :username %></td>
-  		        </tr>
-  		        <tr>
-  		          <td align="left"><%= f.label :password,'Password' %></td><td align="center"><%= f.text_field :password %></td>
-  		        </tr>
-              <tr>
-                <td></td>
-                <td>
-                <%= f.label :remember_me do %>
-                  <%= f.check_box :remember_me %>
-                  <span>Remember me on this computer</span>
-                <% end %>
-                </td>
-              </tr>
-  		        <tr>
-                <td align="center" colspan="2"><%= f.submit "Log in" %></td>
-          		</tr>
-            </table>
-            <% end %>
-        </div>
-      </div>
-    </div>
-
-    <!-- Buttons. Replace # with your link -->
-    <div class="buttons"></div>
-  </div>
-  <!-- End of container -->
-  <!-- Sponsors -->
-  <!-- Foot -->
-
+<div class="">
+      <h3 class="text-center">Log in</h3>
 </div>
-
-
-
-
-<div class="row">
-    <div class="col-md-4 col-md-offset-4">
-        <div class="">
-            <div class="">
-                  <h3 class="text-center">Log in</h3>
-
-            </div>
-            <%= form_for(:session, url: login_path) do |f| %>
-                <fieldset>
-                    <div class="form-group">
-                        <%= f.text_field :username, :class => "form-control input-lg", :placeholder => "Username" %>
-                    </div>
-                    <div class="form-group">
-                        <%= f.text_field :password, :class => "form-control input-lg", :placeholder => "Password" %>
-                    </div>
-                    <div class="checkbox">
-                        <label>
-                            <%= f.label :remember_me do %>
-                              <%= f.check_box :remember_me %>Remember me on this computer
-                            <% end %>
-                        </label>
-                    </div>
-                    <%= f.submit "Log in", :class => "btn btn-lg btn-primary btn-block" %>
-                </fieldset>
-                <% end %>
-            </div>
+<div class="panel-body">
+<%= form_for(:session, url: login_path) do |f| %>
+    <fieldset>
+        <div class="form-group">
+            <%= f.text_field :username, :class => "form-control input-lg", :placeholder => "Username" %>
         </div>
-    </div>
+        <div class="form-group">
+            <%= f.text_field :password, :class => "form-control input-lg", :placeholder => "Password" %>
+        </div>
+        <div class="checkbox">
+            <label>
+                <%= f.label :remember_me do %>
+                  <%= f.check_box :remember_me %>Remember me on this computer
+                <% end %>
+            </label>
+        </div>
+        <%= f.submit "Log in", :class => "btn btn-lg btn-primary btn-block" %>
+    </fieldset>
+    <% end %>
 </div>
