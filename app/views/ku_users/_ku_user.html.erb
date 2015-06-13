@@ -3,8 +3,12 @@
 	<th><%= ku_user.firstname %></th>
 	<th><%= ku_user.lastname %></th>
 	<th>
-		<%= button_to 'Edit', edit_ku_user_path(ku_user), :class => "btn btn-primary" %>
-		<%= button_to 'Delete', ku_user_path(ku_user), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete } %>
+		<div style="display:inline-block;">
+			<%= button_to 'Edit', edit_ku_user_path(ku_user), :class => "btn btn-primary", :method => :get  %>
+		</div>
+		<div style="display:inline-block;">
+			<%= button_to 'Delete', ku_user_path(ku_user), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete %>
+		</div>
 	</th>
 </tr>
 
