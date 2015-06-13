@@ -34,7 +34,7 @@
       <tbody>
         <% @kuuser.user_programs.each do |program| %>
           <tr>
-            <th scope="row"><%= link_to program.program_id, program %></th>
+            <th scope="row"><%= link_to program.id, program %></th>
             <td><%= program.program_name %></td>
             <td><%= program.note %></td>
           </tr>
