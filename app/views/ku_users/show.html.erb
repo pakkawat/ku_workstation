@@ -1,12 +1,44 @@
-show
-<hr>
-        <table cellspacing='0' class="instance">
+<div class="panel panel-info">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Subjects</div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Subject ID</th>
+          <th>Subject name</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @kuuser.subjects.each do |subject| %>
           <tr>
-            <th>Program ID</th><th>Program Name</th><th>Note</th>
-          </tr>
-        <% @kuuser.user_programs.each do |program| %>
-          <tr>
-            <td><%= program.program_id %></td><td><%= program.program_name %></td><td><%= program.note %></td>
+            <th scope="row"><%= link_to subject.id, subject %></th>
+            <td><%= subject.subject_name %></td>
           </tr>
         <% end %>
-        </table>
+      </tbody>
+  </table>
+</div>
+
+
+<div class="panel panel-warning">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Programs</div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Program ID</th>
+          <th>Program name</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @kuuser.user_programs.each do |program| %>
+          <tr>
+            <th scope="row"><%= link_to program.program_id, program %></th>
+            <td><%= program.program_name %></td>
+            <td><%= program.note %></td>
+          </tr>
+        <% end %>
+      </tbody>
+  </table>
+</div>
