@@ -1,10 +1,26 @@
-User index
-<hr>
-
-<%= will_paginate @kuusers %>
-
-<%= render @kuusers %>
-
-<%= will_paginate @kuusers %>
-
 <p><%= link_to "Add new user", new_ku_user_path %></p>
+
+
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">User index</div>
+  <div class="panel-body">
+    <%= will_paginate @kuusers %>
+  </div>
+  	<table class="table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Ku ID</th>
+  				<th>Firstname</th>
+  				<th>Lastname</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render @kuusers %>
+  		</tbody>
+	</table>
+  <div class="panel-body">
+    <%= will_paginate @kuusers %>
+  </div>
+</div>

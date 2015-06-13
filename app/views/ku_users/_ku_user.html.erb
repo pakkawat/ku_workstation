@@ -1,6 +1,10 @@
-<h2><%= link_to ku_user.ku_id, ku_user %></h2>
-<p><%= ku_user.firstname %></p>
-<p><%= link_to "Edit", edit_ku_user_path(ku_user) %> | 
-<%= link_to "Delete", ku_user_path(ku_user),  method: :delete, data: { confirm: "You sure?" } %>
-</p>
-<hr>
+<tr>
+	<th scope="row"><%= link_to ku_user.ku_id, ku_user %></th>
+	<th><%= ku_user.firstname %></th>
+	<th><%= ku_user.lastname %></th>
+	<th>
+		<%= button_to 'Edit', edit_ku_user_path(ku_user), :class => "btn btn-primary" %>
+		<%= button_to 'Delete', ku_user_path(ku_user), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete } %>
+	</th>
+</tr>
+
