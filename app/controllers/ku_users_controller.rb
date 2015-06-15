@@ -3,7 +3,7 @@ class KuUsersController < ApplicationController
   before_action :correct_user,   only: [:edit, :update]
   before_action :admin_user,     only: :destroy
   def index
-    @kuusers = KuUser.paginate(page: params[:page], per_page: 2)
+    @kuusers = KuUser.all
   end
   
   def show

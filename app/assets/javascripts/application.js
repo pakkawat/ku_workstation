@@ -13,6 +13,14 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
+//= require jquery.turbolinks
 //= require_directory .
 //= require bootstrap-sprockets
 //= require bootstrap/collapse
+$(document).ready(function() 
+    { 
+        $("#js_datatable").dataTable({
+            sPaginationType: "full_numbers"
+        });
+    } 
+); 
