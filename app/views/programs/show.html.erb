@@ -1,75 +1,61 @@
-<div class="main">
-  <div class="container">
-    <!-- Gallery -->
-    <div class="gallery">
-
-
-    <div class="row">
-      <div class="span12" align="center" >
-        <h2><b><%= @program.program_name %></b></h2>
-        <%= form_tag(program_path(@program)+"/create_from_loot_dir_form_tag", :method=>'post' ) do %>
-        <table cellspacing='0' style="width:40%;">
-          <tr>
-            <td align="left">Type</td>
-            <td align="center"><%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1')) %></td>
-          </tr>
-          <tr>
-            <td align="left">Path</td>
-            <td align="center"><%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/" %></td>
-          </tr>
-          <tr>
-            <td align="left">Name</td><td align="center"><%= text_field_tag "name" %></td>
-          </tr>
-          <tr>
-            <td align="center" colspan="2"><%= submit_tag 'Create', class: 'btn btn-primary' %></td>
-          </tr>
-        </table>
-        <% end %>
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading"><%= @program.program_name %></div>
+  <fieldset>
+  <%= form_tag(program_path(@program)+"/create_from_loot_dir_form_tag", :method=>'post' ) do %>
+    <div class="control-group">
+      <%= f.label :type,'Type', class: "control-label" %>
+      <div class="controls">
+        <%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1'), class: 'form-control input-lg') %>
       </div>
     </div>
 
-    <div class="row">
-      <div class="span12" align="center" >
-        <h2><b></b></h2>
-        <table cellspacing='0' class="instance">
-          <tr>
-            <th>/</th>
-          </tr>
-          <% @current_dir.each do |file| %>
-            <tr>
-              <td align="left">
-                <% if File.directory?(file) %>
-                  <%= image_tag "icon_folder.png" %>
-                <% else %>
-                  <%= image_tag "icon_file.png" %>
-                <% end %>
-                <%= link_to file.gsub(@directory+"/", ""), program_path(@program)+file.gsub(@directory, "") %>
-              </td>
-
-              <td>
-                <%= button_to 'Delete', program_path(@program)+"/"+file.gsub(@directory, ""), data: { confirm: "Are you sure?" }, :class => "btn", :method => :delete, params: {'name' => file.gsub(@directory, "")} %>
-              </td>
-          </tr>
-        <% end %><!-- End all_filesloop -->
-
-        </table>
+    <div class="control-group">
+      <%= f.label :path,'Path', class: "control-label" %>
+      <div class="controls">
+        <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control input-lg') %>
       </div>
     </div>
 
+    <div class="control-group">
+      <%= f.label :name,'Name', class: "control-label" %>
+      <div class="controls">
+        <%= text_field_tag "name", class: "control-label" %>
+      </div>
+    </div>
 
-
-    </div><!-- End <div class="gallery"> -->
-
-    <!-- Buttons. Replace # with your link -->
-    <div class="buttons"></div>
-  </div>
-  <!-- End of container -->
-  <!-- Sponsors -->
-  <!-- Foot -->
-
+    <div class="control-group" align="center">
+      <div class="controls">
+        <%= submit_tag "Create", class: "btn btn-success" %>
+      </div>
+    </div>
+  <% end %>
+  </fieldset>
 </div>
-<hr>
-<h2>Test</h2>
-<% @current_dir.each do |file| %>
-<%= link_to file.gsub("public/cookbooks/"+@program.program_name+"/", "").to_s, program_path(@program)+"/"+file.gsub("public/cookbooks/"+@program.program_name+"/", "").to_s %><br>
-<% end %>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">/</div>
+  <div class="panel-body">
+    <table class="table table-striped">
+      <tbody>
+      <% @current_dir.each do |file| %>
+        <tr>
+          <td>
+            <% if File.directory?(file) %>
+              <%= image_tag "icon_folder.png" %>
+            <% else %>
+              <%= image_tag "icon_file.png" %>
+            <% end %>
+            <%= link_to file.gsub(@directory+"/", ""), program_path(@program)+file.gsub(@directory, "") %>
+          </td>
+          <td>
+            <%= button_to 'Delete', program_path(@program)+"/"+file.gsub(@directory, ""), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete, params: {'name' => file.gsub(@directory, "")} %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
