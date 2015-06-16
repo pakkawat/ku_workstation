@@ -22,6 +22,7 @@ class ProgramFilesController < ApplicationController
   	@path = ""
   	if params[:program_files] == "create_from_loot_dir_form_tag" # form_tag view/programs/show.html.erb 
   		@path = ""
+      @program_dir = @program_dir.chomp("/") # fix double slash("//") when create file from root folder and select current dir ("/")
   	else
   		@path = params[:program_files]
   	end

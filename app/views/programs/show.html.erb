@@ -1,35 +1,41 @@
 <div class="panel panel-primary">
   <!-- Default panel contents -->
   <div class="panel-heading"><%= @program.program_name %></div>
+  <br>
   <fieldset>
-  <%= form_tag(program_path(@program)+"/create_from_loot_dir_form_tag", :method=>'post' ) do %>
-    <div class="control-group">
-      <%= label_tag 'Type', nil, class: "control-label" %>
-      <div class="controls">
-        <%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1'), class: 'form-control input-lg') %>
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+      <%= form_tag(program_path(@program)+"/create_from_loot_dir_form_tag", :method=>'post' ) do %>
+        <div class="control-group">
+          <%= label_tag 'Type', nil, class: "control-label" %>
+          <div class="controls">
+            <%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1'), class: 'form-control input-lg') %>
+          </div>
+        </div>
+        <br>
+        <div class="control-group">
+          <%= label_tag 'Path', nil, class: "control-label" %>
+          <div class="controls">
+            <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control input-lg' %>
+          </div>
+        </div>
+        <br>
+        <div class="control-group">
+          <%= label_tag 'Name', nil, class: "control-label" %>
+          <div class="controls">
+            <%= text_field_tag "name", nil, class: "form-control input-lg" %>
+          </div>
+        </div>
+        <br>
+        <div class="control-group" align="center">
+          <div class="controls">
+            <%= submit_tag "Create", class: "btn btn-success" %>
+          </div>
+        </div>
+        <br>
+      <% end %>
       </div>
     </div>
-
-    <div class="control-group">
-      <%= label_tag 'Path', nil, class: "control-label" %>
-      <div class="controls">
-        <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control input-lg' %>
-      </div>
-    </div>
-
-    <div class="control-group">
-      <%= label_tag 'Name', nil, class: "control-label" %>
-      <div class="controls">
-        <%= text_field_tag "name", class: "control-label" %>
-      </div>
-    </div>
-
-    <div class="control-group" align="center">
-      <div class="controls">
-        <%= submit_tag "Create", class: "btn btn-success" %>
-      </div>
-    </div>
-  <% end %>
   </fieldset>
 </div>
 
