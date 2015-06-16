@@ -4,21 +4,21 @@
   <fieldset>
   <%= form_tag(program_path(@program)+"/create_from_loot_dir_form_tag", :method=>'post' ) do %>
     <div class="control-group">
-      <%= f.label :type,'Type', class: "control-label" %>
+      <%= label_tag 'Type', nil, class: "control-label" %>
       <div class="controls">
         <%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1'), class: 'form-control input-lg') %>
       </div>
     </div>
 
     <div class="control-group">
-      <%= f.label :path,'Path', class: "control-label" %>
+      <%= label_tag 'Path', nil, class: "control-label" %>
       <div class="controls">
-        <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control input-lg') %>
+        <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control input-lg' %>
       </div>
     </div>
 
     <div class="control-group">
-      <%= f.label :name,'Name', class: "control-label" %>
+      <%= label_tag 'Name', nil, class: "control-label" %>
       <div class="controls">
         <%= text_field_tag "name", class: "control-label" %>
       </div>
