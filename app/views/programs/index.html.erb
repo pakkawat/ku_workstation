@@ -1,9 +1,20 @@
-User index
-<hr>
-
-
-<%= render @programs %>
-
-<%= will_paginate @programs %>
-
-<p><%= link_to "Add new program", new_program_path %></p>
+<%= button_to 'Add new program', new_program_path, :class => "btn btn-success", :method => :get %>
+<br>
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Program index</div>
+  <br>
+  	<table id="js_datatable" class="table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Program ID</th>
+  				<th>Program name</th>
+  				<th>Note</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render @programs %>
+  		</tbody>
+	</table>
+</div>
