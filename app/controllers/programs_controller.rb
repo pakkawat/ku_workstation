@@ -1,7 +1,7 @@
 require 'fileutils'
 class ProgramsController < ApplicationController
   def index
-    @programs = Program.all.paginate(page: params[:page], per_page: 2)
+    @programs = Program.all
   end
   
   def show
@@ -27,7 +27,8 @@ class ProgramsController < ApplicationController
     #@KuUser.save
     if @program.save
       create_file(@program)
-      redirect_to programs_path, :notice => "Program was saved"
+      flash[:success] = "Program was saved"
+      redirect_to programs_path
     else
       render "new"
     end
@@ -41,7 +42,8 @@ class ProgramsController < ApplicationController
     @program = Program.find(params[:id])
 
     if @program.update_attributes(program_params)
-      redirect_to programs_path, :notice => "Program has been updated"
+      flash[:success] = "Program has been updated"
+      redirect_to programs_path
     else
       render "edit"
     end
@@ -52,7 +54,8 @@ class ProgramsController < ApplicationController
     #FileUtils.rm_rf(@program.program_files.first.file_path)
     FileUtils.rm_rf("public/cookbooks/"+@program.program_name)
     @program.destroy
-    redirect_to programs_path, :notice => "Program has been deleted"
+    flash[:success] = "Program has been deleted"
+    redirect_to programs_path
   end
 
   def create_file(program)
