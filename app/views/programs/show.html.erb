@@ -56,7 +56,7 @@
             <%= link_to file.gsub(@directory+"/", ""), program_path(@program)+file.gsub(@directory, "") %>
           </td>
           <td>
-            <%= button_to 'Delete', program_path(@program)+"/"+file.gsub(@directory, ""), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete, params: {'name' => file.gsub(@directory, "")} %>
+            <%= button_to 'Delete', program_path(@program)+"/"+file.gsub(@directory+"/", ""), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete, params: {'name' => file.gsub(@directory, "")} %>
           </td>
         </tr>
       <% end %>

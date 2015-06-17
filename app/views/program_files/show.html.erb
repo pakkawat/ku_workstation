@@ -1,109 +1,94 @@
-<div class="main">
-  <div class="container">
-    <!-- Gallery -->
-    <div class="gallery">
+<% if File.file?(@current_file) %>
 
-	<% if File.file?(@current_file) %>
-		<div class="main">
-		  <div class="container">
-		    <!-- Gallery -->
-		    <div class="gallery">
-
-		      <div class="row">
-		        <div class="span12" align="center" >
-		          <h2><b><%= @path.split("/").last %></b></h2>
-		            <%= form_tag(program_path(@program)+"/"+@path, :method=>'patch' ) do %>
-		              <% #hidden_field_tag 'id', @program_id.to_s %>
-		              <% #hidden_field_tag 'path', @file_path.to_s %>
-		            <table cellspacing='0' style="width:80%;">
-		              <tr>
-		                <td>
-		                  <div id="editor"><%= @data %></div>
-		                  <%= text_area_tag 'file_data', @data, class: 'text_area_hidden' %>
-		                </td>
-		              </tr>
-		              <tr>
-		                <td align="center"><%= submit_tag 'Save', class: 'btn btn-primary' %></td>
-		              </tr>
-		            </table>
-		            <% end %>
-		        </div>
-		      </div>
-
-
-		</div>
-		<%= javascript_include_tag "ace/src-min/ace.js", "ace/text_area_ace.js" %>
-	<% elsif File.directory?(@current_file) %>
-
-
-		<div class="row">
-			<div class="span12" align="center" >
-			  <h2><b><%= @program.program_name %></b></h2>
-			  <%= form_tag(program_path(@program)+"/"+@path, :method=>'post' ) do %>
-			  <table cellspacing='0' style="width:40%;">
-			    <tr>
-			      <td align="left">Type</td>
-			      <td align="center"><%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1')) %></td>
-			    </tr>
-			    <tr>
-			      <td align="left">Path</td>
-			      <td align="center"><%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@current_file, ""), value ] }), include_blank: "/" %></td>
-			    </tr>
-			    <tr>
-			      <td align="left">Name</td><td align="center"><%= text_field_tag "name" %></td>
-			    </tr>
-			    <tr>
-			      <td align="center" colspan="2"><%= submit_tag 'Create', class: 'btn btn-primary' %></td>
-			    </tr>
-			  </table>
-			  <% end %>
-			</div>
-		</div>
-
-		<div class="row">
-			<div class="span12" align="center" >
-			  <h2><b><%= @program.program_name+"/"+@path %></b></h2>
-				<table cellspacing='0' class="instance">
-					<tr>
-						<th>
-							<%= link_to @program.program_name+" ", program_path(@program) %>/
-							<% temp_path = "" %>
-							<% @path.split("/").each do |p| %>
-								<% temp_path += "/"+p %>
-								<%= link_to " "+p+" ", program_path(@program)+temp_path %>/
-							<% end %>
-						</th>
-					</tr>
-			    <% @all_files.each do |file| %>
-			    	<tr>
-		    			<td align="left">
-		    				<% if File.directory?(file) %>
-		    					<%= image_tag "icon_folder.png" %>
-		    				<% else %>
-		    					<%= image_tag "icon_file.png" %>
-		    				<% end %>
-		    				<%= link_to file.gsub(@current_file+"/", ""), program_path(@program)+"/"+@path+file.gsub(@current_file, "") %>
-		    			</td>
-
-		    			<td>
-		    				<%= button_to 'Delete', program_path(@program)+"/"+@path+file.gsub(@current_file, ""), data: { confirm: "Are you sure?" }, :class => "btn", :method => :delete, params: {'name' => file.gsub(@current_file, "")} %>
-		    			</td>
-					</tr>
-				<% end %><!-- End all_filesloop -->
-
-				</table>
-			</div>
-		</div>
-	<% else %>
-		File not found
-	<% end %>
-    </div><!-- End <div class="gallery"> -->
-
-    <!-- Buttons. Replace # with your link -->
-    <div class="buttons"></div>
+<div class="panel panel-default">
+  <div class="panel-heading"><%= @path.split("/").last %></div>
+  <div class="panel-body">
+    <%= form_tag(program_path(@program)+"/"+@path, :method=>'patch' ) do %>
+    	<div id="editor"><%= @data %></div>
+    	<%= text_area_tag 'file_data', @data, class: 'text_area_hidden' %>
+    	<%= submit_tag 'Save', class: 'btn btn-primary' %>
+    <% end %>
   </div>
-  <!-- End of container -->
-  <!-- Sponsors -->
-  <!-- Foot -->
-
 </div>
+
+<%= javascript_include_tag "ace/src-min/ace.js", "ace/text_area_ace.js" %>
+<% elsif File.directory?(@current_file) %>
+
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading"><%= @program.program_name %></div>
+  <br>
+  <fieldset>
+    <div class="row">
+      <div class="col-md-10 col-md-offset-1">
+      <%= form_tag(program_path(@program)+"/create_from_loot_dir_form_tag", :method=>'post' ) do %>
+        <div class="control-group">
+          <%= label_tag 'Type', nil, class: "control-label" %>
+          <div class="controls">
+            <%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1'), class: 'form-control input-lg') %>
+          </div>
+        </div>
+        <br>
+        <div class="control-group">
+          <%= label_tag 'Path', nil, class: "control-label" %>
+          <div class="controls">
+            <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control input-lg' %>
+          </div>
+        </div>
+        <br>
+        <div class="control-group">
+          <%= label_tag 'Name', nil, class: "control-label" %>
+          <div class="controls">
+            <%= text_field_tag "name", nil, class: "form-control input-lg" %>
+          </div>
+        </div>
+        <br>
+        <div class="control-group" align="center">
+          <div class="controls">
+            <%= submit_tag "Create", class: "btn btn-success" %>
+          </div>
+        </div>
+        <br>
+      <% end %>
+      </div>
+    </div>
+  </fieldset>
+</div>
+
+
+<div class="panel panel-default">
+  <div class="panel-heading">
+  	<%= link_to @program.program_name, program_path(@program) %><%= " / " %>
+  	<% temp_path = "" %>
+  	<% @path.split("/").each do |p| %>
+  		<% temp_path += "/"+p %>
+  		<%= link_to p, program_path(@program)+temp_path %><%= " / " %>
+  	<% end %>
+  </div>
+  <div class="panel-body">
+    <table class="table table-striped">
+      <tbody>
+      <% @all_files.each do |file| %>
+        <tr>
+          <td>
+            <% if File.directory?(file) %>
+              <%= image_tag "icon_folder.png" %>
+            <% else %>
+              <%= image_tag "icon_file.png" %>
+            <% end %>
+            <%= link_to file.gsub(@current_file+"/", ""), program_path(@program)+"/"+@path+file.gsub(@current_file, "") %>
+          </td>
+          <td>
+            <%= button_to 'Delete', program_path(@program)+"/"+@path+file.gsub(@current_file, ""), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete, params: {'name' => file.gsub(@current_file, "")} %>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<% else %>
+	File not found
+<% end %>
