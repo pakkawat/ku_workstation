@@ -24,7 +24,7 @@
   <fieldset>
     <div class="row">
       <div class="col-md-10 col-md-offset-1">
-      <%= form_tag(program_path(@program)+"/create_from_loot_dir_form_tag", :method=>'post' ) do %>
+      <%= form_tag(program_path(@program)+"/"+@path, :method=>'post' ) do %>
         <div class="control-group">
           <%= label_tag 'Type', nil, class: "control-label" %>
           <div class="controls">
