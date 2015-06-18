@@ -4,7 +4,13 @@
 <%= render 'shared/error_messages', object: f.object %>
 <fieldset>
         <div id="legend">
-                <legend class="">Add new user</legend>
+                <legend class="">
+                        <% if @kuuser.persisted? %>
+                                Edit user information
+                        <% else %>
+                                Add new user
+                        <% end %>
+                </legend>
         </div>
 
         <div class="control-group">
@@ -110,7 +116,11 @@
         <div class="control-group" align="center">
         <!-- Button -->
                 <div class="controls">
-                        <%= f.submit "Add User", class: "btn btn-success" %>
+                        <% if @kuuser.persisted? %>
+                                <%= f.submit "Update user", class: "btn btn-primary" %>
+                        <% else %>
+                                <%= f.submit "Add user", class: "btn btn-success" %>
+                        <% end %>
                 </div>
         </div>
 </fieldset>

@@ -6,7 +6,10 @@
     <%= form_tag(program_path(@program)+"/"+@path, :method=>'patch' ) do %>
     	<div id="editor"><%= @data %></div>
     	<%= text_area_tag 'file_data', @data, class: 'text_area_hidden' %>
-    	<%= submit_tag 'Save', class: 'btn btn-primary' %>
+      <br>
+      <div align="center">
+    	 <%= submit_tag 'Save', class: 'btn btn-primary' %>
+      </div>
     <% end %>
   </div>
 </div>
@@ -32,7 +35,7 @@
         <div class="control-group">
           <%= label_tag 'Path', nil, class: "control-label" %>
           <div class="controls">
-            <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control input-lg' %>
+            <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@current_file+"/", ""), value ] }), include_blank: "/", class: 'form-control input-lg' %>
           </div>
         </div>
         <br>

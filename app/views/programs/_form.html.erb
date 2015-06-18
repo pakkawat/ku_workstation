@@ -4,7 +4,13 @@
 <%= render 'shared/error_messages', object: f.object %>
 <fieldset>
 	<div id="legend">
-		<legend class="">Add new program</legend>
+		<legend class="">
+            <% if f.persisted? %>
+                Update program information
+            <% else %>
+                Add new program
+            <% end %>
+        </legend>
 	</div>
     <div class="control-group">
             <%= f.label :program_name,'Program Name', class: "control-label" %>
@@ -24,7 +30,11 @@
     <div class="control-group" align="center">
     <!-- Button -->
             <div class="controls">
-                    <%= f.submit "Add Program", class: "btn btn-success" %>
+                <% if f.persisted? %>
+                    <%= f.submit "Update program", class: "btn btn-primary" %>
+                <% else %>
+                    <%= f.submit "Add program", class: "btn btn-success" %>
+                <% end %>
             </div>
     </div>
 </fieldset>
