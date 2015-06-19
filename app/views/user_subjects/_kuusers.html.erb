@@ -6,7 +6,7 @@
 		<%= form_for subject_user_subjects_path do %>
 		        <%= hidden_field_tag 'ku_user_id', user.id  %>
 		        <%= hidden_field_tag 'subject_id', @subject.id  %>
-		        <%= submit_tag "add" %>
+		        <%= submit_tag "add", class: "btn btn-success" %>
 		<% end %>
 	</th>
 </tr>
