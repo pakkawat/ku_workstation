@@ -21,7 +21,7 @@
 //= require bootstrap/collapse
 $(document).ready(function() 
     { 
-        $("table.display").dataTable({
+        $("table.datatable_display").dataTable({
             sPaginationType: "full_numbers"
         });
     } 
