@@ -1,13 +1,42 @@
-<h2><%= @subject.subject_name %> index</h2>
+<h1><%= @subject.subject_name %> index</h1>
 <hr>
-<br>
-<h2>User in this subject</h2>
-<%= render partial: "subjectuser", collection: @subjectusers, as: :user %>
-<%= will_paginate @subjectusers, :param_name => 'subjectuser_page' %>
-<br>
 <%= button_to 'Apply', subject_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
-<hr>
-<br>
-<h2>User List</h2>
-<%= render partial: "kuusers", collection: @kuusers, as: :user %>
-<%= will_paginate @kuusers, :param_name => 'kuuser_page' %>
+
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">User in this subject</div>
+  <br>
+  	<table id="js_datatable" class="table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Ku ID</th>
+  				<th>Firstname</th>
+  				<th>Lastname</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render partial: "subjectuser", collection: @subjectusers, as: :user %>
+  		</tbody>
+	</table>
+</div>
+
+
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">User in this subject</div>
+  <br>
+  	<table id="js_datatable" class="table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Ku ID</th>
+  				<th>Firstname</th>
+  				<th>Lastname</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render partial: "kuusers", collection: @kuusers, as: :user %>
+  		</tbody>
+	</table>
+</div>

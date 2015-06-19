@@ -1,8 +1,12 @@
-<h2><%= link_to user.ku_id, user %></h2>
-<p><%= user.firstname %></p>
-<%= form_for subject_user_subjects_path do %>
-        <%= hidden_field_tag 'ku_user_id', user.id  %>
-        <%= hidden_field_tag 'subject_id', @subject.id  %>
-        <%= submit_tag "add" %>
-<% end %>
-<hr>
+<tr>
+	<th scope="row"><%= link_to user.ku_id, user %></th>
+	<th><%= user.firstname %></th>
+	<th><%= user.lastname %></th>
+	<th>
+		<%= form_for subject_user_subjects_path do %>
+		        <%= hidden_field_tag 'ku_user_id', user.id  %>
+		        <%= hidden_field_tag 'subject_id', @subject.id  %>
+		        <%= submit_tag "add" %>
+		<% end %>
+	</th>
+</tr>

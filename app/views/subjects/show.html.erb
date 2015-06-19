@@ -4,10 +4,10 @@
     <span class="pull-right">
       <h1>
         <div style="display:inline-block;">
-          <%= button_to 'Update program in subject', subject_programs_subjects_path, :class => "btn btn-info", :method => :get %>
+          <%= button_to 'Update program in subject', subject_programs_subjects_path(@subject), :class => "btn btn-info", :method => :get %>
         </div>
         <div style="display:inline-block;">
-          <%= button_to 'Update user in subject', subject_user_subjects_path, :class => "btn btn-warning", :method => :get %>
+          <%= button_to 'Update user in subject', subject_user_subjects_path(@subject), :class => "btn btn-warning", :method => :get %>
         </div>
       </h1>
     </span>
@@ -44,7 +44,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @subject.programs.each do |program| %>
+            <% @subject.programs.order("programs.program_name ASC").each do |program| %>
               <tr>
                 <th scope="row"><%= program.id %></th>
                 <td><%= link_to program.program_name, program %></td>
@@ -66,7 +66,7 @@
             </tr>
           </thead>
           <tbody>
-            <% @subject.ku_users.each do |user| %>
+            <% @subject.ku_users.order("ku_users.ku_id ASC").each do |user| %>
               <tr>
                 <th scope="row"><%= link_to user.ku_id, user %></th>
                 <td><%= user.firstname+" "+user.lastname %></td>

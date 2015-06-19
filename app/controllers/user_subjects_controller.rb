@@ -1,8 +1,8 @@
 class UserSubjectsController < ApplicationController
   def index
     @subject = Subject.find(params[:subject_id])  
-    @subjectusers = KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).paginate(page: params[:subjectuser_page], per_page: 2).order("ku_id ASC")
-    @kuusers = KuUser.where.not(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).paginate(page: params[:kuuser_page], per_page: 2).order("ku_id ASC")
+    @subjectusers = KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).order("ku_id ASC")
+    @kuusers = KuUser.where.not(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).order("ku_id ASC")
   end
 
   def create

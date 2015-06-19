@@ -15,8 +15,9 @@ class SubjectsController < ApplicationController
     @subject = Subject.new(subject_params)
     #render plain: ku_user_params.inspect
     #@KuUser.save
-    if @subject.save
-      redirect_to subjects_path, :notice => "Subject was saved"
+    if @subject.
+      flash[:success] = "Subject was saved"
+      redirect_to subjects_path
     else
       render "new"
     end
@@ -30,7 +31,8 @@ class SubjectsController < ApplicationController
     @subject = Subject.find(params[:id])
 
     if @subject.update_attributes(subject_params)
-      redirect_to subjects_path, :notice => "Subject has been updated"
+      flash[:success] = "Subject has been updated"
+      redirect_to subjects_path
     else
       render "edit"
     end
@@ -40,6 +42,7 @@ class SubjectsController < ApplicationController
     @subject = Subject.find(params[:id])
     update_users_run_list
     #@subject.destroy
+    #flash[:success] = ""
     #redirect_to subjects_path, :notice => "Subject has been deleted"
   end
 
