@@ -1,112 +1,104 @@
-<div class="container">
-  <div class="row">
-    <div class="col-sm-10"><h1><%= @kuuser.firstname+" "+@kuuser.lastname %></h1></div>
-  </div>
 
-  <div class="row">
-    <div class="col-sm-5"><!--left col-->
-      <ul class="list-group">
-        <li class="list-group-item text-muted">Profile</li>
-        <li class="list-group-item text-right"><span class="pull-left"><strong>Ku ID</strong></span><%= @kuuser. %></li>
-        <li class="list-group-item text-right"><span class="pull-left"><strong>Firstname-Lastname</strong></span><%= @kuuser.firstname+" "+@kuuser.lastname %></li>
-        <li class="list-group-item text-right"><span class="pull-left"><strong>Email</strong></span><%= @kuuser.email %></li>
-        <li class="list-group-item text-right"><span class="pull-left"><strong></strong>Sex</span>
-        <% if @kuuser.sex == "1" %>
-          Male
-        <% else%>
-          Female
-        <% end %>
-        </li>
-        <li class="list-group-item text-right"><span class="pull-left"><strong>Degree Level</strong></span>
-        <% if @kuuser.degree_level == "1" %>
-          Master
-        <% else%>
-          Other Degree Level
-        <% end %>
-        </li>
-        <li class="list-group-item text-right"><span class="pull-left"><strong>Campus</strong></span>
-        <% if @kuuser.campus == "1" %>
-          Bangkhen
-        <% else%>
-          Other Campus
-        <% end %>
-        </li>
-        <li class="list-group-item text-right"><span class="pull-left"><strong>Faculty</strong></span>
-        <% if @kuuser.faculty == "1" %>
-          Science
-        <% else%>
-          Other Faculty
-        <% end %>
-        </li>
-        <li class="list-group-item text-right"><span class="pull-left"><strong>Major Field</strong></span>
-        <% if @kuuser.major_field == "1" %>
-          Computer Science (XD60)
-        <% else%>
-          Other Major Field
-        <% end %>
-        </li>
-        <li class="list-group-item text-right"><span class="pull-left"><strong>Status</strong></span>
-        <% if @kuuser.status == "1" %>
-          Currently studying
-        <% else%>
-          Other Status
-        <% end %>
-        </li>
-      </ul>
-    </div><!--/col-5-->
-    <div class="col-sm-9">
+<div class="row">
+  <div class="col-sm-10"><span class="pull-left"><h1><%= @kuuser.firstname+" "+@kuuser.lastname %></h1></span></div>
+</div>
 
-      <div class="panel panel-info">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Subjects</div>
-          <table class="table table-striped">
-            <thead>
+<div class="row">
+  <div class="col-sm-4"><!--left col-->
+    <ul class="list-group">
+      <li class="list-group-item text-muted">Profile</li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Ku ID</strong></span><%= @kuuser.ku_id %></li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Email</strong></span><%= @kuuser.email %></li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Sex</strong></span>
+      <% if @kuuser.sex == "1" %>
+        Male
+      <% else%>
+        Female
+      <% end %>
+      </li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Degree Level</strong></span>
+      <% if @kuuser.degree_level == "1" %>
+        Master
+      <% else%>
+        Other Degree Level
+      <% end %>
+      </li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Campus</strong></span>
+      <% if @kuuser.campus == "1" %>
+        Bangkhen
+      <% else%>
+        Other Campus
+      <% end %>
+      </li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Faculty</strong></span>
+      <% if @kuuser.faculty == "1" %>
+        Science
+      <% else%>
+        Other Faculty
+      <% end %>
+      </li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Major Field</strong></span>
+      <% if @kuuser.major_field == "1" %>
+        Computer Science (XD60)
+      <% else%>
+        Other Major Field
+      <% end %>
+      </li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Status</strong></span>
+      <% if @kuuser.status == "1" %>
+        Currently studying
+      <% else%>
+        Other Status
+      <% end %>
+      </li>
+    </ul>
+  </div><!--/col-5-->
+  <div class="col-sm-8">
+
+    <div class="panel panel-info">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Subjects</div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Subject ID</th>
+              <th>Subject name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @kuuser.subjects.each do |subject| %>
               <tr>
-                <th>Subject ID</th>
-                <th>Subject name</th>
+                <th scope="row"><%= link_to subject.id, subject %></th>
+                <td><%= subject.subject_name %></td>
               </tr>
-            </thead>
-            <tbody>
-              <% @kuuser.subjects.each do |subject| %>
-                <tr>
-                  <th scope="row"><%= link_to subject.id, subject %></th>
-                  <td><%= subject.subject_name %></td>
-                </tr>
-              <% end %>
-            </tbody>
-        </table>
-      </div>
+            <% end %>
+          </tbody>
+      </table>
+    </div>
 
 
-      <div class="panel panel-warning">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Programs</div>
-          <table class="table table-striped">
-            <thead>
+    <div class="panel panel-warning">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Programs</div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Program ID</th>
+              <th>Program name</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @kuuser.user_programs.each do |program| %>
               <tr>
-                <th>Program ID</th>
-                <th>Program name</th>
-                <th>Note</th>
+                <th scope="row"><%= link_to program.id, program %></th>
+                <td><%= program.program_name %></td>
+                <td><%= program.note %></td>
               </tr>
-            </thead>
-            <tbody>
-              <% @kuuser.user_programs.each do |program| %>
-                <tr>
-                  <th scope="row"><%= link_to program.id, program %></th>
-                  <td><%= program.program_name %></td>
-                  <td><%= program.note %></td>
-                </tr>
-              <% end %>
-            </tbody>
-        </table>
-      </div>
+            <% end %>
+          </tbody>
+      </table>
+    </div>
 
-    </div><!--/col-9-->
-  </div>
-
-
-
-</div><!--<div class="container">-->
-
-
-
+  </div><!--/col-9-->
+</div>
