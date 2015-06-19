@@ -19,7 +19,7 @@
 //= require bootstrap/collapse
 $(document).ready(function() 
     { 
-        $("table.display").dataTable({
+        $("#js_datatable").dataTable({
             sPaginationType: "full_numbers"
         });
     } 
