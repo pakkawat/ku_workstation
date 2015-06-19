@@ -64,8 +64,12 @@
   	<%= link_to @program.program_name, program_path(@program) %><%= " / " %>
   	<% temp_path = "" %>
   	<% @path.split("/").each do |p| %>
-  		<% temp_path += "/"+p %>
-  		<%= link_to p, program_path(@program)+temp_path %><%= " / " %>
+      <% if p == @path.last %>
+        <strong><%= p %></strong><%= " / " %>
+      <% else %>
+  		  <% temp_path += "/"+p %>
+  		  <%= link_to p, program_path(@program)+temp_path %><%= " / " %>
+      <% end %>
   	<% end %>
   </div>
   <div class="panel-body">
