@@ -5,7 +5,7 @@
 <fieldset>
 	<div id="legend">
 		<legend class="">
-            <% if f.persisted? %>
+            <% if @program.persisted? %>
                 Update program information
             <% else %>
                 Add new program
@@ -30,7 +30,7 @@
     <div class="control-group" align="center">
     <!-- Button -->
             <div class="controls">
-                <% if f.persisted? %>
+                <% if @program.persisted? %>
                     <%= f.submit "Update program", class: "btn btn-primary" %>
                 <% else %>
                     <%= f.submit "Add program", class: "btn btn-success" %>

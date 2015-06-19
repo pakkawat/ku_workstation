@@ -10,42 +10,42 @@
       <li class="list-group-item text-right"><span class="pull-left"><strong>Ku ID</strong></span><%= @kuuser.ku_id %></li>
       <li class="list-group-item text-right"><span class="pull-left"><strong>Email</strong></span><%= @kuuser.email %></li>
       <li class="list-group-item text-right"><span class="pull-left"><strong>Sex</strong></span>
-      <% if @kuuser.sex == "1" %>
+      <% if @kuuser.sex == 1 %>
         Male
       <% else%>
         Female
       <% end %>
       </li>
       <li class="list-group-item text-right"><span class="pull-left"><strong>Degree Level</strong></span>
-      <% if @kuuser.degree_level == "1" %>
+      <% if @kuuser.degree_level == 1 %>
         Master
       <% else%>
         Other Degree Level
       <% end %>
       </li>
       <li class="list-group-item text-right"><span class="pull-left"><strong>Campus</strong></span>
-      <% if @kuuser.campus == "1" %>
+      <% if @kuuser.campus == 1 %>
         Bangkhen
       <% else%>
         Other Campus
       <% end %>
       </li>
       <li class="list-group-item text-right"><span class="pull-left"><strong>Faculty</strong></span>
-      <% if @kuuser.faculty == "1" %>
+      <% if @kuuser.faculty == 1 %>
         Science
       <% else%>
         Other Faculty
       <% end %>
       </li>
       <li class="list-group-item text-right"><span class="pull-left"><strong>Major Field</strong></span>
-      <% if @kuuser.major_field == "1" %>
+      <% if @kuuser.major_field == 1 %>
         Computer Science (XD60)
       <% else%>
         Other Major Field
       <% end %>
       </li>
       <li class="list-group-item text-right"><span class="pull-left"><strong>Status</strong></span>
-      <% if @kuuser.status == "1" %>
+      <% if @kuuser.status == 1 %>
         Currently studying
       <% else%>
         Other Status
