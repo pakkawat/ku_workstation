@@ -1,21 +1,58 @@
+<div class="row">
+<div class="col-md-6 col-md-offset-3">
 <%= form_for @subject do |f| %>
 <%= render 'shared/error_messages', object: f.object %>
-<table cellspacing='0' style="width:40%;">
-        <tr>
-                <td align="left"><%= f.label :subject_id,'Subject ID' %></td><td align="center"><%= f.text_field :subject_id %></td>
-        </tr>
-        <tr>
-                <td align="left"><%= f.label :subject_name,'Subject Name' %></td><td align="center"><%= f.text_field :subject_name %></td>
-        </tr>
-        <tr>
-                <td align="left"><%= f.label :term,'Term' %></td><td align="center"><%= f.select :term, [['First','1'],['Second','2'],['Summer','3']] %></td>
-        </tr>
-        <tr>
-                <td align="left"><%= f.label :year,'Year' %></td><td align="center"><%= f.text_field :year %></td>
-        </tr>
-        <tr>
-                <td align="center" colspan="2"><%= f.submit "Add Subject" %></td>
-        </tr>
-</table>
-<% end %>
+<fieldset>
+        <div id="legend">
+                <legend class="">
+            <% if @subject.persisted? %>
+                Update subject information
+            <% else %>
+                Add new subject
+            <% end %>
+        </legend>
+        </div>
+        <div class="control-group">
+                <%= f.label :subject_id,'Subject ID', class: "control-label" %>
+                <div class="controls">
+                        <%= f.text_field :subject_id, class: "form-control input-lg" %>
+                        <p class="help-block">Please provide subject id</p>
+                </div>
+        </div>
 
+        <div class="control-group">
+                <%= f.label :subject_name,'Subject Name', class: "control-label" %>
+                <div class="controls">
+                        <%= f.text_field :subject_name, class: "form-control input-lg" %>
+                        <p class="help-block">Please provide subject name</p>
+                </div>
+        </div>
+
+        <div class="control-group">
+                <%= f.label :term,'Term', class: "control-label" %>
+                <div class="controls">
+                        <%= f.select :term, [['First','1'],['Second','2'],['Summer','3']], {}, {class: "form-control input-lg"} %>
+                </div>
+        </div><br>
+
+        <div class="control-group">
+                <%= f.label :year,'Year', class: "control-label" %>
+                <div class="controls">
+                        <%= f.text_field :year, class: "form-control input-lg" %>
+                        <p class="help-block">Please provide year</p>
+                </div>
+        </div>
+    <div class="control-group" align="center">
+    <!-- Button -->
+            <div class="controls">
+                <% if @subject.persisted? %>
+                    <%= f.submit "Update subject", class: "btn btn-primary" %>
+                <% else %>
+                    <%= f.submit "Add subject", class: "btn btn-success" %>
+                <% end %>
+            </div>
+    </div>
+</fieldset>
+<% end %>
+</div><!-- <div class="col-md-6 col-md-offset-3"> -->
+</div><!-- <div class="row"> -->

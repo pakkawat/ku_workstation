@@ -1,12 +1,21 @@
-User index
-<hr>
-<% @subjects.each do |subject| %>
-<h2><%= link_to subject.subject_id, subject %></h2>
-<p><%= subject.subject_name %></p>
-<p><%= link_to "Edit", edit_subject_path(subject) %> | 
-<%= link_to "Delete", subject_path(subject),  method: :delete, data: { confirm: "You sure?" } %>
-</p>
-<hr>
-<% end %>
-
-<p><%= link_to "Add new subject", new_subject_path %></p>
+<%= button_to 'Add new subject', new_subject_path, :class => "btn btn-success", :method => :get %>
+<br>
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Subject List</div>
+  <br>
+  	<table id="js_datatable" class="table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Subject ID</th>
+  				<th>Subject Name</th>
+  				<th>Term</th>
+  				<th>Year</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render @subjects %>
+  		</tbody>
+	</table>
+</div>

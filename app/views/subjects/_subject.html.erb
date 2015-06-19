@@ -1,0 +1,22 @@
+<tr>
+	<th scope="row"><%= subject.subject_id %></th>
+	<th><%= link_to subject.subject_name, subject %></th>
+	<th>
+		<% if subject.term == 1 %>
+			First
+		<% elsif subject.term == 2 %>
+			Second
+		<% else %>
+			Summer
+		<% end %>
+	</th>
+	<th><%= subject.year %></th>
+	<th>
+		<div style="display:inline-block;">
+			<%= button_to 'Edit', edit_subject_path(subject), :class => "btn btn-primary", :method => :get  %>
+		</div>
+		<div style="display:inline-block;">
+			<%= button_to 'Delete', subject_path(subject), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete %>
+		</div>
+	</th>
+</tr>

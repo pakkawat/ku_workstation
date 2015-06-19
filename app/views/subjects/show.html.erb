@@ -1,62 +1,80 @@
-<div class="main">
-  <div class="container">
-    <!-- Gallery -->
-    <div class="gallery">
-      <div class="row">
-        <div class="span12" align="center" >
-        <h2><b><%= @subject.subject_name %></b></h2>
-        <table style="width:100%;">
-          <tr>
-            <td align="left">Search: <input type="text" name="search"></td>
-            <td align="right">Sort by: <select style="width:80px;"><option>ID</option></select></td>
-          </tr>
-          <tr><td align="center" colspan="2"><h3>Student list</h3></td></tr>
-        </table>
-        <table cellspacing='0' class="instance">
-          <tr>
-            <th>User ID</th><th>Firstname</th><th>Lastname</th>
-          </tr>
-        <% @subject.ku_users.each do |user| %>
-          <tr>
-            <td><%= user.ku_id %></td><td><%= user.firstname %></td><td><%= user.lastname %></td>
-          </tr>
-        <% end %>
-        </table>
+<div class="row">
+  <div class="col-sm-12">
+    <span class="pull-left"><h1><%= @subject.subject_name %></h1></span>
+    <span class="pull-right">
+      <h1>
+        <div style="display:inline-block;">
+          <%= button_to 'Update program in subject', subject_programs_subjects_path, :class => "btn btn-info", :method => :get %>
         </div>
-      </div><!-- <div class="row"> -->
-
-
-      <div class="row">
-        <div class="span12" align="center" >
-
-        <table style="width:100%;">
-          <tr>
-            <td align="left">Search: <input type="text" name="search"></td>
-            <td align="right">Sort by: <select style="width:80px;"><option>ID</option></select></td>
-          </tr>
-          <tr><td align="center" colspan="2"><h3>Program list</h3></td></tr>
-        </table>
-        <table cellspacing='0' class="instance">
-          <tr>
-            <th>Program ID</th><th>Program name</th><th>Note</th>
-          </tr>
-        <% @subject.programs.each do |program| %>
-          <tr>
-            <td><%= program.id %></td><td><%= program.program_name %></td><td><%= program.note %></td>
-          </tr>
-        <% end %>
-        </table>
+        <div style="display:inline-block;">
+          <%= button_to 'Update user in subject', subject_user_subjects_path, :class => "btn btn-warning", :method => :get %>
         </div>
-      </div><!-- <div class="row"> -->
-
-
-    </div><!-- <div class="gallery"> -->
-
-    <!-- Buttons. Replace # with your link -->
-    <div class="buttons"></div>
+      </h1>
+    </span>
   </div>
-  <!-- End of container -->
-  <!-- Sponsors -->
-  <!-- Foot -->
+</div>
 
+<div class="row">
+  <div class="col-sm-3"><!--left col-->
+    <ul class="list-group">
+      <li class="list-group-item text-muted">Information</li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Subject ID</strong></span><%= @subject.subject_id %></li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Term</strong></span>
+      <% if @subject.term == 1 %>
+        First
+      <% elsif @subject.term == 2 %>
+        Second
+      <% else %>
+        Summer
+      <% end %>
+      </li>
+      <li class="list-group-item text-right"><span class="pull-left"><strong>Year</strong></span><%= @subject.year %></li>
+    </ul>
+  </div><!--/col-5-->
+  <div class="col-sm-9">
+
+    <div class="panel panel-info">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Programs</div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Program ID</th>
+              <th>Program name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @subject.programs.each do |program| %>
+              <tr>
+                <th scope="row"><%= program.id %></th>
+                <td><%= link_to program.program_name, program %></td>
+              </tr>
+            <% end %>
+          </tbody>
+      </table>
+    </div>
+
+
+    <div class="panel panel-warning">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Students</div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Student ID</th>
+              <th>Student name</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% @subject.ku_users.each do |user| %>
+              <tr>
+                <th scope="row"><%= link_to user.ku_id, user %></th>
+                <td><%= user.firstname+" "+user.lastname %></td>
+              </tr>
+            <% end %>
+          </tbody>
+      </table>
+    </div>
+
+  </div><!--/col-9-->
 </div>
