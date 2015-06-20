@@ -93,7 +93,7 @@ class ProgramsController < ApplicationController
     end
 
     def add_remove_program_to_run_list
-      Subject.where(id: ProgramsSubject.select("subject_id").where(:program_id => @program.id AND :program_enabled => true)).each do |subject|
+      Subject.where(id: ProgramsSubject.select("subject_id").where(:program_id => @program.id, :program_enabled => true)).each do |subject|
         KuUser.where(id: subject.user_subjects.select("ku_user_id").where(user_enabled: true)).each do |user|
           user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
         end
