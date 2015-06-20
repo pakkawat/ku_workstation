@@ -107,7 +107,7 @@ class ProgramsController < ApplicationController
           if !user.run_list.blank?
             str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
             str_temp += " || "
-            user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + program.program_name + "],", ""))
+            user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + @program.program_name + "],", ""))
           end
         end
         subject.programs_subjects.where(program_id: @program.id).destroy_all
