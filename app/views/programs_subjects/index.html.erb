@@ -1,15 +1,50 @@
-<h2><%= @subject.subject_name %> index</h2>
-<hr>
-<br>
-<h2>Program in this subject</h2>
-<%= render partial: "subjectprogram", collection: @subjectprograms, as: :program %>
-<%= will_paginate @subjectprograms, :param_name => 'subjectprogram_page' %>
-<br>
-<%= button_to 'Apply', program_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
-<hr>
-<br>
-<br>
-<h2>Program List</h2>
-<%= render partial: "programs", collection: @programs, as: :program %>
-<%= will_paginate @programs, :param_name => 'program_page' %>
+<div class="row">
+  <div class="col-sm-12">
+    <span class="pull-left"><h1><%= @subject.subject_name %> Programs</h1></span>
+    <span class="pull-right">
+      <h1>
+        <%= button_to 'Apply change', program_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
+      </h1>
+    </span>
+  </div>
+</div>
 
+
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Proram in this subject</div>
+  <br>
+  	<table id="" class="datatable_display table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Program ID</th>
+  				<th>Program name</th>
+  				<th>Note</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render partial: "subjectprogram", collection: @subjectprograms, as: :program %>
+  		</tbody>
+	</table>
+</div>
+
+
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Program List</div>
+  <br>
+  	<table id="" class="datatable_display table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Program ID</th>
+  				<th>Program name</th>
+  				<th>Note</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render partial: "programs", collection: @programs, as: :program %>
+  		</tbody>
+	</table>
+</div>

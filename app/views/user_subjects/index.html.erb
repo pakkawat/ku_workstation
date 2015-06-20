@@ -1,6 +1,14 @@
-<h1><%= @subject.subject_name %> index</h1>
-<hr>
-<%= button_to 'Apply', subject_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
+<div class="row">
+  <div class="col-sm-12">
+    <span class="pull-left"><h1><%= @subject.subject_name %> Users</h1></span>
+    <span class="pull-right">
+      <h1>
+        <%= button_to 'Apply change', subject_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
+      </h1>
+    </span>
+  </div>
+</div>
+
 
 <div class="panel panel-primary">
   <!-- Default panel contents -->
