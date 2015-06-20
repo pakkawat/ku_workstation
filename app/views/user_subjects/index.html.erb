@@ -3,7 +3,12 @@
     <span class="pull-left"><h1><%= @subject.subject_name %> Users</h1></span>
     <span class="pull-right">
       <h1>
-        <%= button_to 'Apply change', subject_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
+        <div style="display:inline-block;">
+          <%= button_to 'Apply change', subject_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
+        </div>
+        <div style="display:inline-block;">
+          <%= button_to 'Back', subject_path(@subject), :class => "btn btn-default", :method => :get %>
+        </div>
       </h1>
     </span>
   </div>

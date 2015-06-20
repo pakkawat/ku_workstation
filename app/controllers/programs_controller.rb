@@ -49,12 +49,15 @@ class ProgramsController < ApplicationController
     end
   end
 
-  def destroy
+  def destroy# not delete user run_list
     @program = Program.find(params[:id])
+    add_remove_program_to_run_list
+    str_temp = apply_run_list
     #FileUtils.rm_rf(@program.program_files.first.file_path)
     FileUtils.rm_rf("public/cookbooks/"+@program.program_name)
     @program.destroy
-    flash[:success] = "Program has been deleted"
+    flash[:success] = str_temp
+    #flash[:success] = "Program has been deleted"
     redirect_to programs_path
   end
 
@@ -87,6 +90,29 @@ class ProgramsController < ApplicationController
   private
     def program_params
       params.require(:program).permit(:program_name, :note)
+    end
+
+    def add_remove_program_to_run_list
+      Subject.where(id: ProgramsSubject.select("subject_id").where(:program_id => @program.id AND :program_enabled => true)).each do |subject|
+        KuUser.where(id: subject.user_subjects.select("ku_user_id").where(user_enabled: true)).each do |user|
+          user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
+        end
+      end
+    end
+
+    def apply_run_list
+      str_temp = ""
+      Subject.where(id: ProgramsSubject.select("subject_id").where(program_id: @program.id)).each do |subject|
+        subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
+          if !user.run_list.blank?
+            str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
+            str_temp += " || "
+            user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + program.program_name + "],", ""))
+          end
+        end
+        subject.programs_subjects.where(program_id: @program.id).destroy_all
+      end
+      return str_temp
     end
 
 end

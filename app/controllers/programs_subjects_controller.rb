@@ -78,7 +78,7 @@ class ProgramsSubjectsController < ApplicationController
       #@subject = Subject.find(params[:subject_id])
       KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).each do |user|
         #str_temp += "ku_id: " + user.ku_id + " add recipe[" + @program.program_name + "] || "
-        user.update_column(:run_list, user.run_list + "recipe[" + @program.program_name + "],")
+        user.update_column(:run_list, user.run_list.to_s + "recipe[" + @program.program_name + "],")
       end
       #KuUser.where.not(id: @subject.ku_users).update_all(:run_list => true)
     end
