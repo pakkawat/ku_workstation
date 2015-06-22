@@ -90,7 +90,7 @@ class ProgramsSubjectsController < ApplicationController
       #@program = Program.find(params[:program_id])
       #@subject = Subject.find(params[:subject_id])
       KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).each do |user|
-        if !other_user_subject_use_this_program(user)
+        if other_user_subject_use_this_program(user)
           user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
         end
       end
