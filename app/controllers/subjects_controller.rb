@@ -56,10 +56,18 @@ class SubjectsController < ApplicationController
       @subject.programs.each do |program|
         @subject.ku_users.each do |user|
           #user.update_column(:run_list, user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"))
-          
-          str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],")
-          str_temp += " || "
+          if other_user_subject_use_this_program(user,program)
+            str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],")
+            str_temp += " || <br>"
+          end
         end
+      end
+      # all_programs that use only in this subject
+      all_programs = @subject.programs.where(id: ProgramsSubject.select("program_id").group("program_id").having("COUNT(subject_id)=1").where(program_enabled: true))
+      run_list_remove = Hash[all_programs.map { |program| ["recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"] }]
+      @subject.ku_users.each do |user|
+        #all_programs.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
+        run_list_remove.each {|k,v| str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(k, v) + " || <br>"}
       end
       # 1. send run_list to chef-server
       # 2. update run_list recipe[remove-xxx] to ''
@@ -70,5 +78,10 @@ class SubjectsController < ApplicationController
         #end
       #end
       render plain: str_temp.inspect
+    end
+
+    def other_user_subject_use_this_program(user,program)
+      #return user.subjects.where(subject_id: Subject.select("subject_id").where(id: ProgramsSubject.select("subject_id").where(:program_id => program.id, :program_enabled => true).where.not(subject_id: @subject.id))).empty?
+      return user.subjects.where(id: ProgramsSubject.select("subject_id").where(:program_id => program.id, :program_enabled => true).where.not(subject_id: @subject.id)).empty?
     end
 end

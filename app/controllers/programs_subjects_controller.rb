@@ -58,7 +58,7 @@ class ProgramsSubjectsController < ApplicationController
       end
     end
 
-    Program.where(id: @subject.programs_subjects.select("program_id").where(program_enabled: false)).each do |program|
+    @subject.programs.where("programs_subjects.program_enabled = false").each do |program|
       @subject.ku_users.each do |user|
         # delete recipe[remove-xxx], from user.run_list
         user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + program.program_name + "],", ""))
@@ -76,7 +76,7 @@ class ProgramsSubjectsController < ApplicationController
       str_temp = ""
       #@program = Program.find(params[:program_id])
       #@subject = Subject.find(params[:subject_id])
-      KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).each do |user|
+      @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
         #str_temp += "ku_id: " + user.ku_id + " add recipe[" + @program.program_name + "] || "
         if !user.run_list.to_s.include?("recipe[" + @program.program_name + "],")
           user.update_column(:run_list, user.run_list.to_s + "recipe[" + @program.program_name + "],")
@@ -89,7 +89,7 @@ class ProgramsSubjectsController < ApplicationController
       str_temp = ""
       #@program = Program.find(params[:program_id])
       #@subject = Subject.find(params[:subject_id])
-      KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).each do |user|
+      @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
         if other_user_subject_use_this_program(user)
           user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
         end
@@ -98,12 +98,12 @@ class ProgramsSubjectsController < ApplicationController
 
     def update_program_to_run_list
       str_temp = ""
-      KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).each do |user|
+      @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
         user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + @program.program_name + "],", "recipe[" + @program.program_name + "],"))
       end
     end
-
+    #user.subjects.where(id: ProgramsSubject.select("subject_id").where(:program_id => @program.id, :program_enabled => true).where.not(subject_id: @subject.id)).empty?
     def other_user_subject_use_this_program(user)
-      return user.subjects.where(id: Subject.select("subject_id").where(id: ProgramsSubject.select("subject_id").where(:program_id => @program.id, :program_enabled => true).where.not(subject_id: @subject.id))).empty?
+      return user.subjects.where(id: ProgramsSubject.select("subject_id").where(:program_id => @program.id, :program_enabled => true).where.not(subject_id: @subject.id)).empty?
     end
 end
