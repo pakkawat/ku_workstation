@@ -40,10 +40,10 @@ class SubjectsController < ApplicationController
 
   def destroy
     @subject = Subject.find(params[:id])
-    update_users_run_list
-    #@subject.destroy
-    #flash[:success] = ""
-    #redirect_to subjects_path, :notice => "Subject has been deleted"
+    str_temp = update_users_run_list
+    @subject.destroy
+    flash[:success] = str_temp
+    redirect_to subjects_path
   end
 
   private
@@ -65,9 +65,18 @@ class SubjectsController < ApplicationController
       # all_programs that use only in this subject
       all_programs = @subject.programs.where(id: ProgramsSubject.select("program_id").group("program_id").having("COUNT(subject_id)=1").where(program_enabled: true))
       run_list_remove = Hash[all_programs.map { |program| ["recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"] }]
+      delete_remove_recipe = Hash[all_programs.map { |program| ["recipe[remove-" + program.program_name + "],", ""] }]
       @subject.ku_users.each do |user|
+        str_run_list = user.run_list
+        run_list_remove.each {|k,v| str_run_list.gsub(k, v)}
+        user.update_column(:run_list, str_run_list)
         #all_programs.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
-        run_list_remove.each {|k,v| str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(k, v) + " || <br>"}
+        run_list_remove.each {|k,v| str_temp += "ku_id: " + user.ku_id + " - run_list:" + str_run_list.gsub(k, v) + " || <br>"}
+        # 1. send run_list to chef-server
+        #---
+        # 2. update run_list recipe[remove-xxx] to ''
+        delete_remove_recipe.each {|k,v| str_run_list.gsub(k, v)}
+        user.update_column(:run_list, str_run_list)
       end
       # 1. send run_list to chef-server
       # 2. update run_list recipe[remove-xxx] to ''
@@ -77,7 +86,7 @@ class SubjectsController < ApplicationController
           #str_temp += " || "
         #end
       #end
-      render plain: str_temp.inspect
+      return str_temp
     end
 
     def other_user_subject_use_this_program(user,program)

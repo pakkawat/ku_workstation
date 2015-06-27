@@ -1,7 +1,7 @@
 var textarea = $('#file_data');
 
 var editor = ace.edit("editor");
-editor.setTheme("ace/theme/twilight");
+editor.setTheme("ace/theme/github");
 editor.getSession().setMode("ace/mode/javascript");
 editor.getSession().setUseWorker(false);
 editor.setOptions({
