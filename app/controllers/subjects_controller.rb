@@ -15,7 +15,7 @@ class SubjectsController < ApplicationController
     @subject = Subject.new(subject_params)
     #render plain: ku_user_params.inspect
     #@KuUser.save
-    if @subject.
+    if @subject.save
       flash[:success] = "Subject was saved"
       redirect_to subjects_path
     else
