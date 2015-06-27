@@ -67,17 +67,17 @@ class SubjectsController < ApplicationController
       run_list_remove = Hash[all_programs.map { |program| ["recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"] }]
       delete_remove_recipe = Hash[all_programs.map { |program| ["recipe[remove-" + program.program_name + "],", ""] }]
       @subject.ku_users.each do |user|
-        str_run_list = user.run_list
-        run_list_remove.each {|k,v| str_run_list.gsub(k, v)}
-        user.update_column(:run_list, str_run_list)
+
+        run_list_remove.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
+        
         #all_programs.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
-        run_list_remove.each {|k,v| str_temp += "ku_id: " + user.ku_id + " - run_list:" + str_run_list.gsub(k, v) + " || <br>"}
+        str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list + " || "
         # 1. send run_list to chef-server
         #---
         # 2. update run_list recipe[remove-xxx] to ''
-        str_run_list = user.run_list
-        delete_remove_recipe.each {|k,v| str_run_list.gsub(k, v)}
-        user.update_column(:run_list, str_run_list)
+
+        delete_remove_recipe.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
+
       end
       # 1. send run_list to chef-server
       # 2. update run_list recipe[remove-xxx] to ''
