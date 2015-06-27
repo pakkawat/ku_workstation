@@ -93,25 +93,34 @@ class ProgramsController < ApplicationController
     end
 
     def add_remove_program_to_run_list
-      Subject.where(id: ProgramsSubject.select("subject_id").where(:program_id => @program.id, :program_enabled => true)).each do |subject|
-        KuUser.where(id: subject.user_subjects.select("ku_user_id").where(user_enabled: true)).each do |user|
-          user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
-        end
+      #Subject.where(id: ProgramsSubject.select("subject_id").where(:program_id => @program.id, :program_enabled => true)).each do |subject|
+        #KuUser.where(id: subject.user_subjects.select("ku_user_id").where(user_enabled: true)).each do |user|
+          #user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
+        #end
+      #end
+      KuUser.where(id: UserSubject.select("ku_user_id").where(subject_id: @program.subjects)).each do |user|
+        user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
       end
     end
 
     def apply_run_list
       str_temp = ""
-      Subject.where(id: ProgramsSubject.select("subject_id").where(program_id: @program.id)).each do |subject|
-        subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
-          if !user.run_list.blank?
-            str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
-            str_temp += " || "
-            user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + @program.program_name + "],", ""))
-          end
-        end
-        subject.programs_subjects.where(program_id: @program.id).destroy_all
+      #Subject.where(id: ProgramsSubject.select("subject_id").where(program_id: @program.id)).each do |subject|
+        #subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
+          #if !user.run_list.blank?
+            #str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
+            #str_temp += " || "
+            #user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + @program.program_name + "],", ""))
+          #end
+        #end
+        #subject.programs_subjects.where(program_id: @program.id).destroy_all
+      #end
+
+      KuUser.where(id: UserSubject.select("ku_user_id").where(subject_id: @program.subjects)).each do |user|# send run_list to Chef-server and run sudo chef-clients
+        str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')+" || "
+        user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + @program.program_name + "],", ""))
       end
+      @program.subjects.destroy_all
       return str_temp
     end
 
