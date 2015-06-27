@@ -53,15 +53,15 @@ class SubjectsController < ApplicationController
 
     def update_users_run_list
       str_temp = ""
-      @subject.programs.each do |program|
-        @subject.ku_users.each do |user|
+      #@subject.programs.each do |program|
+        #@subject.ku_users.each do |user|
           #user.update_column(:run_list, user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"))
-          if other_user_subject_use_this_program(user,program)
-            str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],")
-            str_temp += " || <br>"
-          end
-        end
-      end
+          #if other_user_subject_use_this_program(user,program)
+            #str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],")
+            #str_temp += " || <br>"
+          #end
+        #end
+      #end
       # all_programs that use only in this subject
       all_programs = @subject.programs.where(id: ProgramsSubject.select("program_id").group("program_id").having("COUNT(subject_id)=1").where(program_enabled: true))
       run_list_remove = Hash[all_programs.map { |program| ["recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"] }]
