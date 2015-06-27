@@ -75,6 +75,7 @@ class SubjectsController < ApplicationController
         # 1. send run_list to chef-server
         #---
         # 2. update run_list recipe[remove-xxx] to ''
+        str_run_list = user.run_list
         delete_remove_recipe.each {|k,v| str_run_list.gsub(k, v)}
         user.update_column(:run_list, str_run_list)
       end

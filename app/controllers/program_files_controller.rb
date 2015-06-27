@@ -83,7 +83,8 @@ class ProgramFilesController < ApplicationController
     File.open(@current_file, "w+") do |f|
       f.write(params[:file_data])
     end
-    redirect_to program_path(@program)+"/"+@path, :notice => "File was saved"
+    flash[:success] = "File was saved"
+    redirect_to program_path(@program)+"/"+@path
   end
 
   def delete_file
