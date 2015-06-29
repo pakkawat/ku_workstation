@@ -1,0 +1,15 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  instance_name: MyString
+  instance_id2: MyString
+  instance_type: MyString
+  public_dns: MyString
+  public_ip: MyString
+
+two:
+  instance_name: MyString
+  instance_id2: MyString
+  instance_type: MyString
+  public_dns: MyString
+  public_ip: MyString
