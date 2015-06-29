@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 20150629073039) do
   enable_extension "plpgsql"
 
   create_table "instances", force: :cascade do |t|
+    t.integer  "ku_user_id"
     t.string   "instance_name"
     t.string   "instance_id2"
     t.string   "instance_type"
@@ -25,6 +26,8 @@ ActiveRecord::Schema.define(version: 20150629073039) do
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
   end
+
+  add_index "instances", ["ku_user_id"], name: "index_instances_on_ku_user_id", using: :btree
 
   create_table "ku_users", force: :cascade do |t|
     t.string   "ku_id"
