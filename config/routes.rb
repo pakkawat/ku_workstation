@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'instances/index'
+
   #get 'program_files/index'
   #match '*page', to: 'pages#show', via: :get
   #get 'programs/index'
