@@ -29,12 +29,13 @@ Rails.application.routes.draw do
   match "programs/:program_id/*program_files", :to => "program_files#save_file", :via => "patch", :constraints => { :program_files => /[^*]+/ }
   match "programs/:program_id/*program_files", :to => "program_files#new_file", :via => "post", :constraints => { :program_files => /[^*]+/ }
   match "programs/:program_id/*program_files", :to => "program_files#delete_file", :via => "delete", :constraints => { :program_files => /[^*]+/ }
-  match '/new_file', to: 'programs#new_file', via: :post
-  match '/delete_file', to: 'programs#delete_file', via: :post
-  match '/programs/view_file', to: 'programs#view_file', via: :post
-  match '/save_file', to: 'programs#save_file', via: :post
+  #match '/new_file', to: 'programs#new_file', via: :post
+  #match '/delete_file', to: 'programs#delete_file', via: :post
+  #match '/programs/view_file', to: 'programs#view_file', via: :post
+  #match '/save_file', to: 'programs#save_file', via: :post
   match '/program_apply', to: 'programs_subjects#program_apply', via: :post
   match '/subject_apply', to: 'user_subjects#subject_apply', via: :post
+  resources :instances
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

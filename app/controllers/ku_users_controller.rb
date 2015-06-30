@@ -75,4 +75,8 @@ class KuUsersController < ApplicationController
     def admin_user
       redirect_to(root_url) unless current_user.admin?
     end
+
+    def create_ec2_instance
+      #@kuuser.create_instance(instance_name: 'g0001',instance_id2: 'i-233',instance_type: 't2.small',public_dns: 'dnsss',public_ip: '123.23')
+    end
 end
