@@ -19,6 +19,7 @@ class KuUsersController < ApplicationController
     #render plain: ku_user_params.inspect
     #@KuUser.save
     if @kuuser.save
+      create_ec2_instance
       log_in @kuuser
       #redirect_to ku_users_path, :notice => "Welcome "
       flash[:success] = "Welcome to the Sample App!"
@@ -78,5 +79,8 @@ class KuUsersController < ApplicationController
 
     def create_ec2_instance
       #@kuuser.create_instance(instance_name: 'g0001',instance_id2: 'i-233',instance_type: 't2.small',public_dns: 'dnsss',public_ip: '123.23')
+      Dir.chdir("/home/ubuntu/chef-repo") do
+        %x( mkdir hello )
+      end
     end
 end
