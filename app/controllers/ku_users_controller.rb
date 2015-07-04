@@ -80,7 +80,7 @@ class KuUsersController < ApplicationController
     def create_ec2_instance
       #@kuuser.create_instance(instance_name: 'g0001',instance_id2: 'i-233',instance_type: 't2.small',public_dns: 'dnsss',public_ip: '123.23')
       Dir.chdir("/home/ubuntu/chef-repo") do
-        %x( mkdir hello )
+        system "knife ec2 server create -x ubuntu -I ami-96f1c1c4 -f t2.small -G 'Chef Clients' -N "+@kuuser.ku_id
       end
     end
 end
