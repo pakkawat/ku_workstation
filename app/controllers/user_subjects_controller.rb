@@ -51,7 +51,7 @@ class UserSubjectsController < ApplicationController
     end
 
     users = @subject.ku_users
-    @job = Delayed::Job.enqueue ExportJob.new(users, users.count)
+    @job = Delayed::Job.enqueue CommandJob.new(users, users.count)
 
     @subject.ku_users.where("user_subjects.user_enabled = false").each do |user|
       @subject.programs.each do |program|
@@ -61,8 +61,8 @@ class UserSubjectsController < ApplicationController
     end
     # delete relationship
     @subject.user_subjects.where(user_enabled: false).destroy_all
-    flash[:success] = str_temp
-    redirect_to subject_user_subjects_path(:subject_id => @subject.id)
+    #flash[:success] = str_temp
+    #redirect_to subject_user_subjects_path(:subject_id => @subject.id)
 
   end
 

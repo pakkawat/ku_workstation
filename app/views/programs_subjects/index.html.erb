@@ -4,7 +4,7 @@
     <span class="pull-right">
       <h1>
         <div style="display:inline-block;">
-          <%= button_to 'Apply change', program_apply_path, :class => "btn btn-primary", params: {'subject_id' => @subject.id.to_s} %>
+          <%= link_to "Apply change", subject_path(@subject)+"/program_apply", remote: true, :class => "btn btn-primary" %>
         </div>
         <div style="display:inline-block;">
           <%= button_to 'Back', subject_path(@subject), :class => "btn btn-default", :method => :get %>
@@ -14,6 +14,32 @@
   </div>
 </div>
 
+<div class="row">
+  <div class="command">
+    <div class="well" style="display:none;">
+
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="progress-status text-primary">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12">
+          <div class="progress progress-striped active">
+            <div class="progress-bar">
+              <div class="text-primary">
+                0%
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
 
 <div class="panel panel-primary">
   <!-- Default panel contents -->

@@ -58,6 +58,9 @@ class ProgramsSubjectsController < ApplicationController
       end
     end
 
+    users = @subject.ku_users
+    @job = Delayed::Job.enqueue CommandJob.new(users, users.count)
+
     @subject.programs.where("programs_subjects.program_enabled = false").each do |program|
       @subject.ku_users.each do |user|
         # delete recipe[remove-xxx], from user.run_list
@@ -66,8 +69,8 @@ class ProgramsSubjectsController < ApplicationController
     end
     # delete relationship
     @subject.programs_subjects.where(program_enabled: false).destroy_all
-    flash[:success] = str_temp
-    redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
+    #flash[:success] = str_temp
+    #redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
 
   end
 

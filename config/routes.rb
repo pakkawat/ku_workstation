@@ -33,8 +33,8 @@ Rails.application.routes.draw do
   #match '/delete_file', to: 'programs#delete_file', via: :post
   #match '/programs/view_file', to: 'programs#view_file', via: :post
   #match '/save_file', to: 'programs#save_file', via: :post
-  match '/program_apply', to: 'programs_subjects#program_apply', via: :post
-  match '/subject_apply', to: 'user_subjects#subject_apply', via: :post
+  get 'subjects/:subject_id/program_apply', to: 'programs_subjects#program_apply', via: :get
+  get 'subjects/:subject_id/subject_apply', to: 'user_subjects#subject_apply', via: :get
   resources :instances
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
