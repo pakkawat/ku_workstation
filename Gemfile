@@ -1,4 +1,10 @@
 source 'https://rubygems.org'
+gem 'delayed_job_active_record'
+gem 'progress_job'
+gem 'daemons'
+gem 'faker'
+gem 'haml-rails'
+
 gem 'jquery-datatables-rails', '~> 3.3.0'
 gem 'bootstrap-sass', '~> 3.3.4'
 gem 'sprockets-rails', :require => 'sprockets/railtie'

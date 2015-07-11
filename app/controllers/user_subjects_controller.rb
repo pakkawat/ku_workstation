@@ -49,6 +49,10 @@ class UserSubjectsController < ApplicationController
         str_temp += " || "
       end
     end
+
+    users = @subject.ku_users
+    @job = Delayed::Job.enqueue ExportJob.new(users, users.count)
+
     @subject.ku_users.where("user_subjects.user_enabled = false").each do |user|
       @subject.programs.each do |program|
         # delete recipe[remove-xxx], from user.run_list
