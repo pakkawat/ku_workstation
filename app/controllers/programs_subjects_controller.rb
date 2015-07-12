@@ -59,7 +59,7 @@ class ProgramsSubjectsController < ApplicationController
     end
 
     users = @subject.ku_users
-    @job = Delayed::Job.enqueue CommandJob.new(users, users.count)
+    @job = Delayed::Job.enqueue CommandJob.new(users)
 
     @subject.programs.where("programs_subjects.program_enabled = false").each do |program|
       @subject.ku_users.each do |user|
