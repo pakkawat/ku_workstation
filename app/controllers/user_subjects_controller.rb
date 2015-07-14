@@ -43,24 +43,24 @@ class UserSubjectsController < ApplicationController
   def subject_apply# send run_list to Chef-server and run sudo chef-clients then if any remove need update user.run_list
     str_temp = ""
     @subject = Subject.find(params[:subject_id])
-    @subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
-      if !user.run_list.blank?
-        str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
-        str_temp += " || "
-      end
-    end
+    #@subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
+      #if !user.run_list.blank?
+        #str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
+        #str_temp += " || "
+      #end
+    #end
 
-    users = @subject.ku_users
-    @job = Delayed::Job.enqueue UserSubjectJob.new(users)
+    #users = @subject.ku_users
+    @job = Delayed::Job.enqueue UserSubjectJob.new(@subject.ku_users, @subject)
 
-    @subject.ku_users.where("user_subjects.user_enabled = false").each do |user|
-      @subject.programs.each do |program|
+    #@subject.ku_users.where("user_subjects.user_enabled = false").each do |user|
+      #@subject.programs.each do |program|
         # delete recipe[remove-xxx], from user.run_list
-        user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + program.program_name + "],", ""))
-      end
-    end
+        #user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + program.program_name + "],", ""))
+      #end
+    #end
     # delete relationship
-    @subject.user_subjects.where(user_enabled: false).destroy_all
+    #@subject.user_subjects.where(user_enabled: false).destroy_all
     #flash[:success] = str_temp
     #redirect_to subject_user_subjects_path(:subject_id => @subject.id)
 
