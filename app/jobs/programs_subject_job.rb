@@ -1,14 +1,13 @@
-class ProgramsSubjectJob < ActiveJob::Base
+class ProgramsSubjectJob < ProgressJob::Base
   #queue_as :default
-  def initialize(users, subject)
-    @users = users
+  def initialize(subject)
     @subject = subject
   end
 
   def perform
     # Do something later
     update_stage('Run command')
-    update_progress_max(@users.count)
+    update_progress_max(@subject.ku_users.count)
     #@users.each do |user|
       #sleep(5)
       #update_progress
@@ -16,7 +15,7 @@ class ProgramsSubjectJob < ActiveJob::Base
 
     str_temp = ""
     #@subject = Subject.find(params[:subject_id])
-    @users.each do |user|# send run_list to Chef-server and run sudo chef-clients
+    @subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
       if !user.run_list.blank?
         str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
         str_temp += " || " + "\n"
@@ -28,7 +27,7 @@ class ProgramsSubjectJob < ActiveJob::Base
 
   def success
     @subject.programs.where("programs_subjects.program_enabled = false").each do |program|
-      @users.each do |user|
+      @subject.ku_users.each do |user|
         # delete recipe[remove-xxx], from user.run_list
         user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + program.program_name + "],", ""))
       end

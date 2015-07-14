@@ -1,14 +1,13 @@
 class UserSubjectJob < ProgressJob::Base
   #queue_as :default
-  def initialize(users, subject)
-    @users = users
+  def initialize(subject)
     @subject = subject
   end
 
   def perform
     # Do something later
     update_stage('Run command')
-    update_progress_max(@users.count)
+    update_progress_max(@subject.ku_users.count)
     #@users.each do |user|
       #Dir.chdir("/home/ubuntu/chef-repo") do
       	#system "ruby long.rb"
@@ -17,7 +16,7 @@ class UserSubjectJob < ProgressJob::Base
     #end
 
     str_temp = ""
-    @users.each do |user|# send run_list to Chef-server and run sudo chef-clients
+    @subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
       if !user.run_list.blank?
         str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
         str_temp += " || " + "\n"
