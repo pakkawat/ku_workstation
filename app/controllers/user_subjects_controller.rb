@@ -62,7 +62,8 @@ class UserSubjectsController < ApplicationController
     # delete relationship
     #@subject.user_subjects.where(user_enabled: false).destroy_all
     #flash[:success] = str_temp
-    #redirect_to subject_user_subjects_path(:subject_id => @subject.id)
+    flash[:success] = "Apply change on Subject:"+@subject.subject_name+" with Job ID:"+@job.id
+    redirect_to subject_user_subjects_path(:subject_id => @subject.id)
 
   end
 

@@ -70,7 +70,8 @@ class ProgramsSubjectsController < ApplicationController
     # delete relationship
     #@subject.programs_subjects.where(program_enabled: false).destroy_all
     #flash[:success] = str_temp
-    #redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
+    flash[:success] = "Apply change on Subject:"+@subject.subject_name+" with Job ID:"+@job.id
+    redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
 
   end
 
