@@ -9,7 +9,7 @@ class UserSubjectJob < ProgressJob::Base
     update_stage('Run command')
     update_progress_max(@subject.ku_users.count)
     #@users.each do |user|
-      #Dir.chdir("/home/ubuntu/chef-repo") do
+      #Dir.chdir("/home/ubuntu") do
       	#system "ruby long.rb"
       #end
       #update_progress

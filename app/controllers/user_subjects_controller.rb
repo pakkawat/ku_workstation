@@ -53,7 +53,7 @@ class UserSubjectsController < ApplicationController
     #users = @subject.ku_users
     @job = Delayed::Job.enqueue UserSubjectJob.new(@subject)
     str_des = "Apply change on Subject:"+@subject.subject_name+" with Job ID:"+@job.id.to_s
-    @job.update_column(:desciption, str_des)
+    @job.update_column(:description, str_des)
     #@subject.ku_users.where("user_subjects.user_enabled = false").each do |user|
       #@subject.programs.each do |program|
         # delete recipe[remove-xxx], from user.run_list

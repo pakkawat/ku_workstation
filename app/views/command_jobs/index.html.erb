@@ -6,10 +6,11 @@
 
 
 
-			<% if job.last_error != null %>
+			<% if job.last_error.nil? %>
 	  			<div class="row">
 	  				<div class="col-sm-12">
-	  					<div class="progress-status text-primary">
+	  					<div class="progress-status text-danger">
+	  						<%= job.last_error %>
 	  					</div>
 	  				</div>
   				</div>
@@ -17,15 +18,17 @@
 	  			<div class="row">
 	  				<div class="col-sm-12">
 						<div class="progress">
-							<div class="progress-bar progress-bar-danger progress-bar-striped">
+							<div class="progress-bar progress-bar-danger progress-bar-striped" style="width:100%">
 							</div>
 						</div>
 	  				</div>
 	  			</div>
 			<% else %>
-				<% progress = job.progress_current / job.progress_max * 100; %>
-				<% progress = progress.round %>
-
+				<% progress=0 %>
+				<% if job.progress_max != 0 %>
+					<% progress = job.progress_current / job.progress_max * 100; %>
+					<% progress = progress.round %>
+				<% end %>
 	  			<div class="row">
 	  				<div class="col-sm-12">
 	  					<div class="progress-status text-primary">
@@ -38,7 +41,7 @@
 	  				<div class="col-sm-12">
 						<div class="progress">
 							<%= content_tag(:div, progress + "%", :style => "width:"+progress+"%;", :class => "progress-bar progress-bar-striped active") %>
-							<!-- <div class="progress-bar progress-bar-danger"></div>-->
+							<!-- <div class="progress-bar progress-bar-danger"></div> -->
 						</div>
 	  				</div>
 	  			</div>
