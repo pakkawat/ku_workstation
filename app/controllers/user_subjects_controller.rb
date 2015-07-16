@@ -41,7 +41,7 @@ class UserSubjectsController < ApplicationController
   end
 
   def subject_apply# send run_list to Chef-server and run sudo chef-clients then if any remove need update user.run_list
-    str_temp = ""
+    #str_temp = ""
     @subject = Subject.find(params[:subject_id])
     #@subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
       #if !user.run_list.blank?
@@ -52,7 +52,8 @@ class UserSubjectsController < ApplicationController
 
     #users = @subject.ku_users
     @job = Delayed::Job.enqueue UserSubjectJob.new(@subject)
-
+    str_des = "Apply change on Subject:"+@subject.subject_name+" with Job ID:"+@job.id
+    @job.update_column(:desciption, str_des)
     #@subject.ku_users.where("user_subjects.user_enabled = false").each do |user|
       #@subject.programs.each do |program|
         # delete recipe[remove-xxx], from user.run_list
@@ -62,7 +63,7 @@ class UserSubjectsController < ApplicationController
     # delete relationship
     #@subject.user_subjects.where(user_enabled: false).destroy_all
     #flash[:success] = str_temp
-    flash[:success] = "Apply change on Subject:"+@subject.subject_name+" with Job ID:"+@job.id
+    flash[:success] = str_des
     redirect_to subject_user_subjects_path(:subject_id => @subject.id)
 
   end

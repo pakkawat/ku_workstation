@@ -1,2 +1,52 @@
-<h1>CommandJobs#index</h1>
-<p>Find me in app/views/command_jobs/index.html.erb</p>
+<div class="row">
+  <div class="col-sm-12">
+  	<% @jobs.each do |job| %>
+  		<div class="job">
+
+
+
+
+			<% if job.last_error != null %>
+	  			<div class="row">
+	  				<div class="col-sm-12">
+	  					<div class="progress-status text-primary">
+	  					</div>
+	  				</div>
+  				</div>
+
+	  			<div class="row">
+	  				<div class="col-sm-12">
+						<div class="progress">
+							<div class="progress-bar progress-bar-danger progress-bar-striped">
+							</div>
+						</div>
+	  				</div>
+	  			</div>
+			<% else %>
+				<% progress = job.progress_current / job.progress_max * 100; %>
+				<% progress = progress.round %>
+
+	  			<div class="row">
+	  				<div class="col-sm-12">
+	  					<div class="progress-status text-primary">
+	  						<%= job.description+": "+job.progress_current + '/' + job.progress_max %>
+	  					</div>
+	  				</div>
+  				</div>
+
+	  			<div class="row">
+	  				<div class="col-sm-12">
+						<div class="progress">
+							<%= content_tag(:div, progress + "%", :style => "width:"+progress+"%;", :class => "progress-bar progress-bar-striped active") %>
+							<!-- <div class="progress-bar progress-bar-danger"></div>-->
+						</div>
+	  				</div>
+	  			</div>
+
+			<% end %>
+
+
+  		</div><!-- div class="job"> -->
+  	<% end %>
+  </div>
+</div>
