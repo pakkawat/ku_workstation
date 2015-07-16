@@ -52,7 +52,7 @@ class UserSubjectsController < ApplicationController
 
     #users = @subject.ku_users
     @job = Delayed::Job.enqueue UserSubjectJob.new(@subject)
-    str_des = "Apply change on Subject:"+@subject.subject_name+" with Job ID:"+@job.id.to_s
+    str_des = "Apply change on Subject:"+@subject.subject_name
     @job.update_column(:description, str_des)
     #@subject.ku_users.where("user_subjects.user_enabled = false").each do |user|
       #@subject.programs.each do |program|
@@ -63,7 +63,7 @@ class UserSubjectsController < ApplicationController
     # delete relationship
     #@subject.user_subjects.where(user_enabled: false).destroy_all
     #flash[:success] = str_temp
-    flash[:success] = str_des
+    flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     redirect_to subject_user_subjects_path(:subject_id => @subject.id)
 
   end
