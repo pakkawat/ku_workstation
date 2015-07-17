@@ -3,7 +3,7 @@
 # You can use CoffeeScript in this file: http://coffeescript.org/
 
 refreshPartial = ->
-  $.ajax url: 'command_jobs/refresh_part'
+  $.ajax url: 'refresh_part'
   return
 
 $(document).ready ->
