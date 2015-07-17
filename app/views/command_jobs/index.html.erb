@@ -1,54 +1,5 @@
 <div class="row">
   <div class="col-sm-12">
-  	<% @jobs.each do |job| %>
-  		<div class="job">
-
-
-
-
-			<% if !job.last_error.nil? %>
-	  			<div class="row">
-	  				<div class="col-sm-12">
-	  					<div class="progress-status text-danger">
-	  						<%= job.last_error %>
-	  					</div>
-	  				</div>
-  				</div>
-
-	  			<div class="row">
-	  				<div class="col-sm-12">
-						<div class="progress">
-							<div class="progress-bar progress-bar-danger progress-bar-striped" style="width:100%">
-							</div>
-						</div>
-	  				</div>
-	  			</div>
-			<% else %>
-				<% progress=0 %>
-				<% if job.progress_max != 0 %>
-					<% progress = ((job.progress_current.to_f / job.progress_max) * 100).round %>
-				<% end %>
-	  			<div class="row">
-	  				<div class="col-sm-12">
-	  					<div class="progress-status text-primary">
-	  						<%= job.id.to_s+": "+job.progress_current.to_s + '/' + job.progress_max.to_s +" (" + job.description + ")" %>
-	  					</div>
-	  				</div>
-  				</div>
-
-	  			<div class="row">
-	  				<div class="col-sm-12">
-						<div class="progress">
-							<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar progress-bar-striped active") %>
-							<!-- <div class="progress-bar progress-bar-danger"></div> -->
-						</div>
-	  				</div>
-	  			</div>
-
-			<% end %>
-
-
-  		</div><!-- div class="job"> -->
-  	<% end %>
+  	<div id="jobs_list"></div>
   </div>
 </div>
