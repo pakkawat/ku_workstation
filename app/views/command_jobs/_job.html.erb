@@ -13,7 +13,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 				<div class="progress">
-					<div class="progress-bar progress-bar-danger progress-bar-striped" style="width:100%">
+					<div class="progress-bar progress-bar-danger" style="width:100%">
 					</div>
 				</div>
 				</div>
@@ -26,7 +26,8 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="progress-status text-primary">
-						<%= job.id.to_s+": "+job.progress_current.to_s + '/' + job.progress_max.to_s %>
+						<%= "Job id:"+job.id.to_s+" Task:"+job.progress_current.to_s + '/' + job.progress_max.to_s + " Detail: " + job.description %>
+						<%= button_to 'Delete', command_job_path(job), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete %>
 					</div>
 				</div>
 			</div>
@@ -34,7 +35,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 				<div class="progress">
-					<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar progress-bar-striped active") %>
+					<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar") %>
 					<!-- <div class="progress-bar progress-bar-danger"></div> -->
 				</div>
 				</div>

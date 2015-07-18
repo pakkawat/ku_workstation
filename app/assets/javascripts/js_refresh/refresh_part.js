@@ -1,6 +1,6 @@
 $(document).ready(function () {
-    // will call refreshPartial every 3 seconds
-    setInterval(refreshPartial, 1000)
+    // will call refreshPartial every 2 seconds
+    setInterval(refreshPartial, 2000)
 
 });
 
