@@ -4,7 +4,7 @@ class CommandJobsController < ApplicationController
   end
 
   def destroy
-  	@job.find(params[:id]).destroy
+  	@job.find(params[:job_id]).destroy
   	flash[:success] = "Job deleted"
   	redirect_to command_jobs_path
   end
