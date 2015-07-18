@@ -4,9 +4,9 @@ class CommandJobsController < ApplicationController
   end
 
   def destroy
-  	@job.find(params[:job_id]).destroy
+  	Delayed::Job.find(params[:job_id]).destroy
   	flash[:success] = "Job deleted"
-  	redirect_to command_jobs_path
+  	redirect_to command_jobs_index_path
   end
 
   def refresh_part

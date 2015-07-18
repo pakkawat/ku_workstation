@@ -26,10 +26,10 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="progress-status text-primary">
-						<%= "Job id:"+job.id.to_s+" Task:"+job.progress_current.to_s + '/' + job.progress_max.to_s + " Detail: " + job.description %>
+						<%= "<strong>Job id</strong>:"+job.id.to_s+" <strong>Task</strong>:"+job.progress_current.to_s + '/' + job.progress_max.to_s + " <strong>Detail</strong>: " + job.description %>
 						<span class="pull-right">
 
-							<%= button_to 'Delete', command_job_path(job), :class => "btn btn-default", :method => :delete, :disabled => job.id == Delayed::Job.first.id?false:true %>
+							<%= button_to 'Delete', command_job_path(job), :class => "btn btn-default", :method => :delete, :disabled => job.id == Delayed::Job.first.id ? true : false %>
 						</span>
 					</div>
 				</div>
@@ -48,4 +48,5 @@
 
 
 </div><!-- div class="job"> -->
+<hr>
 <% end %>
