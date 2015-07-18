@@ -37,7 +37,10 @@ Rails.application.routes.draw do
   get 'subjects/:subject_id/subject_apply', to: 'user_subjects#subject_apply', via: :get
   resources :instances
   get "/command_jobs/refresh_part" => 'command_jobs#refresh_part', as: 'command_jobs/refresh_part'
-  resources :command_jobs
+  match "/command_jobs/:job_id", :to => "command_jobs#destroy", :via => "delete", as: :command_job
+  #resources :command_jobs
+
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
