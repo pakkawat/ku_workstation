@@ -26,7 +26,7 @@
 			<div class="row">
 				<div class="col-sm-12">
 					<div class="progress-status text-primary">
-						<%= "<strong>Job id</strong>:"+job.id.to_s+" <strong>Task</strong>:"+job.progress_current.to_s + '/' + job.progress_max.to_s + " <strong>Detail</strong>: " + job.description %>
+						<%= ("<strong>Job id</strong>:"+job.id.to_s+" <strong>Task</strong>:"+job.progress_current.to_s + '/' + job.progress_max.to_s + " <strong>Detail</strong>: " + job.description).html_safe %>
 						<span class="pull-right">
 
 							<%= button_to 'Delete', command_job_path(job), :class => "btn btn-default", :method => :delete, :disabled => job.id == Delayed::Job.first.id ? true : false %>
