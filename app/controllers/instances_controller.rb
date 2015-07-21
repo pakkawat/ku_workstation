@@ -1,9 +1,8 @@
 class InstancesController < ApplicationController
-#require 'chef/rest'
-#require 'chef/node'
-#require 'chef/search/query'
+require 'chef'
   def index
-  	#Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
-  	#@nodes = Chef::Search::Query.new.search(:node, '*:*')
+  	Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
+  	query = Chef::Search::Query.new
+  	@nodes = query.search('node', '*:*').first rescue []
   end
 end

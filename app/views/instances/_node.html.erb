@@ -1,0 +1,5 @@
+<tr>
+	<th scope="row"><%= node.name %></th>
+	<th><%= node.fqdn %></th>
+	<th><%= time_ago_in_words(DateTime.parse(Time.at(node[:ohai_time]).to_s)) %></th>
+</tr>

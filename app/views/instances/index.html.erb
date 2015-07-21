@@ -1,6 +1,17 @@
-<h1>Instances#index</h1>
-<p>Find me in app/views/instances/index.html.erb</p>
-<hr>
-<% nodes.each do |node| %>
-	<%= node.ec2.instance_id %><br>
-<% end %>
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Nodes</div>
+  <br>
+  	<table id="" class="datatable_display table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Node name</th>
+  				<th>Hostname</th>
+  				<th>Launch Time</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render @nodes %>
+  		</tbody>
+	</table>
+</div>
