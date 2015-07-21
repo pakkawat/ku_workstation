@@ -12,12 +12,14 @@
   			</tr>
   		</thead>
   		<tbody>
-			<tr>
-				<th scope="row"><%= node.name %></th>
-				<th><%= node.ec2.public_hostname %></th>
-				<th><%= node.uptime %></th>
-				<th><%= time_ago_in_words(DateTime.parse(Time.at(node[:ohai_time]).to_s)) %></th>
-			</tr>
+  			<% @nodes.each do |node| %>
+				<tr>
+					<th scope="row"><%= node.name %></th>
+					<th><%= node.ec2.public_hostname %></th>
+					<th><%= node.uptime %></th>
+					<th><%= time_ago_in_words(DateTime.parse(Time.at(node[:ohai_time]).to_s)) %></th>
+				</tr>
+			<% end %>
   		</tbody>
 	</table>
 </div>
