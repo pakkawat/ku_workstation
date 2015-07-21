@@ -16,8 +16,13 @@
 				<tr>
 					<th scope="row"><%= node.name %></th>
 					<th><%= node.ec2.public_hostname %></th>
-					<th><%= node.uptime %></th>
-					<th><%= time_ago_in_words(DateTime.parse(Time.at(node[:ohai_time]).to_s)) %></th>
+					<th><%= node.uptime.split(" ")[0..1].join(" ") %></th>
+					<% date = DateTime.parse(Time.at(node[:ohai_time]).to_s) %>
+					<% if date > 1.hour.ago %>
+						<th><%= image_tag "error.png" %> error</th>
+					<% else %>
+						<th><%= image_tag "running.png" %> running</th>
+					<!--<th> time_ago_in_words(date) </th>-->
 				</tr>
 			<% end %>
   		</tbody>
