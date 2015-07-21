@@ -1,5 +1,8 @@
 source 'https://rubygems.org'
 
+# Used as a REST client to access the API
+gem "chef"
+
 gem 'delayed_job_active_record'
 gem 'progress_job'
 gem 'daemons'
