@@ -5,13 +5,19 @@
   	<table id="" class="datatable_display table table-striped">
   		<thead>
   			<tr>
-  				<th>Node name</th>
+  				<th>Instance name</th>
   				<th>Hostname</th>
-  				<th>Launch Time</th>
+  				<th>Uptime</th>
+  				<th>Instance State</th>
   			</tr>
   		</thead>
   		<tbody>
-  			<%= render @nodes %>
+			<tr>
+				<th scope="row"><%= node.name %></th>
+				<th><%= node.ec2.public_hostname %></th>
+				<th><%= node.uptime %></th>
+				<th><%= time_ago_in_words(DateTime.parse(Time.at(node[:ohai_time]).to_s)) %></th>
+			</tr>
   		</tbody>
 	</table>
 </div>
