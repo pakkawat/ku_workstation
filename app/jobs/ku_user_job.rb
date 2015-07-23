@@ -1,4 +1,4 @@
-class UserSubjectJob < ProgressJob::Base
+class KuUserJob < ProgressJob::Base
   #queue_as :default
   def initialize(user,type)
     @user = user

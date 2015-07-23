@@ -1,4 +1,4 @@
-class ProgramsSubjectJob < ProgressJob::Base
+class ProgramJob < ProgressJob::Base
   #queue_as :default
   def initialize(program)
     @program = program
