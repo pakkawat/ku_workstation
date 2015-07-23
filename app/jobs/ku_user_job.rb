@@ -1,8 +1,8 @@
 class KuUserJob < ProgressJob::Base
   #queue_as :default
   require 'chef'
-  def initialize(user,type)
-    @user = user
+  def initialize(id,type)
+    @user = KuUser.find(id)
     @type = type
   end
 
