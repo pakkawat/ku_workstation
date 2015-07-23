@@ -1,11 +1,11 @@
 <div class="panel panel-primary">
   <!-- Default panel contents -->
-  <div class="panel-heading">Nodes</div>
+  <div class="panel-heading">Instances</div>
   <br>
   	<table id="" class="datatable_display table table-striped">
   		<thead>
   			<tr>
-  				<th>Instance name</th>
+  				<th>Instance Name</th>
   				<th>Hostname</th>
   				<th>Uptime</th>
   				<th>Instance State</th>
@@ -18,10 +18,11 @@
 					<th><%= node.ec2.public_hostname %></th>
 					<th><%= node.uptime.split(" ")[0..1].join(" ") %></th>
 					<% date = DateTime.parse(Time.at(node[:ohai_time]).to_s) %>
-					<% if date > 1.hour.ago %>
+					<% if date < 1.hour.ago %>
 						<th><%= image_tag "error.png" %> error</th>
 					<% else %>
 						<th><%= image_tag "running.png" %> running</th>
+					<% end %>
 					<!--<th> time_ago_in_words(date) </th>-->
 				</tr>
 			<% end %>

@@ -51,13 +51,12 @@ class ProgramsController < ApplicationController
 
   def destroy# not delete user run_list
     @program = Program.find(params[:id])
-    add_remove_program_to_run_list
-    str_temp = apply_run_list
-    #FileUtils.rm_rf(@program.program_files.first.file_path)
-    FileUtils.rm_rf("public/cookbooks/"+@program.program_name)
-    @program.destroy
-    flash[:success] = str_temp
-    #flash[:success] = "Program has been deleted"
+
+    @job = Delayed::Job.enqueue ProgramJob.new(@program)
+    str_des = "Delete Program:"+@program.program_name
+    @job.update_column(:description, str_des)
+    flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+
     redirect_to programs_path
   end
 

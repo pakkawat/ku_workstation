@@ -22,7 +22,11 @@ class KuUsersController < ApplicationController
       #create_ec2_instance
       log_in @kuuser
       #redirect_to ku_users_path, :notice => "Welcome "
-      flash[:success] = "Welcome to the Sample App!"
+      @job = Delayed::Job.enqueue KuUserJob.new(@kuuser,"create")
+      str_des = "Create instance:"+@kuuser.ku_id
+      @job.update_column(:description, str_des)
+      flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+
       redirect_to @kuuser
     else
       render "new"
@@ -45,8 +49,14 @@ class KuUsersController < ApplicationController
   end
 
   def destroy
-    @kuuser.find(params[:id]).destroy
-    flash[:success] = "User deleted"
+    @job = Delayed::Job.enqueue KuUserJob.new(@kuuser,"delete")
+    
+    str_des = "Delete instance:"+@kuuser.ku_id
+    @job.update_column(:description, str_des)
+    flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+
+    #@kuuser.find(params[:id]).destroy
+    #flash[:success] = "User deleted"
     redirect_to users_url
   end
 

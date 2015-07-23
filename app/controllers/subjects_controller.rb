@@ -40,9 +40,14 @@ class SubjectsController < ApplicationController
 
   def destroy
     @subject = Subject.find(params[:id])
-    str_temp = update_users_run_list
-    @subject.destroy
-    flash[:success] = str_temp
+
+
+    @job = Delayed::Job.enqueue SubjectJob.new(@subject)
+    str_des = "Delete Subject:"+@subject.subject_name
+    @job.update_column(:description, str_des)
+    flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+    
+    
     redirect_to subjects_path
   end
 
@@ -51,44 +56,6 @@ class SubjectsController < ApplicationController
       params.require(:subject).permit(:subject_id, :subject_name, :term, :year)
     end
 
-    def update_users_run_list
-      str_temp = ""
-      #@subject.programs.each do |program|
-        #@subject.ku_users.each do |user|
-          #user.update_column(:run_list, user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"))
-          #if other_user_subject_use_this_program(user,program)
-            #str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub("recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],")
-            #str_temp += " || <br>"
-          #end
-        #end
-      #end
-      # all_programs that use only in this subject
-      all_programs = @subject.programs.where(id: ProgramsSubject.select("program_id").group("program_id").having("COUNT(subject_id)=1").where(program_enabled: true))
-      run_list_remove = Hash[all_programs.map { |program| ["recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"] }]
-      delete_remove_recipe = Hash[all_programs.map { |program| ["recipe[remove-" + program.program_name + "],", ""] }]
-      @subject.ku_users.each do |user|
-
-        run_list_remove.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
-        
-        #all_programs.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
-        str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list + " || "
-        # 1. send run_list to chef-server
-        #---
-        # 2. update run_list recipe[remove-xxx] to ''
-
-        delete_remove_recipe.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
-
-      end
-      # 1. send run_list to chef-server
-      # 2. update run_list recipe[remove-xxx] to ''
-      #@subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
-        #if !user.run_list.blank?
-          #str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
-          #str_temp += " || "
-        #end
-      #end
-      return str_temp
-    end
 
     def other_user_subject_use_this_program(user,program)
       #return user.subjects.where(subject_id: Subject.select("subject_id").where(id: ProgramsSubject.select("subject_id").where(:program_id => program.id, :program_enabled => true).where.not(subject_id: @subject.id))).empty?
