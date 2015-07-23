@@ -9,6 +9,7 @@
   				<th>Hostname</th>
   				<th>Uptime</th>
   				<th>Instance State</th>
+          <th>Ohai Time</th>
   			</tr>
   		</thead>
   		<tbody>
@@ -23,7 +24,7 @@
 					<% else %>
 						<th><%= image_tag "running.png" %> running</th>
 					<% end %>
-					<!--<th> time_ago_in_words(date) </th>-->
+					<th><%= time_ago_in_words(date) %></th>
 				</tr>
 			<% end %>
   		</tbody>
