@@ -1,6 +1,5 @@
 class KuUserJob < ProgressJob::Base
   #queue_as :default
-  require 'chef'
   def initialize(id,type)
     @user = KuUser.find(id)
     @type = type
@@ -27,9 +26,12 @@ class KuUserJob < ProgressJob::Base
         update_progress
       end
     else #delete user
+      require 'chef'
+      Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
+      query = Chef::Search::Query.new
       node = query.search('node', 'name:'+@user.ku_id).first rescue []
       Dir.chdir("/home/ubuntu/chef-repo") do
-        system "knife ec2 server delete "+node.ec2.instance_id+" --purge -y"
+        system "knife ec2 server delete "+node[0].ec2.instance_id+" --purge -y"
         update_progress
       end
     end
