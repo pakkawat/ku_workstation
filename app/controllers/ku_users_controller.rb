@@ -27,7 +27,7 @@ class KuUsersController < ApplicationController
       @job.update_column(:description, str_des)
       flash[:success] = str_des+" with Job ID:"+@job.id.to_s
 
-      redirect_to @kuuser
+      redirect_to ku_users_path
     else
       render "new"
     end
@@ -49,6 +49,7 @@ class KuUsersController < ApplicationController
   end
 
   def destroy
+    @kuuser = KuUser.find(params[:id])
     @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"delete")
     
     str_des = "Delete instance:"+@kuuser.ku_id
@@ -57,7 +58,7 @@ class KuUsersController < ApplicationController
 
     #@kuuser.find(params[:id]).destroy
     #flash[:success] = "User deleted"
-    redirect_to users_url
+    redirect_to ku_users_path
   end
 
   private

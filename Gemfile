@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
 # Used as a REST client to access the API
+gem "knife-ec2"
 gem "chef"
 
 gem 'delayed_job_active_record'

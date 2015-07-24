@@ -4,8 +4,11 @@
 	<% if !job.last_error.nil? %>
 			<div class="row">
 				<div class="col-sm-12">
-					<div class="progress-status text-danger">
-						<%= job.last_error %>
+					<a href="#Error" class="btn btn-danger" data-toggle="collapse">Error!</a>
+					<div id="Error" class="collapse">
+						<div class="progress-status text-danger">
+							<%= job.last_error %>
+						</div>
 					</div>
 				</div>
 			</div>
