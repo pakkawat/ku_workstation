@@ -17,23 +17,19 @@ class KuUserJob < ProgressJob::Base
     #end
     str_temp = ""
     if @type == "create"
-      Dir.chdir("/home/ubuntu/chef-repo") do
-        system "knife ec2 server create -x ubuntu -I ami-96f1c1c4 -f t2.small -G 'Chef Clients' -N "+@user.ku_id
-        update_progress
-        system "knife node run_list add "+@user.ku_id+" 'recipe[chef-client]'"
-        update_progress
-        system "knife ssh 'name:"+@user.ku_id+"' 'sudo chef-client' -x ubuntu"
-        update_progress
-      end
+      system "knife ec2 server create -x ubuntu -I ami-96f1c1c4 -f t2.small -G 'Chef Clients' -N "+@user.ku_id+" -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      update_progress
+      system "knife node run_list add "+@user.ku_id+" 'recipe[chef-client]'"
+      update_progress
+      system "knife ssh 'name:"+@user.ku_id+"' 'sudo chef-client' -x ubuntu"
+      update_progress
     else #delete user
       require 'chef'
       Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
       query = Chef::Search::Query.new
       node = query.search('node', 'name:'+@user.ku_id).first rescue []
-      Dir.chdir("/home/ubuntu/chef-repo") do
-        system "knife ec2 server delete "+node[0].ec2.instance_id+" --purge -y"
-        update_progress
-      end
+      system "knife ec2 server delete "+node[0].ec2.instance_id+" -c /home/ubuntu/chef-repo/.chef/knife.rb --purge -y"
+      update_progress
     end
     File.open('/home/ubuntu/myapp/public/ku_user_job.txt', 'w') { |f| f.write(str_temp) }
   end
