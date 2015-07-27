@@ -17,13 +17,18 @@ class ProgramJob < ProgressJob::Base
     str_temp = ""
     users.each do |user|
       user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
-      str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')+" || " # send run_list to Chef-server and run sudo chef-clients
+      str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '') +" || " # send run_list to Chef-server and run sudo chef-clients
+
+      system "knife node run_list add " + user.ku_id + " '" + user.run_list.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      sleep(2)
+      system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
+
       user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + @program.program_name + "],", ""))
       update_progress
     end
     @program.subjects.destroy_all
 
-    File.open('/home/ubuntu/myapp/public/programs_job.txt', 'w') { |f| f.write(str_temp) }
+    #File.open('/home/ubuntu/myapp/public/programs_job.txt', 'w') { |f| f.write(str_temp) }
   end
 
   def success

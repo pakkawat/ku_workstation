@@ -20,6 +20,11 @@ class UserSubjectJob < ProgressJob::Base
       if !user.run_list.blank?
         str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
         str_temp += " || " + "\n"
+
+        system "knife node run_list add " + user.ku_id + " '" + user.run_list.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
+        sleep(2)
+        system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
+        
         update_progress
       end
     end

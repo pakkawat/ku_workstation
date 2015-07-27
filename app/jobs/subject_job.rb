@@ -43,20 +43,16 @@ class SubjectJob < ProgressJob::Base
       #---
       # 2. update run_list recipe[remove-xxx] to ''
 
+      system "knife node run_list add " + user.ku_id + " '" + user.run_list.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      sleep(2)
+      system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
+
       delete_remove_recipe.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
 
       update_progress
 
     end
-    # 1. send run_list to chef-server
-    # 2. update run_list recipe[remove-xxx] to ''
-    #@subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
-      #if !user.run_list.blank?
-        #str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
-        #str_temp += " || "
-      #end
-    #end
-    File.open('/home/ubuntu/myapp/public/subject_job.txt', 'w') { |f| f.write(str_temp) }
+    #File.open('/home/ubuntu/myapp/public/subject_job.txt', 'w') { |f| f.write(str_temp) }
   end
 
   def success
