@@ -89,6 +89,13 @@ class ProgramsController < ApplicationController
 
   end
 
+  def upload_cookbook
+    program = Program.find(params[:program_id])
+    system "knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+    flash[:success] = program.program_name + " has been updated"
+    redirect_to program_path(program)
+  end
+
   private
     def program_params
       params.require(:program).permit(:program_name, :note)
