@@ -10,7 +10,7 @@ class ProgramsController < ApplicationController
     #end
     @program = Program.find(params[:id])
     #@program_files = @program.program_files.all
-    @directory = "public/cookbooks/"+@program.program_name
+    @directory = "/home/ubuntu/chef-repo/cookbooks/"+@program.program_name
     #@all_files = Dir.glob(directory+'/**/*').sort_by{|e| e}
     @all_directories = Dir.glob(@directory+'/*').select{ |e| File.directory? e }.sort_by{|e| e}#for drop_down
 
@@ -61,7 +61,7 @@ class ProgramsController < ApplicationController
   end
 
   def create_file(program)
-  	directory = "public/cookbooks/"+program.program_name
+  	directory = "/home/ubuntu/chef-repo/cookbooks/"+program.program_name
   	#name = "test.txt"
   	#path = File.join(directory, name)
   	#dirname = File.dirname(path)
@@ -76,14 +76,17 @@ class ProgramsController < ApplicationController
 
   	@program_file = ProgramFile.new(program_id: program.id, file_path: directory, file_name: program.program_name)
   	@program_file.save
-  	FileUtils.cp_r('public/cookbooks/cookbooktemp/.', directory)
-    #all_files = Dir.glob(directory+"/*")
-    all_files = Dir.glob(directory+'/**/*').select{ |e| File.file? e }
-    all_files.each do |file_name|
-      text = File.read(file_name)
-      new_contents = text.gsub("cookbooktemp", program.program_name)
-      File.open(file_name, "w") {|file| file.puts new_contents }
-    end
+
+  	#FileUtils.cp_r('public/cookbooks/cookbooktemp/.', directory)
+    #all_files = Dir.glob(directory+'/**/*').select{ |e| File.file? e }
+    #all_files.each do |file_name|
+      #text = File.read(file_name)
+      #new_contents = text.gsub("cookbooktemp", program.program_name)
+      #File.open(file_name, "w") {|file| file.puts new_contents }
+    #end
+
+    system "knife cookbook create " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+
   end
 
   private

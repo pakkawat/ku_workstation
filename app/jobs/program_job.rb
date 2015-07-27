@@ -26,13 +26,15 @@ class ProgramJob < ProgressJob::Base
       user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + @program.program_name + "],", ""))
       update_progress
     end
-    @program.subjects.destroy_all
-
+    
     #File.open('/home/ubuntu/myapp/public/programs_job.txt', 'w') { |f| f.write(str_temp) }
   end
 
   def success
-    FileUtils.rm_rf("public/cookbooks/"+@program.program_name)
+    @program.subjects.destroy_all
+    system "knife cookbook delete " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y"
+    sleep(2)
+    FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
     @program.destroy
   end
 

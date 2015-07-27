@@ -3,7 +3,7 @@ class ProgramFilesController < ApplicationController
   end
   def show
   	@program = Program.find(params[:program_id])
-  	@program_dir = "public/cookbooks/"+@program.program_name+"/"
+  	@program_dir = "/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/"
   	@path = params[:program_files]
   	@current_file = @program_dir+@path
   	if File.directory?(@current_file)
@@ -18,7 +18,7 @@ class ProgramFilesController < ApplicationController
 
   def new_file
   	@program = Program.find(params[:program_id])
-  	@program_dir = "public/cookbooks/"+@program.program_name+"/"
+  	@program_dir = "/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/"
   	@path = ""
   	if params[:program_files] == "create_from_loot_dir_form_tag" # form_tag view/programs/show.html.erb 
   		@path = ""
@@ -49,7 +49,7 @@ class ProgramFilesController < ApplicationController
   				flash[:danger] = "A Folder with the same name already exists. Please choose a different name and try again."
   			else
   				FileUtils.mkdir_p(full_path)
-  				flash[:success] = "Folder has been created at "+full_path.gsub("public/cookbooks/"+@program.program_name, "")
+  				flash[:success] = "Folder has been created at "+full_path.gsub("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name, "")
   			end
   		else #new file
   			if params[:name].index(".").present? && params[:name][-1] != "."
@@ -59,7 +59,7 @@ class ProgramFilesController < ApplicationController
   					File.open(full_path, "w+") do |f|
   						f.write("")
   					end
-  					flash[:success] = "File has been created at "+full_path.gsub("public/cookbooks/"+@program.program_name, "")
+  					flash[:success] = "File has been created at "+full_path.gsub("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name, "")
   				end
   			else
   				flash[:danger] = "File name was incorrect format. Please try again."
@@ -71,13 +71,13 @@ class ProgramFilesController < ApplicationController
   			end
   		end
   	end
-  	redirect_to program_path(@program)+full_path.gsub("public/cookbooks/"+@program.program_name, "")
+  	redirect_to program_path(@program)+full_path.gsub("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name, "")
 
   end
 
   def save_file
     @program = Program.find(params[:program_id])
-    @program_dir = "public/cookbooks/"+@program.program_name+"/"
+    @program_dir = "/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/"
     @path = params[:program_files]
     @current_file = @program_dir+@path
     File.open(@current_file, "w+") do |f|
@@ -89,13 +89,13 @@ class ProgramFilesController < ApplicationController
 
   def delete_file
   	@program = Program.find(params[:program_id])
-  	@program_dir = "public/cookbooks/"+@program.program_name+"/"
+  	@program_dir = "/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/"
   	@path = params[:program_files]
   	@current_file_path = @program_dir+@path
   	#render plain: @current_file_path.inspect+" || Name:"+params[:name]
   	FileUtils.rm_rf(@current_file_path)
   	flash[:success] = "File successfully deleted."
   	#@current_file_path = @current_file_path.chomp(params[:name])
-  	redirect_to program_path(@program)+@current_file_path.gsub("public/cookbooks/"+@program.program_name, "").chomp(params[:name])
+  	redirect_to program_path(@program)+@current_file_path.gsub("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name, "").chomp(params[:name])
   end
 end
