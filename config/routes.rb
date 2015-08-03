@@ -25,6 +25,7 @@ Rails.application.routes.draw do
   match "/subjects/:subject_id/programs_subjects", :to => "programs_subjects#destroy", :via => "delete"
   #match "programs/:program_id/*program_file", :to => "program_files#show", :via => "get"
   resources :programs
+  get 'programs/:program_id/upload_cookbook', to: 'programs#upload_cookbook', via: :get # danger! if file name "upload_cookbook"
   match "programs/:program_id/*program_files", :to => "program_files#show", :via => "get", :constraints => { :program_files => /[^*]+/ }#fix dot in url and allows anything except *
   match "programs/:program_id/*program_files", :to => "program_files#save_file", :via => "patch", :constraints => { :program_files => /[^*]+/ }
   match "programs/:program_id/*program_files", :to => "program_files#new_file", :via => "post", :constraints => { :program_files => /[^*]+/ }
@@ -35,7 +36,6 @@ Rails.application.routes.draw do
   #match '/save_file', to: 'programs#save_file', via: :post
   get 'subjects/:subject_id/program_apply', to: 'programs_subjects#program_apply', via: :get
   get 'subjects/:subject_id/subject_apply', to: 'user_subjects#subject_apply', via: :get
-  get 'programs/:program_id/upload_cookbook', to: 'programs#upload_cookbook', via: :get
   resources :instances
   get "/command_jobs/refresh_part" => 'command_jobs#refresh_part', as: 'command_jobs/refresh_part'
   match "/command_jobs/:job_id", :to => "command_jobs#destroy", :via => "delete", as: :command_job

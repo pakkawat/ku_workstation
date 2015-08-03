@@ -25,19 +25,19 @@
             <%= label_tag 'Type', nil, class: "control-label" %>
           </strong>
         </span>
-        <%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1'), class: 'form-control input-lg') %>
+        <%= select_tag("type", options_for_select([['New Directory', '1'], ['New File', '2']], '1'), class: 'form-control') %>
       </li>
       <li class="list-group-item text-right">
         <span class="pull-left">
           <strong><%= label_tag 'Path', nil, class: "control-label" %></strong>
         </span>
-        <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control input-lg' %>
+        <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control' %>
       </li>
       <li class="list-group-item text-right">
         <span class="pull-left">
           <strong><%= label_tag 'Name', nil, class: "control-label" %></strong>
         </span>
-        <%= text_field_tag "name", nil, class: "form-control input-lg" %>
+        <%= text_field_tag "name", nil, class: "form-control" %>
       </li>
       <li class="list-group-item text-center">
         <%= submit_tag "Create", class: "btn btn-success" %>
