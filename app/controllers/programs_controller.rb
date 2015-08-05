@@ -26,9 +26,13 @@ class ProgramsController < ApplicationController
     #render plain: ku_user_params.inspect
     #@KuUser.save
     if @program.save
-      create_file(@program)
-      flash[:success] = "Program was saved"
-      redirect_to programs_path
+      if create_file(@program)
+        flash[:success] = "Program was saved"
+        redirect_to programs_path
+      else
+        flash[:danger] = "Error can not create cookbook"
+        render "new"
+      end
     else
       render "new"
     end
@@ -61,31 +65,34 @@ class ProgramsController < ApplicationController
   end
 
   def create_file(program)
-  	directory = "/home/ubuntu/chef-repo/cookbooks/"+program.program_name
-  	#name = "test.txt"
-  	#path = File.join(directory, name)
-  	#dirname = File.dirname(path)
-  	#unless File.directory?(dirname)
-  		#FileUtils.mkdir_p(dirname)
-  	#end
-        
-  	#content = "data from the "+program.program_name
-  	#File.open(path, "w+") do |f|
-  		#f.write(content)
-  	#end
+    error = system "knife cookbook create " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+    if error
+    	directory = "/home/ubuntu/chef-repo/cookbooks/"+program.program_name
+    	#name = "test.txt"
+    	#path = File.join(directory, name)
+    	#dirname = File.dirname(path)
+    	#unless File.directory?(dirname)
+    		#FileUtils.mkdir_p(dirname)
+    	#end
+          
+    	#content = "data from the "+program.program_name
+    	#File.open(path, "w+") do |f|
+    		#f.write(content)
+    	#end
 
-  	@program_file = ProgramFile.new(program_id: program.id, file_path: directory, file_name: program.program_name)
-  	@program_file.save
+    	@program_file = ProgramFile.new(program_id: program.id, file_path: directory, file_name: program.program_name)
+    	@program_file.save
 
-  	#FileUtils.cp_r('public/cookbooks/cookbooktemp/.', directory)
-    #all_files = Dir.glob(directory+'/**/*').select{ |e| File.file? e }
-    #all_files.each do |file_name|
-      #text = File.read(file_name)
-      #new_contents = text.gsub("cookbooktemp", program.program_name)
-      #File.open(file_name, "w") {|file| file.puts new_contents }
-    #end
+    	#FileUtils.cp_r('public/cookbooks/cookbooktemp/.', directory)
+      #all_files = Dir.glob(directory+'/**/*').select{ |e| File.file? e }
+      #all_files.each do |file_name|
+        #text = File.read(file_name)
+        #new_contents = text.gsub("cookbooktemp", program.program_name)
+        #File.open(file_name, "w") {|file| file.puts new_contents }
+      #end
+    end
 
-    system "knife cookbook create " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+    return error
 
   end
 

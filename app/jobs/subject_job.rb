@@ -29,6 +29,10 @@ class SubjectJob < ProgressJob::Base
     #all_programs = @subject.programs.where(id: ProgramsSubject.select("program_id").group("program_id").having("COUNT(subject_id)=1").where(program_enabled: true))
     #run_list_remove = Hash[all_programs.map { |program| ["recipe[" + program.program_name + "],", "recipe[remove-" + program.program_name + "],"] }]
     #delete_remove_recipe = Hash[all_programs.map { |program| ["recipe[remove-" + program.program_name + "],", ""] }]
+    arr_error = Array.new
+    arr_error.push("There are error with following user id:")
+    check_error = true
+
     @subject.ku_users.each do |user|
 
       programs_in_subject = @subject.programs.where.not(id: ProgramsSubject.select("program_id").where(subject_id: user.user_subjects.select("subject_id").where.not(subject_id: @subject.id).where(user_enabled: true)  ).where(program_enabled: true)  )
@@ -43,14 +47,27 @@ class SubjectJob < ProgressJob::Base
       #---
       # 2. update run_list recipe[remove-xxx] to ''
 
-      system "knife node run_list add " + user.ku_id + " '" + user.run_list.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      check_error = system "knife node run_list add " + user.ku_id + " '" + user.run_list.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
       sleep(2)
-      system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      check_error = system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
 
-      delete_remove_recipe.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
+      if check_error == false
+        arr_error.push(user.ku_id+",")
+      else
+        delete_remove_recipe.each {|k,v| user.update_column(:run_list, user.run_list.gsub(k, v))}
+      end
 
       update_progress
+      check_error = true
 
+    end
+
+    if arr_error.length > 1
+      str_error = ""
+      arr_error.each do |error|
+        str_error += error
+      end
+      raise str_error
     end
     #File.open('/home/ubuntu/myapp/public/subject_job.txt', 'w') { |f| f.write(str_temp) }
   end
@@ -59,7 +76,7 @@ class SubjectJob < ProgressJob::Base
     @subject.destroy
   end
 
-  def failure
+  def error(job, exception)
   	#
   end
 

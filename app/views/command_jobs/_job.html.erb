@@ -7,6 +7,10 @@
 					<div class="progress-status text-danger">
 						<% new_line = job.last_error.index("\n") %>
 						<%= job.last_error[0,new_line] %>
+
+						<span class="pull-right">
+							<%= button_to 'Delete', command_job_path(job), :class => "btn btn-default", :method => :delete %>
+						</span>
 					</div>
 				</div>
 			</div>

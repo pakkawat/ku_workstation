@@ -14,18 +14,33 @@ class ProgramsSubjectJob < ProgressJob::Base
     #end
 
     str_temp = ""
+    arr_error = Array.new
+    arr_error.push("There are error with following user id:")
+    check_error = true
     #@subject = Subject.find(params[:subject_id])
     @subject.ku_users.each do |user|# send run_list to Chef-server and run sudo chef-clients
       if !user.run_list.blank?
         str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '')
         str_temp += " || " + "\n"
 
-        system "knife node run_list add " + user.ku_id + " '" + user.run_list.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
+        check_error = system "knife node run_list add " + user.ku_id + " '" + user.run_list.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
         sleep(2)
-        system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
+        check_error = system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
 
+        if check_error == false
+          arr_error.push(user.ku_id+",")
+        end
         update_progress
+        check_error = true
       end
+    end
+
+    if arr_error.length > 1
+      str_error = ""
+      arr_error.each do |error|
+        str_error += error
+      end
+      raise str_error
     end
     #File.open('/home/ubuntu/myapp/public/programs_subject_job.txt', 'w') { |f| f.write(str_temp) }
   end
@@ -41,7 +56,7 @@ class ProgramsSubjectJob < ProgressJob::Base
     @subject.programs_subjects.where(program_enabled: false).destroy_all
   end
 
-  def failure
+  def error(job, exception)
   	#
   end
 
