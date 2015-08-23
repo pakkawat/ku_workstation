@@ -10,7 +10,7 @@ class KuUserJob < ProgressJob::Base
   def perform
     # Do something later
     update_stage('Run command')
-    update_progress_max(@type == "create" ? 4 : 1)
+    update_progress_max(@type == "create" ? 5 : 2)
     new_password = encryp_password
     #@users.each do |user|
       #Dir.chdir("/home/ubuntu") do
@@ -31,6 +31,11 @@ class KuUserJob < ProgressJob::Base
         update_progress
       else
         raise "Error Create user cookbook"
+      end
+      if system "knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+        update_progress
+      else
+        raise "Error can not upload user cookbook"
       end
       if system "knife node run_list add " + @user.ku_id + " 'recipe[chef-client],recipe[" + @user.ku_id + "],recipe[base-client]' -c /home/ubuntu/chef-repo/.chef/knife.rb"
         sleep(5)
@@ -53,6 +58,12 @@ class KuUserJob < ProgressJob::Base
       else
         raise "Error delete instance"
       end
+      if system "knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y"
+        FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
+        update_progress
+      else
+        raise "Error delete cookbook files"
+      end
     end
     #File.open('/home/ubuntu/myapp/public/ku_user_job.txt', 'w') { |f| f.write(str_temp) }
   end
@@ -67,6 +78,7 @@ class KuUserJob < ProgressJob::Base
     if @type == "create"
       @user.destroy
     end
+    exit
   end
 
   def encryp_password
