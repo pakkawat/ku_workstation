@@ -63,7 +63,7 @@
         <span class="pull-left">
           <strong><%= label_tag 'Path', nil, class: "control-label" %></strong>
         </span>
-        <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@directory+"/", ""), value ] }), include_blank: "/", class: 'form-control' %>
+        <%= select_tag "new_file_path", options_for_select(@all_directories.map { |value| [ value.gsub(@program_dir, ""), value ] }), include_blank: "/", class: 'form-control' %>
       </li>
       <li class="list-group-item text-right">
         <span class="pull-left">

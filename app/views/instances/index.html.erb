@@ -5,6 +5,7 @@
   	<table id="" class="datatable_display table table-striped">
   		<thead>
   			<tr>
+          <th>Remote</th>
   				<th>Instance Name</th>
   				<th>Hostname</th>
   				<th>Uptime</th>
@@ -15,6 +16,7 @@
   		<tbody>
   			<% @nodes.each do |node| %>
 				<tr>
+          <th><a class="btn btn-success" href='<%= "http://"+node.ec2.public_hostname.to_s+":8080/guacamole" %>'>RDP</a></th>
 					<th scope="row"><%= node.name %></th>
 					<th><%= node.ec2.public_hostname %></th>
 					<th><%= node.uptime.split(" ")[0..1].join(" ") %></th>

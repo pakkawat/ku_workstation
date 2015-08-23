@@ -22,7 +22,7 @@ class KuUsersController < ApplicationController
       #create_ec2_instance
       #log_in @kuuser
       #redirect_to ku_users_path, :notice => "Welcome "
-      @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"create")
+      @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"create",ku_user_params[:password])
       str_des = "Create instance:"+@kuuser.ku_id
       @job.update_column(:description, str_des)
       flash[:success] = str_des+" with Job ID:"+@job.id.to_s

@@ -65,8 +65,8 @@ class ProgramsController < ApplicationController
   end
 
   def create_file(program)
-    error = system "knife cookbook create " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
-    if error
+    check_error = system "knife cookbook create " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+    if check_error #if not error (true)
     	directory = "/home/ubuntu/chef-repo/cookbooks/"+program.program_name
     	#name = "test.txt"
     	#path = File.join(directory, name)
@@ -92,15 +92,20 @@ class ProgramsController < ApplicationController
       #end
     end
 
-    return error
+    return check_error
 
   end
 
   def upload_cookbook
     program = Program.find(params[:program_id])
-    system "knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
-    flash[:success] = program.program_name + " has been updated"
-    redirect_to program_path(program)
+    check_error = system "knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+    if check_error
+      flash[:success] = program.program_name + " has been updated"
+      redirect_to program_path(program)
+    else
+      flash[:danger] = "Error can not update cookbook"
+      redirect_to program_path(program)
+    end
   end
 
   private
