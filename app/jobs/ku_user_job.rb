@@ -78,7 +78,6 @@ class KuUserJob < ProgressJob::Base
     if @type == "create"
       @user.destroy
     end
-    exit
   end
 
   def encryp_password
@@ -88,7 +87,7 @@ class KuUserJob < ProgressJob::Base
   end
 
   def write_file(new_password)
-    file_path = "/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "recipes/default.rb"
+    file_path = "/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/default.rb"
     File.open(file_path, 'a') do |file|
       file.puts "user '" + @user.ku_id + "' do"
       file.puts "  home '/home/" + @user.ku_id + "'"
@@ -99,8 +98,8 @@ class KuUserJob < ProgressJob::Base
       file.puts "end"
       file.puts ""
       file.puts "execute 'create folder guacamole' do"
-      file.puts "  command sudo mkdir /etc/guacamole"
-      file.puts "  not_if { ::File.exists?(/etc/guacamole) }"
+      file.puts "  command \"sudo mkdir /etc/guacamole\""
+      file.puts "  not_if { ::File.exists?(\"/etc/guacamole\") }"
       file.puts "  action :run"
       file.puts "end"
       file.puts ""
@@ -111,7 +110,7 @@ class KuUserJob < ProgressJob::Base
       file.puts ""
     end
 
-    file_path = "/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "template/noauth-config.xml.erb"
+    file_path = "/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/templates/noauth-config.xml.erb"
     File.open(file_path, 'w+') do |file|
       file.puts "<configs>"
       file.puts "  <config name=\"RDP - Ubuntu pakk\" protocol=\"rdp\">"
