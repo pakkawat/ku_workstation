@@ -113,7 +113,7 @@ class KuUserJob < ProgressJob::Base
     file_path = "/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/templates/noauth-config.xml.erb"
     File.open(file_path, 'w+') do |file|
       file.puts "<configs>"
-      file.puts "  <config name=\"RDP - Ubuntu pakk\" protocol=\"rdp\">"
+      file.puts "  <config name=\"RDP - Ubuntu " + @user.ku_id + "\" protocol=\"rdp\">"
       file.puts "    <param name=\"hostname\" value=\"<%= node['ec2']['public_hostname'] %>\" />"
       file.puts "    <param name=\"port\" value=\"3389\" />"
       file.puts "    <param name=\"username\" value=\"" + @user.ku_id + "\" />"

@@ -1,6 +1,6 @@
 class SubjectJob < ProgressJob::Base
   #queue_as :default
-  def initialize(subject,type)
+  def initialize(id,type)
     @subject = Subject.find(id)
     @type = type
   end

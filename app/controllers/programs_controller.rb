@@ -90,6 +90,10 @@ class ProgramsController < ApplicationController
         #new_contents = text.gsub("cookbooktemp", program.program_name)
         #File.open(file_name, "w") {|file| file.puts new_contents }
       #end
+
+      # to_do # upload "knife cookbook upload xxx"
+
+      # to_do # upload "knife cookbook upload remove-xxx"
     end
 
     return check_error

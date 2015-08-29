@@ -66,6 +66,8 @@ class ProgramJob < ProgressJob::Base
       sleep(2)
       FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
       @program.destroy
+      # to_do # knife cookbook delete remove-xxx
+      # to_do # rm -rf /home/ubuntu/chef-repo/cookbooks/remove-xxx
     else
       raise "Error delete cookbook:" + @program.program_name
     end

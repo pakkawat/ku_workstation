@@ -53,7 +53,7 @@ class SubjectsController < ApplicationController
     str_des = "Apply change on Subject:"+@subject.subject_name
     @job.update_column(:description, str_des)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
-    redirect_to subjects_path
+    redirect_to @subject
   end
 
   private
