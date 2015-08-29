@@ -1,6 +1,6 @@
 Delayed::Worker.destroy_failed_jobs = false
 Delayed::Worker.sleep_delay = 15
-Delayed::Worker.max_attempts = 3
+Delayed::Worker.max_attempts = 1
 Delayed::Worker.max_run_time = 15.minutes #will kill the delayed worker when this limit is reached and allow the job to fail so another worker can pick it up
 Delayed::Worker.read_ahead = 10
 Delayed::Worker.default_queue_name = 'default'

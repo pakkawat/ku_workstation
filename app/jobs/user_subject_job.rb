@@ -62,4 +62,12 @@ class UserSubjectJob < ProgressJob::Base
   	#
   end
 
+  def get_remove_program
+    str_remove_program = ""
+    @subject.programs.where("programs_subjects.program_enabled = false").each do |program|
+      str_remove_program += "recipe[" + program.program_name + "],"
+    end
+    return str_remove_program.gsub(/\,$/, '')
+  end
+
 end

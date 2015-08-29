@@ -4,6 +4,9 @@
     <span class="pull-right">
       <h1>
         <div style="display:inline-block;">
+          <%= link_to "Apply change", subject_path(@subject)+"/apply_change", :class => "btn btn-primary" %>
+        </div>
+        <div style="display:inline-block;">
           <%= button_to 'Update program in subject', subject_programs_subjects_path(@subject), :class => "btn btn-info", :method => :get %>
         </div>
         <div style="display:inline-block;">

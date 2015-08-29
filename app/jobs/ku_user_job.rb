@@ -24,7 +24,7 @@ class KuUserJob < ProgressJob::Base
         sleep(10)
         update_progress
       else
-        raise "Error Create instance"
+        raise "Error Create " + @user.ku_id + " instance"
       end
       if system "knife cookbook create " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
         write_file(new_password)
@@ -35,18 +35,18 @@ class KuUserJob < ProgressJob::Base
       if system "knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
         update_progress
       else
-        raise "Error can not upload user cookbook"
+        raise "Error can not upload user cookbook to node "+ @user.ku_id 
       end
       if system "knife node run_list add " + @user.ku_id + " 'recipe[chef-client],recipe[" + @user.ku_id + "],recipe[base-client]' -c /home/ubuntu/chef-repo/.chef/knife.rb"
         sleep(5)
         update_progress
       else
-        raise "Error Add run_list"
+        raise "Error Add run_list to node "+ @user.ku_id 
       end
       if system "knife ssh 'name:" + @user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
         update_progress
       else
-        raise "Error ssh"
+        raise "Error ssh to node "+ @user.ku_id 
       end
     else #delete user
       require 'chef'
@@ -117,10 +117,14 @@ class KuUserJob < ProgressJob::Base
       file.puts "    <param name=\"hostname\" value=\"<%= node['ec2']['public_hostname'] %>\" />"
       file.puts "    <param name=\"port\" value=\"3389\" />"
       file.puts "    <param name=\"username\" value=\"" + @user.ku_id + "\" />"
-      file.puts "    <param name=\"password\" value=\"" + new_password + "\" />"
+      file.puts "    <param name=\"password\" value=\"" + @password + "\" />"
       file.puts "  </config>"
       file.puts "</configs>"
     end
   end
+
+  #def max_attempts
+    #3
+  #end
 
 end

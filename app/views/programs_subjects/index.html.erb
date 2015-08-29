@@ -3,9 +3,9 @@
     <span class="pull-left"><h1><%= @subject.subject_name %> Programs</h1></span>
     <span class="pull-right">
       <h1>
-        <div style="display:inline-block;">
-          <%= link_to "Apply change", subject_path(@subject)+"/program_apply", :class => "btn btn-primary" %>
-        </div>
+        <!--<div style="display:inline-block;">
+          <% #link_to "Apply change", subject_path(@subject)+"/program_apply", :class => "btn btn-primary" %>
+        </div>-->
         <div style="display:inline-block;">
           <%= button_to 'Back', subject_path(@subject), :class => "btn btn-default", :method => :get %>
         </div>

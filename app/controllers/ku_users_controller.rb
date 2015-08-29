@@ -50,7 +50,7 @@ class KuUsersController < ApplicationController
 
   def destroy
     @kuuser = KuUser.find(params[:id])
-    @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"delete")
+    @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"delete","")
     
     str_des = "Delete instance:"+@kuuser.ku_id
     @job.update_column(:description, str_des)
