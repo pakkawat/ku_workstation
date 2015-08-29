@@ -8,6 +8,20 @@ class KuUsersController < ApplicationController
   
   def show
     @kuuser = KuUser.find(params[:id])
+
+    ###############      For Test      #####################
+    require 'open3'
+    captured_stdout = ''
+    captured_stderr = ''
+    exit_status = Open3.popen3(ENV, "knife node show " + @kuuser.ku_id + " -r -c /home/ubuntu/chef-repo/.chef/knife.rb") {|stdin, stdout, stderr, wait_thr|
+      pid = wait_thr.pid # pid of the started process.
+      stdin.close
+      captured_stdout = stdout.read
+      captured_stderr = stderr.read
+      wait_thr.value # Process::Status object returned.
+    }
+    @actual_run_list = captured_stdout
+    ##########################################################
   end
 
   def new
