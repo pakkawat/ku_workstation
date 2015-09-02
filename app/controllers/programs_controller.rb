@@ -1,5 +1,6 @@
 require 'fileutils'
 class ProgramsController < ApplicationController
+  include ResourceGenerator
   def index
     @programs = Program.all
   end
@@ -15,6 +16,7 @@ class ProgramsController < ApplicationController
     @all_directories = Dir.glob(@directory+'/*').select{ |e| File.directory? e }.sort_by{|e| e}#for drop_down
 
     @current_dir = Dir.glob(@directory+"/*").sort_by{|e| e}
+    @test = ResourceGenerator.package
   end
 
   def new
