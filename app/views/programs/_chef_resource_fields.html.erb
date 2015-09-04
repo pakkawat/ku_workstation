@@ -1,0 +1,10 @@
+<div class="control-group">
+	<%= f.select :type, [["Repository", "Repository"], ["Zip file", "Zip"]] %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
+	<div class="controls">
+		<%= f.text_field :name %> <%= link_to_remove_fields "remove", f%>
+	</div>
+	<% f.fields_for :chef_attributes do |builder| %>
+		<%= render 'chef_attribute_fields', :f => builder %>
+	<% end %>
+	<%= link_to_add_fields "Add Attribute", f, :chef_attributes %>
+</div>

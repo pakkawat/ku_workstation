@@ -21,6 +21,8 @@ class ProgramsController < ApplicationController
 
   def new
     @program = Program.new
+    chef_resource = @program.chef_resources.build
+    chef_resource.chef_attributes.build
   end
 
   def create
@@ -116,7 +118,7 @@ class ProgramsController < ApplicationController
 
   private
     def program_params
-      params.require(:program).permit(:program_name, :note)
+      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :name, :type ], chef_attributes_attributes: [ :att_value ])
     end
 
     def add_remove_program_to_run_list
