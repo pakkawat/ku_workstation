@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  att_value: MyString
+  type: 
+  chef_resource_id: 
+
+two:
+  att_value: MyString
+  type: 
+  chef_resource_id: 
