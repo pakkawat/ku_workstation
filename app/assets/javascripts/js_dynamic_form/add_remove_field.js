@@ -5,7 +5,7 @@ function remove_fields(link) {
 
 function remove_panel_info(link) {  
     $(link).prev("input[type=hidden]").val("1");  
-    $(link).closest(".panel panel-info").hide();  
+    $(link).closest(".panel-info").hide();  
 }  
   
 function add_fields(link, association, content) {  
