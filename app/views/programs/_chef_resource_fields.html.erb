@@ -1,12 +1,25 @@
-<div class="control-group">
-	<div class="chef">
-                <%= f.select :type, [["Repository", "Repository"], ["Zip file", "Zip"]] %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
-                <%= f.text_field :name %> <%= link_to_remove_fields("remove", f) %>
-        <div class="chef-attributes">
-	<% f.fields_for :chef_attributes do |builder| %>
-		<%= render 'chef_attribute_fields', :f => builder %>
-	<% end %>
-        </div>
-	<%= link_to_add_fields "Add Attribute", f, :chef_attributes %>
-        </div>
+<div class="panel panel-info">
+  <!-- Default panel contents -->
+  <div class="panel-heading">
+  	<form class="form-inline">
+  		<div class="form-group">
+  			<%= f.select :type, [["Repository", "Repository"], ["Zip file", "Zip"]] %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
+  			<%= f.text_field :name %>
+  			<%= link_to_add_fields "Add Attribute", f, :chef_attributes %>
+  			<%= link_to_remove_fields("remove", f) %>
+  		</div>
+  	</form>
+  </div>
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% f.fields_for :chef_attributes do |builder| %>
+        	<%= render 'chef_attribute_fields', :f => builder %>
+        <% end %>
+      </tbody>
+  </table>
 </div>

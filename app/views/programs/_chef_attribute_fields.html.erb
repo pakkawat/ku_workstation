@@ -1,5 +1,11 @@
-<div class="chef">
-	<%= f.label :content, "Attribute" %>
-	<%= f.text_field :att_value %>
-	<%= link_to_remove_fields("remove", f) %> 
-</div>
+<tr>
+	<td>
+		<form class="form-inline">
+			<div class="form-group">
+				<%= f.label :content, "Attribute" %>
+				<%= f.text_field :att_value %>
+				<%= link_to_remove_fields("remove", f) %> 
+			</div>
+		</form>
+	</td>
+</tr>
