@@ -11,10 +11,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150715081253) do
+ActiveRecord::Schema.define(version: 20150904101746) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "chef_attributes", force: :cascade do |t|
+    t.string  "att_value"
+    t.string  "type"
+    t.integer "chef_resource_id"
+  end
+
+  add_index "chef_attributes", ["chef_resource_id"], name: "index_chef_attributes_on_chef_resource_id", using: :btree
+
+  create_table "chef_resources", force: :cascade do |t|
+    t.string  "name"
+    t.string  "type"
+    t.integer "program_id"
+  end
+
+  add_index "chef_resources", ["program_id"], name: "index_chef_resources_on_program_id", using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",         default: 0, null: false
@@ -115,5 +131,7 @@ ActiveRecord::Schema.define(version: 20150715081253) do
   add_index "user_subjects", ["ku_user_id"], name: "index_user_subjects_on_ku_user_id", using: :btree
   add_index "user_subjects", ["subject_id"], name: "index_user_subjects_on_subject_id", using: :btree
 
+  add_foreign_key "chef_attributes", "chef_resources"
+  add_foreign_key "chef_resources", "programs"
   add_foreign_key "program_files", "programs"
 end
