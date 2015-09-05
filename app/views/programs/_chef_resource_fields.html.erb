@@ -6,7 +6,7 @@
   			<%= f.select :type, [["Repository", "Repository"], ["Zip file", "Zip"]] %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
   			<%= f.text_field :name %>
   			<%= link_to_add_fields "Add Attribute", f, :chef_attributes %>
-  			<%= link_to_remove_fields("remove", f) %>
+  			<%= link_to_remove_panel_info("remove", f) %>
   		</div>
   	</form>
   </div>
