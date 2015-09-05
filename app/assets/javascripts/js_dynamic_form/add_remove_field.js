@@ -11,5 +11,5 @@ function remove_panel_info(link) {
 function add_fields(link, association, content) {  
     var new_id = new Date().getTime();  
     var regexp = new RegExp("new_" + association, "g");  
-    $(link).parent().after(content.replace(regexp, new_id));  
+    $(link).first().after(content.replace(regexp, new_id));  
 }
