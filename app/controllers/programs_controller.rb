@@ -21,25 +21,25 @@ class ProgramsController < ApplicationController
 
   def new
     @program = Program.new
-    chef_resource = @program.chef_resources.build
-    chef_resource.chef_attributes.build
+    2.times{ @program.chef_resources.build }
+    #chef_resource.chef_attributes.build
   end
 
   def create
     @program = Program.new(program_params)
-    #render plain: program_params.inspect
+    render plain: program_params.inspect
     #@KuUser.save
-    if @program.save
-      if create_file(@program)
-        flash[:success] = "Program was saved"
-        redirect_to programs_path
-      else
-        flash[:danger] = "Error can not create cookbook"
-        render "new"
-      end
-    else
-      render "new"
-    end
+    #if @program.save
+      #if create_file(@program)
+        #flash[:success] = "Program was saved"
+        #redirect_to programs_path
+      #else
+        #flash[:danger] = "Error can not create cookbook"
+        #render "new"
+      #end
+    #else
+      #render "new"
+    #end
   end
 
   def edit
@@ -118,7 +118,7 @@ class ProgramsController < ApplicationController
 
   private
     def program_params
-      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :resource_name, :resource_type, :_destroy, chef_attributes_attributes: [ :id, :att_value, :_destroy ] ])
+      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :resource_name, :resource_type, :_destroy, chef_attributes_attributes: [ :id, :att_value, :_destroy ] ] )
     end
 
     def add_remove_program_to_run_list
