@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150904101746) do
+ActiveRecord::Schema.define(version: 20150909101050) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -25,8 +25,8 @@ ActiveRecord::Schema.define(version: 20150904101746) do
   add_index "chef_attributes", ["chef_resource_id"], name: "index_chef_attributes_on_chef_resource_id", using: :btree
 
   create_table "chef_resources", force: :cascade do |t|
-    t.string  "name"
-    t.string  "type"
+    t.string  "resource_name"
+    t.string  "resource_type"
     t.integer "program_id"
   end
 
