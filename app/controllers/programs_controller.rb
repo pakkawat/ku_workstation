@@ -118,7 +118,7 @@ class ProgramsController < ApplicationController
 
   private
     def program_params
-      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :name, :type, :_destroy, chef_attributes_attributes: [ :id, :att_value, :_destroy ] ])
+      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :resource_name, :resource_type, :_destroy, chef_attributes_attributes: [ :id, :att_value, :_destroy ] ])
     end
 
     def add_remove_program_to_run_list
