@@ -27,7 +27,7 @@ class ProgramsController < ApplicationController
 
   def create
     @program = Program.new(program_params)
-    #render plain: ku_user_params.inspect
+    #render plain: program_params.inspect
     #@KuUser.save
     if @program.save
       if create_file(@program)
@@ -118,7 +118,7 @@ class ProgramsController < ApplicationController
 
   private
     def program_params
-      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :name, :type ], chef_attributes_attributes: [ :att_value ])
+      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :name, :type, :_destroy, chef_attributes_attributes: [ :id, :att_value, :_destroy ] ])
     end
 
     def add_remove_program_to_run_list

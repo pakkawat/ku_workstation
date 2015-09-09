@@ -51,9 +51,9 @@
 
 
   <div class="col-sm-8">
-    <%= link_to_add_fields "Add Action", f, :chef_resources %>
+    <%= link_to_add_association "Add Action", f, :chef_resources %>
         <% f.fields_for :chef_resources do |builder| %>
-                <%= render 'chef_resource_fields', :f => builder %>
+                <%= render 'chef_resource_fields', f: builder %>
         <% end %>
   </div><!--/col-9-->
 </div>

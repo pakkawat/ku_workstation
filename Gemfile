@@ -1,5 +1,8 @@
 source 'https://rubygems.org'
 
+# Dynamic nested forms
+gem "cocoon"
+
 # Used as a REST client to access the API
 gem "knife-ec2"
 gem "chef"
