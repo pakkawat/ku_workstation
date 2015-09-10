@@ -21,13 +21,31 @@ class ProgramsController < ApplicationController
 
   def new
     @program = Program.new
-    2.times{ @program.chef_resources.build }
+    #2.times{ @program.chef_resources.build }
     #chef_resource.chef_attributes.build
   end
 
   def create
     @program = Program.new(program_params)
-    render plain: program_params.inspect
+    str_temp = ""
+    #if chef_resources_attributes not nil
+    params[:program][:chef_resources_attributes].each do |key, value|
+      #output = chef.dup
+      #output[:chef_attributes_attributes].each do |chef2|
+        #output2 = chef2.dup
+        #str_temp += output[:resource_type]+"---"+output[:resource_name]+"---"+output2[:att_value]+"---"+output2[:_destroy]+"<br>"
+      #end
+      #str_temp += output[:resource_type].to_s+"---"+output[:resource_name].to_s+"---"+output[:_destroy].to_s+"<br>"
+      str_temp += value[:resource_type]+"---"+value[:resource_name]+"----"+value[:_destroy]+"[[["
+      if !value[:chef_attributes_attributes].nil?
+        value[:chef_attributes_attributes].each do |key, value|
+          str_temp += value[:att_value]+"---"+value[:_destroy]+"---"
+        end
+      end
+      str_temp += "]]]"
+    end
+    render plain: str_temp
+    #render plain: program_params.inspect+"-----"+params[:program][:chef_resources_attributes].inspect
     #@KuUser.save
     #if @program.save
       #if create_file(@program)
