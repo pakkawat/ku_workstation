@@ -51,7 +51,7 @@
 
 
   <div class="col-sm-8">
-    <%= link_to_add_association "Add Action", f, :chef_resources, :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } %>
+    <%= link_to_add_association "Add Action", f, :chef_resources, class: "btn btn-primary", :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } %>
         <%= f.fields_for :chef_resources do |builder| %>
                 <%= render 'chef_resource_fields', f: builder %>
         <% end %>
