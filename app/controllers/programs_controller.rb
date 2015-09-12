@@ -121,7 +121,7 @@ class ProgramsController < ApplicationController
   end
 
   def generate_chef_resource(chef_resources)
-    File.open("/home/ubuntu/chef-repo/cookbooks/"+program.program_name+"recipes/default.rb", 'a') do |f|
+    File.open("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/recipes/default.rb", 'a') do |f|
       chef_resources.each do |key, value|
         #value[:resource_type]+"---"+value[:resource_name]+"----"+value[:_destroy]
         if value[:resource_type] == "Repository"
