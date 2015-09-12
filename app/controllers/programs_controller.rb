@@ -42,9 +42,9 @@ class ProgramsController < ApplicationController
     #@KuUser.save
     if @program.save
       if create_file(@program)
-        #if !params[:program][:chef_resources_attributes].nil?
-          #generate_chef_resource(params[:program][:chef_resources_attributes])
-        #end
+        if !params[:program][:chef_resources_attributes].nil?
+          generate_chef_resource(params[:program][:chef_resources_attributes])
+        end
         flash[:success] = "Program was saved"
         redirect_to programs_path
       else
