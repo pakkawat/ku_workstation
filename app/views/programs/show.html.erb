@@ -78,7 +78,7 @@
 -------------------------<br>
 <ol>  
   <% for chef_resource in @program.chef_resources %>  
-  <li><%= h chef_resource.name %></li>  
+  <li><%= h chef_resource.resource_name %></li>  
   <ul>  
     <% for chef_attribute in chef_resource.chef_attributes %>  
       <li><%= h chef_attribute.att_value %></li>  

@@ -16,7 +16,6 @@ class ProgramsController < ApplicationController
     @all_directories = Dir.glob(@directory+'/*').select{ |e| File.directory? e }.sort_by{|e| e}#for drop_down
 
     @current_dir = Dir.glob(@directory+"/*").sort_by{|e| e}
-    @test = ResourceGenerator.package
   end
 
   def new
@@ -74,12 +73,14 @@ class ProgramsController < ApplicationController
 
   def destroy# not delete user run_list
     @program = Program.find(params[:id])
-
-    @job = Delayed::Job.enqueue ProgramJob.new(@program)
-    str_des = "Delete Program:"+@program.program_name
-    @job.update_column(:description, str_des)
-    flash[:success] = str_des+" with Job ID:"+@job.id.to_s
-
+    #------- Testtttttttttttttttttttttttttttttttttt
+    #@job = Delayed::Job.enqueue ProgramJob.new(@program)
+    #str_des = "Delete Program:"+@program.program_name
+    #@job.update_column(:description, str_des)
+    #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+    #-------- Testttttttttttttttttttttttt
+    FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
+    @program.destroy
     redirect_to programs_path
   end
 
@@ -123,7 +124,7 @@ class ProgramsController < ApplicationController
     File.open("/home/ubuntu/chef-repo/cookbooks/"+program.program_name+"recipes/default.rb", 'a') do |f|
       chef_resources.each do |key, value|
         #value[:resource_type]+"---"+value[:resource_name]+"----"+value[:_destroy]
-        if value[:resource_type] == "Repository" do
+        if value[:resource_type] == "Repository"
           f.write(ResourceGenerator.package(value[:resource_name],value[:chef_attributes_attributes]))
         else
           f.write(ResourceGenerator.package(value[:resource_name],value[:chef_attributes_attributes]))
