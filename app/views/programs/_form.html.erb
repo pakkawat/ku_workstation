@@ -50,7 +50,7 @@
   </div><!--/col-4-->
 
 
-  <div class="col-sm-8">
+  <div class="col-sm-6">
     <%= link_to_add_association "Add Action", f, :chef_resources, class: "btn btn-primary", :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } %>
     <div style="margin-top: 10px"></div>
         <%= f.fields_for :chef_resources do |builder| %>

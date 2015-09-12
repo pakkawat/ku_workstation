@@ -27,37 +27,34 @@ class ProgramsController < ApplicationController
 
   def create
     @program = Program.new(program_params)
-    str_temp = ""
+    #str_temp = ""
     #if chef_resources_attributes not nil
-    params[:program][:chef_resources_attributes].each do |key, value|
-      #output = chef.dup
-      #output[:chef_attributes_attributes].each do |chef2|
-        #output2 = chef2.dup
-        #str_temp += output[:resource_type]+"---"+output[:resource_name]+"---"+output2[:att_value]+"---"+output2[:_destroy]+"<br>"
+    #params[:program][:chef_resources_attributes].each do |key, value|
+      #str_temp += value[:resource_type]+"---"+value[:resource_name]+"----"+value[:_destroy]+"[[["
+      #if !value[:chef_attributes_attributes].nil?
+        #value[:chef_attributes_attributes].each do |key, value|
+          #str_temp += value[:att_value]+"---"+value[:_destroy]+"---"
+        #end
       #end
-      #str_temp += output[:resource_type].to_s+"---"+output[:resource_name].to_s+"---"+output[:_destroy].to_s+"<br>"
-      str_temp += value[:resource_type]+"---"+value[:resource_name]+"----"+value[:_destroy]+"[[["
-      if !value[:chef_attributes_attributes].nil?
-        value[:chef_attributes_attributes].each do |key, value|
-          str_temp += value[:att_value]+"---"+value[:_destroy]+"---"
-        end
-      end
-      str_temp += "]]]"
-    end
-    render plain: str_temp
+      #str_temp += "]]]"
+    #end
+    #render plain: str_temp
     #render plain: program_params.inspect+"-----"+params[:program][:chef_resources_attributes].inspect
     #@KuUser.save
-    #if @program.save
-      #if create_file(@program)
-        #flash[:success] = "Program was saved"
-        #redirect_to programs_path
-      #else
-        #flash[:danger] = "Error can not create cookbook"
-        #render "new"
-      #end
-    #else
-      #render "new"
-    #end
+    if @program.save
+      if create_file(@program)
+        #if !params[:program][:chef_resources_attributes].nil?
+          #generate_chef_resource(params[:program][:chef_resources_attributes])
+        #end
+        flash[:success] = "Program was saved"
+        redirect_to programs_path
+      else
+        flash[:danger] = "Error can not create cookbook"
+        render "new"
+      end
+    else
+      render "new"
+    end
   end
 
   def edit
@@ -120,6 +117,24 @@ class ProgramsController < ApplicationController
 
     return check_error
 
+  end
+
+  def generate_chef_resource(chef_resources)
+    File.open("/home/ubuntu/chef-repo/cookbooks/"+program.program_name+"recipes/default.rb", 'a') do |f|
+      chef_resources.each do |key, value|
+        #value[:resource_type]+"---"+value[:resource_name]+"----"+value[:_destroy]
+        if value[:resource_type] == "Repository" do
+          f.write(ResourceGenerator.package(value[:resource_name],value[:chef_attributes_attributes]))
+        else
+          f.write(ResourceGenerator.package(value[:resource_name],value[:chef_attributes_attributes]))
+        end
+        #if !value[:chef_attributes_attributes].nil?
+          #value[:chef_attributes_attributes].each do |key, value|
+            #value[:att_value]+"---"+value[:_destroy]
+          #end
+        #end
+      end
+    end
   end
 
   def upload_cookbook
