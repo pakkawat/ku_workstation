@@ -1,0 +1,2 @@
+$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").next('div').remove();
+$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").after("<%= escape_javascript(render :partial => "chef_zip_fields", locals: { f: @builder }) %>");

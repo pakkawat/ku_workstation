@@ -59,4 +59,33 @@
   </div><!--/col-9-->
 </div>
 
+<%= f.hidden_field :form_variable, :value => f %>
+
+<script type='text/javascript'>
+  $(function (){
+     $(document).on("change",".selectType", function (){
+        var selectValue = $(this).val();
+        var numberPattern = /\d+/g;
+        //alert(this.id.match( numberPattern ));
+        temp_url = "";
+        if ( selectValue === "Zip") {
+           temp_url = "chef_remote_files_partial"
+        }
+        if ( selectValue === "Repository" ) {
+           temp_url = "chef_package_partial"
+        }
+        jQuery.ajax({
+           url: temp_url,
+           data: {'form_id' : this.id.match( numberPattern )},
+           error: function(xhr, status, error){
+              alert(xhr.responseText);
+           } 
+     });
+  });
+});
+
+
+</script>
+
+
 <% end %>

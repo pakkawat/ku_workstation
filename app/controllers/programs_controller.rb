@@ -150,6 +150,25 @@ class ProgramsController < ApplicationController
     end
   end
 
+  def chef_remote_files_partial
+    @form_id = params[:form_id].to_s[2..-3]
+    #render plain: params[:form_id].inspect+"--"+@form_id.to_s[2..-3]
+    @chef_attribute = ChefAttribute.new
+    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def chef_package_partial
+    @form_id = params[:form_id].to_s[2..-3]
+    @chef_attribute = ChefAttribute.new
+    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
+    respond_to do |format|
+      format.js
+    end
+  end
+
   private
     def program_params
       params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :resource_name, :resource_type, :_destroy, chef_attributes_attributes: [ :id, :att_value, :_destroy ] ] )

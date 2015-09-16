@@ -2,7 +2,7 @@
   <!-- Default panel contents -->
   <div class="panel-heading">
   	
-    <%= f.select :resource_type, [["Repository", "Repository"], ["Zip file", "Zip"]] %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
+    <%= f.select :resource_type, [["Repository", "Repository"], ["Zip file", "Zip"]], {}, :class => "selectType" %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
     <%= f.text_field :resource_name %>
     <%= link_to_remove_association("remove", f, wrapper_class: :'panel.panel-info', class: "btn btn-default" ) %>
   	
@@ -13,11 +13,15 @@
           <td>
             <%= link_to_add_association "Add Attribute", f, :chef_attributes, class: "btn btn-info", :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } %>
             <div style="margin-top: 10px"></div>
+            <%= f.label :content, "", {:style=>'display: none;'} %>
+            
           </td>
         </tr>
         <%= f.fields_for :chef_attributes do |builder| %>
         	<%= render 'chef_attribute_fields', f: builder %>
         <% end %>
+
       </tbody>
   </table>
 </div>
+

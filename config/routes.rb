@@ -24,6 +24,19 @@ Rails.application.routes.draw do
   match "/subjects/:subject_id/user_subjects", :to => "user_subjects#destroy", :via => "delete"
   match "/subjects/:subject_id/programs_subjects", :to => "programs_subjects#destroy", :via => "delete"
   #match "programs/:program_id/*program_file", :to => "program_files#show", :via => "get"
+  
+
+
+  #get "chef_remote_files_partial", to: 'prorams#chef_remote_files_partial', via: :get
+  #get "chef_package_partial", to: 'prorams#chef_package_partial', via: :get
+  get "/programs/chef_remote_files_partial" => 'programs#chef_remote_files_partial', as: 'programs/chef_remote_files_partial'
+  get "/programs/chef_package_partial" => 'programs#chef_package_partial', as: 'programs/chef_package_partial'
+
+
+
+
+
+
   resources :programs
   get 'programs/:program_id/upload_cookbook', to: 'programs#upload_cookbook', via: :get # danger! if file name "upload_cookbook"
   match "programs/:program_id/*program_files", :to => "program_files#show", :via => "get", :constraints => { :program_files => /[^*]+/ }#fix dot in url and allows anything except *
@@ -41,6 +54,18 @@ Rails.application.routes.draw do
   get "/command_jobs/refresh_part" => 'command_jobs#refresh_part', as: 'command_jobs/refresh_part'
   match "/command_jobs/:job_id", :to => "command_jobs#destroy", :via => "delete", as: :command_job
   #resources :command_jobs
+  #get "/programs/chef_remote_files_partial" => 'programs#chef_remote_files_partial', as: 'programs/chef_remote_files_partial'
+  #get "/programs/chef_package_partial" => 'programs#chef_package_partial', as: 'programs/chef_package_partial'
+
+
+
+  #get "chef_remote_files_partial", to: 'prorams#chef_remote_files_partial', via: :get
+  #get "chef_package_partial", to: 'prorams#chef_package_partial', via: :get
+
+
+
+
+
 
 
   # The priority is based upon order of creation: first created -> highest priority.
