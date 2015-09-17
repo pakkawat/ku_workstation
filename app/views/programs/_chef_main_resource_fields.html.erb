@@ -1,0 +1,56 @@
+<div class="panel panel-info">
+  <!-- Default panel contents -->
+  <div class="panel-heading">
+  	
+    <%= f.select :resource_type, [["Repository", "Repository"], ["Zip file", "Zip"]], {}, :class => "selectType" %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
+    <%= f.text_field :resource_name %>
+    <%= link_to_remove_association("remove", f, wrapper_class: :'panel.panel-info', class: "btn btn-default" ) %>
+  	
+  </div>
+    <table class="table table-striped">
+      <tbody>
+        <tr>
+          <td>
+            <!-- link_to_add_association "Add Attribute", f, :chef_attributes, class: "btn btn-info", :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } -->
+            <div style="margin-top: 10px"></div>
+            <%= f.label :content, "", {:style=>'display: none;'} %><!-- for attribute partial -->
+            <% if @program.persisted? %>
+            
+              <% if f.object.resource_type == "Repository" %>
+                <%= f.fields_for :chef_attributes do |builder| %>
+                  <%= render 'attributes_fields/chef_package_fields', f: builder %>
+                <% end %>
+              <% elsif f.object.resource_type == "Zip" %>
+                <%= f.fields_for :chef_attributes do |builder| %>
+                  <%= render 'attributes_fields/chef_remote_files_fields', f: builder %>
+                <% end %>
+              <% end %>
+
+            <% else %><!-- if @program.persisted? -->
+
+              <!-- default partial package (_chef_package_fields.html.erb) -->
+                <%= f.fields_for :chef_attributes do |builder| %>
+                  <div style="margin-bottom: 10px">
+                    <div class="chef_att">
+                      <%= builder.label :content, "Action" %>
+                      <%= builder.hidden_field :att_type, :value => "action" %>
+                      <%= builder.text_field :att_value %>
+                      <!-- link_to_remove_association("remove", f, wrapper_class: :'chef_att', class: "btn btn-default")-->
+                    </div>
+                  </div>
+                <% end %>
+              <!-- - -  - -  - - -->
+
+            <% end %>
+
+
+          </td>
+        </tr>
+        <!-- f.fields_for :chef_attributes do |builder| -->
+        	<!--render 'chef_attribute_fields', f: builder -->
+        <!-- end -->
+
+      </tbody>
+  </table>
+</div>
+
