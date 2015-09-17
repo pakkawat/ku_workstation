@@ -11,14 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150909101050) do
+ActiveRecord::Schema.define(version: 20150917081755) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "chef_attributes", force: :cascade do |t|
     t.string  "att_value"
-    t.string  "type"
+    t.string  "att_type"
     t.integer "chef_resource_id"
   end
 

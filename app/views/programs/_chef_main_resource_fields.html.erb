@@ -27,18 +27,12 @@
               <% end %>
 
             <% else %><!-- if @program.persisted? -->
-
+             
               <!-- default partial package (_chef_package_fields.html.erb) -->
-                <%= f.fields_for :chef_attributes do |builder| %>
-                  <div style="margin-bottom: 10px">
-                    <div class="chef_att">
-                      <%= builder.label :content, "Action" %>
-                      <%= builder.hidden_field :att_type, :value => "action" %>
-                      <%= builder.text_field :att_value %>
-                      <!-- link_to_remove_association("remove", f, wrapper_class: :'chef_att', class: "btn btn-default")-->
-                    </div>
-                  </div>
-                <% end %>
+    
+                
+                  <%= render 'programs/attribute_fields/chef_package_fields', f: @builder %>
+               
               <!-- - -  - -  - - -->
 
             <% end %>

@@ -20,6 +20,8 @@ class ProgramsController < ApplicationController
 
   def new
     @program = Program.new
+    chef_attribute = ChefAttribute.new
+    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, chef_attribute, view_context, {})
     #2.times{ @program.chef_resources.build }
     #chef_resource.chef_attributes.build
   end
