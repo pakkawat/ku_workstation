@@ -20,8 +20,8 @@ class ProgramsController < ApplicationController
 
   def new
     @program = Program.new
-    chef_attribute = ChefAttribute.new
-    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, chef_attribute, view_context, {})
+    #chef_attribute = ChefAttribute.new
+    #@builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, chef_attribute, view_context, {})
     #2.times{ @program.chef_resources.build }
     #chef_resource.chef_attributes.build
   end
@@ -40,22 +40,22 @@ class ProgramsController < ApplicationController
       #str_temp += "]]]"
     #end
     #render plain: str_temp
-    #render plain: program_params.inspect+"-----"+params[:program][:chef_resources_attributes].inspect
+    render plain: program_params.inspect#+"-----"+params[:program][:chef_resources_attributes].inspect
     #@KuUser.save
-    if @program.save
-      if create_file(@program)
-        if !params[:program][:chef_resources_attributes].nil?
-          generate_chef_resource(params[:program][:chef_resources_attributes])
-        end
-        flash[:success] = "Program was saved"
-        redirect_to programs_path
-      else
-        flash[:danger] = "Error can not create cookbook"
-        render "new"
-      end
-    else
-      render "new"
-    end
+    #if @program.save
+      #if create_file(@program)
+        #if !params[:program][:chef_resources_attributes].nil?
+          #generate_chef_resource(params[:program][:chef_resources_attributes])
+        #end
+        #flash[:success] = "Program was saved"
+        #redirect_to programs_path
+      #else
+        #flash[:danger] = "Error can not create cookbook"
+        #render "new"
+      #end
+    #else
+      #render "new"
+    #end
   end
 
   def edit
@@ -173,7 +173,7 @@ class ProgramsController < ApplicationController
 
   private
     def program_params
-      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :resource_name, :resource_type, :_destroy, chef_attributes_attributes: [ :id, :att_value, :_destroy ] ] )
+      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :resource_name, :resource_type, :_destroy, chef_attributes_attributes: [ :id, :att_type, :att_value, :_destroy ] ] )
     end
 
     def add_remove_program_to_run_list

@@ -1,8 +1,9 @@
+<% partial_id = DateTime.now.strftime('%Q').to_s %>
 <div style="margin-bottom: 10px">
 	<div class="chef_att">
 		<%= f.label :content, "Action" %>
-		<%= f.hidden_field :att_type, :value => "action" %>
-		<%= f.select :att_value, [["Install", "install"], ["Upgrade", "upgrade"], ["Remove", "purge"]], {} %>
+		<%= f.hidden_field :att_type, :value => "action", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+'_att_type' %>
+		<%= f.select :att_value, [["Install", "install"], ["Upgrade", "upgrade"], ["Remove", "purge"]], {}, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+'_att_value' %>
 		<!-- link_to_remove_association("remove", f, wrapper_class: :'chef_att', class: "btn btn-default")-->
 	</div>
 </div>

@@ -18,11 +18,11 @@
             
               <% if f.object.resource_type == "Repository" %>
                 <%= f.fields_for :chef_attributes do |builder| %>
-                  <%= render 'attributes_fields/chef_package_fields', f: builder %>
+                  <%= render 'programs/attribute_fields/chef_package_fields', f: builder %>
                 <% end %>
               <% elsif f.object.resource_type == "Zip" %>
                 <%= f.fields_for :chef_attributes do |builder| %>
-                  <%= render 'attributes_fields/chef_remote_files_fields', f: builder %>
+                  <%= render 'programs/attribute_fields/chef_remote_files_fields', f: builder %>
                 <% end %>
               <% end %>
 
@@ -31,7 +31,11 @@
               <!-- default partial package (_chef_package_fields.html.erb) -->
     
                 
-                  <%= render 'programs/attribute_fields/chef_package_fields', f: @builder %>
+            <% f.object.chef_attributes.build %>
+              <%= f.fields_for :chef_attributes do |builder| %>
+                <%= render 'programs/attribute_fields/chef_default_fields', f: builder %>
+              <% end %>
+           
                
               <!-- - -  - -  - - -->
 
@@ -41,7 +45,7 @@
           </td>
         </tr>
         <!-- f.fields_for :chef_attributes do |builder| -->
-        	<!--render 'chef_attribute_fields', f: builder -->
+        	<!-- render 'chef_attribute_fields', f: builder -->
         <!-- end -->
 
       </tbody>
