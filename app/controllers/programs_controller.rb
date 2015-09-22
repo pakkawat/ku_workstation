@@ -40,22 +40,22 @@ class ProgramsController < ApplicationController
       #str_temp += "]]]"
     #end
     #render plain: str_temp
-    render plain: program_params.inspect#+"-----"+params[:program][:chef_resources_attributes].inspect
+    #render plain: program_params.inspect#+"-----"+params[:program][:chef_resources_attributes].inspect
     #@KuUser.save
-    #if @program.save
+    if @program.save
       #if create_file(@program)
         #if !params[:program][:chef_resources_attributes].nil?
           #generate_chef_resource(params[:program][:chef_resources_attributes])
         #end
-        #flash[:success] = "Program was saved"
-        #redirect_to programs_path
+        flash[:success] = "Program was saved"
+        redirect_to programs_path
       #else
         #flash[:danger] = "Error can not create cookbook"
         #render "new"
       #end
-    #else
-      #render "new"
-    #end
+    else
+      render "new"
+    end
   end
 
   def edit
@@ -64,9 +64,9 @@ class ProgramsController < ApplicationController
 
   def update
     @program = Program.find(params[:id])
-
+    #render plain: program_params.inspect
     if @program.update_attributes(program_params)
-      flash[:success] = "Program has been updated"
+      flash[:success] = "Program has been updated--"+program_params.inspect
       redirect_to programs_path
     else
       render "edit"
@@ -81,7 +81,7 @@ class ProgramsController < ApplicationController
     #@job.update_column(:description, str_des)
     #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     #-------- Testttttttttttttttttttttttt
-    FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
+    #FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
     @program.destroy
     redirect_to programs_path
   end
@@ -153,6 +153,8 @@ class ProgramsController < ApplicationController
   end
 
   def chef_remote_files_partial
+    @test = "test"
+    @program = nil
     @form_id = params[:form_id].to_s[2..-3]
     #render plain: params[:form_id].inspect+"--"+@form_id.to_s[2..-3]
     @chef_attribute = ChefAttribute.new
@@ -163,6 +165,7 @@ class ProgramsController < ApplicationController
   end
 
   def chef_package_partial
+    @program = nil
     @form_id = params[:form_id].to_s[2..-3]
     @chef_attribute = ChefAttribute.new
     @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})

@@ -53,7 +53,7 @@
   <div class="col-sm-6">
     <%= link_to_add_association "Add Action", f, :chef_resources, class: "btn btn-primary", partial: 'chef_main_resource_fields', :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } %>
     <div style="margin-top: 10px"></div>
-        <%= f.fields_for :chef_resources do |builder| %>
+        <%= f.fields_for :chef_resources, f.object.chef_resources.order(:id) do |builder| %>
                 <%= render 'chef_main_resource_fields', f: builder %>
         <% end %>
   </div><!--/col-9-->
@@ -65,12 +65,12 @@
         var selectValue = $(this).val();
         var numberPattern = /\d+/g;
         //alert(this.id.match( numberPattern ));
-        temp_url = "";
+        temp_url = "/";
         if ( selectValue === "Zip") {
-           temp_url = "chef_remote_files_partial"
+           temp_url += "chef_remote_files_partial"
         }
         if ( selectValue === "Repository" ) {
-           temp_url = "chef_package_partial"
+           temp_url += "chef_package_partial"
         }
         jQuery.ajax({
            url: temp_url,

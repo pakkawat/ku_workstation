@@ -1,2 +1,1 @@
-$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").next('div').remove();
-$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").after("<%= escape_javascript(render :partial => 'programs/attribute_fields/chef_package_fields', locals: { f: @builder, form_id: @form_id }) %>");
+$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").next('div').html("<%= escape_javascript(render :partial => 'programs/attribute_fields/chef_package_fields', locals: { f: @builder, form_id: @form_id }) %>");

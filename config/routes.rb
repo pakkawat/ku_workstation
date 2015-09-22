@@ -26,8 +26,8 @@ Rails.application.routes.draw do
   #match "programs/:program_id/*program_file", :to => "program_files#show", :via => "get"
   
 
-  get "/programs/chef_remote_files_partial" => 'programs#chef_remote_files_partial', as: 'programs/chef_remote_files_partial'
-  get "/programs/chef_package_partial" => 'programs#chef_package_partial', as: 'programs/chef_package_partial'
+  get "/chef_remote_files_partial" => 'programs#chef_remote_files_partial', as: 'chef_remote_files_partial'
+  get "/chef_package_partial" => 'programs#chef_package_partial', as: 'chef_package_partial'
 
 
 
