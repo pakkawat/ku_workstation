@@ -66,7 +66,7 @@ class ProgramsController < ApplicationController
     @program = Program.find(params[:id])
     #render plain: program_params.inspect
     if @program.update_attributes(program_params)
-      flash[:success] = "Program has been updated--"+program_params.inspect
+      flash[:success] = "Program has been updated"
       redirect_to programs_path
     else
       render "edit"

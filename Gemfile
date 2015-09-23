@@ -1,5 +1,8 @@
 source 'https://rubygems.org'
 
+#fix error CookieOverflow
+gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
+
 # Dynamic nested forms
 gem "cocoon"
 
