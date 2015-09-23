@@ -34,14 +34,6 @@
                 <% end %>
               <% end %>
 
-              <% if f.object.resource_type.nil? %>
-                <%= f.hidden_field :form_type, :value => "new" %>
-              <% else %>
-                <%= f.hidden_field :form_type, :value => "old" %>
-              <% end %>
-
-
-
            <% else %><!-- if @program.persisted? -->
              
               <!-- default partial package (_chef_package_fields.html.erb) -->
@@ -51,8 +43,8 @@
               <%= f.fields_for :chef_attributes do |builder| %>
                 <%= render 'programs/attribute_fields/chef_default_fields', f: builder %>
               <% end %>
-              <%= f.hidden_field :form_type, :value => "new" %>
-            <% end %>
+           
+           <% end %>
         </div>
 
           </td>

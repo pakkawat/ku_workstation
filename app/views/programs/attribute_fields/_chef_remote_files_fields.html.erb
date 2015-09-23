@@ -11,6 +11,7 @@
                 <%= f.hidden_field :att_type, :value => "extract_path" %>
                 <%= f.text_field :att_value %>
                 <%= f.hidden_field :_destroy  %>
+                <%= f.hidden_field :form_type, :value => "old" %>
                 <% end %>
 <% else %>
                 <% partial_id = DateTime.now.strftime('%Q').to_s %>
@@ -27,5 +28,6 @@
                 <!-- i = i+1 -->
 		<%= f.text_field :att_value, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_value' %>
 		<%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'__destroy' %>
+                <%= f.hidden_field :form_type, :value => "new", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][form_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_form_type' %>
 		<!-- link_to_remove_association("remove", f, wrapper_class: :'chef_att', class: "btn btn-default") -->
 <% end %>
