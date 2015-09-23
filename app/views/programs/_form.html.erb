@@ -64,7 +64,9 @@
      $(document).on("change",".selectType", function (){
         var selectValue = $(this).val();
         var numberPattern = /\d+/g;
-        //alert(this.id.match( numberPattern ));
+        var form_id = this.id.match( numberPattern );
+        var form_type = $("#program_chef_resources_attributes_"+form_id+"_form_type").val();
+        //alert(form_type);
         temp_url = "/";
         if ( selectValue === "Zip") {
            temp_url += "chef_remote_files_partial"
@@ -74,16 +76,17 @@
         }
         jQuery.ajax({
            url: temp_url,
-           data: {'form_id' : this.id.match( numberPattern )},
+           data: {'form_id' : form_id, 'form_type' : form_type},
            error: function(xhr, status, error){
               alert(xhr.responseText);
-           } 
+           }
      });
   });
 });
 
 
 </script>
+
 
 
 <% end %>

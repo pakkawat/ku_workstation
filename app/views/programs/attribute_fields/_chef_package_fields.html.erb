@@ -3,11 +3,13 @@
                 <%= f.label :content, "Action" %>
                 <%= f.hidden_field :att_type, :value => "action" %>
                 <%= f.select :att_value, [["Install", "install"], ["Upgrade", "upgrade"], ["Remove", "purge"]], {} %>
+                <%= f.hidden_field :_destroy  %>
 <% else %>
-                <% partial_id = DateTime.now.strftime('%Q').to_s %>
+        <% partial_id = DateTime.now.strftime('%Q').to_s %>
 		<%= f.label :content, "Action" %>
 		<%= f.hidden_field :att_type, :value => "action", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+'_att_type' %>
 		<%= f.select :att_value, [["Install", "install"], ["Upgrade", "upgrade"], ["Remove", "purge"]], {}, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+'_att_value' %>
+		<%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+'__destroy' %>
 		<!-- link_to_remove_association("remove", f, wrapper_class: :'chef_att', class: "btn btn-default")-->
 <% end %>
 

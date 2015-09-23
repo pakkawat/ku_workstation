@@ -1,6 +1,8 @@
-if ("<%= @test %>" == "test"){
-$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").next('div').remove();
+if ("<%= @form_type %>" == "old"){
+	$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").next('div').find( "input[type='hidden'][id$=_destroy]" ).val("1");
+	$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").next('div').css('display', 'none');
+	$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").after("<div><%= escape_javascript(render :partial => 'programs/attribute_fields/chef_remote_files_fields', locals: { f: @builder, form_id: @form_id }) %></div>");
 }
 else{
-$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").next('div').html("<%= escape_javascript(render :partial => 'programs/attribute_fields/chef_remote_files_fields', locals: { f: @builder, form_id: @form_id }) %>");
+	$("label[for='program_chef_resources_attributes_<%= @form_id %>_content']").next('div').html("<%= escape_javascript(render :partial => 'programs/attribute_fields/chef_remote_files_fields', locals: { f: @builder, form_id: @form_id }) %>");
 }

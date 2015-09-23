@@ -10,7 +10,7 @@
     <table class="table table-striped">
       <tbody>
         <tr>
-          <td class="chef_att">
+          <td>
             <!-- link_to_add_association "Add Attribute", f, :chef_attributes, class: "btn btn-info", :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } -->
             <div style="margin-top: 10px"></div>
             <%= f.label :content, "", {:style=>'display: none;'} %><!-- for attribute partial -->
@@ -32,9 +32,15 @@
                 <%= f.fields_for :chef_attributes do |builder| %>
                   <%= render 'programs/attribute_fields/chef_default_fields', f: builder %>
                 <% end %>
-         
-
               <% end %>
+
+              <% if f.object.resource_type.nil? %>
+                <%= f.hidden_field :form_type, :value => "new" %>
+              <% else %>
+                <%= f.hidden_field :form_type, :value => "old" %>
+              <% end %>
+
+
 
            <% else %><!-- if @program.persisted? -->
              
@@ -45,7 +51,7 @@
               <%= f.fields_for :chef_attributes do |builder| %>
                 <%= render 'programs/attribute_fields/chef_default_fields', f: builder %>
               <% end %>
-
+              <%= f.hidden_field :form_type, :value => "new" %>
             <% end %>
         </div>
 

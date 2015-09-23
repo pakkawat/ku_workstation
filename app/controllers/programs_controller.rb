@@ -153,9 +153,9 @@ class ProgramsController < ApplicationController
   end
 
   def chef_remote_files_partial
-    @test = "test"
     @program = nil
     @form_id = params[:form_id].to_s[2..-3]
+    @form_type = params[:form_type]
     #render plain: params[:form_id].inspect+"--"+@form_id.to_s[2..-3]
     @chef_attribute = ChefAttribute.new
     @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
@@ -167,6 +167,7 @@ class ProgramsController < ApplicationController
   def chef_package_partial
     @program = nil
     @form_id = params[:form_id].to_s[2..-3]
+    @form_type = params[:form_type]
     @chef_attribute = ChefAttribute.new
     @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
     respond_to do |format|

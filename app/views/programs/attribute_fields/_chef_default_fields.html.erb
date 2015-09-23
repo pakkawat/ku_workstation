@@ -1,9 +1,7 @@
 
-<div style="margin-bottom: 10px">
-	<div class="chef_att">
-		<%= f.label :content, "Action" %>
-		<%= f.hidden_field :att_type, :value => "action" %>
-		<%= f.select :att_value, [["Install", "install"], ["Upgrade", "upgrade"], ["Remove", "purge"]], {} %>
-		<!-- link_to_remove_association("remove", f, wrapper_class: :'chef_att', class: "btn btn-default")-->
-	</div>
-</div>
+<%= f.label :content, "Action" %>
+<%= f.hidden_field :att_type, :value => "action" %>
+<%= f.select :att_value, [["Install", "install"], ["Upgrade", "upgrade"], ["Remove", "purge"]], {} %>
+<%= f.hidden_field :_destroy  %>
+<!-- link_to_remove_association("remove", f, wrapper_class: :'chef_att', class: "btn btn-default")-->
+
