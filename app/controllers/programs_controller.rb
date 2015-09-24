@@ -43,16 +43,16 @@ class ProgramsController < ApplicationController
     #render plain: program_params.inspect#+"-----"+params[:program][:chef_resources_attributes].inspect
     #@KuUser.save
     if @program.save
-      #if create_file(@program)
-        #if !params[:program][:chef_resources_attributes].nil?
-          #generate_chef_resource(params[:program][:chef_resources_attributes])
-        #end
+      if create_file(@program)
+        if !params[:program][:chef_resources_attributes].nil?
+          generate_chef_resource(params[:program][:chef_resources_attributes])
+        end
         flash[:success] = "Program was saved"
         redirect_to programs_path
-      #else
-        #flash[:danger] = "Error can not create cookbook"
-        #render "new"
-      #end
+      else
+        flash[:danger] = "Error can not create cookbook"
+        render "new"
+      end
     else
       render "new"
     end
@@ -81,7 +81,7 @@ class ProgramsController < ApplicationController
     #@job.update_column(:description, str_des)
     #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     #-------- Testttttttttttttttttttttttt
-    #FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
+    FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
     @program.destroy
     redirect_to programs_path
   end
@@ -129,7 +129,7 @@ class ProgramsController < ApplicationController
         if value[:resource_type] == "Repository"
           f.write(ResourceGenerator.package(value[:resource_name],value[:chef_attributes_attributes]))
         else
-          f.write(ResourceGenerator.package(value[:resource_name],value[:chef_attributes_attributes]))
+          f.write(ResourceGenerator.remote_file(value[:resource_name],value[:chef_attributes_attributes]))
         end
         #if !value[:chef_attributes_attributes].nil?
           #value[:chef_attributes_attributes].each do |key, value|
