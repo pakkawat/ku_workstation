@@ -45,7 +45,7 @@ class ProgramsController < ApplicationController
     if @program.save
       if create_file(@program)
         if !params[:program][:chef_resources_attributes].nil?
-          generate_chef_resource(params[:program][:chef_resources_attributes])
+          generate_chef_resource()
         end
         flash[:success] = "Program was saved"
         redirect_to programs_path
@@ -122,20 +122,10 @@ class ProgramsController < ApplicationController
 
   end
 
-  def generate_chef_resource(chef_resources)
+  def generate_chef_resource()
     File.open("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/recipes/default.rb", 'a') do |f|
-      chef_resources.each do |key, value|
-        #value[:resource_type]+"---"+value[:resource_name]+"----"+value[:_destroy]
-        if value[:resource_type] == "Repository"
-          f.write(ResourceGenerator.package(value[:resource_name],value[:chef_attributes_attributes]))
-        else
-          f.write(ResourceGenerator.remote_file(value[:resource_name],value[:chef_attributes_attributes]))
-        end
-        #if !value[:chef_attributes_attributes].nil?
-          #value[:chef_attributes_attributes].each do |key, value|
-            #value[:att_value]+"---"+value[:_destroy]
-          #end
-        #end
+      @program.chef_resources.each do |chef_resource|
+        f.write(ResourceGenerator.resource(chef_resource))
       end
     end
   end

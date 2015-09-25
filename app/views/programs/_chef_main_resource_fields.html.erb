@@ -22,7 +22,7 @@
                   <%= render 'programs/attribute_fields/chef_package_fields', f: builder %>
                 <% end %>
               <% elsif f.object.resource_type == "Zip" %>
-                <%= f.fields_for :chef_attributes do |builder| %>
+                <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
                   <%= render 'programs/attribute_fields/chef_remote_files_fields', f: builder %>
                 <% end %>
               <!-- end -->
