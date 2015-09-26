@@ -7,7 +7,7 @@ gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
 gem "cocoon"
 
 # Used as a REST client to access the API
-gem "knife-ec2"
+gem "knife-ec2", '>= 0.11.0'
 gem "chef"
 
 gem 'delayed_job_active_record'

@@ -17,7 +17,7 @@ module KnifeCommand
 	    end
 	end
 
-	def error_message(msg)
+	def self.error_message(msg)
 		return msg
 	end
 end
