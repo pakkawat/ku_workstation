@@ -1,6 +1,7 @@
 require 'fileutils'
 class ProgramsController < ApplicationController
   include ResourceGenerator
+  include KnifeCommand
   def index
     @programs = Program.all
   end
@@ -130,7 +131,7 @@ class ProgramsController < ApplicationController
     end
   end
 
-  def upload_cookbook
+  def upload_cookbook222
     program = Program.find(params[:program_id])
     check_error = system "knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
     if check_error
@@ -141,6 +142,20 @@ class ProgramsController < ApplicationController
       redirect_to program_path(program)
     end
   end
+
+
+  def upload_cookbook
+    program = Program.find(params[:program_id])
+    check_error, error_msg = KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb")
+    if check_error
+      flash[:success] = program.program_name + " has been updated"
+      redirect_to program_path(program)
+    else
+      flash[:danger] = error_msg
+      redirect_to program_path(program)
+    end
+  end
+
 
   def chef_remote_files_partial
     @program = nil
