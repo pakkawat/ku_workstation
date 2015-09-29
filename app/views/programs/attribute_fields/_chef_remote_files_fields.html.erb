@@ -1,33 +1,55 @@
 
 <% if !@program.nil? %>
-                <% if f.object.att_type == "source" %>
-                <%= f.label :content, "Source url" %>
-                <%= f.hidden_field :att_type, :value => "source" %>
-                <%= f.text_field :att_value %>
-                <%= f.hidden_field :_destroy  %>
-                <br>
-                <% elsif f.object.att_type == "extract_path" %>
-                <%= f.label :content, "Extract path" %>
-                <%= f.hidden_field :att_type, :value => "extract_path" %>
-                <%= f.text_field :att_value %>
-                <%= f.hidden_field :_destroy  %>
-                <%= f.hidden_field :form_type, :value => "old" %>
-                <% end %>
+        <% if f.object.att_type == "source" %>
+                <div  class="row">
+                        <div class="col-md-3">
+                                <%= f.label :content, "Source url" %>
+                                <%= f.hidden_field :att_type, :value => "source" %>
+                        </div>
+                        <div class="col-md-3">
+                                <%= f.text_field :att_value %>
+                                <%= f.hidden_field :_destroy  %>
+                        </div>
+                </div>
+        <% elsif f.object.att_type == "extract_path" %>
+                <div  class="row">
+                        <div class="col-md-3">
+                                <%= f.label :content, "Extract path" %>
+                                <%= f.hidden_field :att_type, :value => "extract_path" %>
+                        </div>
+                        <div class="col-md-3">
+                                <%= f.text_field :att_value %>
+                                <%= f.hidden_field :_destroy  %>
+                                <%= f.hidden_field :form_type, :value => "old" %>
+                        </div>
+                </div>
+        <% end %>
 <% else %>
-                <% partial_id = DateTime.now.strftime('%Q').to_s %>
-                <% i = 0 %>
-		<%= f.label :content, "Source url" %>
-		<%= f.hidden_field :att_type, :value => "source", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_type' %>
-                <!-- i = i+1 -->
-		<%= f.text_field :att_value, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_value' %>
-		<%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'__destroy' %>
-		<br>
-		<%= f.label :content, "Extract path" %>
-                <% i = i+1 %>
-		<%= f.hidden_field :att_type, :value => "extract_path", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_type' %>
-                <!-- i = i+1 -->
-		<%= f.text_field :att_value, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_value' %>
-		<%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'__destroy' %>
-                <%= f.hidden_field :form_type, :value => "new", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][form_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_form_type' %>
-		<!-- link_to_remove_association("remove", f, wrapper_class: :'chef_att', class: "btn btn-default") -->
+        <% partial_id = DateTime.now.strftime('%Q').to_s %>
+        <% i = 0 %>
+        <div  class="row">
+                <div class="col-md-3">
+                        <%= f.label :content, "Source url" %>
+                        <%= f.hidden_field :att_type, :value => "source", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_type' %>
+                        <!-- i = i+1 -->
+                </div>
+                <div class="col-md-3">
+                        <%= f.text_field :att_value, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_value' %>
+                        <%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'__destroy' %>
+                </div>
+        </div>
+        <div  class="row">    
+        <% i = i+1 %>
+                <div class="col-md-3">
+                        <%= f.label :content, "Extract path" %>
+                        <%= f.hidden_field :att_type, :value => "extract_path", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_type' %>
+                        <!-- i = i+1 -->
+                </div>
+                <div class="col-md-3">
+                        <%= f.text_field :att_value, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_value' %>
+                        <%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'__destroy' %>
+                        <%= f.hidden_field :form_type, :value => "new", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][form_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_form_type' %>
+                        <!-- link_to_remove_association("remove", f, wrapper_class: :'chef_att', class: "btn btn-default") -->
+                </div>
+        </div>
 <% end %>
