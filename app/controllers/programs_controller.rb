@@ -48,8 +48,14 @@ class ProgramsController < ApplicationController
         if !params[:program][:chef_resources_attributes].nil?
           generate_chef_resource()
         end
-        flash[:success] = "Program was saved"
-        redirect_to programs_path
+        check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+        if check_error
+          flash[:success] = "Program was saved"
+          redirect_to programs_path
+        else
+          flash[:danger] = "Error can not update cookbook"
+          redirect_to programs_path
+        end
       else
         flash[:danger] = "Error can not create cookbook"
         render "new"
@@ -170,6 +176,17 @@ class ProgramsController < ApplicationController
   end
 
   def chef_package_partial
+    @program = nil
+    @form_id = params[:form_id].to_s[2..-3]
+    @form_type = params[:form_type]
+    @chef_attribute = ChefAttribute.new
+    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def chef_deb_partial
     @program = nil
     @form_id = params[:form_id].to_s[2..-3]
     @form_type = params[:form_type]

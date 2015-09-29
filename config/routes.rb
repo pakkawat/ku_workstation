@@ -27,6 +27,7 @@ Rails.application.routes.draw do
   
 
   get "/chef_remote_files_partial" => 'programs#chef_remote_files_partial', as: 'chef_remote_files_partial'
+  get "/chef_deb_partial" => 'programs#chef_deb_partial', as: 'chef_deb_partial'
   get "/chef_package_partial" => 'programs#chef_package_partial', as: 'chef_package_partial'
 
 

@@ -2,7 +2,7 @@
   <!-- Default panel contents -->
   <div class="panel-heading">
   	
-    <%= f.select :resource_type, [["Repository", "Repository"], ["Zip file", "Zip"]], {}, :class => "selectType" %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
+    <%= f.select :resource_type, [["Repository", "Repository"], ["Deb file", "Deb"], ["Zip file", "Zip"]], {}, :class => "selectType" %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
     <%= f.text_field :resource_name %>
     <%= link_to_remove_association("remove", f, wrapper_class: :'panel.panel-info', class: "btn btn-default" ) %>
   	
@@ -25,8 +25,10 @@
                 <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
                   <%= render 'programs/attribute_fields/chef_remote_files_fields', f: builder %>
                 <% end %>
-              <!-- end -->
-              
+              <% elsif f.object.resource_type == "Deb" %>
+                <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
+                  <%= render 'programs/attribute_fields/chef_deb_fields', f: builder %>
+                <% end %>
               <% elsif f.object.resource_type.nil? %>
                 <% f.object.chef_attributes.build %>
                 <%= f.fields_for :chef_attributes do |builder| %>

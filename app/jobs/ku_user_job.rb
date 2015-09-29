@@ -90,7 +90,7 @@ class KuUserJob < ProgressJob::Base
     file_path = "/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/default.rb"
     File.open(file_path, 'a') do |file|
       file.puts "user '" + @user.ku_id + "' do"
-      file.puts "  home '/home/" + @user.ku_id + "'"
+      file.puts "  home '/home/user'"
       file.puts "  shell '/bin/bash'"
       file.puts "  supports :manage_home => true"
       file.puts "  password '" + new_password + "'"

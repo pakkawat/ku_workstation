@@ -8,12 +8,12 @@ module KnifeCommand
 	      stdin.close
 	      captured_stdout = stdout.read
 	      captured_stderr = stderr.read
-	      wait_thr.value # Process::Status object returned.
+	      exit_status = wait_thr.value # Process::Status object returned.
 	    }
-	    if captured_stdout == ""
-	    	return false, error_message(captured_stderr)
-	    else
+	    if exit_status.success?
 	    	return true, ""
+	    else
+	    	return false, error_message(captured_stderr)
 	    end
 	end
 
