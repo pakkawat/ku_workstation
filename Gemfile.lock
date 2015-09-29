@@ -10,6 +10,7 @@ GIT
 GEM
   remote: https://rubygems.org/
   specs:
+    CFPropertyList (2.3.1)
     actionmailer (4.2.0)
       actionpack (= 4.2.0)
       actionview (= 4.2.0)
@@ -45,9 +46,6 @@ GEM
       minitest (~> 5.1)
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
-    akami (1.3.1)
-      gyoku (>= 0.4.0)
-      nokogiri
     arel (6.0.0)
     autoprefixer-rails (5.2.0)
       execjs
@@ -112,13 +110,13 @@ GEM
       activerecord (>= 3.0, < 5.0)
       delayed_job (>= 3.0, < 4.1)
     diff-lcs (1.2.5)
-    em-winrm (0.6.0)
+    em-winrm (0.7.0)
       eventmachine (~> 1.0.0)
       mixlib-log (>= 1.3.0)
       uuidtools (~> 2.1.1)
-      winrm (~> 1.2.0)
+      winrm (~> 1.3.0)
     erubis (2.7.0)
-    eventmachine (1.0.7)
+    eventmachine (1.0.8)
     excon (0.45.4)
     execjs (2.4.0)
     faker (1.4.3)
@@ -126,34 +124,101 @@ GEM
     ffi (1.9.10)
     ffi-yajl (2.2.2)
       libyajl2 (~> 1.2)
-    fog (1.23.0)
-      fog-brightbox
-      fog-core (~> 1.23)
+    fission (0.5.0)
+      CFPropertyList (~> 2.2)
+    fog (1.29.0)
+      fog-atmos
+      fog-aws (~> 0.0)
+      fog-brightbox (~> 0.4)
+      fog-core (~> 1.27, >= 1.27.4)
+      fog-ecloud
       fog-json
+      fog-local
+      fog-powerdns (>= 0.1.1)
+      fog-profitbricks
+      fog-radosgw (>= 0.0.2)
+      fog-riakcs
+      fog-sakuracloud (>= 0.0.4)
+      fog-serverlove
       fog-softlayer
+      fog-storm_on_demand
+      fog-terremark
+      fog-vmfusion
+      fog-voxel
+      fog-xml (~> 0.1.1)
       ipaddress (~> 0.5)
       nokogiri (~> 1.5, >= 1.5.11)
-    fog-brightbox (0.8.0)
+    fog-atmos (0.1.0)
+      fog-core
+      fog-xml
+    fog-aws (0.7.6)
+      fog-core (~> 1.27)
+      fog-json (~> 1.0)
+      fog-xml (~> 0.1)
+      ipaddress (~> 0.8)
+    fog-brightbox (0.9.0)
       fog-core (~> 1.22)
       fog-json
       inflecto (~> 0.0.2)
-    fog-core (1.32.0)
+    fog-core (1.32.1)
       builder
       excon (~> 0.45)
       formatador (~> 0.2)
       mime-types
       net-scp (~> 1.1)
       net-ssh (>= 2.1.3)
+    fog-ecloud (0.3.0)
+      fog-core
+      fog-xml
     fog-json (1.0.2)
       fog-core (~> 1.0)
       multi_json (~> 1.10)
+    fog-local (0.2.1)
+      fog-core (~> 1.27)
+    fog-powerdns (0.1.1)
+      fog-core (~> 1.27)
+      fog-json (~> 1.0)
+      fog-xml (~> 0.1)
+    fog-profitbricks (0.0.5)
+      fog-core
+      fog-xml
+      nokogiri
+    fog-radosgw (0.0.4)
+      fog-core (>= 1.21.0)
+      fog-json
+      fog-xml (>= 0.0.1)
+    fog-riakcs (0.1.0)
+      fog-core
+      fog-json
+      fog-xml
+    fog-sakuracloud (1.3.2)
+      fog-core
+      fog-json
+    fog-serverlove (0.1.2)
+      fog-core
+      fog-json
     fog-softlayer (0.4.7)
       fog-core
       fog-json
+    fog-storm_on_demand (0.1.1)
+      fog-core
+      fog-json
+    fog-terremark (0.1.0)
+      fog-core
+      fog-xml
+    fog-vmfusion (0.1.0)
+      fission
+      fog-core
+    fog-voxel (0.1.0)
+      fog-core
+      fog-xml
+    fog-xml (0.1.2)
+      fog-core
+      nokogiri (~> 1.5, >= 1.5.11)
     formatador (0.2.5)
     globalid (0.3.3)
       activesupport (>= 4.1.0)
-    gssapi (1.0.3)
+    gssapi (1.2.0)
       ffi (>= 1.0.1)
     gyoku (1.3.1)
       builder (>= 2.1.2)
@@ -161,8 +226,6 @@ GEM
     highline (1.7.2)
     hike (1.2.3)
     httpclient (2.6.0.1)
-    httpi (0.9.7)
-      rack
     i18n (0.7.0)
     inflecto (0.0.2)
     ipaddress (0.8.0)
@@ -182,14 +245,14 @@ GEM
       railties (>= 3.1.0)
       turbolinks
     json (1.8.2)
-    knife-ec2 (0.10.0)
-      fog (~> 1.23.0)
+    knife-ec2 (0.11.0)
+      fog (~> 1.29.0)
       knife-windows (>= 0.8.2)
-    knife-windows (0.8.5)
-      em-winrm (~> 0.6)
-      winrm-s (~> 0.2.0)
+    knife-windows (0.8.6)
+      em-winrm (~> 0.7)
+      winrm-s (~> 0.3.1)
     libyajl2 (1.2.0)
-    little-plugger (1.1.3)
+    little-plugger (1.1.4)
     logging (1.8.2)
       little-plugger (>= 1.1.3)
       multi_json (>= 1.8.4)
@@ -219,7 +282,7 @@ GEM
     net-telnet (0.1.1)
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
-    nori (1.1.5)
+    nori (2.6.0)
     ohai (8.5.0)
       ffi (~> 1.9)
       ffi-yajl (~> 2.2)
@@ -289,7 +352,7 @@ GEM
     rspec_junit_formatter (0.2.3)
       builder (< 4)
       rspec-core (>= 2, < 4, != 2.12.0)
-    rubyntlm (0.1.1)
+    rubyntlm (0.4.0)
     sass (3.4.13)
     sass-rails (5.0.1)
       railties (>= 4.0.0, < 5.0)
@@ -297,14 +360,6 @@ GEM
       sprockets (>= 2.8, < 4.0)
       sprockets-rails (>= 2.0, < 4.0)
       tilt (~> 1.1)
-    savon (0.9.5)
-      akami (~> 1.0)
-      builder (>= 2.1.2)
-      gyoku (>= 0.4.0)
-      httpi (~> 0.9)
-      nokogiri (>= 1.4.0)
-      nori (~> 1.0)
-      wasabi (~> 1.0)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -343,23 +398,22 @@ GEM
       execjs (>= 0.3.0)
       json (>= 1.8.0)
     uuidtools (2.1.5)
-    wasabi (1.0.0)
-      nokogiri (>= 1.4.0)
     web-console (2.1.2)
       activemodel (>= 4.0)
       binding_of_caller (>= 0.7.2)
       railties (>= 4.0)
       sprockets-rails (>= 2.0, < 4.0)
-    winrm (1.2.0)
-      gssapi (~> 1.0.0)
+    winrm (1.3.4)
+      builder (>= 2.1.2)
+      gssapi (~> 1.2)
+      gyoku (~> 1.0)
       httpclient (~> 2.2, >= 2.2.0.2)
       logging (~> 1.6, >= 1.6.1)
-      nokogiri (~> 1.5)
-      rubyntlm (~> 0.1.1)
-      savon (= 0.9.5)
+      nori (~> 2.0)
+      rubyntlm (~> 0.4.0)
       uuidtools (~> 2.1.2)
-    winrm-s (0.2.4)
-      winrm (~> 1.2.0)
+    winrm-s (0.3.1)
+      winrm (~> 1.3.0)
     wmi-lite (1.0.0)
 
 PLATFORMS
@@ -380,7 +434,7 @@ DEPENDENCIES
   jquery-datatables-rails (~> 3.3.0)
   jquery-rails
   jquery-turbolinks
-  knife-ec2
+  knife-ec2 (>= 0.11.0)
   pg
   progress_job
   rails (= 4.2.0)
