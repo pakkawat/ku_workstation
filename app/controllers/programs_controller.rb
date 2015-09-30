@@ -72,12 +72,14 @@ class ProgramsController < ApplicationController
   def update
     @program = Program.find(params[:id])
     #render plain: program_params.inspect
-    if @program.update_attributes(program_params)
-      flash[:success] = "Program has been updated"
-      redirect_to programs_path
-    else
-      render "edit"
-    end
+    update_resource(program_params)
+    
+    #if @program.update_attributes(program_params)
+      #flash[:success] = "Program has been updated"
+      #redirect_to programs_path
+    #else
+      #render "edit"
+    #end
   end
 
   def destroy# not delete user run_list
@@ -162,6 +164,23 @@ class ProgramsController < ApplicationController
     end
   end
 
+  def update_resource(program_params)
+    str_temp = ""
+    params[:program][:chef_resources_attributes].each do |key, value|
+      if value[:_destroy] == "false"
+        value[:chef_attributes_attributes].each do |key, value|
+          if value[:id].nil?# new value
+            str_temp += "nil---"
+          else # old value
+            str_temp += value[:id].to_s+"---"
+          end
+        end
+      else # resource has been deleted
+        #
+      end
+    end
+    render plain: str_temp+"||||||||||||"+program_params.inspect
+  end
 
   def chef_remote_files_partial
     @program = nil
