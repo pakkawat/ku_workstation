@@ -122,8 +122,19 @@ class ProgramsController < ApplicationController
         #File.open(file_name, "w") {|file| file.puts new_contents }
       #end
 
-      # to_do # upload "knife cookbook upload xxx"
-
+      File.open(directory+"/recipes/default.rb", 'a') do |f|
+        f.write("\n")
+        f.write("include_recipe \'#{program.program_name}::remove_files\'")
+        f.write("\n")
+        f.write("include_recipe \'#{program.program_name}::uninstall_programs\'")
+        f.write("\n")
+      end
+      output = File.open(directory+"/recipes/remove_files.rb","w")
+      output << ""
+      output.close
+      output = File.open(directory+"/recipes/uninstall_programs.rb","w")
+      output << ""
+      output.close
       # to_do # upload "knife cookbook upload remove-xxx"
     end
 
@@ -168,18 +179,26 @@ class ProgramsController < ApplicationController
     str_temp = ""
     params[:program][:chef_resources_attributes].each do |key, value|
       if value[:_destroy] == "false"
-        value[:chef_attributes_attributes].each do |key, value|
-          if value[:id].nil?# new value
-            str_temp += "nil---"
-          else # old value
-            str_temp += value[:id].to_s+"---"
-          end
+        str_temp += value.to_s+"---"
+
+        if value[:id].nil?# new value
+          str_temp += "new[[["+value[:chef_attributes_attributes].to_s+"]]]---"
+          #update_new_resource(chef_resource)
+        else # old value ( delete old file)
+          str_temp += "old[[["+value[:chef_attributes_attributes].to_s+"]]]---"
         end
-      else # resource has been deleted
-        #
+
+      else # resource has been deleted (delete old file and uninstall program)
+        str_temp += "delete_resource[["+value.to_s+"]]---"
       end
     end
     render plain: str_temp+"||||||||||||"+program_params.inspect
+  end
+
+  def update_new_resource(chef_resource)
+    File.open("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/recipes/default.rb", 'a') do |f|
+      f.write(ResourceGenerator.add_resource(chef_resource))
+    end
   end
 
   def chef_remote_files_partial
