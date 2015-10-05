@@ -127,7 +127,7 @@ class ProgramsController < ApplicationController
         f.write("include_recipe \'#{program.program_name}::remove_files\'")
         f.write("\n")
         f.write("include_recipe \'#{program.program_name}::uninstall_programs\'")
-        f.write("\n")
+        f.write("\n\n")
       end
       output = File.open(directory+"/recipes/remove_files.rb","w")
       output << ""
