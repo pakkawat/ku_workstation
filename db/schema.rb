@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150923114537) do
+ActiveRecord::Schema.define(version: 20151005123726) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -113,6 +113,14 @@ ActiveRecord::Schema.define(version: 20150923114537) do
   add_index "programs_subjects", ["program_id"], name: "index_programs_subjects_on_program_id", using: :btree
   add_index "programs_subjects", ["subject_id"], name: "index_programs_subjects_on_subject_id", using: :btree
 
+  create_table "remove_files", force: :cascade do |t|
+    t.integer "program_id"
+    t.integer "chef_attribute_id"
+    t.string  "source"
+  end
+
+  add_index "remove_files", ["program_id"], name: "index_remove_files_on_program_id", using: :btree
+
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false
     t.text     "data"
@@ -144,4 +152,5 @@ ActiveRecord::Schema.define(version: 20150923114537) do
   add_foreign_key "chef_attributes", "chef_resources"
   add_foreign_key "chef_resources", "programs"
   add_foreign_key "program_files", "programs"
+  add_foreign_key "remove_files", "programs"
 end
