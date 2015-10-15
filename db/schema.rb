@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151005123726) do
+ActiveRecord::Schema.define(version: 20151015101643) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -28,6 +28,7 @@ ActiveRecord::Schema.define(version: 20151005123726) do
     t.string  "resource_name"
     t.string  "resource_type"
     t.integer "program_id"
+    t.string  "file_name"
   end
 
   add_index "chef_resources", ["program_id"], name: "index_chef_resources_on_program_id", using: :btree
@@ -115,8 +116,11 @@ ActiveRecord::Schema.define(version: 20151005123726) do
 
   create_table "remove_files", force: :cascade do |t|
     t.integer "program_id"
-    t.integer "chef_attribute_id"
-    t.string  "source"
+    t.integer "chef_resource_id"
+    t.string  "resource_type"
+    t.string  "resource_name"
+    t.string  "att_type"
+    t.string  "att_value"
   end
 
   add_index "remove_files", ["program_id"], name: "index_remove_files_on_program_id", using: :btree
