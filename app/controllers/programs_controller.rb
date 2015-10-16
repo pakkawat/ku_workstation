@@ -33,13 +33,13 @@ class ProgramsController < ApplicationController
 
 
 
-    str_temp = ""
-    str_temp += program_params.to_s+"-----------------------------"
+    #str_temp = ""
+    #str_temp += program_params.to_s+"-----------------------------"
     #if chef_resources_attributes not nil
     update_file_name_to_params
 
-    str_temp += program_params.to_s
-    render plain: str_temp
+    #str_temp += program_params.to_s
+    #render plain: str_temp
 
 
 
@@ -62,14 +62,14 @@ class ProgramsController < ApplicationController
         if !params[:program][:chef_resources_attributes].nil?
           generate_new_chef_resource()
         end
-        check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
-        if check_error
-          flash[:success] = "Program was saved"
-          redirect_to programs_path
-        else
-          flash[:danger] = "Error can not update cookbook"
-          redirect_to programs_path
-        end
+        #check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+        #if check_error
+          #flash[:success] = "Program was saved"
+          #redirect_to programs_path
+        #else
+          #flash[:danger] = "Error can not upload cookbook to server"
+          #redirect_to programs_path
+        #end
       else
         flash[:danger] = "Error can not create cookbook"
         render "new"
@@ -100,8 +100,8 @@ class ProgramsController < ApplicationController
 
   def destroy# not delete user run_list
     @program = Program.find(params[:id])
-    find_other_delete_resources
-    generate_remove_resource
+    #find_other_delete_resources
+    #generate_remove_resource
     #------- Testtttttttttttttttttttttttttttttttttt
     #@job = Delayed::Job.enqueue ProgramJob.new(@program)
     #str_des = "Delete Program:"+@program.program_name
@@ -109,7 +109,7 @@ class ProgramsController < ApplicationController
     #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     #-------- Testttttttttttttttttttttttt
     FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
-    #@program.destroy
+    @program.destroy
     redirect_to programs_path
   end
 
@@ -163,9 +163,10 @@ class ProgramsController < ApplicationController
         f.write("\n\n")
       end
       FileUtils.mv directory+"/recipes/default.rb", directory+"/recipes/header.rb"
-      output = File.open(directory+"/recipes/default.rb","w")
-      output << "include_recipe \'#{program.program_name}::uninstall_programs\'"
-      output.close
+      File.open(directory+"/recipes/default.rb", 'w') do |f|
+        f.write("include_recipe \'#{program.program_name}::header\'")
+        f.write("\n\n")
+      end
       output = File.open(directory+"/recipes/uninstall_programs.rb","w")
       output << ""
       output.close
