@@ -60,7 +60,7 @@ class ProgramsController < ApplicationController
     if @program.save
       if create_file(@program)
         if !params[:program][:chef_resources_attributes].nil?
-          generate_new_chef_resource()
+          generate_new_chef_resource
         end
         #check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
         #if check_error
@@ -89,13 +89,13 @@ class ProgramsController < ApplicationController
     update_file_name_to_params
     find_differ_resource
     generate_remove_resource
-    #if @program.update_attributes(program_params)
+    if @program.update_attributes(program_params)
       generate_new_chef_resource
-      #flash[:success] = "Program has been updated"
-      #redirect_to programs_path
-    #else
-      #render "edit"
-    #end
+      flash[:success] = "Program has been updated"
+      redirect_to programs_path
+    else
+      render "edit"
+    end
   end
 
   def destroy# not delete user run_list
@@ -163,10 +163,9 @@ class ProgramsController < ApplicationController
         f.write("\n\n")
       end
       FileUtils.mv directory+"/recipes/default.rb", directory+"/recipes/header.rb"
-      File.open(directory+"/recipes/default.rb", 'w') do |f|
-        f.write("include_recipe \'#{program.program_name}::header\'")
-        f.write("\n\n")
-      end
+      output = File.open(directory+"/recipes/default.rb", "w")
+      output << ""
+      output.close
       output = File.open(directory+"/recipes/uninstall_programs.rb","w")
       output << ""
       output.close
@@ -179,6 +178,7 @@ class ProgramsController < ApplicationController
 
   def generate_new_chef_resource
     File.open("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/recipes/default.rb", 'w') do |f|
+      f.write("include_recipe \'#{program.program_name}::header\'\n\n")
       @program.chef_resources.each do |chef_resource|
         f.write(ResourceGenerator.resource(chef_resource))
       end
@@ -274,7 +274,7 @@ class ProgramsController < ApplicationController
   end
 
   def generate_remove_resource
-    remove_files = RemoveFiles.where(program_id: @program.id)
+    remove_files = RemoveFile.where(program_id: @program.id)
     File.open("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/recipes/uninstall_programs.rb", 'w') do |f|
       f.write(ResourceGenerator.delete_resources(remove_files))
     end
