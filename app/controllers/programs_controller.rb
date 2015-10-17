@@ -29,6 +29,7 @@ class ProgramsController < ApplicationController
   end
 
   def create
+    update_file_name_to_params
     @program = Program.new(program_params)
 
 
@@ -36,7 +37,7 @@ class ProgramsController < ApplicationController
     #str_temp = ""
     #str_temp += program_params.to_s+"-----------------------------"
     #if chef_resources_attributes not nil
-    update_file_name_to_params
+    
 
     #str_temp += program_params.to_s
     #render plain: str_temp
@@ -65,7 +66,7 @@ class ProgramsController < ApplicationController
         #check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
         #if check_error
           #flash[:success] = "Program was saved"
-          #redirect_to programs_path
+          redirect_to programs_path
         #else
           #flash[:danger] = "Error can not upload cookbook to server"
           #redirect_to programs_path
@@ -178,7 +179,7 @@ class ProgramsController < ApplicationController
 
   def generate_new_chef_resource
     File.open("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/recipes/default.rb", 'w') do |f|
-      f.write("include_recipe \'#{program.program_name}::header\'\n\n")
+      f.write("include_recipe \'#{@program.program_name}::header\'\n\n")
       @program.chef_resources.each do |chef_resource|
         f.write(ResourceGenerator.resource(chef_resource))
       end
@@ -229,47 +230,43 @@ class ProgramsController < ApplicationController
                 if value[:att_type] == "source" || value[:att_type] == "extract_path" # zip, deb
                   chef_att = ChefAttribute.find(value[:id])
                   if value[:att_value] != chef_att.att_value
-                    add_remove_files(chef_resource_id)
+                    add_remove_files(ChefResource.find(chef_resource_id))
                   end
                 elsif value[:att_type] == "action" # package
                   chef_re = ChefResource.find(chef_resource_id)
                   if new_resource_name != chef_re.resource_name
-                    add_remove_files(chef_resource_id)
+                    add_remove_files(chef_re)
                   end
                 end
               end # if !value[:id].nil? #chef_attribute old value ( if different delete old file)
             else # chef_attribute has been delete (delete old file and uninstall program)
-              add_remove_files(chef_resource_id)
+              add_remove_files(ChefResource.find(chef_resource_id))
             end # if value[:_destroy] == "false"
           end # value[:chef_attributes_attributes].each do |key, value|
         end # if !value[:id].nil?
       else # chef_resource has been deleted (delete old file and uninstall program)
         str_temp += "delete_resource[["+value.to_s+"]]---"
-        add_remove_files(chef_resource_id)
+        add_remove_files(ChefResource.find(value[:id]))
       end
     end
     #render plain: str_temp+"||||||||||||"+program_params.inspect
   end
 
-  def add_remove_files(chef_resource_id)
-    if !@program.remove_files.find_by(chef_resource_id: chef_resource_id).present?
-      chef_re = ChefResource.find(chef_resource_id)
-      chef_re.chef_attributes.each do |chef_attribute|
-        #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"
-        remove_file = RemoveFiles.new(program_id: @program.id, chef_resource_id: chef_resource_id, resource_type: chef_re.resource_type, resource_name: chef_re.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
-        remove_file.save
+  def add_remove_files(chef_resource)
+    if !@program.remove_files.find_by(chef_resource_id: chef_resource_.id).present? # check Is chef_resource_id alredy in remove_files
+      if ChefAttribute.where("att_type = 'source' AND att_value LIKE (?)","%#{chef_resource.file_name}").count == 1 # check file_name use by this chef_resource only
+        chef_resource.chef_attributes.each do |chef_attribute|
+          #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"
+          remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
+          remove_file.save
+        end
       end
     end
   end
 
   def find_other_delete_resources
     @program.chef_resources.each do |chef_resource|
-      if !@program.remove_files.find_by(chef_resource_id: chef_resource.id).present?
-        chef_resource.chef_attributes.each do |chef_attribute|
-          remove_file = RemoveFiles.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
-          remove_file.save
-        end
-      end
+      add_remove_files(chef_resource)
     end
   end
 
