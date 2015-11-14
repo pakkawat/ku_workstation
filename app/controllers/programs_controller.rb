@@ -253,7 +253,7 @@ class ProgramsController < ApplicationController
   end
 
   def add_remove_files(chef_resource)
-    if !@program.remove_files.find_by(chef_resource_id: chef_resource_.id).present? # check Is chef_resource_id alredy in remove_files
+    if !@program.remove_files.find_by(chef_resource_id: chef_resource.id).present? # check Is chef_resource_id alredy in remove_files
       if ChefAttribute.where("att_type = 'source' AND att_value LIKE (?)","%#{chef_resource.file_name}").count == 1 # check file_name use by this chef_resource only
         chef_resource.chef_attributes.each do |chef_attribute|
           #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"

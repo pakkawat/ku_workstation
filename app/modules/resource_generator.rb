@@ -4,9 +4,9 @@ require 'uri'
 		if resource.resource_type == "Repository"
 			ResourceGenerator.package(resource.resource_name, resource.chef_attributes)
 		elsif resource.resource_type == "Zip"
-			ResourceGenerator.remote_file(resource.chef_attributes)
+			ResourceGenerator.remote_file(resource.file_name, resource.chef_attributes)
 		elsif resource.resource_type == "Deb"
-			ResourceGenerator.deb(resource.chef_attributes)
+			ResourceGenerator.deb(resource.file_name, resource.chef_attributes)
 		end
 	end
 
@@ -19,11 +19,9 @@ require 'uri'
 		return str_code
 	end
 
-	def ResourceGenerator.remote_file(chef_attributes)
-		url = chef_attributes[0].att_value
-		uri = URI.parse(url)
+	def ResourceGenerator.remote_file(file_name, chef_attributes)
 		str_code = ""
-		str_code += "src_filename = \"" + File.basename(uri.path) + "\"\n"
+		str_code += "src_filename = \"" + file_name + "\"\n"
 		str_code += "src_filepath = \"\#\{Chef\:\:Config\[\:file_cache_path\]\}\/\#\{src_filename\}\"\n"
 		str_code += "extract_path = \"" + chef_attributes[1].att_value + "\"\n"
 		str_code += "\n"
@@ -45,11 +43,9 @@ require 'uri'
 		return str_code
 	end
 
-	def ResourceGenerator.deb(chef_attributes)
-		url = chef_attributes[0].att_value
-		uri = URI.parse(url)
+	def ResourceGenerator.deb(file_name, chef_attributes)
 		str_code = ""
-		str_code += "src_filename = \"" + File.basename(uri.path) + "\"\n"
+		str_code += "src_filename = \"" + file_name + "\"\n"
 		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/\#\{src_filename\}\"\n"
 		str_code += "\n"
 		str_code += "remote_file src_filepath do\n"
@@ -80,12 +76,11 @@ require 'uri'
 
 		if file.resource_type == "Zip" || file.resource_type == "Deb" # Repo does not has a file to delete
 			if file.att_type == "extract_path"
-				str_code += " test Remove extract path\n"
-				str_code += file.att_value+"\n"
-				str_code += "\n"
-				str_code += "\n"
-				str_code += "\n"
-				str_code += "\n"
+				#str_code += " test Remove extract path\n"
+				str_code += "directory " + file.att_value + " do\n"
+				str_code += "  recursive true\n"
+				str_code += "  action :delete\n"
+				str_code += "end\n"
 				str_code += "\n"
 			else # source
 				url = file.att_value
