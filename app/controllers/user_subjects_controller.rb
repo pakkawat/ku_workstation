@@ -11,14 +11,14 @@ class UserSubjectsController < ApplicationController
     @user_enabled = @subject.user_subjects.find_by(ku_user_id: @kuuser.id)
     if @user_enabled.present?
       if @user_enabled.update_attribute(:user_enabled, true)
-        update_program_to_run_list
+        add_user_programs
         flash[:success] = @kuuser.ku_id + " has been added"
       else
         flash[:danger] = "Error1!!"
       end
     else
       if @subject.user_subjects.create(ku_user: @kuuser)
-        add_program_to_run_list
+        add_user_programs
         flash[:success] = @kuuser.ku_id + " has been added"
       else
         flash[:danger] = "Error2!!"
@@ -32,7 +32,7 @@ class UserSubjectsController < ApplicationController
     @subject = Subject.find(params[:subject_id])
     #UserSubject.find_by(ku_user_id: @kuuser.id, subject_id: @subject.id).destroy
     if @subject.user_subjects.find_by(ku_user_id: @kuuser.id).update_attribute(:user_enabled, false)
-      add_remove_program_to_run_list
+      remove_user_programs
       flash[:success] = @kuuser.ku_id + " has been deleted from subject"
     else
       flash[:danger] = "Error3!!"
@@ -69,7 +69,7 @@ class UserSubjectsController < ApplicationController
   end
 
   private
-    def add_program_to_run_list
+    def add_program_to_run_list # mark not use
       str_temp = ""
       #@kuuser = KuUser.find(params[:ku_user_id])
       #@subject = Subject.find(params[:subject_id])
@@ -83,7 +83,7 @@ class UserSubjectsController < ApplicationController
       #KuUser.where.not(id: @subject.ku_users).update_all(:run_list => true)
     end
 
-    def add_remove_program_to_run_list
+    def add_remove_program_to_run_list # mark not use
       str_temp = ""
       #@kuuser = KuUser.find(params[:ku_user_id])
       #@subject = Subject.find(params[:subject_id])
@@ -94,15 +94,22 @@ class UserSubjectsController < ApplicationController
       end
     end
 
-    def update_program_to_run_list
+    def other_user_subject_use_this_program(program) # mark not use
+      #return @kuuser.subjects.where(subject_id: Subject.select("subject_id").where(id: ProgramsSubject.select("subject_id").where(:program_id => program.id, :program_enabled => true).where.not(subject_id: @subject.id))).empty?
+      return @kuuser.subjects.where(id: ProgramsSubject.select("subject_id").where(:program_id => program.id, :program_enabled => true).where.not(subject_id: @subject.id)).empty?
+    end
+
+    def add_user_programs
       str_temp = ""
       @subject.programs.where("programs_subjects.program_enabled = true").each do |program|
-        @kuuser.update_column(:run_list, @kuuser.run_list.gsub("recipe[remove-" + program.program_name + "],", "recipe[" + program.program_name + "],"))
+        @kuuser.users_programs.create(:program => @program, :subject_id => @subject.id)
       end
     end
 
-    def other_user_subject_use_this_program(program)
-      #return @kuuser.subjects.where(subject_id: Subject.select("subject_id").where(id: ProgramsSubject.select("subject_id").where(:program_id => program.id, :program_enabled => true).where.not(subject_id: @subject.id))).empty?
-      return @kuuser.subjects.where(id: ProgramsSubject.select("subject_id").where(:program_id => program.id, :program_enabled => true).where.not(subject_id: @subject.id)).empty?
+    def remove_user_programs
+      str_temp = ""
+      @subject.programs.where("programs_subjects.program_enabled = true").each do |program|
+        @kuuser.users_programs.where(:program => @program, :subject_id => @subject.id).destroy_all
+      end
     end
 end

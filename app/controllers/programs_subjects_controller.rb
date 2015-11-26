@@ -111,4 +111,18 @@ class ProgramsSubjectsController < ApplicationController
     def other_user_subject_use_this_program(user)
       return user.subjects.where(id: ProgramsSubject.select("subject_id").where(:program_id => @program.id, :program_enabled => true).where.not(subject_id: @subject.id)).empty?
     end
+
+    def add_user_programs
+      str_temp = ""
+      @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
+        @program.users_programs.create(:ku_user => @user, :subject_id => @subject.id)
+      end
+    end
+
+    def remove_user_programs
+      str_temp = ""
+      @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
+        @program.users_programs.where(:ku_user => @user, :subject_id => @subject.id).destroy_all
+      end
+    end
 end

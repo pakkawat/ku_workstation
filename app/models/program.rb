@@ -5,4 +5,5 @@ class Program < ActiveRecord::Base
   has_many :chef_resources, dependent: :destroy
   accepts_nested_attributes_for :chef_resources, reject_if: lambda {|attributes| attributes[:resource_name].blank?}, allow_destroy: true
   has_many :remove_files, dependent: :destroy
+  has_many :users_programs, dependent: :destroy
 end
