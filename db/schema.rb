@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151015101643) do
+ActiveRecord::Schema.define(version: 20151126084913) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -152,6 +152,15 @@ ActiveRecord::Schema.define(version: 20151015101643) do
 
   add_index "user_subjects", ["ku_user_id"], name: "index_user_subjects_on_ku_user_id", using: :btree
   add_index "user_subjects", ["subject_id"], name: "index_user_subjects_on_subject_id", using: :btree
+
+  create_table "users_programs", force: :cascade do |t|
+    t.integer "ku_user_id"
+    t.integer "program_id"
+    t.string  "subject_id"
+  end
+
+  add_index "users_programs", ["ku_user_id"], name: "index_users_programs_on_ku_user_id", using: :btree
+  add_index "users_programs", ["program_id"], name: "index_users_programs_on_program_id", using: :btree
 
   add_foreign_key "chef_attributes", "chef_resources"
   add_foreign_key "chef_resources", "programs"
