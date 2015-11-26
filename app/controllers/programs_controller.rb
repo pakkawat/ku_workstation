@@ -104,10 +104,17 @@ class ProgramsController < ApplicationController
     #find_other_delete_resources
     #generate_remove_resource
     #------- Testtttttttttttttttttttttttttttttttttt
-    #@job = Delayed::Job.enqueue ProgramJob.new(@program)
-    #str_des = "Delete Program:"+@program.program_name
-    #@job.update_column(:description, str_des)
-    #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+    #check_error, error_msg = KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb")
+    #if check_error
+      #@job = Delayed::Job.enqueue ProgramJob.new(@program)
+      #str_des = "Delete Program:"+@program.program_name
+      #@job.update_column(:description, str_des)
+      #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+      #redirect_to programs_path
+    #else
+      #flash[:danger] = error_msg
+      #redirect_to program_path(program)
+    #end
     #-------- Testttttttttttttttttttttttt
     FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
     @program.destroy

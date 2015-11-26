@@ -1,4 +1,5 @@
 class ProgramJob < ProgressJob::Base
+  include KnifeCommand
   #queue_as :default
   def initialize(program)
     @program = program
@@ -18,32 +19,18 @@ class ProgramJob < ProgressJob::Base
 
     #str_temp = ""
     users.each do |user|
-      check_error1 = true
-      check_error2 = true
-      check_error3 = true
-      check_error1 = system "knife node run_list remove " + user.ku_id + " 'recipe[" + @program.program_name + "]' -c /home/ubuntu/chef-repo/.chef/knife.rb"
-      user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", "recipe[remove-" + @program.program_name + "],"))
-      sleep(2)
-      #str_temp += "ku_id: " + user.ku_id + " - run_list:" + user.run_list.gsub(/\,$/, '') +" || " # send run_list to Chef-server and run sudo chef-clients
-
-      check_error2 = system "knife node run_list add " + user.ku_id + " '" + user.run_list.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
-      check_error3 = system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
-
-      if ((check_error1 == false) or (check_error2 == false) or (check_error3 == false))
-        str_error = "" + user.ku_id + "(Error:"
-        str_error += "remove run_list," if check_error1 == false
-        str_error += "add run_list," if check_error2 == false
-        str_error += "ssh," if check_error3 == false
-        str_error = str_error.gsub(/\,$/, '')
-        str_error += ")"
-        str_error += ", "
-        arr_error.push(str_error)
-      else
-        if system "knife node run_list remove " + user.ku_id + " 'recipe[remove-" + @program.program_name + "]' -c /home/ubuntu/chef-repo/.chef/knife.rb"
-          user.update_column(:run_list, user.run_list.gsub("recipe[remove-" + @program.program_name + "],", ""))
+      check_error, error_msg = KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb")
+      if check_error
+        check_error, error_msg = KnifeCommand.run("knife node run_list remove " + user.ku_id + " 'recipe[" + @program.program_name + "]' -c /home/ubuntu/chef-repo/.chef/knife.rb")
+        if check_error
+          user.update_column(:run_list, user.run_list.gsub("recipe[" + @program.program_name + "],", ""))
         else
-          arr_error.push(user.ku_id + "(Error:remove run_list 2), ")
+          str_error = "" + user.ku_id + "(Error: "+ error_msg + "),"
+          arr_error.push(str_error)
         end
+      else
+        str_error = "" + user.ku_id + "(Error: "+ error_msg + "),"
+        arr_error.push(str_error)
       end
 
       update_progress
