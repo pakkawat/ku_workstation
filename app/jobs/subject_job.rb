@@ -1,5 +1,6 @@
 class SubjectJob < ProgressJob::Base
   #queue_as :default
+  include KnifeCommand
   def initialize(id,type)
     @subject = Subject.find(id)
     @type = type
@@ -9,7 +10,7 @@ class SubjectJob < ProgressJob::Base
     # Do something later
     update_stage('Run command')
     update_progress_max(@subject.ku_users.count)
-
+    arr_error = Array.new
     if @type == "delete"
       #update all user_subject = false
       @subject.user_subjects.update_all(user_enabled: false)
@@ -23,19 +24,22 @@ class SubjectJob < ProgressJob::Base
       File.open("/home/ubuntu/chef-repo/cookbooks/"+program.program_name+"/attributes/user_list.rb", 'w') do |f|
         f.write("default['user_list'] = " + create_user_list(KuUser.where(id: UsersProgram.where(:program_id => program.id).uniq.pluck(:ku_user_id)).pluck(:ku_id)))
       end
-      #to_do upload cookbook
+      check_error, error_msg = KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb")
+      if !check_error
+        arr_error.push(error_msg)
+      end
     end
 
-    program_enable_true = create_runlist(@subject.programs.where("programs_subjects.program_enabled = true").pluck(:program_name))
+    program_enable_true = create_run_list(@subject.programs.where("programs_subjects.program_enabled = true").pluck(:program_name))
 
-    arr_error = Array.new
-    arr_error.push("There are error with following user id:")
+    
+    arr_error.push(" There are error with following user id:")
 
     @subject.ku_users.each do |user|
       if system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
         if user.user_subjects.where(:subject_id => @subject.id).pluck(:user_enabled)
           if system "knife node run_list add " + user.ku_id + " '" + program_enable_true.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
-            program_enable_false = create_runlist(@subject.programs.where("programs_subjects.program_enabled = false").where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
+            program_enable_false = create_run_list(@subject.programs.where("programs_subjects.program_enabled = false").where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
             if !(system "knife node run_list remove " + user.ku_id + " '" + program_enable_false.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb")
               arr_error.push(user.ku_id+"(error run_list remove), ")
             end
@@ -44,7 +48,7 @@ class SubjectJob < ProgressJob::Base
           end
         else # user.user_enabled = false
           # all program that in this subject but not in UsersProgram table because when user_enabled = false will deleted all program_id(program_enabled = true) with subject_id in UserProgram table
-          all_programs = create_runlist(@subject.programs.where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
+          all_programs = create_run_list(@subject.programs.where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
           if !(system "knife node run_list remove " + user.ku_id + " '" + all_programs.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb")
             arr_error.push(user.ku_id+"(error run_list remove), ")
           end
