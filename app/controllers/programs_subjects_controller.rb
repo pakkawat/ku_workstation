@@ -115,14 +115,14 @@ class ProgramsSubjectsController < ApplicationController
     def add_user_programs
       str_temp = ""
       @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
-        @program.users_programs.create(:ku_user_id => @user.id, :subject_id => @subject.id)
+        @program.users_programs.create(:ku_user_id => user.id, :subject_id => @subject.id)
       end
     end
 
     def remove_user_programs
       str_temp = ""
       @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
-        @program.users_programs.where(:ku_user_id => @user.id, :subject_id => @subject.id).destroy_all
+        @program.users_programs.where(:ku_user_id => user.id, :subject_id => @subject.id).destroy_all
       end
     end
 end

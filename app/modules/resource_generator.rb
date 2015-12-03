@@ -1,12 +1,12 @@
 module ResourceGenerator
 require 'uri'
-	def ResourceGenerator.resource(resource)
-		if resource.resource_type == "Repository"
-			ResourceGenerator.package(resource.resource_name, resource.chef_attributes)
-		elsif resource.resource_type == "Zip"
-			ResourceGenerator.remote_file(resource.file_name, resource.chef_attributes)
-		elsif resource.resource_type == "Deb"
-			ResourceGenerator.deb(resource.file_name, resource.chef_attributes)
+	def ResourceGenerator.resource(chef_resource)
+		if chef_resource.resource_type == "Repository"
+			ResourceGenerator.package(chef_resource.resource_name, chef_resource.chef_attributes)
+		elsif chef_resource.resource_type == "Zip"
+			ResourceGenerator.remote_file(chef_resource.file_name, chef_resource.chef_attributes)
+		elsif chef_resource.resource_type == "Deb"
+			ResourceGenerator.deb(chef_resource.file_name, chef_resource.chef_attributes)
 		end
 	end
 
@@ -144,4 +144,47 @@ require 'uri'
 		return str_code
 	end
 
+
+
+	def ResourceGenerator.uninstall_resource(chef_resource)
+		str_code = ""
+		if chef_resource.resource_type == "Repository"
+			str_code += "package '#{chef_resource.resource_name}' do\n"
+			str_code += "  action :remove\n"
+			str_code += "end\n"
+			str_code += "\n"
+		elsif chef_resource.resource_type == "Dep"
+			str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + chef_resource.file_name + "\" do\n"
+			str_code += "  action :delete\n"
+			str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + chef_resource.file_name + "\") \}\n"
+			str_code += "end\n"
+			str_code += "\n"
+			str_code += "dpkg_package '#{chef_resource.resource_name}' do\n"
+			str_code += "  action :remove\n"
+			str_code += "end\n"
+			str_code += "\n"
+		elsif chef_resource.resource_type == "Zip"
+			chef_resource.chef_attributes.each do |chef_attribute|
+				if chef_attribute.att_type == "extract_path"
+					#str_code += " test Remove extract path\n"
+					str_code += "directory " + chef_attribute.att_value + " do\n"
+					str_code += "  recursive true\n"
+					str_code += "  action :delete\n"
+					str_code += "end\n"
+					str_code += "\n"
+				else # source
+					url = chef_attribute.att_value
+					uri = URI.parse(url)
+					str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + File.basename(uri.path) + "\" do\n"
+					str_code += "  action :delete\n"
+					str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + File.basename(uri.path) + "\") \}\n"
+					str_code += "end\n"
+					str_code += "\n"
+				end
+			end
+			#to_do uninstall program from source
+			str_code += "start uninstall program from source\n"
+			str_code += "\n"
+		end
+	end
 end
