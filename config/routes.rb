@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :logs
+
   get 'command_jobs/index'
 
   #get 'program_files/index'
