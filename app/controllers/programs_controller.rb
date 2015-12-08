@@ -72,7 +72,7 @@ class ProgramsController < ApplicationController
           #redirect_to programs_path
         #end
       else
-        flash[:danger] = "Error can not create cookbook"
+        flash[:danger] = "Error can not create cookbook see system.log"
         render "new"
       end
     else
@@ -139,7 +139,7 @@ class ProgramsController < ApplicationController
   end
 
   def create_file(program)
-    check_error = system "knife cookbook create " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+    check_error = KnifeCommand.run("knife cookbook create " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
     if check_error #if not error (true)
     	directory = "/home/ubuntu/chef-repo/cookbooks/"+program.program_name
     	#name = "test.txt"
@@ -239,12 +239,11 @@ class ProgramsController < ApplicationController
 
   def upload_cookbook
     program = Program.find(params[:program_id])
-    check_error, error_msg = KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb")
-    if check_error
+    if KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
       flash[:success] = program.program_name + " has been updated"
       redirect_to program_path(program)
     else
-      flash[:danger] = error_msg
+      flash[:danger] = "there are something wrong see system.log"
       redirect_to program_path(program)
     end
   end

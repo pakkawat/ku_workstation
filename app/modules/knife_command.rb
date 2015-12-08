@@ -1,23 +1,43 @@
 module KnifeCommand
-	def KnifeCommand.run(command)
-		require 'open3'
-	    #captured_stdout = ''
-	    captured_stderr = ''
-	    exit_status = Open3.popen3(ENV, command) {|stdin, stdout, stderr, wait_thr|
-	      pid = wait_thr.pid # pid of the started process.
-	      stdin.close
-	      #captured_stdout = stdout.read
-	      captured_stderr = stderr.read
-	      exit_status = wait_thr.value # Process::Status object returned.
-	    }
-	    if exit_status.success?
-	    	return true, ""
-	    else
-	    	return false, error_message(captured_stderr)
-	    end
+
+	class ColourBlind
+		  def initialize(*targets)
+			@targets = targets
+		  end
+
+		  def write(*args)
+		    @targets.each {|t| t.write(*args.map {|x| x.gsub(/\e\[(\d+)(;\d+)*m/, '')}.compact)}
+		  end
+
+		  def close
+		    @targets.each(&:close)
+		  end
 	end
 
-	def self.error_message(msg)
-		return msg
+	def KnifeCommand.run(command, user)
+		require 'logger'
+		require 'open3'
+		check_error = true
+		log_path = ""
+		user.present ? (log_path = "#{RAILS_ROOT}/log/knife/system.log") : (log_path = "#{RAILS_ROOT}/log/knife/#{user.ku_id}.log")
+		file = ColourBlind.new(File.open(log_path, "a"))
+		log = Logger.new(file)
+		log.formatter = proc do |severity, datetime, progname, msg|
+			"#{datetime}: #{msg}\n"
+		end
+
+		Open3.popen3(command) do |stdin, stdout_err, wait_thr|
+			while line=stdout_err.gets do
+				log.info(line)
+			end
+			if wait_thr.value.success?
+				check_error = true
+			else
+				check_error = false
+			end
+		end
+		log.close
+		return check_error
 	end
+
 end

@@ -24,23 +24,17 @@ class ProgramJob < ProgressJob::Base
 
     #str_temp = ""
     users.each do |user|
-      check_error, error_msg = KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb")
-      if check_error
-        check_error, error_msg = KnifeCommand.run("knife node run_list remove " + user.ku_id + " 'recipe[" + @program.program_name + "]' -c /home/ubuntu/chef-repo/.chef/knife.rb")
-        if check_error
+      if KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+        if KnifeCommand.run("knife node run_list remove " + user.ku_id + " 'recipe[" + @program.program_name + "]' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
           # run ssh again for download file if other program use same file in this program
-          check_error, error_msg = KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb")
-          if !check_error
-            str_error = "(" + user.ku_id + " Error: "+ error_msg + "),"
-            arr_error.push(str_error)
+          if !KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+            arr_error.push("(" + user.ku_id + "),")
           end
         else
-          str_error = "(" + user.ku_id + " Error: "+ error_msg + "),"
-          arr_error.push(str_error)
+          arr_error.push("(" + user.ku_id + "),")
         end
       else
-        str_error = "(" + user.ku_id + " Error: "+ error_msg + "),"
-        arr_error.push(str_error)
+        arr_error.push("(" + user.ku_id + "),")
       end
 
       update_progress
@@ -58,7 +52,7 @@ class ProgramJob < ProgressJob::Base
   end
 
   def success
-    if system "knife cookbook delete " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y"
+    if KnifeCommand.run("knife cookbook delete " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
       #@program.programs_subjects.destroy_all
       #UsersProgram.where(:sprogram_id => @program.id).destroy_all
       #@program.subjects.destroy_all
@@ -66,7 +60,7 @@ class ProgramJob < ProgressJob::Base
       FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
       @program.destroy
     else
-      raise "Error delete cookbook:" + @program.program_name
+      raise "Error delete cookbook see system.log"
     end
   end
 

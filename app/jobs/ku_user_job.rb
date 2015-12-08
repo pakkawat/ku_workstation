@@ -1,4 +1,5 @@
 class KuUserJob < ProgressJob::Base
+  include KnifeCommand
   require 'digest/sha2'
   #queue_as :default
   def initialize(id,type,password)
@@ -20,49 +21,49 @@ class KuUserJob < ProgressJob::Base
     #end
     str_temp = ""
     if @type == "create"
-      if system "knife ec2 server create -x ubuntu -I ami-96f1c1c4 -f t2.small -G 'Chef Clients' -N " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      if KnifeCommand.run("knife ec2 server create -x ubuntu -I ami-96f1c1c4 -f t2.small -G 'Chef Clients' -N " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", @user)
         sleep(10)
         update_progress
       else
-        raise "Error Create " + @user.ku_id + " instance"
+        raise @user.ku_id.to_s
       end
-      if system "knife cookbook create " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      if KnifeCommand.run("knife cookbook create " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", @user)
         write_file(new_password)
         update_progress
       else
-        raise "Error Create user cookbook"
+        raise @user.ku_id.to_s
       end
-      if system "knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      if KnifeCommand.run("knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", @user)
         update_progress
       else
-        raise "Error can not upload user cookbook to node "+ @user.ku_id 
+        raise @user.ku_id.to_s
       end
-      if system "knife node run_list add " + @user.ku_id + " 'recipe[chef-client],recipe[" + @user.ku_id + "],recipe[base-client]' -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      if KnifeCommand.run("knife node run_list add " + @user.ku_id + " 'recipe[chef-client],recipe[" + @user.ku_id + "],recipe[base-client]' -c /home/ubuntu/chef-repo/.chef/knife.rb", @user)
         sleep(5)
         update_progress
       else
-        raise "Error Add run_list to node "+ @user.ku_id 
+        raise @user.ku_id.to_s
       end
-      if system "knife ssh 'name:" + @user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      if KnifeCommand.run("knife ssh 'name:" + @user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", @user)
         update_progress
       else
-        raise "Error ssh to node "+ @user.ku_id 
+        raise @user.ku_id.to_s
       end
     else #delete user
       require 'chef'
       Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
       query = Chef::Search::Query.new
       node = query.search('node', 'name:' + @user.ku_id).first rescue []
-      if system "knife ec2 server delete " + node[0].ec2.instance_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb --purge -y"
+      if KnifeCommand.run("knife ec2 server delete " + node[0].ec2.instance_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb --purge -y", nil)
         update_progress
       else
-        raise "Error delete instance"
+        raise "system.log"
       end
-      if system "knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y"
+      if KnifeCommand.run("knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
         FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
         update_progress
       else
-        raise "Error delete cookbook files"
+        raise "system.log"
       end
     end
     #File.open('/home/ubuntu/myapp/public/ku_user_job.txt', 'w') { |f| f.write(str_temp) }

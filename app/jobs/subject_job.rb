@@ -24,40 +24,43 @@ class SubjectJob < ProgressJob::Base
       File.open("/home/ubuntu/chef-repo/cookbooks/"+program.program_name+"/attributes/user_list.rb", 'w') do |f|
         f.write("default['user_list'] = " + create_user_list(KuUser.where(id: UsersProgram.where(:program_id => program.id).uniq.pluck(:ku_user_id)).pluck(:ku_id)))
       end
-      check_error, error_msg = KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb")
-      if !check_error
-        arr_error.push(error_msg)
+      if !KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        arr_error.push("system.log")
       end
     end
 
     program_enable_true = create_run_list(@subject.programs.where("programs_subjects.program_enabled = true").pluck(:program_name))
 
     
-    arr_error.push(" There are error with following user id:")
+    arr_error.push(" There are error with following ku id:")
 
     @subject.ku_users.each do |user|
-      if system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb"
+      ku_id = user.ku_id
+      if KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         if user.user_subjects.where(:subject_id => @subject.id).pluck(:user_enabled)
-          if system "knife node run_list add " + user.ku_id + " '" + program_enable_true.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb"
+          if KnifeCommand.run("knife node run_list add " + ku_id + " '" + program_enable_true.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
             program_enable_false = create_run_list(@subject.programs.where("programs_subjects.program_enabled = false").where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
-            if !(system "knife node run_list remove " + user.ku_id + " '" + program_enable_false.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb")
-              arr_error.push(user.ku_id+"(error run_list remove), ")
+            if !KnifeCommand.run("knife node run_list remove " + ku_id + " '" + program_enable_false.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+              arr_error.push(ku_id)
             end
           else
-            arr_error.push(user.ku_id+"(error run_list add), ")
+            arr_error.push(ku_id)
           end
         else # user.user_enabled = false
           # all program that in this subject but not in UsersProgram table because when user_enabled = false will deleted all program_id(program_enabled = true) with subject_id in UserProgram table
           all_programs = create_run_list(@subject.programs.where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
-          if !(system "knife node run_list remove " + user.ku_id + " '" + all_programs.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb")
-            arr_error.push(user.ku_id+"(error run_list remove), ")
+          if !KnifeCommand.run("knife node run_list remove " + ku_id + " '" + all_programs.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+            arr_error.push(ku_id)
           end
         end
       else
-        arr_error.push(user.ku_id+"(error ssh), ")
+        arr_error.push(ku_id)
       end
-      if !(system "knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb")
-        arr_error.push(user.ku_id+"(error ssh), ")
+
+      if !arr_error.include?(ku_id)
+        if !KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+          arr_error.push(ku_id)
+        end
       end
       update_progress
     end
