@@ -25,20 +25,24 @@ module KnifeCommand
 		log.formatter = proc do |severity, datetime, progname, msg|
 			"#{datetime.strftime('%c')}: #{msg}\n"
 		end
-
+		log.info("-------------------- Start --------------------")
 		Open3.popen2e(command) do |stdin, stdout_err, wait_thr|
 			while line=stdout_err.gets do
 				log.info(line)
 			end
                         
 			if wait_thr.value.success?
-				user.log.update(error: true) if !user.nil?
+				user.log.update(error: false) if !user.nil?
 				check_error = true
 			else
-				user.log.update(error: false) if !user.nil?
+				user.log.update(error: true) if !user.nil?
 				check_error = false
 			end
 		end
+		log.info("-------------------- End --------------------")
+		log.info("")
+		log.info("")
+		log.info("")
 		log.close
 		return check_error
 	end
