@@ -32,10 +32,10 @@ module KnifeCommand
 			end
                         
 			if wait_thr.value.success?
-				user.log.update(error: true)
+				user.log.update(error: true) if !user.nil?
 				check_error = true
 			else
-				user.log.update(error: false)
+				user.log.update(error: false) if !user.nil?
 				check_error = false
 			end
 		end
