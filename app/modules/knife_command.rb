@@ -19,17 +19,18 @@ module KnifeCommand
 		require 'open3'
 		check_error = true
 		log_path = ""
-		user.present ? (log_path = "#{RAILS_ROOT}/log/knife/system.log") : (log_path = "#{RAILS_ROOT}/log/knife/#{user.ku_id}.log")
+		user.nil? ? (log_path = "#{Rails.root}/log/knife/system.log") : (log_path = "#{Rails.root}/log/knife/#{user.ku_id}.log")
 		file = ColourBlind.new(File.open(log_path, "a"))
 		log = Logger.new(file)
 		log.formatter = proc do |severity, datetime, progname, msg|
 			"#{datetime}: #{msg}\n"
 		end
 
-		Open3.popen3(command) do |stdin, stdout_err, wait_thr|
+		Open3.popen2e(command) do |stdin, stdout_err, wait_thr|
 			while line=stdout_err.gets do
 				log.info(line)
 			end
+                        
 			if wait_thr.value.success?
 				check_error = true
 			else

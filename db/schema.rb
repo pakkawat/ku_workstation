@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151126084913) do
+ActiveRecord::Schema.define(version: 20151208122417) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -87,6 +87,16 @@ ActiveRecord::Schema.define(version: 20151126084913) do
   end
 
   add_index "ku_users", ["ku_id"], name: "index_ku_users_on_ku_id", unique: true, using: :btree
+
+  create_table "logs", force: :cascade do |t|
+    t.integer  "ku_user_id"
+    t.string   "log_path"
+    t.boolean  "error"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "logs", ["ku_user_id"], name: "index_logs_on_ku_user_id", using: :btree
 
   create_table "program_files", force: :cascade do |t|
     t.integer  "program_id"

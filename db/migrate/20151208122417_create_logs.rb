@@ -3,7 +3,7 @@ class CreateLogs < ActiveRecord::Migration
     create_table :logs do |t|
    	  t.belongs_to :ku_user, index: true
       t.string :log_path
-      t.Boolean :error
+      t.boolean :error
 
       t.timestamps null: false
     end
