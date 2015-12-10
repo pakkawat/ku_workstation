@@ -5,6 +5,7 @@ class KuUser < ActiveRecord::Base
   has_many :user_subjects, dependent: :destroy
   has_many :subjects, through: :user_subjects
   has_one :instance, dependent: :destroy
+  has_one :log, dependent: :destroy
   before_save { self.email = email.downcase }
   validates :ku_id, presence: true, length: { maximum: 15 }  
   validates :username, presence: true, length: { maximum: 50 }

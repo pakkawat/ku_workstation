@@ -14,11 +14,9 @@
   <tbody>
     <% @logs.each do |log| %>
       <tr>
-        <td><%= log.LogPath %></td>
-        <td><%= log.Error %></td>
+        <td><%= log.log_path %></td>
+        <td><%= log.error %></td>
         <td><%= link_to 'Show', log %></td>
-        <td><%= link_to 'Edit', edit_log_path(log) %></td>
-        <td><%= link_to 'Destroy', log, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
     <% end %>
   </tbody>
@@ -26,4 +24,3 @@
 
 <br>
 
-<%= link_to 'New Log', new_log_path %>

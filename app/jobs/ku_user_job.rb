@@ -72,6 +72,11 @@ class KuUserJob < ProgressJob::Base
   def success
     if @type == "delete"
       @user.destroy
+    else
+      output = File.open("#{RAILS_ROOT}/log/knife/#{@user.ku_id}.log","w")
+      output << ""
+      output.close
+      @user.logs.create(:log_path => "#{RAILS_ROOT}/log/knife/#{@user.ku_id}.log", :error => false)
     end
   end
 

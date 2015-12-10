@@ -1,5 +1,5 @@
 class LogsController < ApplicationController
-  before_action :set_log, only: [:show, :edit, :update, :destroy]
+  before_action :set_log, only: [:show]
 
   # GET /logs
   # GET /logs.json
@@ -10,6 +10,8 @@ class LogsController < ApplicationController
   # GET /logs/1
   # GET /logs/1.json
   def show
+    #@log = Log.find(params[:log_id])
+    @data = File.read(@log.log_path)
   end
 
   # GET /logs/new
@@ -69,6 +71,6 @@ class LogsController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def log_params
-      params.require(:log).permit(:LogPath, :Error)
+      params.require(:log).permit(:log_path, :error)
     end
 end

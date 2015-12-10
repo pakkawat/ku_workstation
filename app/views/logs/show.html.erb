@@ -1,14 +1,5 @@
-<p id="notice"><%= notice %></p>
-
-<p>
-  <strong>Logpath:</strong>
-  <%= @log.LogPath %>
-</p>
-
-<p>
-  <strong>Error:</strong>
-  <%= @log.Error %>
-</p>
-
-<%= link_to 'Edit', edit_log_path(@log) %> |
 <%= link_to 'Back', logs_path %>
+<br><br>
+<div id="editor"><%= @data %></div>
+<br>
+<%= javascript_include_tag "ace/src-min/ace.js", "ace/text_area_ace.js" %>
