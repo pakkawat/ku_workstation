@@ -23,7 +23,7 @@ module KnifeCommand
 		file = ColourBlind.new(File.open(log_path, "a"))
 		log = Logger.new(file)
 		log.formatter = proc do |severity, datetime, progname, msg|
-			"#{datetime}: #{msg}\n"
+			"#{datetime.strftime('%c')}: #{msg}\n"
 		end
 
 		Open3.popen2e(command) do |stdin, stdout_err, wait_thr|
@@ -32,8 +32,10 @@ module KnifeCommand
 			end
                         
 			if wait_thr.value.success?
+				user.log.update(error: true)
 				check_error = true
 			else
+				user.log.update(error: false)
 				check_error = false
 			end
 		end

@@ -4,7 +4,8 @@ class LogsController < ApplicationController
   # GET /logs
   # GET /logs.json
   def index
-    @logs = Log.all
+    @passes = Log.where(error: false)
+    @errors = Log.where(error: true)
   end
 
   # GET /logs/1

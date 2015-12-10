@@ -1,26 +1,38 @@
-<p id="notice"><%= notice %></p>
+<div class="panel panel-danger">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Error Logs</div>
+  <br>
+    <table id="" class="datatable_display table table-striped">
+      <thead>
+        <tr>
+          <th>Ku ID</th>
+          <th>Firstname</th>
+          <th>Lastname</th>
+          <th>View Log</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: "errorlog", collection: @errors, as: :log %>
+      </tbody>
+  </table>
+</div>
 
-<h1>Listing Logs</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Logpath</th>
-      <th>Error</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @logs.each do |log| %>
-      <tr>
-        <td><%= log.log_path %></td>
-        <td><%= log.error %></td>
-        <td><%= link_to 'Show', log %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
+<div class="panel panel-info">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Logs</div>
+  <br>
+    <table id="" class="datatable_display table table-striped">
+      <thead>
+        <tr>
+          <th>Ku ID</th>
+          <th>Firstname</th>
+          <th>Lastname</th>
+          <th>View Log</th>
+        </tr>
+      </thead>
+      <tbody>
+        <%= render partial: "passlog", collection: @passes, as: :log %>
+      </tbody>
+  </table>
+</div>
