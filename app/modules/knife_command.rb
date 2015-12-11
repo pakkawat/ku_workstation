@@ -39,10 +39,7 @@ module KnifeCommand
 				check_error = false
 			end
 		end
-		log.info("-------------------- End --------------------")
-		log.info("")
-		log.info("")
-		log.info("")
+		log.info("-------------------- End --------------------\n\n")
 		log.close
 		return check_error
 	end

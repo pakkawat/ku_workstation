@@ -71,6 +71,8 @@ class KuUserJob < ProgressJob::Base
 
   def success
     if @type == "delete"
+      FileUtils.rm("#{Rails.root}/log/knife/#{@user.ku_id}.log")
+      #to_do delete logrotate( g0001.log.2) ???
       @user.destroy
     end
   end
