@@ -24,17 +24,18 @@ class ProgramJob < ProgressJob::Base
 
     #str_temp = ""
     users.each do |user|
+      error_length = arr_error.length
       if KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         if KnifeCommand.run("knife node run_list remove " + user.ku_id + " 'recipe[" + @program.program_name + "]' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
           # run ssh again for download file if other program use same file in this program
           if !KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
-            arr_error.push("(" + user.ku_id + "),")
+            arr_error.push("#{link_to ku_id, user.log}")
           end
         else
-          arr_error.push("(" + user.ku_id + "),")
+          arr_error.push("#{link_to 'system.log', logs_system_log_path}")
         end
       else
-        arr_error.push("(" + user.ku_id + "),")
+        arr_error.push("#{link_to ku_id, user.log}")
       end
 
       update_progress
