@@ -29,13 +29,13 @@ class ProgramJob < ProgressJob::Base
         if KnifeCommand.run("knife node run_list remove " + user.ku_id + " 'recipe[" + @program.program_name + "]' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
           # run ssh again for download file if other program use same file in this program
           if !KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
-            arr_error.push("#{link_to ku_id, user.log}")
+            arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/logs/'+user.log.id.to_s}, ")
           end
         else
-          arr_error.push("#{link_to 'system.log', logs_system_log_path}")
+          arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
         end
       else
-        arr_error.push("#{link_to ku_id, user.log}")
+        arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/logs/'+user.log.id.to_s}, ")
       end
 
       update_progress
@@ -61,7 +61,7 @@ class ProgramJob < ProgressJob::Base
       FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
       @program.destroy
     else
-      raise "Error delete cookbook see system.log"
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
     end
   end
 

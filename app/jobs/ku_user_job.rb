@@ -25,29 +25,29 @@ class KuUserJob < ProgressJob::Base
         sleep(10)
         update_progress
       else
-        raise "#{link_to 'system.log', logs_system_log_path}"
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       end
       if KnifeCommand.run("knife cookbook create " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb",nil)
         write_file(new_password)
         update_progress
       else
-        raise "#{link_to 'system.log', logs_system_log_path}"
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       end
       if KnifeCommand.run("knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         update_progress
       else
-        raise "#{link_to 'system.log', logs_system_log_path}"
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       end
       if KnifeCommand.run("knife node run_list add " + @user.ku_id + " 'recipe[chef-client],recipe[" + @user.ku_id + "],recipe[base-client]' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         sleep(5)
         update_progress
       else
-        raise "#{link_to 'system.log', logs_system_log_path}"
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       end
       if KnifeCommand.run("knife ssh 'name:" + @user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         update_progress
       else
-        raise "#{link_to 'system.log', logs_system_log_path}"
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       end
     else #delete user
       require 'chef'
@@ -57,13 +57,13 @@ class KuUserJob < ProgressJob::Base
       if KnifeCommand.run("knife ec2 server delete " + node[0].ec2.instance_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb --purge -y", nil)
         update_progress
       else
-        raise "#{link_to 'system.log', logs_system_log_path}"
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       end
       if KnifeCommand.run("knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
         FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
         update_progress
       else
-        raise "#{link_to 'system.log', logs_system_log_path}"
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       end
     end
     #File.open('/home/ubuntu/myapp/public/ku_user_job.txt', 'w') { |f| f.write(str_temp) }
