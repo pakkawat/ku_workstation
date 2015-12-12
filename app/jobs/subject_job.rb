@@ -1,6 +1,7 @@
 class SubjectJob < ProgressJob::Base
   #queue_as :default
   include KnifeCommand
+  include ActionView::Helpers::UrlHelper
   def initialize(id,type)
     @subject = Subject.find(id)
     @type = type
@@ -25,7 +26,7 @@ class SubjectJob < ProgressJob::Base
         f.write("default['user_list'] = " + create_user_list(KuUser.where(id: UsersProgram.where(:program_id => program.id).uniq.pluck(:ku_user_id)).pluck(:ku_id)))
       end
       if !KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        arr_error.push("#{link_to 'system.log', logs_system_log_path}")
+        arr_error.push("#{view_context.link_to 'system.log', logs_system_log_path}, ".html_safe)
       end
     end
 
@@ -42,27 +43,27 @@ class SubjectJob < ProgressJob::Base
             program_enable_false = create_run_list(@subject.programs.where("programs_subjects.program_enabled = false").where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
             if KnifeCommand.run("knife node run_list remove " + ku_id + " '" + program_enable_false.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
               if !KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
-                arr_error.push("#{link_to ku_id, user.log}")
+                arr_error.push("#{view_context.link_to ku_id, log_path(user.log)}, ".html_safe)
               end
             else
-              arr_error.push("#{link_to ku_id, user.log}")
+              arr_error.push("#{view_context.link_to ku_id, log_path(user.log)}, ".html_safe)
             end
           else
-            arr_error.push("#{link_to ku_id, user.log}")
+            arr_error.push("#{view_context.link_to ku_id, log_path(user.log)}, ".html_safe)
           end
         else # user.user_enabled = false
           # all program that in this subject but not in UsersProgram table because when user_enabled = false will deleted all program_id(program_enabled = true) with subject_id in UserProgram table
           all_programs = create_run_list(@subject.programs.where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
           if KnifeCommand.run("knife node run_list remove " + ku_id + " '" + all_programs.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
             if !KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
-              arr_error.push("#{link_to ku_id, user.log}")
+              arr_error.push("#{view_context.link_to ku_id, log_path(user.log)}, ".html_safe)
             end
           else
-            arr_error.push("#{link_to ku_id, user.log}")
+            arr_error.push("#{view_context.link_to ku_id, log_path(user.log)}, ".html_safe)
           end
         end
       else
-        arr_error.push("#{link_to ku_id, user.log}")
+        arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/logs/'+user.log.id.to_s}, ")
       end
 
       update_progress

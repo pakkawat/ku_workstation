@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
-  resources :logs, :only => [:index, :show]
   get 'logs/system_log', to: 'logs#system_log'
+  resources :logs, :only => [:index, :show]
+  #get 'logs/system_log', to: 'logs#system_log'
 
   get 'command_jobs/index'
 
