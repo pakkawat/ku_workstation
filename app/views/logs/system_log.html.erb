@@ -1,6 +1,6 @@
 <%= link_to "Back", logs_path, :class => "btn btn-primary" %>
 <br><br>
-<div id="editor"><%= @data %></div>
+<%= text_area_tag(:message, @data, :size => "150x60") %>
 <br><br>
 <%= link_to "Back", logs_path, :class => "btn btn-primary" %>
-<%= javascript_include_tag "ace/src-min/ace.js", "ace/text_area_ace.js" %>
+

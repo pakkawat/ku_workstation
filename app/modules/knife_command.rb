@@ -23,9 +23,9 @@ module KnifeCommand
 		file = ColourBlind.new(File.open(log_path, "a"))
 		log = Logger.new(file)
 		log.formatter = proc do |severity, datetime, progname, msg|
-			"#{datetime.strftime('%c')}: #{msg}\n"
+			"#{msg}\n"
 		end
-		log.info("-------------------- Start --------------------")
+		log.info("-------------------- Start  #{Time.now.strftime('%c')}  --------------------\n")
 		Open3.popen2e(command) do |stdin, stdout_err, wait_thr|
 			while line=stdout_err.gets do
 				log.info(line)
@@ -39,7 +39,7 @@ module KnifeCommand
 				check_error = false
 			end
 		end
-		log.info("-------------------- End --------------------\n\n")
+		log.info("------------------------------------ End ---------------------------------------\n\n")
 		log.close
 		return check_error
 	end
