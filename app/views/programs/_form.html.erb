@@ -52,10 +52,13 @@
 
   <div class="col-sm-6">
     <%= link_to_add_association "Add Action", f, :chef_resources, class: "btn btn-primary", partial: 'chef_main_resource_fields', :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } %>
-    <div style="margin-top: 10px"></div>
+    <div style="margin-top: 10px">
+    </div>
+    <div class="sortable">
         <%= f.fields_for :chef_resources, f.object.chef_resources.order(:id) do |builder| %>
                 <%= render 'chef_main_resource_fields', f: builder %>
         <% end %>
+    </div>
   </div><!--/col-9-->
 </div>
 
@@ -89,7 +92,7 @@
 
 
 </script>
-
+<%= javascript_include_tag "sortable/programs.js"%>
 
 
 <% end %>
