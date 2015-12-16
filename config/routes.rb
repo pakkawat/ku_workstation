@@ -39,7 +39,9 @@ Rails.application.routes.draw do
 
 
 
-  resources :programs
+  resources :programs do
+    put :sort, on: :collection
+  end
   get 'programs/:program_id/upload_cookbook', to: 'programs#upload_cookbook', via: :get # danger! if file name "upload_cookbook"
   match "programs/:program_id/*program_files", :to => "program_files#show", :via => "get", :constraints => { :program_files => /[^*]+/ }#fix dot in url and allows anything except *
   match "programs/:program_id/*program_files", :to => "program_files#save_file", :via => "patch", :constraints => { :program_files => /[^*]+/ }

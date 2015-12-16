@@ -348,6 +348,15 @@ class ProgramsController < ApplicationController
     end
   end
 
+
+  def sort
+    program = Program.find(params[:program_id])
+    params[:order].each do |key,value|
+      program.chef_resource.find_by(chef_resource_id: value[:id]).update_attribute(:priority,value[:position])
+    end
+    render :nothing => true
+  end
+
   private
     def program_params
       params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :resource_name, :resource_type, :file_name, :_destroy, chef_attributes_attributes: [ :id, :att_type, :att_value, :_destroy ] ] )
