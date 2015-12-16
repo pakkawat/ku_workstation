@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151208122417) do
+ActiveRecord::Schema.define(version: 20151216104439) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -29,6 +29,7 @@ ActiveRecord::Schema.define(version: 20151208122417) do
     t.string  "resource_type"
     t.integer "program_id"
     t.string  "file_name"
+    t.integer "priority"
   end
 
   add_index "chef_resources", ["program_id"], name: "index_chef_resources_on_program_id", using: :btree

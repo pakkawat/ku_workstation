@@ -352,7 +352,7 @@ class ProgramsController < ApplicationController
   def sort
     program = Program.find(params[:program_id])
     params[:order].each do |key,value|
-      program.chef_resource.find_by(chef_resource_id: value[:id]).update_attribute(:priority,value[:position])
+      program.chef_resources.find_by(id: value[:id]).update_attribute(:priority,value[:position])
     end
     render :nothing => true
   end
