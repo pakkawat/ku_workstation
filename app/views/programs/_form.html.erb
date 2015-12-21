@@ -64,21 +64,32 @@
 
 <script type='text/javascript'>
   $(function (){
-     $(document).on("change",".selectType", function (){
+     $(document).on("change",".form-control", function (){
         var selectValue = $(this).val();
         var numberPattern = /\d+/g;
         var form_id = this.id.match( numberPattern );
         var form_type = $("label[for='program_chef_resources_attributes_"+form_id+"_content']").next('div').find( "input[type='hidden'][id$=_form_type]" ).val();
         //alert(form_type);
         temp_url = "/";
-        if ( selectValue === "Zip") {
-           temp_url += "chef_remote_files_partial"
+        if ( selectValue === "Repository") {
+          $("[id$="+form_id+"_resource_name]").parent().show();
+           temp_url += "install_repository_partial"
         }
         if ( selectValue === "Deb" ) {
-           temp_url += "chef_deb_partial"
+          $("[id$="+form_id+"_resource_name]").parent().show();
+           temp_url += "install_dep_partial"
         }
-        if ( selectValue === "Repository" ) {
-           temp_url += "chef_package_partial"
+        if ( selectValue === "Source" ) {
+          $("[id$="+form_id+"_resource_name]").parent().show();
+           temp_url += "install_source_partial"
+        }
+        if ( selectValue === "Download" ) {
+          $("[id$="+form_id+"_resource_name]").parent().hide();
+           temp_url += "download_file_partial"
+        }
+        if ( selectValue === "Extract" ) {
+          $("[id$="+form_id+"_resource_name]").parent().hide();
+           temp_url += "extract_file_partial"
         }
         jQuery.ajax({
            url: temp_url,

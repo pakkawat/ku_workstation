@@ -314,19 +314,7 @@ class ProgramsController < ApplicationController
     end
   end
 
-  def chef_remote_files_partial
-    @program = nil
-    @form_id = params[:form_id].to_s[2..-3]
-    @form_type = params[:form_type]
-    #render plain: params[:form_id].inspect+"--"+@form_id.to_s[2..-3]
-    @chef_attribute = ChefAttribute.new
-    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def chef_package_partial
+  def install_repository_partial
     @program = nil
     @form_id = params[:form_id].to_s[2..-3]
     @form_type = params[:form_type]
@@ -337,7 +325,7 @@ class ProgramsController < ApplicationController
     end
   end
 
-  def chef_deb_partial
+  def install_dep_partial
     @program = nil
     @form_id = params[:form_id].to_s[2..-3]
     @form_type = params[:form_type]
@@ -348,6 +336,38 @@ class ProgramsController < ApplicationController
     end
   end
 
+  def install_source_partial
+    @program = nil
+    @form_id = params[:form_id].to_s[2..-3]
+    @form_type = params[:form_type]
+    @chef_attribute = ChefAttribute.new
+    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def download_file_partial
+    @program = nil
+    @form_id = params[:form_id].to_s[2..-3]
+    @form_type = params[:form_type]
+    @chef_attribute = ChefAttribute.new
+    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
+    respond_to do |format|
+      format.js
+    end
+  end
+
+  def extract_file_partial
+    @program = nil
+    @form_id = params[:form_id].to_s[2..-3]
+    @form_type = params[:form_type]
+    @chef_attribute = ChefAttribute.new
+    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
+    respond_to do |format|
+      format.js
+    end
+  end
 
   def sort
     program = Program.find(params[:program_id])

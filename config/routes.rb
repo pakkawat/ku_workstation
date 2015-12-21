@@ -30,11 +30,11 @@ Rails.application.routes.draw do
   #match "programs/:program_id/*program_file", :to => "program_files#show", :via => "get"
   
 
-  get "/chef_remote_files_partial" => 'programs#chef_remote_files_partial', as: 'chef_remote_files_partial'
-  get "/chef_deb_partial" => 'programs#chef_deb_partial', as: 'chef_deb_partial'
-  get "/chef_package_partial" => 'programs#chef_package_partial', as: 'chef_package_partial'
-
-
+  get "/install_repository_partial" => 'programs#install_repository_partial', as: 'install_repository_partial'
+  get "/install_dep_partial" => 'programs#install_dep_partial', as: 'install_dep_partial'
+  get "/install_source_partial" => 'programs#install_source_partial', as: 'install_source_partial'
+  get "/download_file_partial" => 'programs#download_file_partial', as: 'download_file_partial'
+  get "/extract_file_partial" => 'programs#extract_file_partial', as: 'extract_file_partial'
 
 
 

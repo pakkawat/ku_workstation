@@ -1,62 +1,76 @@
-<div class="panel panel-info" data-id="<%= f.object.id %>">
-  <!-- Default panel contents -->
-  <div class="panel-heading">
-  	
-    <%= f.select :resource_type, [["Repository", "Repository"], ["Deb file", "Deb"], ["Zip file", "Zip"]], {}, :class => "selectType" %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
-    <%= f.text_field :resource_name %>
-    <%= f.hidden_field :file_name %>
-    <%= link_to_remove_association("remove", f, wrapper_class: :'panel.panel-info', class: "btn btn-default" ) %>
-  	
-  </div>
-    <table class="table table-striped">
-      <tbody>
-        <tr>
-          <td>
-            <!-- link_to_add_association "Add Attribute", f, :chef_attributes, class: "btn btn-info", :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } -->
-            <div style="margin-top: 10px"></div>
-            <%= f.label :content, "", {:style=>'display: none;'} %><!-- for attribute partial -->
-            <div>
-            <% if @program.persisted? %>
-            
-              <% if f.object.resource_type == "Repository" %>
-                <%= f.fields_for :chef_attributes do |builder| %>
-                  <%= render 'programs/attribute_fields/chef_package_fields', f: builder %>
-                <% end %>
-              <% elsif f.object.resource_type == "Zip" %>
-                <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
-                  <%= render 'programs/attribute_fields/chef_remote_files_fields', f: builder %>
-                <% end %>
-              <% elsif f.object.resource_type == "Deb" %>
-                <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
-                  <%= render 'programs/attribute_fields/chef_deb_fields', f: builder %>
-                <% end %>
-              <% elsif f.object.resource_type.nil? %>
-                <% f.object.chef_attributes.build %>
-                <%= f.fields_for :chef_attributes do |builder| %>
-                  <%= render 'programs/attribute_fields/chef_default_fields', f: builder %>
-                <% end %>
-              <% end %>
+<div class="row chef-resource" data-id="<%= f.object.id %>">
+  <div class="col-md-3">
+    <div class="well well-sm">
+      <form>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="subject">
+              Action
+            </label>
+            <%= f.select :resource_type, [["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"], ["Download file", "Download"], ["Extract file", "Extract"]], {}, :class => "form-control" %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
+          </div>
 
-           <% else %><!-- if @program.persisted? -->
-             
-              <!-- default partial package (_chef_package_fields.html.erb) -->
-    
-                
-            <% f.object.chef_attributes.build %>
+          <div class="form-group">
+            <label for="name">
+              Program name
+            </label>
+            <%= f.text_field :resource_name, class: "form-control" %>
+          </div>
+
+
+          <%= f.label :content, "", {:style=>'display: none;'} %><!-- for attribute partial -->
+          <% if @program.persisted? %>
+          
+            <% if f.object.resource_type == "Repository" %>
               <%= f.fields_for :chef_attributes do |builder| %>
-                <%= render 'programs/attribute_fields/chef_default_fields', f: builder %>
+                <%= render 'programs/attribute_fields/install_repository_fields', f: builder %>
               <% end %>
+            <% elsif f.object.resource_type == "Dep" %>
+              <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
+                <%= render 'programs/attribute_fields/install_dep_fields', f: builder %>
+              <% end %>
+            <% elsif f.object.resource_type == "Source" %>
+              <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
+                <%= render 'programs/attribute_fields/install_source_fields', f: builder %>
+              <% end %>
+            <% elsif f.object.resource_type == "Download" %>
+              <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
+                <%= render 'programs/attribute_fields/download_file_fields', f: builder %>
+              <% end %>
+            <% elsif f.object.resource_type == "Extract" %>
+              <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
+                <%= render 'programs/attribute_fields/extract_file_fields', f: builder %>
+              <% end %>
+            <% elsif f.object.resource_type.nil? %>
+              <% f.object.chef_attributes.build %>
+              <%= f.fields_for :chef_attributes do |builder| %>
+                <%= render 'programs/attribute_fields/default_fields', f: builder %>
+              <% end %>
+            <% end %>
+
+         <% else %><!-- if @program.persisted? -->
            
-           <% end %>
+            <!-- default partial package (_chef_package_fields.html.erb) -->
+  
+              
+          <% f.object.chef_attributes.build %>
+            <%= f.fields_for :chef_attributes do |builder| %>
+              <%= render 'programs/attribute_fields/default_fields', f: builder %>
+            <% end %>
+         
+         <% end %>
+
+
+
+
+        <%= link_to_remove_association("Remove", f, wrapper_class: :'row.chef-resource', class: "btn btn-default pull-right" ) %>
         </div>
 
-          </td>
-        </tr>
-        <!-- f.fields_for :chef_attributes do |builder| -->
-        	<!-- render 'chef_attribute_fields', f: builder -->
-        <!-- end -->
+      </div>
+      </form>
+    </div>
+  </div>
 
-      </tbody>
-  </table>
 </div>
 
