@@ -3,7 +3,7 @@ var ready, set_positions;
 set_positions = function(){
     // loop through and give each task a data-pos
     // attribute that holds its position in the DOM
-    $('.panel.panel-info').each(function(i){
+    $('.row.chef-resource').each(function(i){
         $(this).attr("data-pos",i+1);
     });
 }
@@ -25,7 +25,7 @@ ready = function(){
         set_positions();
 
         // populate the updated_order array with the new task positions
-        $('.panel.panel-info').each(function(i){
+        $('.row.chef-resource').each(function(i){
             updated_order.push({ id: $(this).data("id"), position: i+1 });
         });
 
@@ -33,7 +33,10 @@ ready = function(){
         $.ajax({
             type: "PUT",
             url: '/programs/sort',
-            data: { program_id: document.getElementById("program_id").value, order: updated_order }
+            data: { program_id: document.getElementById("program_id").value, order: updated_order },
+            error: function(xhr, status, error){
+              alert(xhr.responseText);
+            }
         });
     });
 
