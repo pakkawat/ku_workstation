@@ -1,6 +1,6 @@
-<div>
 <% if !@program.nil? %>
         <% if f.object.att_type == "source_file" %>
+        <div>
                 <div class="form-group">
                         <label for="name">
                                 Source file
@@ -18,6 +18,7 @@
                         <%= f.text_field :att_value, class: "form-control" %>  
                 </div>
                 <%= f.hidden_field :_destroy  %>
+        </div>
         <% end %>
         <%= f.hidden_field :form_type, :value => "old" %>
 <% else %>
@@ -42,4 +43,4 @@
         </div>
         <%= f.hidden_field :form_type, :value => "new", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][form_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_form_type' %>
 <% end %>
-</div>
+
