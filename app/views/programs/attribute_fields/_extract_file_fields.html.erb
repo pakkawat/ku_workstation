@@ -1,21 +1,24 @@
 <div>
 <% if !@program.nil? %>
-        <div class="form-group">
-                <label for="name">
-                        Source file
-                </label>
-                <%= f.hidden_field :att_type, :value => "source_file" %>
-                <%= f.text_field :att_value, class: "form-control" %>
-        </div>
-        <%= f.hidden_field :_destroy  %>
-        <div class="form-group">
-                <label for="name">
-                        Extract to
-                </label>
-                <%= f.hidden_field :att_type, :value => "extract_to" %>
-                <%= f.text_field :att_value, class: "form-control" %>  
-        </div>
-        <%= f.hidden_field :_destroy  %>  
+        <% if f.object.att_type == "source_file" %>
+                <div class="form-group">
+                        <label for="name">
+                                Source file
+                        </label>
+                        <%= f.hidden_field :att_type, :value => "source_file" %>
+                        <%= f.text_field :att_value, class: "form-control" %>
+                </div>
+                <%= f.hidden_field :_destroy  %>
+        <% elsif f.object.att_type == "extract_to" %>
+                <div class="form-group">
+                        <label for="name">
+                                Extract to
+                        </label>
+                        <%= f.hidden_field :att_type, :value => "extract_to" %>
+                        <%= f.text_field :att_value, class: "form-control" %>  
+                </div>
+                <%= f.hidden_field :_destroy  %>
+        <% end %>
         <%= f.hidden_field :form_type, :value => "old" %>
 <% else %>
         <% partial_id = DateTime.now.strftime('%Q').to_s %>
