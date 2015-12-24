@@ -7,8 +7,7 @@
                 <%= f.hidden_field :att_type, :value => "source_file" %>
                 <%= f.text_field :att_value, class: "form-control" %>
                 <%= f.hidden_field :_destroy  %>
-        
-        <%= f.hidden_field :form_type, :value => "old" %>
+                <%= f.hidden_field :form_type, :value => "old" %>
         </div>
 <% else %>
         <% partial_id = DateTime.now.strftime('%Q').to_s %>
