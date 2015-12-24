@@ -9,19 +9,19 @@
             <%= f.select :resource_type, [["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"], ["Download file", "Download"], ["Extract file", "Extract"]], {}, :class => "form-control" %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
           </div>
 
-          <div class="form-group">
+          <% if @program.persisted? %>
+            <% if f.object.resource_type == "Download" || f.object.resource_type == "Extract" %>
+              <div class="form-group" style="display: none;">
+            <% else %>
+              <div class="form-group">
+            <% end %>
+          <% else %>
+            <div class="form-group">
+          <% end %>
             <label for="name">
               Program name
             </label>
-            <% if @program.persisted? %>
-              <% if f.object.resource_type == "Download" || f.object.resource_type == "Extract" %>
-                <%= f.text_field :resource_name, class: "form-control", :style => "display: none;" %>
-              <% else %>
-                <%= f.text_field :resource_name, class: "form-control" %>
-              <% end %>
-            <% else %>
-              <%= f.text_field :resource_name, class: "form-control" %>
-            <% end %>
+            <%= f.text_field :resource_name, class: "form-control" %>
           </div>
 
 

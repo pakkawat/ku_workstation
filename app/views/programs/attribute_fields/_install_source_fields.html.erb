@@ -2,7 +2,7 @@
 <% if !@program.nil? %>
         <div class="form-group">
                 <label for="name">
-                        Source file111
+                        Source file
                 </label>
                 <%= f.hidden_field :att_type, :value => "source_file" %>
                 <%= f.text_field :att_value, class: "form-control" %>
@@ -14,7 +14,7 @@
         <% i = 0 %>
         <div class="form-group">
                 <label for="name">
-                        Source file222
+                        Source file
                 </label>
                 <%= f.hidden_field :att_type, :value => "source_file", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_type' %>
                 <%= f.text_field :att_value, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_value', :class => 'form-control' %>
