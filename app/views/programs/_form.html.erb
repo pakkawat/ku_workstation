@@ -68,8 +68,8 @@
         var selectValue = $(this).val();
         var numberPattern = /\d+/g;
         var form_id = this.id.match( numberPattern );
-        var form_type = $("input[type='hidden'][id$=_form_type]").val();
-        //alert(form_type);
+        var form_type = $("label[for='program_chef_resources_attributes_"+form_id+"_content']").next('div').find( "input[type='hidden'][id$=_form_type]" ).val();
+        alert(form_id+"---"+form_type);
         temp_url = "/";
         if ( selectValue === "Repository") {
           $("[id$="+form_id+"_resource_name]").parent().show();

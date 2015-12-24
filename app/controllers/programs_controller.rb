@@ -167,10 +167,10 @@ class ProgramsController < ApplicationController
   def check_chef_resource
     params[:program][:chef_resources_attributes].each do |key, value|
       if value[:_destroy] == "false"
-        str_temp += value.to_s+"---"
+        #str_temp += value.to_s+"---"
 
         if !value[:id].nil? #chef_resource old value ( if different delete old file)
-          str_temp += "old[[["+value[:chef_attributes_attributes].to_s+"]]]---"
+          #str_temp += "old[[["+value[:chef_attributes_attributes].to_s+"]]]---"
           chef_resource = ChefResource.find(value[:id])
           new_resource_name = value[:resource_name]
 

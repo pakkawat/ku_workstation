@@ -19,12 +19,11 @@
 
           <%= f.label :content, "", {:style=>'display: none;'} %><!-- for attribute partial -->
           <% if @program.persisted? %>
-          
             <% if f.object.resource_type == "Repository" %>
               <%= f.fields_for :chef_attributes do |builder| %>
                 <%= render 'programs/attribute_fields/install_repository_fields', f: builder %>
               <% end %>
-            <% elsif f.object.resource_type == "Dep" %>
+            <% elsif f.object.resource_type == "Deb" %>
               <%= f.fields_for :chef_attributes, f.object.chef_attributes.order(:id) do |builder| %>
                 <%= render 'programs/attribute_fields/install_dep_fields', f: builder %>
               <% end %>
