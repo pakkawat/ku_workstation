@@ -49,9 +49,9 @@ require 'uri'
 	def ResourceGenerator.install_from_deb(chef_resource)
 		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value)
 		str_code = ""
-		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/\#\{source_file\}\"\n"
+		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/#{source_file}\"\n"
 		str_code += "\n"
-		str_code += "dpkg_package \"\#\{chef_resource.resource_name\}\" do\n"
+		str_code += "dpkg_package \"#{chef_resource.resource_name}\" do\n"
 		str_code += "  source src_filepath\n"
 		str_code += "  action :install\n"
 		str_code += "end\n"
@@ -62,7 +62,7 @@ require 'uri'
 	def ResourceGenerator.uninstall_from_deb(chef_resource)
 		#source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value)
 		str_code = ""
-		str_code += "dpkg_package \"\#\{chef_resource.resource_name\}\" do\n"
+		str_code += "dpkg_package \"#{chef_resource.resource_name}\" do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
 		str_code += "\n"
@@ -93,7 +93,7 @@ require 'uri'
 		str_code += "remote_file src_filepath do\n"
 		str_code += "  source \"" + url + "\"\n"
 		str_code += "  mode '0755'\n"
-		str_code += "  not_if \{ \:\:File.exists?(src_filepath) \}\n"
+		str_code += "  not_if \{ \:\:File.exists?(\#\{src_filepath\}) \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
@@ -119,10 +119,10 @@ require 'uri'
 		str_code += "bash 'extract_module' do\n"
 		str_code += "  cwd Chef\:\:Config\[\:file_cache_path\]\n"
 		str_code += "  code \<\<\-EOH\n"
-		str_code += "    mkdir -p \#\{extract_to\}\n"
-		str_code += "    tar xzf \#\{source_file\} \-C \#\{extract_to\}\n"
+		str_code += "    mkdir -p #{extract_to}\n"
+		str_code += "    tar xzf #{source_file} \-C #{extract_to}\n"
 		str_code += "    EOH\n"
-		str_code += "  not_if \{ \:\:File.exists?(extract_to) \}\n"
+		str_code += "  not_if \{ \:\:File.exists?(#{extract_to}) \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 		str_code += "\n"
@@ -168,7 +168,7 @@ require 'uri'
 
 	def self.remove_deb(file)
 		str_code = ""
-		str_code += "dpkg_package \"\#\{file.resource_name\}\" do\n"
+		str_code += "dpkg_package \"#{file.resource_name}\" do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
 		str_code += "\n"
@@ -271,7 +271,7 @@ require 'uri'
 		return str_code
 	end
 
-	def ResourceGenerator.uninstall_resource(chef_resource)
+	def ResourceGenerator.uninstall_resource222(chef_resource)
 		str_code = ""
 		if chef_resource.resource_type == "Repository"
 			str_code += "package '#{chef_resource.resource_name}' do\n"
