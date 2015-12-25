@@ -62,7 +62,7 @@ require 'uri'
 	def ResourceGenerator.uninstall_from_deb(chef_resource)
 		#source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value)
 		str_code = ""
-		str_code += "dpkg_package \"#{chef_resource.resource_name}\" do\n"
+		str_code += "dpkg_package '#{chef_resource.resource_name}'' do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
 		str_code += "\n"
@@ -119,10 +119,10 @@ require 'uri'
 		str_code += "bash 'extract_module' do\n"
 		str_code += "  cwd Chef\:\:Config\[\:file_cache_path\]\n"
 		str_code += "  code \<\<\-EOH\n"
-		str_code += "    mkdir -p #{extract_to}\n"
-		str_code += "    tar xzf #{source_file} \-C #{extract_to}\n"
+		str_code += "    mkdir -p \"#{extract_to}\"\n"
+		str_code += "    tar xzf \"#{source_file}\" \-C \"#{extract_to}\"\n"
 		str_code += "    EOH\n"
-		str_code += "  not_if \{ \:\:File.exists?(#{extract_to}) \}\n"
+		str_code += "  not_if \{ \:\:File.exists?(\"#{extract_to}\") \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 		str_code += "\n"
@@ -132,7 +132,7 @@ require 'uri'
 	def ResourceGenerator.delete_extract_file(chef_resource)
 		extract_to = chef_resource.chef_attributes.where(:att_type => "extract_to").pluck(:att_value).first
 		str_code = ""
-		str_code += "directory \"" + extract_to + "\" do\n"
+		str_code += "directory '" + extract_to + "' do\n"
 		str_code += "  recursive true\n"
 		str_code += "  action :delete\n"
 		str_code += "end\n"
@@ -168,7 +168,7 @@ require 'uri'
 
 	def self.remove_deb(file)
 		str_code = ""
-		str_code += "dpkg_package \"#{file.resource_name}\" do\n"
+		str_code += "dpkg_package '#{file.resource_name}' do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
 		str_code += "\n"
@@ -199,7 +199,7 @@ require 'uri'
 		str_code = ""
 		if file.att_type == "extract_to"
 			extract_to = file.att_value
-			str_code += "directory \"" + extract_to + "\" do\n"
+			str_code += "directory '" + extract_to + "' do\n"
 			str_code += "  recursive true\n"
 			str_code += "  action :delete\n"
 			str_code += "end\n"
