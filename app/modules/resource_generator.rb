@@ -47,7 +47,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.install_from_deb(chef_resource)
-		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value)
+		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
 		str_code = ""
 		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/#{source_file}\"\n"
 		str_code += "\n"
@@ -84,7 +84,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.download_file(chef_resource)
-		url = chef_resource.chef_attributes.where(:att_type => "download_url").pluck(:att_value)
+		url = chef_resource.chef_attributes.where(:att_type => "download_url").pluck(:att_value).first
 		uri = URI.parse(url)
 		file_name = File.basename(uri.path)
 		str_code = ""
@@ -100,7 +100,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_download_file(chef_resource)
-		url = chef_resource.chef_attributes.where(:att_type => "download_url").pluck(:att_value)
+		url = chef_resource.chef_attributes.where(:att_type => "download_url").pluck(:att_value).first
 		uri = URI.parse(url)
 		file_name = File.basename(uri.path)
 		str_code = ""
@@ -113,8 +113,8 @@ require 'uri'
 	end
 
 	def ResourceGenerator.extract_file(chef_resource)
-		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value)
-		extract_to = chef_resource.chef_attributes.where(:att_type => "extract_to").pluck(:att_value)
+		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
+		extract_to = chef_resource.chef_attributes.where(:att_type => "extract_to").pluck(:att_value).first
 		str_code = ""
 		str_code += "bash 'extract_module' do\n"
 		str_code += "  cwd Chef\:\:Config\[\:file_cache_path\]\n"
@@ -130,7 +130,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_extract_file(chef_resource)
-		extract_to = chef_resource.chef_attributes.where(:att_type => "extract_to").pluck(:att_value)
+		extract_to = chef_resource.chef_attributes.where(:att_type => "extract_to").pluck(:att_value).first
 		str_code = ""
 		str_code += "directory \"" + extract_to + "\" do\n"
 		str_code += "  recursive true\n"
