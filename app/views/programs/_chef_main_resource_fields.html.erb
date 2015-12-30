@@ -18,10 +18,17 @@
           <% else %>
             <div class="form-group">
           <% end %>
+
             <label for="name">
               Program name
             </label>
-            <%= f.text_field :resource_name, class: "form-control" %>
+            <div class="input-group">
+              <span class="input-group-addon">
+                <span class="glyphicon glyphicon-book">
+                </span>
+              </span>
+              <%= f.text_field :resource_name, class: "form-control" %>
+            </div>
           </div>
 
 

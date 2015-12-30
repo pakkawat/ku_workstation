@@ -1,58 +1,46 @@
+<ul class="thumbnails list-unstyled">
 <% jobs.each do |job| %>
-<div class="job">
-
-	<% if !job.last_error.nil? %>
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="progress-status text-danger">
-						<% new_line = job.last_error.index("\n") %>
-						<%= job.last_error[0,new_line].html_safe %>
-
-						<span class="pull-right">
-							<%= button_to 'Delete', command_job_path(job), :class => "btn btn-default", :method => :delete %>
-						</span>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-sm-12">
-				<div class="progress">
-					<div class="progress-bar progress-bar-danger" style="width:100%">
-						Error!
-					</div>
-				</div>
-				</div>
-			</div>
-	<% else %>
-		<% progress=0 %>
-		<% if job.progress_max != 0 %>
-			<% progress = ((job.progress_current.to_f / job.progress_max) * 100).round %>
-		<% end %>
-			<div class="row">
-				<div class="col-sm-12">
-					<div class="progress-status text-primary">
-						<%= ("<strong>Job id</strong>:"+job.id.to_s+" <strong>Task</strong>:"+job.progress_current.to_s + '/' + job.progress_max.to_s + " <strong>Detail</strong>: " + job.description).html_safe %>
-						<span class="pull-right">
-
-							<%= button_to 'Delete', command_job_path(job), :class => "btn btn-default", :method => :delete, :disabled => job.id == Delayed::Job.first.id ? true : false %>
-						</span>
-					</div>
-				</div>
-			</div>
-
-			<div class="row">
-				<div class="col-sm-12">
-				<div class="progress">
-					<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar") %>
-					<!-- <div class="progress-bar progress-bar-danger"></div> -->
-				</div>
-				</div>
-			</div>
-
-	<% end %>
-
-
-</div><!-- div class="job"> -->
-<hr>
+<% progress=0 %>
+<% if job.progress_max != 0 %>
+	<% progress = ((job.progress_current.to_f / job.progress_max) * 100).round %>
 <% end %>
+    <li class="col-md-3" style="margin-top: 20px;">
+      <div class="thumbnail" style="padding: 0">
+        <div class="caption">
+        <%= button_to 'Delete', command_job_path(job), :class => "btn btn-default pull-right", :method => :delete %>
+          <h2>Project A</h2>
+          <%= ("<h2>Job id:"+job.id.to_s+"</h2>").html_safe %>
+          <%= ("<p>"+job.description+"</p>").html_safe %>
+        </div>
+        <div class="modal-footer" style="text-align: left">
+          <div class="progress">
+          	<% if !job.last_error.nil? %>
+            	<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar progress-bar-danger") %>
+            <% else %>
+            	<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar") %>
+            <% end %>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4"><%= ("<b>"+progress.to_s+"%</b>").html_safe %><br/><small>Successed</small></div>
+            <div class="col-md-4"><%= ("<b>"+job.progress_current.to_s+"%</b>").html_safe %><br/><small>Current</small></div>
+            <div class="col-md-4"><%= ("<b>"+job.progress_max.to_s+"%</b>").html_safe %><br/><small>Max</small></div>
+          </div>
+        </div>
+
+
+        <% if !job.last_error.nil? %>
+            <div class="modal-footer" style="text-align: left; background-color: #f2dede;">
+                <div class="caption">
+                    <p style="word-wrap: break-word;">
+                    	<% new_line = job.last_error.index("\n") %>
+                    	<%= job.last_error[0,new_line].html_safe %>
+                    </p>
+                </div>
+            </div>
+        <% end %>
+
+      </div>
+    </li>
+<% end %>
+</ul>

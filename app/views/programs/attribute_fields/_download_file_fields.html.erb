@@ -5,7 +5,10 @@
                         Download url
                 </label>
                 <%= f.hidden_field :att_type, :value => "download_url" %>
-                <%= f.text_field :att_value, class: "form-control" %>
+                <div class="input-group">
+                        <span class="input-group-addon"><span class="glyphicon glyphicon-save-file"></span></span>
+                        <%= f.text_field :att_value, class: "form-control" %>
+                </div>
                 <%= f.hidden_field :_destroy  %>
                 <%= f.hidden_field :form_type, :value => "old" %>
         </div>
@@ -17,7 +20,10 @@
                         Download url
                 </label>
                 <%= f.hidden_field :att_type, :value => "download_url", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_type' %>
+                <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-save-file"></span></span>
                 <%= f.text_field :att_value, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_value', :class => 'form-control' %>
+                </div>
                 <%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'__destroy' %>
                 <%= f.hidden_field :form_type, :value => "new", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][form_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_form_type' %>
         </div>

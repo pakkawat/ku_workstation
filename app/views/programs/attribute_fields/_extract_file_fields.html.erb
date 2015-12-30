@@ -6,7 +6,10 @@
                                 Source file
                         </label>
                         <%= f.hidden_field :att_type, :value => "source_file" %>
-                        <%= f.text_field :att_value, class: "form-control" %>
+                        <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-file"></span></span>
+                                <%= f.text_field :att_value, class: "form-control" %>
+                        </div>
                 </div>
                 <%= f.hidden_field :_destroy  %>
         <% elsif f.object.att_type == "extract_to" %>
@@ -15,7 +18,10 @@
                                 Extract to
                         </label>
                         <%= f.hidden_field :att_type, :value => "extract_to" %>
-                        <%= f.text_field :att_value, class: "form-control" %>  
+                        <div class="input-group">
+                                <span class="input-group-addon"><span class="glyphicon glyphicon-folder-open"></span></span>
+                                <%= f.text_field :att_value, class: "form-control" %> 
+                        </div>
                 </div>
                 <%= f.hidden_field :_destroy  %>
         </div>
@@ -29,7 +35,10 @@
                         Source file
                 </label>
                 <%= f.hidden_field :att_type, :value => "source_file", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_type' %>
+                <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-file"></span></span>
                 <%= f.text_field :att_value, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_value', :class => 'form-control' %>
+                </div>
                 <%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'__destroy' %>
         </div>
         <% i = i+1 %>
@@ -38,7 +47,10 @@
                         Extract to
                 </label>
                 <%= f.hidden_field :att_type, :value => "extract_to", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_type' %>
+                <div class="input-group">
+                <span class="input-group-addon"><span class="glyphicon glyphicon-folder-open"></span></span>
                 <%= f.text_field :att_value, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_value]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_value', :class => 'form-control' %>
+                </div>
                 <%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'__destroy' %>
         </div>
         <%= f.hidden_field :form_type, :value => "new", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][form_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_form_type' %>
