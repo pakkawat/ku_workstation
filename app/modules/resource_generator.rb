@@ -30,8 +30,10 @@ require 'uri'
 
 	def ResourceGenerator.install_from_repository(resource_name)
 		str_code = ""
-		str_code += "package '#{resource_name}' do\n"
-		str_code += "  action :install\n"
+		str_code += "\%w\{#{resource_name}\}.each do \|pkg\|\n"
+		str_code += "  package pkg do\n"
+		str_code += "    action :install\n"
+		str_code += "  end\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
@@ -39,8 +41,10 @@ require 'uri'
 
 	def ResourceGenerator.uninstall_from_repository(resource_name)
 		str_code = ""
-		str_code += "package '#{resource_name}' do\n"
-		str_code += "  action :remove\n"
+		str_code += "\%w\{#{resource_name}\}.each do \|pkg\|\n"
+		str_code += "  package pkg do\n"
+		str_code += "    action :remove\n"
+		str_code += "  end\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
@@ -159,8 +163,10 @@ require 'uri'
 
 	def self.remove_repository(file)
 		str_code = ""
-		str_code += "package '#{file.resource_name}' do\n"
-		str_code += "  action :remove\n"
+		str_code += "\%w\{#{file.resource_name}\}.each do \|pkg\|\n"
+		str_code += "  package pkg do\n"
+		str_code += "    action :remove\n"
+		str_code += "  end\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
@@ -208,108 +214,4 @@ require 'uri'
 		return str_code
 	end
 
-
-
-
-
-
-	def ResourceGenerator.delete_resources(remove_files)
-		str_code = ""
-		remove_files.each do |file|
-			str_code += remove_file_resource(file)
-			str_code += uninstall_program_resource(file)
-		end
-		return str_code
-	end
-
-	def self.remove_file_resource(file)
-		str_code = ""
-
-		if file.resource_type == "Zip" || file.resource_type == "Deb" # Repo does not has a file to delete
-			if file.att_type == "extract_path"
-				#str_code += " test Remove extract path\n"
-				str_code += "directory " + file.att_value + " do\n"
-				str_code += "  recursive true\n"
-				str_code += "  action :delete\n"
-				str_code += "end\n"
-				str_code += "\n"
-			else # source
-				url = file.att_value
-				uri = URI.parse(url)
-				str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + File.basename(uri.path) + "\" do\n"
-				str_code += "  action :delete\n"
-				str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + File.basename(uri.path) + "\") \}\n"
-				str_code += "end\n"
-				str_code += "\n"
-			end
-		end
-
-		return str_code
-	end
-
-	def self.uninstall_program_resource(file)
-		str_code = ""
-
-		if file.resource_type == "Repository"
-			str_code += "package '#{file.resource_name}' do\n"
-			str_code += "  action :remove\n"
-			str_code += "end\n"
-			str_code += "\n"
-		elsif file.resource_type == "Deb"
-			str_code += "dpkg_package '#{file.resource_name}' do\n"
-			str_code += "  action :remove\n"
-			str_code += "end\n"
-			str_code += "\n"
-		elsif file.resource_type == "Zip"
-			if file.att_type == "source" # because Zip type have 2 record (source, extract_path) this will lead to duplicate code then just select one
-				str_code += "test uninstall program from Zip\n"
-				str_code += file.resource_name+"\n"
-				str_code += "\n"
-			end
-		end
-
-		return str_code
-	end
-
-	def ResourceGenerator.uninstall_resource222(chef_resource)
-		str_code = ""
-		if chef_resource.resource_type == "Repository"
-			str_code += "package '#{chef_resource.resource_name}' do\n"
-			str_code += "  action :remove\n"
-			str_code += "end\n"
-			str_code += "\n"
-		elsif chef_resource.resource_type == "Dep"
-			str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + chef_resource.file_name + "\" do\n"
-			str_code += "  action :delete\n"
-			str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + chef_resource.file_name + "\") \}\n"
-			str_code += "end\n"
-			str_code += "\n"
-			str_code += "dpkg_package '#{chef_resource.resource_name}' do\n"
-			str_code += "  action :remove\n"
-			str_code += "end\n"
-			str_code += "\n"
-		elsif chef_resource.resource_type == "Zip"
-			chef_resource.chef_attributes.each do |chef_attribute|
-				if chef_attribute.att_type == "extract_path"
-					#str_code += " test Remove extract path\n"
-					str_code += "directory " + chef_attribute.att_value + " do\n"
-					str_code += "  recursive true\n"
-					str_code += "  action :delete\n"
-					str_code += "end\n"
-					str_code += "\n"
-				else # source
-					url = chef_attribute.att_value
-					uri = URI.parse(url)
-					str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + File.basename(uri.path) + "\" do\n"
-					str_code += "  action :delete\n"
-					str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + File.basename(uri.path) + "\") \}\n"
-					str_code += "end\n"
-					str_code += "\n"
-				end
-			end
-			#to_do uninstall program from source
-			str_code += "start uninstall program from source\n"
-			str_code += "\n"
-		end
-	end
 end

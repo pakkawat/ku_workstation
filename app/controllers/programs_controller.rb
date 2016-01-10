@@ -41,7 +41,7 @@ class ProgramsController < ApplicationController
           #redirect_to programs_path
         #end
       else
-        flash[:danger] = "Error can not create cookbook see system.log"
+        flash[:danger] = "Error can not create program #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
         render "new"
       end
     else
@@ -59,6 +59,25 @@ class ProgramsController < ApplicationController
     check_chef_resource
     if @program.update_attributes(program_params)
       generate_chef_resource
+      if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        flash[:success] = "Program has been updated"
+        redirect_to @program
+      else
+        flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+        redirect_to @program
+      end
+    else
+      render "edit"
+    end
+  end
+
+
+  def update2
+    @program = Program.find(params[:id])
+    #render plain: program_params.inspect
+    check_chef_resource
+    if @program.update_attributes(program_params)
+      generate_chef_resource
       flash[:success] = "Program has been updated"
       redirect_to programs_path
     else
@@ -66,12 +85,13 @@ class ProgramsController < ApplicationController
     end
   end
 
+
   def destroy# not delete user run_list
     @program = Program.find(params[:id])
     #------- Testtttttttttttttttttttttttttttttttttt
     #check_error, error_msg = KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb")
     #if check_error
-      #@job = Delayed::Job.enqueue ProgramJob.new(@program)
+      #@job = Delayed::Job.enqueue ProgramJob.new(@program,"delete")
       #str_des = "Delete Program:"+@program.program_name
       #@job.update_column(:description, str_des)
       #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
@@ -140,15 +160,22 @@ class ProgramsController < ApplicationController
   end
 
   def generate_chef_resource
-    File.open("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/recipes/install_programs.rb", 'w') do |f|
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/install_programs.rb", 'w') do |f|
       @program.chef_resources.each do |chef_resource|
         f.write(ResourceGenerator.resource(chef_resource))
       end
     end
 
-    File.open("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/recipes/uninstall_programs.rb", 'w') do |f|
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/uninstall_programs.rb", 'w') do |f|
       @program.chef_resources.each do |chef_resource|
         f.write(ResourceGenerator.uninstall_resource(chef_resource))
+      end
+    end
+
+    remove_files = RemoveFile.where(program_id: @program.id)
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
+      remove_files.each do |file|
+        f.write(ResourceGenerator.remove_disuse_resource(file))
       end
     end
   end
@@ -164,6 +191,15 @@ class ProgramsController < ApplicationController
     end
   end
 
+  def apply_change
+    @program = Program.find(params[:program_id])
+    @job = Delayed::Job.enqueue ProgramJob.new(@program.id,"apply_change")
+    str_des = "Apply change on Program:"+@program.program_name
+    @job.update_column(:description, str_des)
+    flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+    redirect_to @program
+  end
+
   def check_chef_resource
     params[:program][:chef_resources_attributes].each do |key, value|
       if value[:_destroy] == "false"
@@ -172,11 +208,11 @@ class ProgramsController < ApplicationController
         if !value[:id].nil? #chef_resource old value ( if different delete old file)
           #str_temp += "old[[["+value[:chef_attributes_attributes].to_s+"]]]---"
           chef_resource = ChefResource.find(value[:id])
-          new_resource_name = value[:resource_name]
-
           if value[:resource_type] == "Repository" # because Repository does not has chef_attribute
+            new_resource_name = value[:resource_name]
             if chef_resource.resource_name != new_resource_name
-              remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: "", att_value: "")
+              diff_resource_name = find_diff_resource_name(chef_resource.resource_name, new_resource_name)
+              remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: diff_resource_name, att_type: "", att_value: "")
               remove_file.save
             end
           else
@@ -187,6 +223,12 @@ class ProgramsController < ApplicationController
         remove_resource(chef_resource)
       end
     end
+  end
+
+  def find_diff_resource_name(resource1, resource2)
+    array1 = resource1.split(' ')
+    array2 = resource2.split(' ')
+    return (array1 - array2).join(" ")
   end
 
   def check_chef_attribute(chef_resource, chef_attributes)
@@ -204,25 +246,17 @@ class ProgramsController < ApplicationController
     end
   end
 
-  def check_resource(chef_resource)
-    #
-  end
-
   def remove_resource(chef_resource)
     if !@program.remove_files.find_by(chef_resource_id: chef_resource.id).present? # check Is chef_resource_id alredy in remove_files
-      chef_resource.chef_attributes.each do |chef_attribute|
-        #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"
-        remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
+      if chef_resource.resource_type == "Repository"
+        remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: "", att_value: "")
         remove_file.save
-      end
-    end
-  end
-
-  def generate_remove_disuse_resource
-    remove_files = RemoveFile.where(program_id: @program.id)
-    File.open("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/recipes/remove_disuse_resources.rb", 'w') do |f|
-      remove_files.each do |file|
-        f.write(ResourceGenerator.remove_disuse_resource(file))
+      else
+        chef_resource.chef_attributes.each do |chef_attribute|
+          #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"
+          remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
+          remove_file.save
+        end
       end
     end
   end

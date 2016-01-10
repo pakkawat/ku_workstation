@@ -9,7 +9,7 @@ class SubjectJob < ProgressJob::Base
   def perform
     # Do something later
     update_stage('Run command')
-    update_progress_max(@subject.ku_users.count*2)
+    update_progress_max(@subject.ku_users.count*2) # each user run ssh two times
     @arr_error = Array.new
     if @type == "delete"
       #update all user_subject = false
@@ -28,23 +28,12 @@ class SubjectJob < ProgressJob::Base
 
     second_ssh_run
 
-    if @arr_error.length > 1
-      str_error = ""
-      @arr_error.each do |error|
-        str_error += error
-      end
-      raise str_error
-    end
   end
 
   def success
     if @type == "delete"
       @subject.destroy
     else # apply change
-      #to_do may be delete this later
-      @subject.programs.each do |program|
-        RemoveFile.where(program_id: program.id).destroy_all
-      end
       
       # delete relationship
       @subject.programs_subjects.where(program_enabled: false).destroy_all
@@ -65,17 +54,12 @@ class SubjectJob < ProgressJob::Base
         f.write("default['user_list'] = " + create_user_list(KuUser.where(id: UsersProgram.where(:program_id => program.id).uniq.pluck(:ku_user_id)).pluck(:ku_id)))
       end
 
-      remove_files = RemoveFile.where(program_id: program.id)
-      File.open("/home/ubuntu/chef-repo/cookbooks/"+program.program_name+"/recipes/remove_disuse_resources.rb", 'w') do |f|
-        remove_files.each do |file|
-          f.write(ResourceGenerator.remove_disuse_resource(file))
-        end
-      end
-
       if !KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
       end
     end
+
+    check_error("1. ")
   end
 
   def first_ssh_run
@@ -85,9 +69,9 @@ class SubjectJob < ProgressJob::Base
       ku_id = user.ku_id
       if KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         if user.user_subjects.where(:subject_id => @subject.id).pluck(:user_enabled)
-          if KnifeCommand.run("knife node run_list add " + ku_id + " '" + program_enable_true.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+          if KnifeCommand.run("knife node run_list add " + ku_id + " '" + program_enable_true.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
             program_enable_false = create_run_list(@subject.programs.where("programs_subjects.program_enabled = false").where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
-            if !KnifeCommand.run("knife node run_list remove " + ku_id + " '" + program_enable_false.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+            if !KnifeCommand.run("knife node run_list remove " + ku_id + " '" + program_enable_false.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
               @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
             end
           else
@@ -96,7 +80,7 @@ class SubjectJob < ProgressJob::Base
         else # user.user_enabled = false
           # all program that in this subject but not in UsersProgram table because when user_enabled = false will deleted all program_id(program_enabled = true) with subject_id in UserProgram table
           all_programs = create_run_list(@subject.programs.where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
-          if !KnifeCommand.run("knife node run_list remove " + ku_id + " '" + all_programs.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+          if !KnifeCommand.run("knife node run_list remove " + ku_id + " '" + all_programs.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
             @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
           end
         end
@@ -106,29 +90,24 @@ class SubjectJob < ProgressJob::Base
 
       update_progress
     end#@subject.ku_users.each do |user|  
+
+    check_error("2. ")
+
   end
 
   def second_ssh_run
-    create_new_disuse_resource
 
     @subject.ku_users.each do |user|
+      ku_id = user.ku_id
       if !KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         @arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/logs/'+user.log.id.to_s}, ")
       end
 
       update_progress
     end
-  end
 
-  def create_new_disuse_resource
-    @subject.programs.each do |program|
-      File.open("/home/ubuntu/chef-repo/cookbooks/"+program.program_name+"/recipes/remove_disuse_resources.rb", 'w') do |f|
-        f.write("")
-      end
-      if !KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
-      end
-    end
+    check_error("3. ")
+
   end
 
   def create_run_list(program_list)
@@ -148,8 +127,14 @@ class SubjectJob < ProgressJob::Base
     return str_temp
   end
 
-  def clear_remove_disuse_resource
-    #
+  def check_error(test)
+    if @arr_error.length > 1
+      str_error = ""
+      @arr_error.each do |error|
+        str_error += error
+      end
+      raise test + str_error
+    end
   end
 
 end
