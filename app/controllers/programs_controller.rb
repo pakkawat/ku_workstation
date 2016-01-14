@@ -61,10 +61,10 @@ class ProgramsController < ApplicationController
       generate_chef_resource
       if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         flash[:success] = "Program has been updated"
-        redirect_to @program
+        redirect_to program_path(@program)+"/edit"
       else
         flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-        redirect_to @program
+        redirect_to program_path(@program)+"/edit"
       end
     else
       render "edit"
@@ -208,18 +208,23 @@ class ProgramsController < ApplicationController
         if !value[:id].nil? #chef_resource old value ( if different delete old file)
           #str_temp += "old[[["+value[:chef_attributes_attributes].to_s+"]]]---"
           chef_resource = ChefResource.find(value[:id])
-          if value[:resource_type] == "Repository" # because Repository does not has chef_attribute
-            new_resource_name = value[:resource_name]
-            if chef_resource.resource_name != new_resource_name
-              diff_resource_name = find_diff_resource_name(chef_resource.resource_name, new_resource_name)
-              remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: diff_resource_name, att_type: "", att_value: "")
-              remove_file.save
-            end
+          if chef_resource.resource_type != value[:resource_type]
+            remove_resource(chef_resource)
           else
-            check_chef_attribute(chef_resource, value[:chef_attributes_attributes])
+            if chef_resource.resource_type == "Repository" # because Repository does not has chef_attribute
+              new_resource_name = value[:resource_name]
+              if chef_resource.resource_name != new_resource_name
+                diff_resource_name = find_diff_resource_name(chef_resource.resource_name, new_resource_name)
+                remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: diff_resource_name, att_type: "", att_value: "")
+                remove_file.save
+              end
+            else
+              check_chef_attribute(chef_resource, value[:chef_attributes_attributes])
+            end
           end
         end
       else # chef_resource has been deleted (delete old file and uninstall program)
+        chef_resource = ChefResource.find(value[:id])
         remove_resource(chef_resource)
       end
     end
@@ -247,6 +252,21 @@ class ProgramsController < ApplicationController
   end
 
   def remove_resource(chef_resource)
+    #if !@program.remove_files.find_by(chef_resource_id: chef_resource.id).present? # check Is chef_resource_id alredy in remove_files
+    if chef_resource.resource_type == "Repository"
+      remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: "", att_value: "")
+      remove_file.save
+    else
+      chef_resource.chef_attributes.each do |chef_attribute|
+        #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"
+        remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
+        remove_file.save
+      end
+    end
+    #end
+  end
+
+  def remove_resource222(chef_resource)
     if !@program.remove_files.find_by(chef_resource_id: chef_resource.id).present? # check Is chef_resource_id alredy in remove_files
       if chef_resource.resource_type == "Repository"
         remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: "", att_value: "")
