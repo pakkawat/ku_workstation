@@ -1,8 +1,11 @@
 <div>
 <% if !@program.nil? %>
+<%= f.hidden_field :_destroy  %>
         <%= f.hidden_field :form_type, :value => "old" %>
 <% else %>
         <% partial_id = DateTime.now.strftime('%Q').to_s %>
+                <%= f.hidden_field :_destroy, :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+'][_destroy]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+'__destroy' %>
+
         <%= f.hidden_field :form_type, :value => "new", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+'][form_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+'_form_type' %>
 <% end %>
 </div>
