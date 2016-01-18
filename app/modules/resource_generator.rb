@@ -66,7 +66,7 @@ require 'uri'
 	def ResourceGenerator.uninstall_from_deb(chef_resource)
 		#source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value)
 		str_code = ""
-		str_code += "dpkg_package '#{chef_resource.resource_name}'' do\n"
+		str_code += "dpkg_package '#{chef_resource.resource_name}' do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
 		str_code += "\n"
@@ -93,7 +93,7 @@ require 'uri'
 		file_name = File.basename(uri.path)
 		str_code = ""
 		str_code += "src_filename = \"" + file_name + "\"\n"
-		str_code += "src_filepath = \"\#\{Chef\:\:Config\[\:file_cache_path\]\}\/\#\{src_filename\}\"\n"
+		str_code += "src_filepath = \"\#\{Chef\:\:Config\[\:file_cache_path\]\}\/" + file_name + "\"\n"
 		str_code += "remote_file src_filepath do\n"
 		str_code += "  source \"" + url + "\"\n"
 		str_code += "  mode '0755'\n"
@@ -195,7 +195,7 @@ require 'uri'
 		str_code = ""
 		str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\" do\n"
 		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + chef_resource.file_name + "\") \}\n"
+		str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\") \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
