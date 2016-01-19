@@ -92,12 +92,11 @@ require 'uri'
 		uri = URI.parse(url)
 		file_name = File.basename(uri.path)
 		str_code = ""
-		str_code += "src_filename = \"" + file_name + "\"\n"
 		str_code += "src_filepath = \"\#\{Chef\:\:Config\[\:file_cache_path\]\}\/" + file_name + "\"\n"
 		str_code += "remote_file src_filepath do\n"
 		str_code += "  source \"" + url + "\"\n"
 		str_code += "  mode '0755'\n"
-		str_code += "  not_if \{ \:\:File.exists?(\#\{src_filepath\}) \}\n"
+		str_code += "  not_if \{ \:\:File.exists?(src_filepath) \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
