@@ -30,6 +30,7 @@ class ProgramJob < ProgressJob::Base
   end
 
   def success
+    RemoveFile.where(program_id: @program.id).destroy_all
     if @type == "delete"
       if KnifeCommand.run("knife cookbook delete " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
         #@program.programs_subjects.destroy_all
@@ -44,8 +45,19 @@ class ProgramJob < ProgressJob::Base
     end
   end
 
-  def error(job, exception)
-  	#
+  def error(job, exception) #####  need to test this function if error program will continue on this function ?
+    remove_files = RemoveFile.where(program_id: @program.id)
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
+      remove_files.each do |file|
+        f.write(ResourceGenerator.remove_disuse_resource(file))
+      end
+    end
+
+    if !KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
+    end
+
+    check_error("6. ")
   end
 
   def delete_all_user
@@ -105,7 +117,6 @@ class ProgramJob < ProgressJob::Base
   end
 
   def clear_remove_disuse_resource
-    RemoveFile.where(program_id: @program.id).destroy_all
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
       f.write("")
     end

@@ -89,10 +89,9 @@ require 'uri'
 
 	def ResourceGenerator.download_file(chef_resource)
 		url = chef_resource.chef_attributes.where(:att_type => "download_url").pluck(:att_value).first
-		uri = URI.parse(url)
-		file_name = File.basename(uri.path)
+		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
 		str_code = ""
-		str_code += "src_filepath = \"\#\{Chef\:\:Config\[\:file_cache_path\]\}\/" + file_name + "\"\n"
+		str_code += "src_filepath = \"\#\{Chef\:\:Config\[\:file_cache_path\]\}\/" + source_file + "\"\n"
 		str_code += "remote_file src_filepath do\n"
 		str_code += "  source \"" + url + "\"\n"
 		str_code += "  mode '0755'\n"
@@ -103,13 +102,11 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_download_file(chef_resource)
-		url = chef_resource.chef_attributes.where(:att_type => "download_url").pluck(:att_value).first
-		uri = URI.parse(url)
-		file_name = File.basename(uri.path)
+		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
 		str_code = ""
-		str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\" do\n"
+		str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + source_file + "\" do\n"
 		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\") \}\n"
+		str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + source_file + "\") \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
@@ -188,15 +185,14 @@ require 'uri'
 	end
 
 	def self.remove_download_file(file)
-		url = file.att_value
-		uri = URI.parse(url)
-		file_name = File.basename(uri.path)
 		str_code = ""
-		str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\" do\n"
-		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\") \}\n"
-		str_code += "end\n"
-		str_code += "\n"
+		if file.att_type == "source_file"
+			str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\" do\n"
+			str_code += "  action :delete\n"
+			str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\") \}\n"
+			str_code += "end\n"
+			str_code += "\n"
+		end
 		return str_code
 	end
 

@@ -252,18 +252,18 @@ class ProgramsController < ApplicationController
   end
 
   def remove_resource(chef_resource)
-    #if !@program.remove_files.find_by(chef_resource_id: chef_resource.id).present? # check Is chef_resource_id alredy in remove_files
-    if chef_resource.resource_type == "Repository"
-      remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: "", att_value: "")
-      remove_file.save
-    else
-      chef_resource.chef_attributes.each do |chef_attribute|
-        #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"
-        remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
+    if !@program.remove_files.find_by(chef_resource_id: chef_resource.id).present? # check Is chef_resource_id alredy in remove_files
+      if chef_resource.resource_type == "Repository"
+        remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: "", att_value: "")
         remove_file.save
+      else
+        chef_resource.chef_attributes.each do |chef_attribute|
+          #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"
+          remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
+          remove_file.save
+        end
       end
     end
-    #end
   end
 
   def remove_resource222(chef_resource)
