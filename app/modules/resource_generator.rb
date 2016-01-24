@@ -63,6 +63,26 @@ require 'uri'
 		return str_code
 	end
 
+	def ResourceGenerator.install_from_deb2(chef_resource)
+		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
+		str_code = ""
+		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/#{source_file}\"\n"
+		str_code += "\n"
+		str_code += "dpkg_package \"#{chef_resource.resource_name}\" do\n"
+		str_code += "  source src_filepath\n"
+		str_code += "  action :install\n"
+		str_code += "  ignore_failure true\n"
+		str_code += "  notifies :run, 'execute[apt-get-install-f]', :immediately\n"
+		str_code += "end\n"
+		str_code += "\n"
+		str_code += "execute 'apt-get-install-f' do\n"
+		str_code += "  command 'sudo apt-get install -f'\n"
+		str_code += "  action :run\n"
+		str_code += "end\n"
+		str_code += "\n"
+		return str_code
+	end
+
 	def ResourceGenerator.uninstall_from_deb(chef_resource)
 		#source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value)
 		str_code = ""

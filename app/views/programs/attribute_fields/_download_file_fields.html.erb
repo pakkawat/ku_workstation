@@ -15,7 +15,7 @@
         <% elsif f.object.att_type == "source_file" %>
                 <div class="form-group">
                         <label for="name">
-                                Source file
+                                File name
                         </label>
                         <%= f.hidden_field :att_type, :value => "source_file" %>
                         <div class="input-group">
@@ -44,7 +44,7 @@
         <% i = i+1 %>
         <div class="form-group">
                 <label for="name">
-                        Source file
+                        File name
                 </label>
                 <%= f.hidden_field :att_type, :value => "source_file", :name => 'program[chef_resources_attributes]['+form_id+'][chef_attributes_attributes]['+partial_id+i.to_s+'][att_type]', :id => 'program_chef_resources_attributes_'+form_id+'_chef_attributes_attributes_'+partial_id+i.to_s+'_att_type' %>
                 <div class="input-group">
