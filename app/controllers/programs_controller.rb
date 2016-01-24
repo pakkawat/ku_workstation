@@ -197,7 +197,7 @@ class ProgramsController < ApplicationController
     str_des = "Apply change on Program:"+@program.program_name
     @job.update_column(:description, str_des)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
-    redirect_to @program
+    redirect_to programs_path
   end
 
   def check_chef_resource
