@@ -9,8 +9,11 @@
             <%= f.select :resource_type, [["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"], ["Download file", "Download"], ["Extract file", "Extract"]], {}, :class => "form-control" %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
           </div>
 
-
-          <div><!-- collapse -->
+          <% if !f.object.id.nil? %>
+            <div style="display: none;"><!-- collapse -->
+          <% else %>
+            <div><!-- collapse -->
+          <% end %>
 
           <% if @program.persisted? %>
             <% if f.object.resource_type == "Download" || f.object.resource_type == "Extract" %>
@@ -77,9 +80,11 @@
          <% end %>
 
 
-         </div><!-- collapse -->
+        </div><!-- collapse -->
 
-         <a href="#" class="btn btn-info pull-left">Expand</a>
+        <% if !f.object.id.nil? %>
+          <a href="#" class="btn btn-info pull-left">Expand</a>
+        <% end %>
 
 
         <%= link_to_remove_association("Remove", f, wrapper_class: :'row.chef-resource', class: "btn btn-default pull-right" ) %>
