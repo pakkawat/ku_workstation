@@ -1,5 +1,5 @@
 <div class="row chef-resource" data-id="<%= f.object.id %>">
-    <div class="well well-sm">
+    <div class="well well-sm" style="background: #D8D8D8;">
       <div class="row">
         <div class="col-md-12">
           <div class="form-group">
@@ -8,6 +8,9 @@
             </label>
             <%= f.select :resource_type, [["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"], ["Download file", "Download"], ["Extract file", "Extract"]], {}, :class => "form-control" %><!-- The first value in each array element is the name of the select option, the second is the value which will be assigned to the attribute.-->
           </div>
+
+          <% collapse_id = DateTime.now.strftime('%Q').to_s %>
+          <div id="<%= collapse_id %>" class="collapse in" aria-expanded="true">
 
           <% if @program.persisted? %>
             <% if f.object.resource_type == "Download" || f.object.resource_type == "Extract" %>
@@ -74,6 +77,9 @@
          <% end %>
 
 
+         </div><!-- collapse -->
+
+         <a href="<%= collapse_id %>" data-toggle="collapse" class="btn btn-info pull-left" aria-expanded="true">Collapsible</a>
 
 
         <%= link_to_remove_association("Remove", f, wrapper_class: :'row.chef-resource', class: "btn btn-default pull-right" ) %>

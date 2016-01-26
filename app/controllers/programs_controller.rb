@@ -193,7 +193,7 @@ class ProgramsController < ApplicationController
 
   def apply_change
     @program = Program.find(params[:program_id])
-    @job = Delayed::Job.enqueue ProgramJob.new(@program.id,"apply_change")
+    @job = Delayed::Job.enqueue ProgramJob.new(@program,"apply_change")
     str_des = "Apply change on Program:"+@program.program_name
     @job.update_column(:description, str_des)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s

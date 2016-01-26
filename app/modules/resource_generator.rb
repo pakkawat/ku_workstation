@@ -50,7 +50,7 @@ require 'uri'
 		return str_code
 	end
 
-	def ResourceGenerator.install_from_deb(chef_resource)
+	def ResourceGenerator.install_from_deb2(chef_resource)
 		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
 		str_code = ""
 		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/#{source_file}\"\n"
@@ -63,7 +63,7 @@ require 'uri'
 		return str_code
 	end
 
-	def ResourceGenerator.install_from_deb2(chef_resource)
+	def ResourceGenerator.install_from_deb(chef_resource)
 		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
 		str_code = ""
 		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/#{source_file}\"\n"
