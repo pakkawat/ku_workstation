@@ -83,7 +83,9 @@
         </div><!-- collapse -->
 
         <% if !f.object.id.nil? %>
-          <a href="#" class="btn btn-info pull-left">Expand</a>
+          <button type="button" class="btn btn-info pull-left">Expand</button>
+        <% else %>
+          <button type="button" class="btn btn-info pull-left">Collapse</button>
         <% end %>
 
 

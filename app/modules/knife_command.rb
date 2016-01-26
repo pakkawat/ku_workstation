@@ -26,6 +26,7 @@ module KnifeCommand
 			"#{msg}\n"
 		end
 		log.info("-------------------- Start  #{Time.now.strftime('%c')}  --------------------\n")
+                log.info(command+"\n")
 		Open3.popen2e(command) do |stdin, stdout_err, wait_thr|
 			while line=stdout_err.gets do
 				log.info(line)

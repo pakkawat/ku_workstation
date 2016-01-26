@@ -105,7 +105,7 @@
 </script>
 
 <script type='text/javascript'>
-$("a.btn.btn-info.pull-left").click(function () {
+$(document).on("click", "button.btn.btn-info.pull-left", function(e) {
 
     $header = $(this);
     //getting the next element
