@@ -6,7 +6,7 @@ class ProgramsController < ApplicationController
   def index
     @programs = Program.all
   end
-  
+
   def show
     #if params[:subject].present?
       #render plain: params[:subject].inspect
@@ -29,9 +29,6 @@ class ProgramsController < ApplicationController
 
     if @program.save
       if create_file(@program)
-        if !params[:program][:chef_resources_attributes].nil?
-          generate_chef_resource
-        end
         #check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
         #if check_error
           #flash[:success] = "Program was saved"
@@ -56,9 +53,9 @@ class ProgramsController < ApplicationController
   def update
     @program = Program.find(params[:id])
     #render plain: program_params.inspect
-    check_chef_resource
+
     if @program.update_attributes(program_params)
-      generate_chef_resource
+
       if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         flash[:success] = "Program has been updated"
         redirect_to program_path(@program)+"/edit"
@@ -70,21 +67,6 @@ class ProgramsController < ApplicationController
       render "edit"
     end
   end
-
-
-  def update2
-    @program = Program.find(params[:id])
-    #render plain: program_params.inspect
-    check_chef_resource
-    if @program.update_attributes(program_params)
-      generate_chef_resource
-      flash[:success] = "Program has been updated"
-      redirect_to programs_path
-    else
-      render "edit"
-    end
-  end
-
 
   def destroy# not delete user run_list
     @program = Program.find(params[:id])
@@ -144,7 +126,7 @@ class ProgramsController < ApplicationController
       output = File.open(directory+"/recipes/remove_disuse_resources.rb","w")
       output << ""
       output.close
-      
+
       File.open(directory+"/attributes/default.rb", 'w') do |f|
         f.write("\n")
         f.write("include_attribute \'#{program.program_name}::user_list\'")
@@ -157,27 +139,6 @@ class ProgramsController < ApplicationController
 
     return check_error
 
-  end
-
-  def generate_chef_resource
-    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/install_programs.rb", 'w') do |f|
-      @program.chef_resources.each do |chef_resource|
-        f.write(ResourceGenerator.resource(chef_resource))
-      end
-    end
-
-    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/uninstall_programs.rb", 'w') do |f|
-      @program.chef_resources.each do |chef_resource|
-        f.write(ResourceGenerator.uninstall_resource(chef_resource))
-      end
-    end
-
-    remove_files = RemoveFile.where(program_id: @program.id)
-    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
-      remove_files.each do |file|
-        f.write(ResourceGenerator.remove_disuse_resource(file))
-      end
-    end
   end
 
   def upload_cookbook
@@ -200,142 +161,6 @@ class ProgramsController < ApplicationController
     redirect_to programs_path
   end
 
-  def check_chef_resource
-    params[:program][:chef_resources_attributes].each do |key, value|
-      if value[:_destroy] == "false"
-        #str_temp += value.to_s+"---"
-
-        if !value[:id].nil? #chef_resource old value ( if different delete old file)
-          #str_temp += "old[[["+value[:chef_attributes_attributes].to_s+"]]]---"
-          chef_resource = ChefResource.find(value[:id])
-          if chef_resource.resource_type != value[:resource_type]
-            remove_resource(chef_resource)
-          else
-            if chef_resource.resource_type == "Repository" # because Repository does not has chef_attribute
-              new_resource_name = value[:resource_name]
-              if chef_resource.resource_name != new_resource_name
-                diff_resource_name = find_diff_resource_name(chef_resource.resource_name, new_resource_name)
-                remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: diff_resource_name, att_type: "", att_value: "")
-                remove_file.save
-              end
-            else
-              check_chef_attribute(chef_resource, value[:chef_attributes_attributes])
-            end
-          end
-        end
-      else # chef_resource has been deleted (delete old file and uninstall program)
-        chef_resource = ChefResource.find(value[:id])
-        remove_resource(chef_resource)
-      end
-    end
-  end
-
-  def find_diff_resource_name(resource1, resource2)
-    array1 = resource1.split(' ')
-    array2 = resource2.split(' ')
-    return (array1 - array2).join(" ")
-  end
-
-  def check_chef_attribute(chef_resource, chef_attributes)
-    chef_attributes.each do |key, value|
-      if value[:_destroy] == "false"
-        if !value[:id].nil? #chef_attribute old value ( if different delete old file)
-          chef_att = ChefAttribute.find(value[:id])
-          if chef_att.att_value != value[:att_value]
-            remove_resource(chef_resource)
-          end
-        end
-      else
-        remove_resource(chef_resource)
-      end
-    end
-  end
-
-  def remove_resource(chef_resource)
-    if !@program.remove_files.find_by(chef_resource_id: chef_resource.id).present? # check Is chef_resource_id alredy in remove_files
-      if chef_resource.resource_type == "Repository"
-        remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: "", att_value: "")
-        remove_file.save
-      else
-        chef_resource.chef_attributes.each do |chef_attribute|
-          #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"
-          remove_file = RemoveFile.new(program_id: @program.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
-          remove_file.save
-        end
-      end
-    end
-  end
-
-  def remove_resource222(chef_resource)
-    if !@program.remove_files.find_by(chef_resource_id: chef_resource.id).present? # check Is chef_resource_id alredy in remove_files
-      if chef_resource.resource_type == "Repository"
-        remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: "", att_value: "")
-        remove_file.save
-      else
-        chef_resource.chef_attributes.each do |chef_attribute|
-          #if chef_attribute.att_type == "source" || chef_attribute.att_type == "extract_path"
-          remove_file = RemoveFile.new(program_id: @program.id, chef_resource_id: chef_resource.id, resource_type: chef_resource.resource_type, resource_name: chef_resource.resource_name, att_type: chef_attribute.att_type, att_value: chef_attribute.att_value)
-          remove_file.save
-        end
-      end
-    end
-  end
-
-  def install_repository_partial
-    @program = nil
-    @form_id = params[:form_id].to_s[2..-3]
-    @form_type = params[:form_type]
-    @chef_attribute = ChefAttribute.new
-    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def install_dep_partial
-    @program = nil
-    @form_id = params[:form_id].to_s[2..-3]
-    @form_type = params[:form_type]
-    @chef_attribute = ChefAttribute.new
-    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def install_source_partial
-    @program = nil
-    @form_id = params[:form_id].to_s[2..-3]
-    @form_type = params[:form_type]
-    @chef_attribute = ChefAttribute.new
-    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def download_file_partial
-    @program = nil
-    @form_id = params[:form_id].to_s[2..-3]
-    @form_type = params[:form_type]
-    @chef_attribute = ChefAttribute.new
-    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
-    respond_to do |format|
-      format.js
-    end
-  end
-
-  def extract_file_partial
-    @program = nil
-    @form_id = params[:form_id].to_s[2..-3]
-    @form_type = params[:form_type]
-    @chef_attribute = ChefAttribute.new
-    @builder = ActionView::Helpers::FormBuilder.new(:chef_attribute, @chef_attribute, view_context, {})
-    respond_to do |format|
-      format.js
-    end
-  end
-
   def sort
     program = Program.find(params[:program_id])
     params[:order].each do |key,value|
@@ -346,6 +171,6 @@ class ProgramsController < ApplicationController
 
   private
     def program_params
-      params.require(:program).permit(:program_name, :note, chef_resources_attributes: [ :id, :resource_name, :resource_type, :file_name, :_destroy, chef_attributes_attributes: [ :id, :att_type, :att_value, :_destroy ] ] )
+      params.require(:program).permit(:program_name, :note )
     end
 end

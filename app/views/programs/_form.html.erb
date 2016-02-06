@@ -45,7 +45,7 @@
             <%= f.submit "Add program", class: "btn btn-success" %>
         <% end %>
       </li>
-    
+
     </ul>
   </div><!--/col-4-->
 
@@ -55,73 +55,11 @@
     <div style="margin-top: 10px">
     </div>
     <div class="sortable">
-        <%= f.fields_for :chef_resources, f.object.chef_resources do |builder| %>
-                <%= render 'chef_main_resource_fields', f: builder %>
-        <% end %>
+
     </div>
   </div><!--/col-9-->
 </div>
 
-<script type='text/javascript'>
-  $(function (){
-     $(document).on("change",".form-control", function (){
-        var selectValue = $(this).val();
-        var numberPattern = /\d+/g;
-        var form_id = this.id.match( numberPattern );
-        var form_type = $("label[for='program_chef_resources_attributes_"+form_id+"_content']").next('div').find( "input[type='hidden'][id$=_form_type]" ).val();
-        //alert(form_id+"---"+form_type);
-        temp_url = "/";
-        if ( selectValue === "Repository") {
-          $("[id$="+form_id+"_resource_name]").parents().eq(1).show();
-           temp_url += "install_repository_partial"
-        }
-        if ( selectValue === "Deb" ) {
-          $("[id$="+form_id+"_resource_name]").parents().eq(1).show();
-           temp_url += "install_dep_partial"
-        }
-        if ( selectValue === "Source" ) {
-          $("[id$="+form_id+"_resource_name]").parents().eq(1).show();
-           temp_url += "install_source_partial"
-        }
-        if ( selectValue === "Download" ) {
-          $("[id$="+form_id+"_resource_name]").parents().eq(1).hide();
-           temp_url += "download_file_partial"
-        }
-        if ( selectValue === "Extract" ) {
-          $("[id$="+form_id+"_resource_name]").parents().eq(1).hide();
-           temp_url += "extract_file_partial"
-        }
-        jQuery.ajax({
-           url: temp_url,
-           data: {'form_id' : form_id, 'form_type' : form_type},
-           error: function(xhr, status, error){
-              alert(xhr.responseText);
-           }
-     });
-  });
-});
-
-
-</script>
-
-<script type='text/javascript'>
-$(document).on("click", "button.btn.btn-info.pull-left", function(e) {
-
-    $header = $(this);
-    //getting the next element
-    $content = $header.prev();
-    //open up the content needed - toggle the slide- if visible, slide up, if not slidedown.
-    $content.slideToggle(500, function () {
-        //execute this after slideToggle is done
-        //change text of header based on visibility of content div
-        $header.text(function () {
-            //change text based on condition
-            return $content.is(":visible") ? "Collapse" : "Expand";
-        });
-    });
-
-});
-</script>
 
 <%= hidden_field_tag :program_id, @program.id %>
 <%= javascript_include_tag "sortable/programs.js"%>
