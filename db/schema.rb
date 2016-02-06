@@ -11,16 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160206115805) do
+ActiveRecord::Schema.define(version: 20160206121017) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "chef_properties", force: :cascade do |t|
     t.string   "value"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "value_type"
+    t.integer  "chef_resource_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
+
+  add_index "chef_properties", ["chef_resource_id"], name: "index_chef_properties_on_chef_resource_id", using: :btree
 
   create_table "chef_resources", force: :cascade do |t|
     t.string   "resource_type"
@@ -94,9 +98,14 @@ ActiveRecord::Schema.define(version: 20160206115805) do
   add_index "logs", ["ku_user_id"], name: "index_logs_on_ku_user_id", using: :btree
 
   create_table "program_chefs", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.integer  "program_id"
+    t.integer  "chef_resource_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
   end
+
+  add_index "program_chefs", ["chef_resource_id"], name: "index_program_chefs_on_chef_resource_id", using: :btree
+  add_index "program_chefs", ["program_id"], name: "index_program_chefs_on_program_id", using: :btree
 
   create_table "program_files", force: :cascade do |t|
     t.integer  "program_id"
