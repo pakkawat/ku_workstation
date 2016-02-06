@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  resources :chef_properties
+
+  resources :program_chefs
+
+  resources :chef_resources
+
   get 'logs/system_log', to: 'logs#system_log'
   resources :logs, :only => [:index, :show]
   #get 'logs/system_log', to: 'logs#system_log'

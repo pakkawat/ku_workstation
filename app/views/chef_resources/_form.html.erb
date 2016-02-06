@@ -1,0 +1,21 @@
+<%= form_for(@chef_resource) do |f| %>
+  <% if @chef_resource.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@chef_resource.errors.count, "error") %> prohibited this chef_resource from being saved:</h2>
+
+      <ul>
+      <% @chef_resource.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :resource_type %><br>
+    <%= f.text_field :resource_type %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

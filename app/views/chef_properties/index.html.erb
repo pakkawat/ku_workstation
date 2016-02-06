@@ -1,0 +1,27 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Chef Properties</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @chef_properties.each do |chef_property| %>
+      <tr>
+        <td><%= chef_property.value %></td>
+        <td><%= link_to 'Show', chef_property %></td>
+        <td><%= link_to 'Edit', edit_chef_property_path(chef_property) %></td>
+        <td><%= link_to 'Destroy', chef_property, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Chef property', new_chef_property_path %>

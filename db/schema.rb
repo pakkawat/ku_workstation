@@ -11,10 +11,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160206114308) do
+ActiveRecord::Schema.define(version: 20160206115805) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "chef_properties", force: :cascade do |t|
+    t.string   "value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "chef_resources", force: :cascade do |t|
+    t.string   "resource_type"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",         default: 0, null: false
@@ -80,6 +92,11 @@ ActiveRecord::Schema.define(version: 20160206114308) do
   end
 
   add_index "logs", ["ku_user_id"], name: "index_logs_on_ku_user_id", using: :btree
+
+  create_table "program_chefs", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "program_files", force: :cascade do |t|
     t.integer  "program_id"

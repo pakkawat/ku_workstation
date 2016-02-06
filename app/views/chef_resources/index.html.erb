@@ -1,0 +1,27 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Chef Resources</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Resource type</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @chef_resources.each do |chef_resource| %>
+      <tr>
+        <td><%= chef_resource.resource_type %></td>
+        <td><%= link_to 'Show', chef_resource %></td>
+        <td><%= link_to 'Edit', edit_chef_resource_path(chef_resource) %></td>
+        <td><%= link_to 'Destroy', chef_resource, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Chef resource', new_chef_resource_path %>
