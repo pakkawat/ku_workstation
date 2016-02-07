@@ -15,6 +15,87 @@
     <%= f.label :resource_type %><br>
     <%= f.text_field :resource_type %>
   </div>
+  <h2>Chef Properties</h2>
+  <div class="chef_properties_fields">
+    <div class="field">
+      <% %>
+      <% case @chef_resource.resource_type %>
+      <% when "Repository" %>
+        <%= f.fields_for :chef_properties do |property| %>
+          <%= property.label :program_name %><br>
+          <%= property.text_field :value %>
+          <% if property.object.id != nil %>
+            <%= property.hidden_field :value_type %>
+          <% else %>
+            <%= property.hidden_field :value_type, :value => "program_name" %>
+          <% end %>
+        <% end %>
+      <% when "Deb", "Source" %>
+        <%= f.fields_for :chef_properties do |property| %>
+          <% if @property_count == 0 %>
+            <%= property.label :program_name %><br>
+            <%= property.text_field :value %>
+            <% if property.object.id != nil %>
+              <%= property.hidden_field :value_type %>
+            <% else %>
+              <%= property.hidden_field :value_type, :value => "program_name" %>
+            <% end %>
+          <% else %>
+            <%= property.label :source_file %><br>
+            <%= property.text_field :value %>
+            <% if property.object.id != nil %>
+              <%= property.hidden_field :value_type %>
+            <% else %>
+              <%= property.hidden_field :value_type, :value => "source_file" %>
+            <% end %>
+          <% end %>
+          <% @property_count = @property_count + 1 %>
+        <% end %>
+      <% when "Download" %>
+        <%= f.fields_for :chef_properties do |property| %>
+          <% if @property_count == 0 %>
+            <%= property.label :download_url %><br>
+            <%= property.text_area :value %>
+            <% if property.object.id != nil %>
+              <%= property.hidden_field :value_type %>
+            <% else %>
+              <%= property.hidden_field :value_type, :value => "download_url" %>
+            <% end %>
+          <% else %>
+            <%= property.label :source_file %><br>
+            <%= property.text_field :value %>
+            <% if property.object.id != nil %>
+              <%= property.hidden_field :value_type %>
+            <% else %>
+              <%= property.hidden_field :value_type, :value => "source_file" %>
+            <% end %>
+          <% end %>
+          <% @property_count = @property_count + 1 %>
+        <% end %>
+      <% when "Extract" %>
+        <%= f.fields_for :chef_properties do |property| %>
+          <% if @property_count == 0 %>
+            <%= property.label :source_file %><br>
+            <%= property.text_field :value %>
+            <% if property.object.id != nil %>
+              <%= property.hidden_field :value_type %>
+            <% else %>
+              <%= property.hidden_field :value_type, :value => "source_file" %>
+            <% end %>
+          <% else %>
+            <%= property.label :extract_to %><br>
+            <%= property.text_field :value %>
+            <% if property.object.id != nil %>
+              <%= property.hidden_field :value_type %>
+            <% else %>
+              <%= property.hidden_field :value_type, :value => "extract_to" %>
+            <% end %>
+          <% end %>
+          <% @property_count = @property_count + 1 %>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
   <div class="actions">
     <%= f.submit %>
   </div>

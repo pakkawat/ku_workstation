@@ -19,6 +19,18 @@ class ChefResourcesController < ApplicationController
 
   # GET /chef_resources/1/edit
   def edit
+    @property_count = 0
+    case @chef_resource.resource_type
+    when "Repository"
+      if !@chef_resource.chef_properties.any?
+        @chef_resource.chef_properties.build
+      end
+    when "Download", "Extract", "Deb", "Source"
+      if !@chef_resource.chef_properties.any?
+        @chef_resource.chef_properties.build
+        @chef_resource.chef_properties.build
+      end
+    end
   end
 
   # POST /chef_resources
@@ -28,8 +40,8 @@ class ChefResourcesController < ApplicationController
 
     respond_to do |format|
       if @chef_resource.save
-        format.html { redirect_to @chef_resource, notice: 'Chef resource was successfully created.' }
-        format.json { render :show, status: :created, location: @chef_resource }
+        format.html { redirect_to edit_chef_resource_path(@chef_resource), notice: 'Chef resource was successfully updated.' }
+        format.json { render :show, status: :created, location: edit_chef_resource_path(@chef_resource) }
       else
         format.html { render :new }
         format.json { render json: @chef_resource.errors, status: :unprocessable_entity }
@@ -42,8 +54,8 @@ class ChefResourcesController < ApplicationController
   def update
     respond_to do |format|
       if @chef_resource.update(chef_resource_params)
-        format.html { redirect_to @chef_resource, notice: 'Chef resource was successfully updated.' }
-        format.json { render :show, status: :ok, location: @chef_resource }
+        format.html { redirect_to edit_chef_resource_path(@chef_resource), notice: 'Chef resource was successfully updated.' }
+        format.json { render :show, status: :ok, location: edit_chef_resource_path(@chef_resource) }
       else
         format.html { render :edit }
         format.json { render json: @chef_resource.errors, status: :unprocessable_entity }
@@ -69,6 +81,6 @@ class ChefResourcesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def chef_resource_params
-      params.require(:chef_resource).permit(:resource_type)
+      params.require(:chef_resource).permit(:resource_type, chef_properties_attributes: [ :id, :value, :value_type ])
     end
 end

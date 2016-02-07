@@ -5,9 +5,6 @@ gem 'puma'
 #fix error CookieOverflow
 gem 'activerecord-session_store', github: 'rails/activerecord-session_store'
 
-# Dynamic nested forms
-gem "cocoon"
-
 # Used as a REST client to access the API
 gem "knife-ec2", '>= 0.11.0'
 gem "chef"
@@ -66,4 +63,3 @@ group :development, :test do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
 end
-

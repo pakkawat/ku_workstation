@@ -50,19 +50,34 @@
   </div><!--/col-4-->
 
 
-  <div class="col-sm-6">
-    <%= link_to_add_association "Add Action", f, :chef_resources, class: "btn btn-primary", partial: 'chef_main_resource_fields', :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } %>
-    <div style="margin-top: 10px">
-    </div>
-    <div class="sortable">
-
-    </div>
-  </div><!--/col-9-->
-</div>
-
-
 <%= hidden_field_tag :program_id, @program.id %>
-<%= javascript_include_tag "sortable/programs.js"%>
-
 
 <% end %>
+
+<% if @program.persisted? %>
+<div class="col-sm-6">
+  <%= link_to_add_association "Add Action", f, :chef_resources, class: "btn btn-primary", partial: 'chef_main_resource_fields', :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } %>
+  <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
+              <%= hidden_field_tag 'program_id', @program.id  %>
+              <%= select_tag :chef_resource_type, options_for_select([["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"]]) %>
+              <%= submit_tag "Add action", class: "btn btn-success" %>
+      <% end %>
+  <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
+              <%= hidden_field_tag 'program_id', @program.id  %>
+              <%= select_tag :chef_resource_type, options_for_select([["Download file", "Download"], ["Extract file", "Extract"]]) %>
+              <%= submit_tag "Add action", class: "btn btn-success" %>
+      <% end %>
+  <div style="margin-top: 10px">
+  </div>
+  <div class="sortable">
+    <% if @program.chef_resources.any? %>
+      <%= render partial: "chefresources", collection: @program.chef_resources, as: :chef %>
+    <% end %>
+  </div>
+</div><!--/col-6-->
+<% end %>
+</div><!--row-->
+
+<%= javascript_include_tag "programs/btn_expand_collapse.js"%>
+<%= javascript_include_tag "programs/html.sortable.js"%>
+<%= javascript_include_tag "programs/sort.js"%>
