@@ -56,7 +56,6 @@
 
 <% if @program.persisted? %>
 <div class="col-sm-6">
-  <%= link_to_add_association "Add Action", f, :chef_resources, class: "btn btn-primary", partial: 'chef_main_resource_fields', :data => {"association-insertion-method" => "append","data-association-insertion-traversal" => "closest" } %>
   <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
               <%= hidden_field_tag 'program_id', @program.id  %>
               <%= select_tag :chef_resource_type, options_for_select([["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"]]) %>

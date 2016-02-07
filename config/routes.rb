@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   
 
   resources :programs do
+    resources :program_chefs
     put :sort, on: :collection
   end
   get 'programs/:program_id/apply_change', to: 'programs#apply_change', via: :get

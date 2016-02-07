@@ -3,7 +3,7 @@ var ready, set_positions;
 set_positions = function(){
     // loop through and give each task a data-pos
     // attribute that holds its position in the DOM
-    $('.row.chef_resource_fields').each(function(i){
+    $('.row.chef-resource').each(function(i){
         $(this).attr("data-pos",i+1);
     });
 }
@@ -25,7 +25,7 @@ ready = function(){
         set_positions();
 
         // populate the updated_order array with the new task positions
-        $('.row.chef_resource_fields').each(function(i){
+        $('.row.chef-resource').each(function(i){
             updated_order.push({ id: $(this).data("id"), position: i+1 });
         });
 

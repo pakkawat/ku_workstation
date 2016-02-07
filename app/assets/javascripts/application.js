@@ -19,8 +19,7 @@
 //= require_directory .
 //= require bootstrap-sprockets
 //= require bootstrap/collapse
-//= require cocoon
-//= require html.sortable
+
 $(document).ready(function() 
     { 
         $("table.datatable_display").dataTable({
