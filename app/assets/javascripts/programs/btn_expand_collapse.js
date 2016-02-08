@@ -1,4 +1,4 @@
-$(document).off("click", "button.btn.btn-info.pull-left").on("click", "button.btn.btn-info.pull-left", function(e) {
+$(document).off("click", "button.btn.btn-info").on("click", "button.btn.btn-info", function(e) {
 
     $header = $(this);
     //getting the next element

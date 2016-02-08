@@ -56,16 +56,26 @@
 
 <% if @program.persisted? %>
 <div class="col-sm-6">
-  <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
-              <%= hidden_field_tag 'program_id', @program.id  %>
-              <%= select_tag :chef_resource_type, options_for_select([["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"]]) %>
-              <%= submit_tag "Add action", class: "btn btn-success" %>
-      <% end %>
-  <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
-              <%= hidden_field_tag 'program_id', @program.id  %>
-              <%= select_tag :chef_resource_type, options_for_select([["Download file", "Download"], ["Extract file", "Extract"]]) %>
-              <%= submit_tag "Add action", class: "btn btn-success" %>
-      <% end %>
+  <div class="row">
+    <div class="col-md-12">
+      <div class="col-md-6">
+        <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
+                    <%= hidden_field_tag 'program_id', @program.id  %>
+                    <%= select_tag :chef_resource_type, options_for_select([["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"]]), class: "form-control" %>
+                    <div style="margin-top: 10px"></div>
+                    <%= submit_tag "Install action", class: "btn btn-primary" %>
+            <% end %>
+      </div>
+      <div class="col-md-6">
+        <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
+                    <%= hidden_field_tag 'program_id', @program.id  %>
+                    <%= select_tag :chef_resource_type, options_for_select([["Download file", "Download"], ["Extract file", "Extract"]]), class: "form-control" %>
+                    <div style="margin-top: 10px"></div>
+                    <%= submit_tag "File action", class: "btn btn-primary" %>
+            <% end %>
+      </div>
+    </div>
+  </div>
   <div style="margin-top: 10px">
   </div>
   <div class="sortable">
