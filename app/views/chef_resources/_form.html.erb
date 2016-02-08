@@ -1,102 +1,206 @@
-<%= form_for(@chef_resource) do |f| %>
-  <% if @chef_resource.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@chef_resource.errors.count, "error") %> prohibited this chef_resource from being saved:</h2>
 
-      <ul>
-      <% @chef_resource.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+<div class="row">
+  <div class="col-sm-10">
+    <span class="pull-left">
+        <h1>
+            Edit action
+        </h1>
+    </span>
+  </div>
+</div>
 
-  <div class="field">
-    <%= f.label :resource_type %><br>
-    <%= f.text_field :resource_type %>
-  </div>
-  <h2>Chef Properties</h2>
-  <div class="chef_properties_fields">
-    <div class="field">
-      <% %>
-      <% case @chef_resource.resource_type %>
-      <% when "Repository" %>
-        <%= f.fields_for :chef_properties do |property| %>
-          <%= property.label :program_name %><br>
-          <%= property.text_field :value %>
-          <% if property.object.id != nil %>
-            <%= property.hidden_field :value_type %>
-          <% else %>
-            <%= property.hidden_field :value_type, :value => "program_name" %>
-          <% end %>
+<%= form_for @chef_resource do |f| %>
+<%= render 'shared/error_messages', object: f.object %>
+
+<div class="row">
+  <div class="col-sm-4"><!--left col-->
+    <ul class="list-group">
+
+      <li class="list-group-item text-muted">Information</li>
+      <li class="list-group-item text-right">
+        <span class="pull-left">
+            <strong>
+                <%= f.label :resource_type,'Action', class: "control-label" %>
+            </strong>
+        </span>
+        <%= f.text_field :resource_type, class: "form-control" %>
+      </li>
+
+      <li class="list-group-item text-right">
+        <span class="pull-left">
+            <strong>
+                <%= f.label :related_program,'Related program', class: "control-label" %>
+            </strong>
+        </span>
+        <% @chef_resource.programs.each do |program| %>
+          <%= link_to program.program_name, edit_program_path(program) %><br>
         <% end %>
-      <% when "Deb", "Source" %>
-        <%= f.fields_for :chef_properties do |property| %>
-          <% if @property_count == 0 %>
-            <%= property.label :program_name %><br>
-            <%= property.text_field :value %>
-            <% if property.object.id != nil %>
-              <%= property.hidden_field :value_type %>
-            <% else %>
-              <%= property.hidden_field :value_type, :value => "program_name" %>
+      </li>
+
+      <li class="list-group-item text-center">
+        <%= f.submit %>
+      </li>
+
+    </ul>
+  </div><!--/col-4-->
+
+
+<%= hidden_field_tag :program_id, @program.id %>
+
+
+
+
+<div class="col-sm-6">
+  <div class="row">
+      <div class="well well-sm" style="background: #D8D8D8;">
+        <div class="row">
+          <div class="col-md-12">
+
+
+
+
+
+
+            <% case @chef_resource.resource_type %>
+            <% when "Repository" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <div class='form-group'>
+                  <label for='name'>
+                    <%= property.label :program_name %>
+                  </label>
+                  <div class='input-group'>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-book'></span></span>
+                    <%= property.text_field :value %>
+                  </div>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "program_name" %>
+                  <% end %>
+              </div>
+              <% end %>
+            <% when "Deb", "Source" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :program_name %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-book'></span></span>
+                      <%= property.text_field :value %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "program_name" %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :source_file %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                      <%= property.text_field :value %>
+                    </div>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "source_file" %>
+                  <% end %>
+                  </div>
+                <% end %>
+                <% @property_count = @property_count + 1 %>
+              <% end %>
+            <% when "Download" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :download_url %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-save-file'></span></span>
+                      <%= property.text_field :value %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "download_url" %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :source_file %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                      <%= property.text_field :value %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "source_file" %>
+                    <% end %>
+                  </div>
+                <% end %>
+                <% @property_count = @property_count + 1 %>
+              <% end %>
+            <% when "Extract" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :source_file %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-save-file'></span></span>
+                      <%= property.text_field :value %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "source_file" %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :extract_to %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-folder-open'></span></span>
+                      <%= property.text_field :value %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "extract_to" %>
+                    <% end %>
+                  </div>
+                <% end %>
+                <% @property_count = @property_count + 1 %>
+              <% end %>
             <% end %>
-          <% else %>
-            <%= property.label :source_file %><br>
-            <%= property.text_field :value %>
-            <% if property.object.id != nil %>
-              <%= property.hidden_field :value_type %>
-            <% else %>
-              <%= property.hidden_field :value_type, :value => "source_file" %>
-            <% end %>
-          <% end %>
-          <% @property_count = @property_count + 1 %>
-        <% end %>
-      <% when "Download" %>
-        <%= f.fields_for :chef_properties do |property| %>
-          <% if @property_count == 0 %>
-            <%= property.label :download_url %><br>
-            <%= property.text_area :value %>
-            <% if property.object.id != nil %>
-              <%= property.hidden_field :value_type %>
-            <% else %>
-              <%= property.hidden_field :value_type, :value => "download_url" %>
-            <% end %>
-          <% else %>
-            <%= property.label :source_file %><br>
-            <%= property.text_field :value %>
-            <% if property.object.id != nil %>
-              <%= property.hidden_field :value_type %>
-            <% else %>
-              <%= property.hidden_field :value_type, :value => "source_file" %>
-            <% end %>
-          <% end %>
-          <% @property_count = @property_count + 1 %>
-        <% end %>
-      <% when "Extract" %>
-        <%= f.fields_for :chef_properties do |property| %>
-          <% if @property_count == 0 %>
-            <%= property.label :source_file %><br>
-            <%= property.text_field :value %>
-            <% if property.object.id != nil %>
-              <%= property.hidden_field :value_type %>
-            <% else %>
-              <%= property.hidden_field :value_type, :value => "source_file" %>
-            <% end %>
-          <% else %>
-            <%= property.label :extract_to %><br>
-            <%= property.text_field :value %>
-            <% if property.object.id != nil %>
-              <%= property.hidden_field :value_type %>
-            <% else %>
-              <%= property.hidden_field :value_type, :value => "extract_to" %>
-            <% end %>
-          <% end %>
-          <% @property_count = @property_count + 1 %>
-        <% end %>
-      <% end %>
+
+
+
+
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+</div>
+
+
+
+
+</div><!--/col-6-->
+
+</div><!--row-->
+
+
 <% end %>

@@ -133,7 +133,7 @@ module ProgramsHelper
           str_temp += "  </label>"
           str_temp += "  <div class='input-group'>"
           str_temp += "    <span class='input-group-addon'>"
-          str_temp += "      <span class='glyphicon glyphicon-save-file'>"
+          str_temp += "      <span class='glyphicon glyphicon-file'>"
           str_temp += "      </span>"
           str_temp += "    </span>"
           str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
