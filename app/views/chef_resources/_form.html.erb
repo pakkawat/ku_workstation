@@ -23,7 +23,7 @@
                 <%= f.label :resource_type,'Action', class: "control-label" %>
             </strong>
         </span>
-        <%= f.text_field :resource_type, class: "form-control" %>
+        <%= f.text_field :resource_type, class: "form-control", value:resource_type_full_name(@chef_resource.resource_type), disabled: true %>
       </li>
 
       <li class="list-group-item">
