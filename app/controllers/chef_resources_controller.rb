@@ -54,7 +54,7 @@ class ChefResourcesController < ApplicationController
   def update
     respond_to do |format|
       if @chef_resource.update(chef_resource_params)
-        format.html { redirect_to edit_chef_resource_path(@chef_resource), notice: 'Chef resource was successfully updated.' }
+        format.html { redirect_to edit_chef_resource_path(@chef_resource), :flash => { :success => "Action was successfully updated." } }
         format.json { render :show, status: :ok, location: edit_chef_resource_path(@chef_resource) }
       else
         format.html { render :edit }

@@ -30,7 +30,7 @@ class ProgramChefsController < ApplicationController
 
     respond_to do |format|
       if @program.program_chefs.create(chef_resource: @chef_resource)
-        format.html { redirect_to edit_program_path(@program), notice: 'Chef resource was successfully created.' }
+        format.html { redirect_to edit_program_path(@program), :flash => { :success => "Action was successfully created." } }
         format.json { render :show, status: :created, location: edit_program_path(@program) }
       else
         format.html { render :new }
@@ -61,7 +61,7 @@ class ProgramChefsController < ApplicationController
     @program.program_chefs.find_by(chef_resource_id: @chef_resource.id).destroy
     #@program_chef.destroy
     respond_to do |format|
-      format.html { redirect_to edit_program_path(@program), notice: 'Chef resource was successfully destroyed.' }
+      format.html { redirect_to edit_program_path(@program), :flash => { :success => "Action was successfully destroyed." } }
       format.json { head :no_content }
     end
   end
