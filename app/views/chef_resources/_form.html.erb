@@ -6,6 +6,17 @@
             Edit action
         </h1>
     </span>
+    <span class="pull-right">
+      <h1>
+        <div style="display:inline-block;">
+          <% if !@program.nil? %>
+            <%= button_to 'Back', edit_program_path(@program), :class => "btn btn-default", :method => :get %>
+          <% else %>
+            <%= button_to 'Back', chef_resources_path, :class => "btn btn-default" %>
+          <% end %>
+        </div>
+      </h1>
+    </span>
   </div>
 </div>
 
@@ -201,5 +212,5 @@
 
 </div><!--row-->
 
-
+<%= hidden_field_tag 'program_id', @program.id  %>
 <% end %>

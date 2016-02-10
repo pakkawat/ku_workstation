@@ -19,6 +19,11 @@ class ChefResourcesController < ApplicationController
 
   # GET /chef_resources/1/edit
   def edit
+    if !params[:program_id].nil?
+      @program = Program.find(params[:program_id])
+    else
+      @program = nil
+    end
     @property_count = 0
     case @chef_resource.resource_type
     when "Repository"
@@ -52,6 +57,11 @@ class ChefResourcesController < ApplicationController
   # PATCH/PUT /chef_resources/1
   # PATCH/PUT /chef_resources/1.json
   def update
+    if !params[:program_id].nil?
+      @program = Program.find(params[:program_id])
+    else
+      @program = nil
+    end
     @property_count = 0
     respond_to do |format|
       if @chef_resource.update(chef_resource_params)
@@ -87,7 +97,25 @@ class ChefResourcesController < ApplicationController
 
     def check_chef_property
       params[:chef_resource][:chef_properties_attributes].each do |key, value|
-        #
+        if !value[:id].nil?
+          chef_property = ChefProperty.find(value[:id])
+          if chef_property.value != value[:value]
+            if @chef_resource.resource_type == "Repository"
+              diff_program_name = find_diff_program_name(chef_property.value, value[:value])
+              # Delete program
+            else
+              # Delete old file
+              temp = ""
+            end
+          end
+        end
       end
     end
+
+    def find_diff_program_name(resource1, resource2)
+      array1 = resource1.split(' ')
+      array2 = resource2.split(' ')
+      return (array1 - array2).join(" ")
+    end
+
 end
