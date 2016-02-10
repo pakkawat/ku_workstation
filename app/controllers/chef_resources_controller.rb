@@ -52,6 +52,7 @@ class ChefResourcesController < ApplicationController
   # PATCH/PUT /chef_resources/1
   # PATCH/PUT /chef_resources/1.json
   def update
+    @property_count = 0
     respond_to do |format|
       if @chef_resource.update(chef_resource_params)
         format.html { redirect_to edit_chef_resource_path(@chef_resource), :flash => { :success => "Action was successfully updated." } }
@@ -82,5 +83,11 @@ class ChefResourcesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def chef_resource_params
       params.require(:chef_resource).permit(:resource_type, chef_properties_attributes: [ :id, :value, :value_type ])
+    end
+
+    def check_chef_property
+      params[:chef_resource][:chef_properties_attributes].each do |key, value|
+        #
+      end
     end
 end
