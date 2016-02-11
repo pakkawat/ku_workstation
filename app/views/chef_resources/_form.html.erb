@@ -211,6 +211,9 @@
 </div><!--/col-6-->
 
 </div><!--row-->
-
-<%= hidden_field_tag 'program_id', @program.id  %>
+<% if !@program.nil? %>
+  <%= hidden_field_tag 'program_id', @program.id  %>
 <% end %>
+
+
+<% end %><!-- <%= form_for @chef_resource do |f| %> -->
