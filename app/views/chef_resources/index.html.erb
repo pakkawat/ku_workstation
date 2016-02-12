@@ -25,3 +25,26 @@
 <br>
 
 <%= link_to 'New Chef resource', new_chef_resource_path %>
+
+
+
+<%= button_to 'Add new action', new_chef_resource_path, :class => "btn btn-success", :method => :get %>
+<br>
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Action index</div>
+  <br>
+  	<table id="" class="datatable_display table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Action ID</th>
+  				<th>Action type</th>
+  				<th>Related program</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render @chefresources %>
+  		</tbody>
+	</table>
+</div>

@@ -95,21 +95,59 @@ class ChefResourcesController < ApplicationController
       params.require(:chef_resource).permit(:resource_type, chef_properties_attributes: [ :id, :value, :value_type ])
     end
 
-    def check_chef_property
-      params[:chef_resource][:chef_properties_attributes].each do |key, value|
-        if !value[:id].nil?
+    def find_unuse_program_and_file
+      case @chef_resource.resource_type
+      when "Repository" # delete program when program_name diff
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
           chef_property = ChefProperty.find(value[:id])
           if chef_property.value != value[:value]
-            if @chef_resource.resource_type == "Repository"
-              diff_program_name = find_diff_program_name(chef_property.value, value[:value])
-              # Delete program
-            else
-              # Delete old file
-              temp = ""
+            diff_program_name = find_diff_program_name(chef_property.value, value[:value])
+            # delete program
+          end
+        end
+      when "Deb" # delete program when source file change
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          if value[:value_type] == "source_file"
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              # delete program
             end
           end
         end
+      when "Source" # delete program when source file change
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          if value[:value_type] == "source_file"
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              # delete program
+            end
+          end
+        end
+      when "Download" # delete download file when url OR!!!! source file change
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          chef_property = ChefProperty.find(value[:id])
+          if chef_property.value != value[:value]
+            # {"0"=>{"value"=>"aaaa", "value_type"=>"download_url", "id"=>"2"}, "1"=>{"value"=>"bbb", "value_type"=>"source_file", "id"=>"3"}}
+            # use id of value_type = source_file
+          end
+        end
+      when "Extract" # ( delete source and extract_to file when source change) or ( delete extract_to file when extract_to change )
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          if value[:value_type] == "source_file"
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              # delete source
+              # delete extract_to
+            end
+          else # extract_to
+            # delete extract_to
+          end
+        end
       end
+    end
+
+    def add_remove_resource
+      #
     end
 
     def find_diff_program_name(resource1, resource2)

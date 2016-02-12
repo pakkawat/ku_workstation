@@ -1,0 +1,17 @@
+<tr>
+	<th scope="row"><%= chefresource.id %></th>
+	<th><%= chefresource.resource_type %></th>
+	<th>
+    <% chefresource.programs.each do |program| %>
+      <%= link_to program.program_name, edit_program_path(program) %><br>
+    <% end %>
+  </th>
+	<th>
+		<div style="display:inline-block;">
+			<%= button_to 'Edit', edit_chef_resource_path(chefresource), :class => "btn btn-primary", :method => :get  %>
+		</div>
+		<div style="display:inline-block;">
+			<%= button_to 'Delete', chef_resource_path(chefresource), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete %>
+		</div>
+	</th>
+</tr>
