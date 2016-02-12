@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160207112926) do
+ActiveRecord::Schema.define(version: 20160212113943) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -134,16 +134,14 @@ ActiveRecord::Schema.define(version: 20160207112926) do
   add_index "programs_subjects", ["program_id"], name: "index_programs_subjects_on_program_id", using: :btree
   add_index "programs_subjects", ["subject_id"], name: "index_programs_subjects_on_subject_id", using: :btree
 
-  create_table "remove_files", force: :cascade do |t|
+  create_table "remove_resources", force: :cascade do |t|
     t.integer "program_id"
-    t.integer "chef_resource_id"
     t.string  "resource_type"
-    t.string  "resource_name"
-    t.string  "att_type"
-    t.string  "att_value"
+    t.string  "value"
+    t.string  "value_type"
   end
 
-  add_index "remove_files", ["program_id"], name: "index_remove_files_on_program_id", using: :btree
+  add_index "remove_resources", ["program_id"], name: "index_remove_resources_on_program_id", using: :btree
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false
@@ -183,5 +181,5 @@ ActiveRecord::Schema.define(version: 20160207112926) do
   add_index "users_programs", ["program_id"], name: "index_users_programs_on_program_id", using: :btree
 
   add_foreign_key "program_files", "programs"
-  add_foreign_key "remove_files", "programs"
+  add_foreign_key "remove_resources", "programs"
 end
