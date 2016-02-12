@@ -30,7 +30,7 @@ class ProgramJob < ProgressJob::Base
   end
 
   def success
-    RemoveFile.where(program_id: @program.id).destroy_all
+    RemoveResource.where(program_id: @program.id).destroy_all
     if @type == "delete"
       if KnifeCommand.run("knife cookbook delete " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
         #@program.programs_subjects.destroy_all
@@ -46,9 +46,9 @@ class ProgramJob < ProgressJob::Base
   end
 
   def error(job, exception) #####  need to test this function if error program will continue on this function ?
-    remove_files = RemoveFile.where(program_id: @program.id)
+    remove_resources = RemoveResource.where(program_id: @program.id)
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
-      remove_files.each do |file|
+      remove_resources.each do |file|
         f.write(ResourceGenerator.remove_disuse_resource(file))
       end
     end

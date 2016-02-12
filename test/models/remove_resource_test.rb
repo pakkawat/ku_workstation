@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class RemoveFileTest < ActiveSupport::TestCase
+class RemoveResourceTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

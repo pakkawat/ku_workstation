@@ -133,17 +133,13 @@ class ChefResourcesController < ApplicationController
         end
       when "Extract" # ( delete source and extract_to file when source change) or ( delete extract_to file when extract_to change )
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
-          if value[:value_type] == "source_file"
-            chef_property = ChefProperty.find(value[:id])
-            if chef_property.value != value[:value]
-              # delete source
-              # delete extract_to
-            end
-          else # extract_to
+          chef_property = ChefProperty.find(value[:id])
+          if chef_property.value != value[:value]
             # delete extract_to
           end
         end
       end
+      
     end
 
     def add_remove_resource
