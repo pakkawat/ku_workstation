@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160212113943) do
+ActiveRecord::Schema.define(version: 20160213121734) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -139,6 +139,7 @@ ActiveRecord::Schema.define(version: 20160212113943) do
     t.string  "resource_type"
     t.string  "value"
     t.string  "value_type"
+    t.integer "chef_resource_id"
   end
 
   add_index "remove_resources", ["program_id"], name: "index_remove_resources_on_program_id", using: :btree
