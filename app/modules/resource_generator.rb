@@ -2,7 +2,7 @@ module ResourceGenerator
 require 'uri'
 	def ResourceGenerator.resource(chef_resource)
 		if chef_resource.resource_type == "Repository"
-			ResourceGenerator.install_from_repository(chef_resource.resource_name)
+			ResourceGenerator.install_from_repository(chef_resource)
 		elsif chef_resource.resource_type == "Deb"
 			ResourceGenerator.install_from_deb(chef_resource)
 		elsif chef_resource.resource_type == "Source"
@@ -16,7 +16,7 @@ require 'uri'
 
 	def ResourceGenerator.uninstall_resource(chef_resource)
 		if chef_resource.resource_type == "Repository"
-			ResourceGenerator.uninstall_from_repository(chef_resource.resource_name)
+			ResourceGenerator.uninstall_from_repository(chef_resource)
 		elsif chef_resource.resource_type == "Deb"
 			ResourceGenerator.uninstall_from_deb(chef_resource)
 		elsif chef_resource.resource_type == "Source"
@@ -28,9 +28,10 @@ require 'uri'
 		end
 	end
 
-	def ResourceGenerator.install_from_repository(resource_name)
+	def ResourceGenerator.install_from_repository(chef_resource)
+		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
 		str_code = ""
-		str_code += "\%w\{#{resource_name}\}.each do \|pkg\|\n"
+		str_code += "\%w\{#{value}\}.each do \|pkg\|\n"
 		str_code += "  package pkg do\n"
 		str_code += "    action :install\n"
 		str_code += "  end\n"
@@ -39,9 +40,10 @@ require 'uri'
 		return str_code
 	end
 
-	def ResourceGenerator.uninstall_from_repository(resource_name)
+	def ResourceGenerator.uninstall_from_repository(chef_resource)
+		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
 		str_code = ""
-		str_code += "\%w\{#{resource_name}\}.each do \|pkg\|\n"
+		str_code += "\%w\{#{value}\}.each do \|pkg\|\n"
 		str_code += "  package pkg do\n"
 		str_code += "    action :remove\n"
 		str_code += "  end\n"
@@ -64,11 +66,12 @@ require 'uri'
 	end
 
 	def ResourceGenerator.install_from_deb(chef_resource)
-		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
 		str_code = ""
 		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/#{source_file}\"\n"
 		str_code += "\n"
-		str_code += "dpkg_package \"#{chef_resource.resource_name}\" do\n"
+		str_code += "dpkg_package \"#{program_name}\" do\n"
 		str_code += "  source src_filepath\n"
 		str_code += "  action :install\n"
 		str_code += "  ignore_failure true\n"
@@ -84,9 +87,9 @@ require 'uri'
 	end
 
 	def ResourceGenerator.uninstall_from_deb(chef_resource)
-		#source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value)
+		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
 		str_code = ""
-		str_code += "dpkg_package '#{chef_resource.resource_name}' do\n"
+		str_code += "dpkg_package '#{program_name}' do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
 		str_code += "\n"
@@ -94,22 +97,24 @@ require 'uri'
 	end
 
 	def ResourceGenerator.install_from_source(chef_resource)
+		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
 		str_code = ""
-		str_code += "install_from_source\n"
+		str_code += "#{program_name} install_from_source\n"
 		str_code += "\n"
 		return str_code
 	end
 
 	def ResourceGenerator.uninstall_from_source(chef_resource)
+		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
 		str_code = ""
-		str_code += "uninstall_from_source\n"
+		str_code += "#{program_name} uninstall_from_source\n"
 		str_code += "\n"
 		return str_code
 	end
 
 	def ResourceGenerator.download_file(chef_resource)
-		url = chef_resource.chef_attributes.where(:att_type => "download_url").pluck(:att_value).first
-		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
+		url = chef_resource.chef_properties.where(:value_type => "download_url").pluck(:value)
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
 		str_code = ""
 		str_code += "src_filepath = \"\#\{Chef\:\:Config\[\:file_cache_path\]\}\/" + source_file + "\"\n"
 		str_code += "remote_file src_filepath do\n"
@@ -122,7 +127,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_download_file(chef_resource)
-		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
 		str_code = ""
 		str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + source_file + "\" do\n"
 		str_code += "  action :delete\n"
@@ -133,8 +138,8 @@ require 'uri'
 	end
 
 	def ResourceGenerator.extract_file(chef_resource)
-		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
-		extract_to = chef_resource.chef_attributes.where(:att_type => "extract_to").pluck(:att_value).first
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
 		str_code = ""
 		str_code += "bash 'extract_module' do\n"
 		str_code += "  cwd Chef\:\:Config\[\:file_cache_path\]\n"
@@ -150,7 +155,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_extract_file(chef_resource)
-		extract_to = chef_resource.chef_attributes.where(:att_type => "extract_to").pluck(:att_value).first
+		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
 		str_code = ""
 		str_code += "directory '" + extract_to + "' do\n"
 		str_code += "  recursive true\n"
@@ -163,23 +168,23 @@ require 'uri'
 #########################################################################################################################
 
 
-	def ResourceGenerator.remove_disuse_resource(file)
-		if file.resource_type == "Repository"
-			remove_repository(file)
-		elsif file.resource_type == "Deb"
-			remove_deb(file)
-		elsif file.resource_type == "Source"
-			remove_source(file)
-		elsif file.resource_type == "Download"
-			remove_download_file(file)
-		elsif file.resource_type == "Extract"
-			remove_extract_file(file)
+	def ResourceGenerator.remove_disuse_resource(remove_resource)
+		if remove_resource.resource_type == "Repository"
+			remove_repository(remove_resource)
+		elsif remove_resource.resource_type == "Deb"
+			remove_deb(remove_resource)
+		elsif remove_resource.resource_type == "Source"
+			remove_source(remove_resource)
+		elsif remove_resource.resource_type == "Download"
+			remove_download_file(remove_resource)
+		elsif remove_resource.resource_type == "Extract"
+			remove_extract_file(remove_resource)
 		end
 	end
 
-	def self.remove_repository(file)
+	def self.remove_repository(remove_resource)
 		str_code = ""
-		str_code += "\%w\{#{file.resource_name}\}.each do \|pkg\|\n"
+		str_code += "\%w\{#{remove_resource.value}\}.each do \|pkg\|\n"
 		str_code += "  package pkg do\n"
 		str_code += "    action :remove\n"
 		str_code += "  end\n"
@@ -188,44 +193,39 @@ require 'uri'
 		return str_code
 	end
 
-	def self.remove_deb(file)
+	def self.remove_deb(remove_resource)
 		str_code = ""
-		str_code += "dpkg_package '#{file.resource_name}' do\n"
+		str_code += "dpkg_package '#{remove_resource.value}' do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
 	end
 
-	def self.remove_source(file)
+	def self.remove_source(remove_resource)
 		str_code = ""
-		str_code += "uninstall_from_source\n"
+		str_code += "#{remove_resource.value} uninstall_from_source\n"
 		str_code += "\n"
 		return str_code
 	end
 
-	def self.remove_download_file(file)
+	def self.remove_download_file(remove_resource)
 		str_code = ""
-		if file.att_type == "source_file"
-			str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\" do\n"
-			str_code += "  action :delete\n"
-			str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + file_name + "\") \}\n"
-			str_code += "end\n"
-			str_code += "\n"
-		end
+		str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + remove_resource.value + "\" do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + remove_resource.value + "\") \}\n"
+		str_code += "end\n"
+		str_code += "\n"
 		return str_code
 	end
 
-	def self.remove_extract_file(file)
+	def self.remove_extract_file(remove_resource)
 		str_code = ""
-		if file.att_type == "extract_to"
-			extract_to = file.att_value
-			str_code += "directory '" + extract_to + "' do\n"
-			str_code += "  recursive true\n"
-			str_code += "  action :delete\n"
-			str_code += "end\n"
-			str_code += "\n"
-		end
+		str_code += "directory '" + remove_resource.value + "' do\n"
+		str_code += "  recursive true\n"
+		str_code += "  action :delete\n"
+		str_code += "end\n"
+		str_code += "\n"
 		return str_code
 	end
 

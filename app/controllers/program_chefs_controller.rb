@@ -58,6 +58,7 @@ class ProgramChefsController < ApplicationController
   def destroy
     @program = Program.find(params[:program_id])
     @chef_resource = ChefResource.find(params[:chef_id])
+    #add_remove_resource
     @program.program_chefs.find_by(chef_resource_id: @chef_resource.id).destroy
     #@program_chef.destroy
     respond_to do |format|
@@ -76,4 +77,33 @@ class ProgramChefsController < ApplicationController
   #def program_chef_params
     #params[:program_chef]
   #end
+
+  def add_remove_resource
+    if @chef_resource.resource_type == "Repository" # repo not check chef_resource_id because install from repo will have one or more program
+      value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+      remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "program")
+      remove_resource.save
+    else
+      if !@program.remove_resources.find_by(chef_resource_id: @chef_resource.id).present? # check Is chef_resource_id alredy in remove_resources
+        case @chef_resource.resource_type
+        when "Deb"
+          value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+          remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "program")
+          remove_resource.save
+        when "Source"
+          value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+          remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "program")
+          remove_resource.save
+        when "Download"
+          value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+          remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "file")
+          remove_resource.save
+        when "Extract"
+          value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
+          remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "folder")
+          remove_resource.save
+        end
+      end
+    end
+  end
 end

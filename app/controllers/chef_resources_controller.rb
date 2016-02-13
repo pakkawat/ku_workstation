@@ -63,6 +63,7 @@ class ChefResourcesController < ApplicationController
       @program = nil
     end
     @property_count = 0
+    #find_unuse_program_and_file
     respond_to do |format|
       if @chef_resource.update(chef_resource_params)
         format.html { redirect_to edit_chef_resource_path(@chef_resource), :flash => { :success => "Action was successfully updated." } }
@@ -95,6 +96,23 @@ class ChefResourcesController < ApplicationController
       params.require(:chef_resource).permit(:resource_type, chef_properties_attributes: [ :id, :value, :value_type ])
     end
 
+
+
+    #1. repo
+    #change program_name or delete resource: delete program
+
+    #2. deb
+    #change source_file or delete resource: delete program
+
+    #3. install from source
+    #change source_file or delete resource: delete program
+
+    #4. download file
+    #change source_file or change url or delete resource: delete source_file
+
+    #5. extract
+    #change source_file or change extract_to or delete resource: delete extract_to folder
+
     def find_unuse_program_and_file
       case @chef_resource.resource_type
       when "Repository" # delete program when program_name diff
@@ -102,7 +120,7 @@ class ChefResourcesController < ApplicationController
           chef_property = ChefProperty.find(value[:id])
           if chef_property.value != value[:value]
             diff_program_name = find_diff_program_name(chef_property.value, value[:value])
-            # delete program
+            add_remove_resource(diff_program_name, "program")
           end
         end
       when "Deb" # delete program when source file change
@@ -110,7 +128,8 @@ class ChefResourcesController < ApplicationController
           if value[:value_type] == "source_file"
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              # delete program
+              value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+              add_remove_resource(value, "program")
             end
           end
         end
@@ -119,7 +138,8 @@ class ChefResourcesController < ApplicationController
           if value[:value_type] == "source_file"
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              # delete program
+              value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+              add_remove_resource(value, "program")
             end
           end
         end
@@ -127,23 +147,36 @@ class ChefResourcesController < ApplicationController
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
           chef_property = ChefProperty.find(value[:id])
           if chef_property.value != value[:value]
-            # {"0"=>{"value"=>"aaaa", "value_type"=>"download_url", "id"=>"2"}, "1"=>{"value"=>"bbb", "value_type"=>"source_file", "id"=>"3"}}
-            # use id of value_type = source_file
+            value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+            add_remove_resource(value, "file")
           end
         end
-      when "Extract" # ( delete source and extract_to file when source change) or ( delete extract_to file when extract_to change )
+      when "Extract" # change source_file or change extract_to or delete resource: delete extract_to folder
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
           chef_property = ChefProperty.find(value[:id])
           if chef_property.value != value[:value]
-            # delete extract_to
+            value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
+            add_remove_resource(value, "folder")
           end
         end
       end
-      
+
     end
 
-    def add_remove_resource
-      #
+    def add_remove_resource(value, value_type)
+      if @chef_resource.resource_type == "Repository" # repo not check chef_resource_id because install from repo will have one or more program
+        @chef_resource.programs.each do |program|
+          remove_resource = RemoveResource.new(program_id: program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: value_type)
+          remove_resource.save
+        end
+      else
+        @chef_resource.programs.each do |program|
+          if !program.remove_resources.find_by(chef_resource_id: @chef_resource.id).present? # check Is chef_resource_id alredy in remove_resources
+            remove_resource = RemoveResource.new(program_id: program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: value_type)
+            remove_resource.save
+          end
+        end
+      end
     end
 
     def find_diff_program_name(resource1, resource2)

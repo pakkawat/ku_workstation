@@ -18,6 +18,8 @@ class ProgramJob < ProgressJob::Base
     @arr_error = Array.new
     @arr_error.push("There are error with following user id:")
 
+    generate_chef_resource
+
     if @type == "delete"
       delete_all_user
       remove_program_from_users
@@ -136,5 +138,33 @@ class ProgramJob < ProgressJob::Base
       raise test + str_error
     end
   end
+
+  def generate_chef_resource
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/install_programs.rb", 'w') do |f|
+      @program.chef_resources.each do |chef_resource|
+        f.write(ResourceGenerator.resource(chef_resource))
+      end
+    end
+
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/uninstall_programs.rb", 'w') do |f|
+      @program.chef_resources.each do |chef_resource|
+        f.write(ResourceGenerator.uninstall_resource(chef_resource))
+      end
+    end
+
+    remove_resources = RemoveResource.where(program_id: @program.id)
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
+      remove_resources.each do |remove_resource|
+        f.write(ResourceGenerator.remove_disuse_resource(remove_resource))
+      end
+    end
+
+    if !KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
+    end
+
+  end
+
+
 
 end
