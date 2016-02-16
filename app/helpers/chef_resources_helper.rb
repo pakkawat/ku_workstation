@@ -12,6 +12,8 @@ module ChefResourcesHelper
       return "Download file"
     when "Extract"
       return "Extract file"
+    when "Config_file"
+      return "Config file"
     end
   end
 

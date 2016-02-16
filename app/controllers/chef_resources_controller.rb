@@ -35,7 +35,21 @@ class ChefResourcesController < ApplicationController
         @chef_resource.chef_properties.build
         @chef_resource.chef_properties.build
       end
-    end
+    when "Config_file"
+      @data = nil
+      if !@chef_resource.chef_properties.any?
+        @chef_resource.chef_properties.build
+      else
+        if !@program.nil?
+          value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value)
+          file_name = File.basename(value)
+          if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+            @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+          end
+        end
+      end
+    end # end case
+
   end
 
   # POST /chef_resources
@@ -157,6 +171,14 @@ class ChefResourcesController < ApplicationController
           if chef_property.value != value[:value]
             value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
             add_remove_resource(value, "folder")
+          end
+        end
+      when "Config_file"
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          chef_property = ChefProperty.find(value[:id])
+          if chef_property.value != value[:value]
+            value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value)
+            add_remove_resource(value, "file")
           end
         end
       end

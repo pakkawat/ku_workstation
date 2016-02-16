@@ -142,7 +142,11 @@ class ProgramJob < ProgressJob::Base
   def generate_chef_resource
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/install_programs.rb", 'w') do |f|
       @program.chef_resources.each do |chef_resource|
-        f.write(ResourceGenerator.resource(chef_resource))
+        if chef_resource.resource_type == "Config_file"
+          f.write(ResourceGenerator.config_file(chef_resource, @program))
+        else
+          f.write(ResourceGenerator.resource(chef_resource))
+        end
       end
     end
 

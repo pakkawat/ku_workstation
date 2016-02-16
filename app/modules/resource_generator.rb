@@ -165,6 +165,27 @@ require 'uri'
 		return str_code
 	end
 
+	def ResourceGenerator.config_file(chef_resource, program)
+		value = chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value)
+		file_name = File.basename(value)
+		str_code = ""
+		if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb")
+			str_code += "template '#{value}' do\n"
+			str_code += "  source '#{file_name}.erb'\n"
+			str_code += "  owner 'root'\n"
+			str_code += "  group 'root'\n"
+			str_code += "  mode '0755'\n"
+			str_code += "end\n"
+			str_code += "\n"
+		end
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}' do\n"
+		str_code += "  content IO.read('#{value}')\n"
+		str_code += "  action :create\n"
+		str_code += "end\n"
+		str_code += "\n"
+		return str_code
+	end
+
 #########################################################################################################################
 
 
@@ -179,6 +200,8 @@ require 'uri'
 			remove_download_file(remove_resource)
 		elsif remove_resource.resource_type == "Extract"
 			remove_extract_file(remove_resource)
+		elsif remove_resource.resource_type == "Config_file"
+			remove_config_file(remove_resource)
 		end
 	end
 
@@ -227,6 +250,20 @@ require 'uri'
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
+	end
+
+	def self.remove_config_file(remove_resource)
+		file_name = File.basename(remove_resource.value)
+		program = Program.find(remove_resource.program_id)
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb"
+		File.delete(path_to_file) if File.exist?(path_to_file)
+
+		str_code = ""
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
 	end
 
 end

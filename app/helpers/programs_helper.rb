@@ -1,11 +1,12 @@
 module ProgramsHelper
-  def expand_collapse_for(chef_resource)
-    render html: ExpandCollapse.new(chef_resource).html
+  def expand_collapse_for(chef_resource, program)
+    render html: ExpandCollapse.new(chef_resource, program).html
   end
 
   class ExpandCollapse
-    def initialize(chef_resource)
+    def initialize(chef_resource, program)
       @chef_resource = chef_resource
+      @program = program
     end
 
     def html
@@ -20,6 +21,8 @@ module ProgramsHelper
         download
       when "Extract"
         extract
+      when "Config_file"
+        config_file
       end
     end
 
@@ -177,6 +180,38 @@ module ProgramsHelper
       end
       return str_temp.html_safe
     end
+
+    def config_file
+      str_temp = ""
+      @chef_resource.chef_properties.each do |property|
+        str_temp += "<div class='form-group'>"
+        str_temp += "  <label for='name'>"
+        str_temp += "    File path:"
+        str_temp += "  </label>"
+        str_temp += "  <div class='input-group'>"
+        str_temp += "    <span class='input-group-addon'>"
+        str_temp += "      <span class='glyphicon glyphicon-file'>"
+        str_temp += "      </span>"
+        str_temp += "    </span>"
+        str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
+        str_temp += "  </div>"
+        file_name = File.basename(property.value)
+        if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    running.png: " + file_name
+          str_temp += "    "
+          str_temp += "  </div>"
+        else
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    error.png: File not found"
+          str_temp += "    "
+          str_temp += "  </div>"
+        end
+        str_temp += "</div>"
+      end
+      return str_temp.html_safe
+    end
+
   end
 
   def resource_type_full_name(resource_type)
@@ -191,6 +226,8 @@ module ProgramsHelper
       return "Download file"
     when "Extract"
       return "Extract file"
+    when "Config_file"
+      return "Config file"
     end
   end
 

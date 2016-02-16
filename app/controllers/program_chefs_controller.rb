@@ -85,24 +85,27 @@ class ProgramChefsController < ApplicationController
       remove_resource.save
     else
       if !@program.remove_resources.find_by(chef_resource_id: @chef_resource.id).present? # check Is chef_resource_id alredy in remove_resources
+        value = nil
+        value_type = nil
         case @chef_resource.resource_type
         when "Deb"
           value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
-          remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "program")
-          remove_resource.save
+          value_type = "program"
         when "Source"
           value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
-          remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "program")
-          remove_resource.save
+          value_type = "program"
         when "Download"
           value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-          remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "file")
-          remove_resource.save
+          value_type = "file"
         when "Extract"
           value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
-          remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "folder")
-          remove_resource.save
+          value_type = "folder"
+        when "Config_file"
+          value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value)
+          value_type = "fie"
         end
+        remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: value_type)
+        remove_resource.save
       end
     end
   end

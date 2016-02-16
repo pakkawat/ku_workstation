@@ -194,6 +194,26 @@
                 <% end %>
                 <% @property_count = @property_count + 1 %>
               <% end %>
+              <% when "Config_file" %>
+                <%= f.fields_for :chef_properties do |property| %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :file_path %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-book'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "config_file" %>
+                    <% end %>
+                    <div class='input-group'>
+                      <%= text_area_tag(:config_file_value, @data, :size => "100x60") %>
+                    </div>
+                </div>
+                <% end %>
             <% end %>
 
 
