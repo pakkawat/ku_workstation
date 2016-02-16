@@ -12,7 +12,7 @@
           <% if !@program.nil? %>
             <%= button_to 'Back', edit_program_path(@program), :class => "btn btn-default", :method => :get %>
           <% else %>
-            <%= button_to 'Back', chef_resources_path, :class => "btn btn-default" %>
+            <%= button_to 'Back', chef_resources_path, :class => "btn btn-default", :method => :get %>
           <% end %>
         </div>
       </h1>
@@ -210,7 +210,7 @@
                       <%= property.hidden_field :value_type, :value => "config_file" %>
                     <% end %>
                     <div class='input-group'>
-                      <%= text_area_tag(:config_file_value, @data, :size => "100x60") %>
+                      <%= text_area_tag(:config_file_value, @data, :size => "63x60", class: 'form-control') %>
                     </div>
                 </div>
                 <% end %>

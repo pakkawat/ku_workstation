@@ -101,8 +101,8 @@ class ProgramChefsController < ApplicationController
           value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
           value_type = "folder"
         when "Config_file"
-          value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value)
-          value_type = "fie"
+          value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
+          value_type = "file"
         end
         remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: value_type)
         remove_resource.save

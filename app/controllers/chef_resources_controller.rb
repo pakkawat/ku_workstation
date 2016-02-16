@@ -41,7 +41,7 @@ class ChefResourcesController < ApplicationController
         @chef_resource.chef_properties.build
       else
         if !@program.nil?
-          value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value)
+          value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
           file_name = File.basename(value)
           if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
             @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
@@ -177,7 +177,7 @@ class ChefResourcesController < ApplicationController
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
           chef_property = ChefProperty.find(value[:id])
           if chef_property.value != value[:value]
-            value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value)
+            value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
             add_remove_resource(value, "file")
           end
         end

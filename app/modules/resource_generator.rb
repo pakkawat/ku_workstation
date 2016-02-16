@@ -166,7 +166,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.config_file(chef_resource, program)
-		value = chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value)
+		value = chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
 		file_name = File.basename(value)
 		str_code = ""
 		if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb")
