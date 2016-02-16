@@ -209,8 +209,22 @@
                     <% else %>
                       <%= property.hidden_field :value_type, :value => "config_file" %>
                     <% end %>
+                </div>
+                <div class='form-group'>
+                  <% if @data != nil %>
+                    <label for='name'>
+                      <%= property.label :file_content %>
+                    </label>
                     <div class='input-group'>
                       <%= text_area_tag(:config_file_value, @data, :size => "63x60", class: 'form-control') %>
+                    </div>
+                  <% else %>
+                    <label for='name'>
+                      <%= property.label :file_status %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><%= image_tag "error.png" %></span>
+                      <%= text_field_tag 'error', 'File not found', disabled: true, class: "form-control" %>
                     </div>
                 </div>
                 <% end %>

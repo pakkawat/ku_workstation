@@ -195,19 +195,34 @@ module ProgramsHelper
         str_temp += "    </span>"
         str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
         str_temp += "  </div>"
+        str_temp += "</div>"
         file_name = File.basename(property.value)
         if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    File status:"
+          str_temp += "  </label>"
           str_temp += "  <div class='input-group'>"
-          str_temp += "    running.png: " + file_name
-          str_temp += "    "
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <img src='/assets/running.png' alt='Running'>"
+          str_temp += "    </span>"
+          str_temp += "    <input type='text' value='#{file_name}' class='form-control' disabled='disabled'>"
           str_temp += "  </div>"
+          str_temp += "</div>"
         else
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    File status:"
+          str_temp += "  </label>"
           str_temp += "  <div class='input-group'>"
-          str_temp += "    error.png: File not found"
-          str_temp += "    "
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <img src='/assets/error.png' alt='error'>"
+          str_temp += "    </span>"
+          str_temp += "    <input type='text' value='File not found' class='form-control' disabled='disabled'>"
           str_temp += "  </div>"
+          str_temp += "</div>"
         end
-        str_temp += "</div>"
+        
       end
       return str_temp.html_safe
     end
