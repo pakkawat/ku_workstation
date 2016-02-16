@@ -48,7 +48,7 @@ class ProgramsController < ApplicationController
 
   def edit
     @program = Program.find(params[:id])
-    get_config_file
+    check_config_file
   end
 
   def update
@@ -175,23 +175,35 @@ class ProgramsController < ApplicationController
       params.require(:program).permit(:program_name, :note )
     end
 
-    def get_config_file
+    def check_config_file
       chef_resources = @program.chef_resources.where(:resource_type => "Config_file")
       if chef_resources.any?
         chef_resources.each do |chef_resource|
           value = chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
       		file_name = File.basename(value)
           if !File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
-            require 'chef'
-            require 'open-uri'
-            ku_id = KuUser.where(id: UsersProgram.where(:program_id => @program.id).uniq.pluck(:ku_user_id)).pluck(:ku_id).first
-            Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
-            query = Chef::Search::Query.new
-          	node = query.search('node', 'name:#{ku_id}').first rescue []
-            download = open(node.ec2.public_hostname + ":8080/sharedfile/" + file_name)
-            IO.copy_stream(download, "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb")
+            donwload_config_file
           end
         end
+      end
+    end
+
+    def donwload_config_file
+      require 'chef'
+      require 'open-uri'
+      error = false
+      ku_id = KuUser.where(id: UsersProgram.where(:program_id => @program.id).uniq.pluck(:ku_user_id)).pluck(:ku_id).first
+      Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
+      query = Chef::Search::Query.new
+      nodes = query.search('node', 'name:' + ku_id).first rescue []
+      node = nodes.first
+      begin
+        download = open(node.ec2.public_hostname + ":8080/sharedfile/" + file_name)
+      rescue
+        error = true
+      end
+      if !error
+        IO.copy_stream(download, "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
       end
     end
 end
