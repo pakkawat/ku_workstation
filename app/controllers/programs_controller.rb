@@ -182,13 +182,13 @@ class ProgramsController < ApplicationController
           value = chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
       		file_name = File.basename(value)
           if !File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
-            donwload_config_file
+            donwload_config_file(file_name)
           end
         end
       end
     end
 
-    def donwload_config_file
+    def donwload_config_file(file_name)
       require 'chef'
       require 'open-uri'
       error = false
@@ -198,7 +198,7 @@ class ProgramsController < ApplicationController
       nodes = query.search('node', 'name:' + ku_id).first rescue []
       node = nodes.first
       begin
-        download = open(node.ec2.public_hostname + ":8080/sharedfile/" + file_name)
+        download = open("http://" + node.ec2.public_hostname + ":8080/sharedfile/" + file_name)
       rescue
         error = true
       end
