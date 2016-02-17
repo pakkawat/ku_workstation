@@ -77,7 +77,7 @@ class ChefResourcesController < ApplicationController
       @program = nil
     end
     @property_count = 0
-    #find_unuse_program_and_file
+    find_unuse_program_and_file
     respond_to do |format|
       if @chef_resource.update(chef_resource_params)
         format.html { redirect_to edit_chef_resource_path(@chef_resource), :flash => { :success => "Action was successfully updated." } }
@@ -179,6 +179,8 @@ class ChefResourcesController < ApplicationController
           if chef_property.value != value[:value]
             value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
             add_remove_resource(value, "file")
+          else
+            save_config_file(params[:config_file_value])
           end
         end
       end
@@ -205,6 +207,19 @@ class ChefResourcesController < ApplicationController
       array1 = resource1.split(' ')
       array2 = resource2.split(' ')
       return (array1 - array2).join(" ")
+    end
+
+    def save_config_file(config_file_value)
+      if !@program.nil?
+        value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
+        file_name = File.basename(value)
+        file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb"
+        if !File.exists?(file_full_path)
+          File.open(file_full_path, "w") do |f|
+            f.write(config_file_value)
+          end
+        end
+      end
     end
 
 end

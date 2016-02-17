@@ -181,14 +181,15 @@ class ProgramsController < ApplicationController
         chef_resources.each do |chef_resource|
           value = chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
       		file_name = File.basename(value)
-          if !File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
-            donwload_config_file(file_name)
+          file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb"
+          if !File.exists?(file_full_path)
+            donwload_config_file(file_name, file_full_path)
           end
         end
       end
     end
 
-    def donwload_config_file(file_name)
+    def donwload_config_file(file_name, file_full_path)
       require 'chef'
       require 'open-uri'
       error = false
@@ -203,7 +204,7 @@ class ProgramsController < ApplicationController
         error = true
       end
       if !error
-        IO.copy_stream(download, "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+        IO.copy_stream(download, file_full_path)
       end
     end
 end
