@@ -291,7 +291,7 @@ class ChefResourcesController < ApplicationController
         file_name = File.basename(value)
         file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb"
         File.open(file_full_path, "w") do |f|
-          f.write(config_file_value)
+          f.write(created_file_content)
         end
       end
     end
