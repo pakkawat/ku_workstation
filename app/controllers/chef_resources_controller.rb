@@ -42,11 +42,19 @@ class ChefResourcesController < ApplicationController
       else
         if !@program.nil?
           value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
+          if !value.nil?
           file_name = File.basename(value)
-          if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
-            @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+            if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+              @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+            end
           end
         end
+      end
+    when "Copy_file"
+      if !@chef_resource.chef_properties.any?
+        @chef_resource.chef_properties.build
+        @chef_resource.chef_properties.build
+        @chef_resource.chef_properties.build
       end
     end # end case
 
@@ -135,59 +143,82 @@ class ChefResourcesController < ApplicationController
       case @chef_resource.resource_type
       when "Repository" # delete program when program_name diff
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
-          chef_property = ChefProperty.find(value[:id])
-          if chef_property.value != value[:value]
-            diff_program_name = find_diff_program_name(chef_property.value, value[:value])
-            add_remove_resource(diff_program_name, "program")
+          if !value[:id].nil? # old_value
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              diff_program_name = find_diff_program_name(chef_property.value, value[:value])
+              add_remove_resource(diff_program_name, "program")
+            end
           end
         end
       when "Deb" # delete program when source file change
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
-          if value[:value_type] == "source_file"
-            chef_property = ChefProperty.find(value[:id])
-            if chef_property.value != value[:value]
-              value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
-              add_remove_resource(value, "program")
+          if !value[:id].nil? # old_value
+            if value[:value_type] == "source_file"
+              chef_property = ChefProperty.find(value[:id])
+              if chef_property.value != value[:value]
+                value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+                add_remove_resource(value, "program")
+              end
             end
           end
         end
       when "Source" # delete program when source file change
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
-          if value[:value_type] == "source_file"
-            chef_property = ChefProperty.find(value[:id])
-            if chef_property.value != value[:value]
-              value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
-              add_remove_resource(value, "program")
+          if !value[:id].nil? # old_value
+            if value[:value_type] == "source_file"
+              chef_property = ChefProperty.find(value[:id])
+              if chef_property.value != value[:value]
+                value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+                add_remove_resource(value, "program")
+              end
             end
           end
         end
       when "Download" # delete download file when url OR!!!! source file change
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
-          chef_property = ChefProperty.find(value[:id])
-          if chef_property.value != value[:value]
-            value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-            add_remove_resource(value, "file")
+          if !value[:id].nil? # old_value
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+              add_remove_resource(value, "file")
+            end
           end
         end
       when "Extract" # change source_file or change extract_to or delete resource: delete extract_to folder
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
-          chef_property = ChefProperty.find(value[:id])
-          if chef_property.value != value[:value]
-            value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
-            add_remove_resource(value, "folder")
+          if !value[:id].nil? # old_value
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
+              add_remove_resource(value, "folder")
+            end
           end
         end
       when "Config_file"
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
-          chef_property = ChefProperty.find(value[:id])
-          if chef_property.value != value[:value]
-            value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-            add_remove_resource(value, "file")
-          else
-            save_config_file(params[:config_file_value])
+          if !value[:id].nil? # old_value
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
+              add_remove_resource(value, "file")
+            else
+              save_config_file(params[:config_file_value])
+            end
           end
         end
-      end
+      when "Copy_file" # delete destination when copy_type or source_file or destination_file change
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          if !value[:id].nil? # old_value
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              value = @chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
+              copy_type = @chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value).first
+              add_remove_resource(value, copy_type)
+            end
+          end
+        end
+      end # end case
 
     end
 

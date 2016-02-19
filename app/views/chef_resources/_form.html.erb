@@ -229,6 +229,56 @@
                   <% end %>
                 </div>
                 <% end %>
+                <% when "Copy_file" %>
+                  <%= f.fields_for :chef_properties do |property| %>
+                    <% if @property_count == 0 %>
+                      <div class='form-group'>
+                        <label for='name'>
+                          <%= property.label :copy %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><span class='glyphicon glyphicon-list-alt'></span></span>
+                          <%= property.select :value, [['File', 'file'], ['Folder', 'folder']], {}, {:class => "form-control"} %>
+                        </div>
+                        <% if property.object.id != nil %>
+                          <%= property.hidden_field :value_type %>
+                        <% else %>
+                          <%= property.hidden_field :value_type, :value => "copy_type" %>
+                        <% end %>
+                      </div>
+                    <% elsif @property_count == 1 %>
+                      <div class='form-group'>
+                        <label for='name'>
+                          <%= property.label :source %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                          <%= property.text_field :value, class: "form-control" %>
+                        </div>
+                        <% if property.object.id != nil %>
+                          <%= property.hidden_field :value_type %>
+                        <% else %>
+                          <%= property.hidden_field :value_type, :value => "source_file" %>
+                        <% end %>
+                      </div>
+                    <% else %>
+                      <div class='form-group'>
+                        <label for='name'>
+                          <%= property.label :destination %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                          <%= property.text_field :value, class: "form-control" %>
+                        </div>
+                        <% if property.object.id != nil %>
+                          <%= property.hidden_field :value_type %>
+                        <% else %>
+                          <%= property.hidden_field :value_type, :value => "destination_file" %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <% @property_count = @property_count + 1 %>
+                  <% end %>
             <% end %>
 
 

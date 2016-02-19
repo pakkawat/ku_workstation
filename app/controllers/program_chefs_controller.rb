@@ -80,7 +80,7 @@ class ProgramChefsController < ApplicationController
 
   def add_remove_resource
     if @chef_resource.resource_type == "Repository" # repo not check chef_resource_id because install from repo will have one or more program
-      value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+      value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
       remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "program")
       remove_resource.save
     else
@@ -89,20 +89,23 @@ class ProgramChefsController < ApplicationController
         value_type = nil
         case @chef_resource.resource_type
         when "Deb"
-          value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+          value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
           value_type = "program"
         when "Source"
-          value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+          value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
           value_type = "program"
         when "Download"
-          value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+          value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
           value_type = "file"
         when "Extract"
-          value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
+          value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
           value_type = "folder"
         when "Config_file"
           value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
           value_type = "file"
+        when "Copy_file"
+          value = @chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
+          value_type = @chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value).first
         end
         remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: value_type)
         remove_resource.save

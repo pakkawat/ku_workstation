@@ -11,6 +11,8 @@ require 'uri'
 			ResourceGenerator.download_file(chef_resource)
 		elsif chef_resource.resource_type == "Extract"
 			ResourceGenerator.extract_file(chef_resource)
+		elsif chef_resource.resource_type == "Copy_file"
+			ResourceGenerator.copy_file(chef_resource)
 		end
 	end
 
@@ -25,6 +27,8 @@ require 'uri'
 			ResourceGenerator.delete_download_file(chef_resource)
 		elsif chef_resource.resource_type == "Extract"
 			ResourceGenerator.delete_extract_file(chef_resource)
+		elsif chef_resource.resource_type == "Copy_file"
+			ResourceGenerator.delete_copy_file(chef_resource)
 		end
 	end
 
@@ -186,6 +190,88 @@ require 'uri'
 		return str_code
 	end
 
+	def ResourceGenerator.copy_file(chef_resource)
+		copy_type = chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value)
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+		str_code = ""
+		if copy_type == "file"
+			paths = File.dirname(destination_file)
+			path = get_path(paths)
+			str_code += "%w[ #{path} ].each do |path|\n"
+			str_code += "  directory path do\n"
+			str_code += "    owner 'root'\n"
+			str_code += "    group 'root'\n"
+			str_code += "    mode '0755'\n"
+			str_code += "  end\n"
+			str_code += "end\n"
+			str_code += "\n"
+			str_code += "file '#{destination_file}' do\n"
+			str_code += "  content IO.read('#{source_file}')\n"
+			str_code += "  action :create\n"
+			str_code += "end\n"
+			str_code += "\n"
+		else
+			path = get_path(destination_file)
+			str_code += "%w[ #{path} ].each do |path|\n"
+			str_code += "  directory path do\n"
+			str_code += "    owner 'root'\n"
+			str_code += "    group 'root'\n"
+			str_code += "    mode '0755'\n"
+			str_code += "  end\n"
+			str_code += "end\n"
+			str_code += "\n"
+			str_code += "if Dir.entries('#{destination_file}').size == 2\n" # empty folder (have two links "." and ".." only)
+			str_code += "  execute 'copy_all_file_in_folder' do\n"
+			str_code += "    command 'cp -r #{source_file}/. #{destination_file}'\n"
+			str_code += "  end\n"
+			str_code += "end\n"
+			str_code += "\n"
+		end
+		return str_code
+	end
+
+	def ResourceGenerator.delete_copy_file(chef_resource)
+		copy_type = chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value)
+		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+		str_code = ""
+		if copy_type == "file"
+			str_code += "file '#{destination_file}' do\n"
+			str_code += "  action :delete\n"
+			str_code += "end\n"
+			str_code += "\n"
+		else
+			str_code += "directory '#{destination_file}' do\n"
+			str_code += "  recursive true\n"
+			str_code += "  action :delete\n"
+			str_code += "end\n"
+			str_code += "\n"
+		end
+		return str_code
+	end
+
+	def get_path(path)
+		paths = path.split("/")
+		if paths.first == ""
+			paths.shift
+		end
+		arr = Array.new
+		index = 0
+		paths.each do |p|
+			if index != 0
+				arr.push(arr.at(index-1)+"/"+p)
+			else
+				arr.push("/"+p)
+			end
+			index = index + 1
+		end
+		str_temp = ""
+		arr.each do |a|
+			str_temp = str_temp + a + " "
+		end
+		return str_temp
+	end
+
 #########################################################################################################################
 
 
@@ -202,6 +288,8 @@ require 'uri'
 			remove_extract_file(remove_resource)
 		elsif remove_resource.resource_type == "Config_file"
 			remove_config_file(remove_resource)
+		elsif remove_resource.resource_type == "Copy_file"
+			remove_copy_file(remove_resource)
 		end
 	end
 
@@ -264,6 +352,23 @@ require 'uri'
 		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
+	end
+
+	def self.remove_copy_file(remove_resource)
+		str_code = ""
+		if remove_resource.value_type == "file"
+			str_code += "file '#{remove_resource.value}' do\n"
+			str_code += "  action :delete\n"
+			str_code += "end\n"
+			str_code += "\n"
+		else
+			str_code += "directory '#{remove_resource.value}' do\n"
+			str_code += "  recursive true\n"
+			str_code += "  action :delete\n"
+			str_code += "end\n"
+			str_code += "\n"
+		end
+		return str_code
 	end
 
 end

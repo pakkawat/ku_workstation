@@ -23,6 +23,8 @@ module ProgramsHelper
         extract
       when "Config_file"
         config_file
+      when "Copy_file"
+        conpy_file
       end
     end
 
@@ -222,7 +224,58 @@ module ProgramsHelper
           str_temp += "  </div>"
           str_temp += "</div>"
         end
-        
+
+      end
+      return str_temp.html_safe
+    end
+
+    def copy_file
+      str_temp = ""
+      @chef_resource.chef_properties.each do |property|
+        if property.value_type == "copy_type"
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    Copy:"
+          str_temp += "  </label>"
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <span class='glyphicon glyphicon-list-alt'>"
+          str_temp += "      </span>"
+          str_temp += "    </span>"
+          if property.value == "file"
+            str_temp += "    <select class='form-control'><option value='file' selected>File</option><option value='folder'>Folder</option></select>"
+          else
+            str_temp += "    <select class='form-control'><option value='file'>File</option><option value='folder' selected>Folder</option></select>"
+          end
+          str_temp += "  </div>"
+          str_temp += "</div>"
+        elsif property.value_type == "source_file"
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    Source:"
+          str_temp += "  </label>"
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <span class='glyphicon glyphicon-file'>"
+          str_temp += "      </span>"
+          str_temp += "    </span>"
+          str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
+          str_temp += "  </div>"
+          str_temp += "</div>"
+        else #destination_file
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    Destination:"
+          str_temp += "  </label>"
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <span class='glyphicon glyphicon-file'>"
+          str_temp += "      </span>"
+          str_temp += "    </span>"
+          str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
+          str_temp += "  </div>"
+          str_temp += "</div>"
+        end
       end
       return str_temp.html_safe
     end
@@ -243,6 +296,8 @@ module ProgramsHelper
       return "Extract file"
     when "Config_file"
       return "Config file"
+    when "Copy_file"
+      return "Copy file"
     end
   end
 
