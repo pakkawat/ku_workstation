@@ -210,13 +210,13 @@ class ChefResourcesController < ApplicationController
             end
           end
         end
-      when "Config_file"
+      when "Config_file" # delete file when config_file(path+filename) change
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-              add_remove_resource(value, "file")
+              #value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
+              add_remove_resource(chef_property.value, "file")
             else
               save_config_file(params[:config_file_value])
             end
@@ -238,14 +238,13 @@ class ChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              value = @chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
-              add_remove_resource(value, "file") # delete old file
-              create_file(params[:created_file_content]) # create new file
+              add_remove_resource(chef_property.value, "file") # delete old file
+              create_file(params[:created_file_content], value[:value]) # create new file
             else
-              create_file(params[:created_file_content]) # old file then update content
+              create_file(params[:created_file_content], chef_property.value) # old file then update content
             end
           else
-            create_file(params[:created_file_content]) # new file
+            create_file(params[:created_file_content], value[:value]) # new file
           end
         end
       end # end case
@@ -287,9 +286,8 @@ class ChefResourcesController < ApplicationController
       end
     end
 
-    def create_file(created_file_content)
+    def create_file(created_file_content, value)
       if !@program.nil?
-        value = @chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
         file_name = File.basename(value)
         file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb"
         File.open(file_full_path, "w") do |f|

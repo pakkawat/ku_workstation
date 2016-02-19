@@ -76,11 +76,10 @@ require 'uri'
 	def ResourceGenerator.install_from_deb(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+
 		str_code = ""
-		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/#{source_file}\"\n"
-		str_code += "\n"
 		str_code += "dpkg_package \"#{program_name}\" do\n"
-		str_code += "  source src_filepath\n"
+		str_code += "  source '#{source_file}'\n"
 		str_code += "  action :install\n"
 		str_code += "  ignore_failure true\n"
 		str_code += "  notifies :run, 'execute[apt-get-install-f]', :immediately\n"
@@ -123,12 +122,25 @@ require 'uri'
 	def ResourceGenerator.download_file(chef_resource)
 		url = chef_resource.chef_properties.where(:value_type => "download_url").pluck(:value)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+
+		src_filepath = File.dirname(source_file)
+		paths = get_path(src_filepath)
+
 		str_code = ""
-		str_code += "src_filepath = \"\#\{Chef\:\:Config\[\:file_cache_path\]\}\/" + source_file + "\"\n"
-		str_code += "remote_file src_filepath do\n"
-		str_code += "  source \"" + url + "\"\n"
+		str_code += "%w[ #{paths} ].each do |path|\n"
+		str_code += "  directory path do\n"
+		str_code += "    owner 'root'\n"
+		str_code += "    group 'root'\n"
+		str_code += "    mode '0755'\n"
+		str_code += "  end\n"
+		str_code += "end\n"
+		str_code += "\n"
+
+
+		str_code += "remote_file '#{source_file}' do\n"
+		str_code += "  source '#{url}'\n"
 		str_code += "  mode '0755'\n"
-		str_code += "  not_if \{ \:\:File.exists?(src_filepath) \}\n"
+		str_code += "  action :create\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
@@ -137,9 +149,8 @@ require 'uri'
 	def ResourceGenerator.delete_download_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
 		str_code = ""
-		str_code += "file \"\#\{Chef::Config\[:file_cache_path\]\}\/" + source_file + "\" do\n"
+		str_code += "file '#{source_file}' do\n"
 		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?(\"\#\{Chef::Config\[:file_cache_path\]\}\/" + source_file + "\") \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
@@ -148,11 +159,24 @@ require 'uri'
 	def ResourceGenerator.extract_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
 		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
+
+		src_filepath = File.dirname(source_file)
+		path = File.dirname(extract_to)
+		paths = get_path(path)
+
 		str_code = ""
+		str_code += "%w[ #{paths} ].each do |path|\n"
+		str_code += "  directory path do\n"
+		str_code += "    owner 'root'\n"
+		str_code += "    group 'root'\n"
+		str_code += "    mode '0755'\n"
+		str_code += "  end\n"
+		str_code += "end\n"
+		str_code += "\n"
 		str_code += "bash 'extract_module' do\n"
-		str_code += "  cwd Chef\:\:Config\[\:file_cache_path\]\n"
+		str_code += "  cwd ::File.dirname(#{src_filepath})\n"
 		str_code += "  code \<\<\-EOH\n"
-		str_code += "    mkdir -p \"#{extract_to}\"\n"
+		#str_code += "    mkdir -p \"#{extract_to}\"\n"
 		str_code += "    tar xzf \"#{source_file}\" \-C \"#{extract_to}\"\n"
 		str_code += "    EOH\n"
 		str_code += "  not_if \{ \:\:File.exists?(\"#{extract_to}\") \}\n"
@@ -199,9 +223,9 @@ require 'uri'
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
 		str_code = ""
 		if copy_type == "file"
-			paths = File.dirname(destination_file)
-			path = get_path(paths)
-			str_code += "%w[ #{path} ].each do |path|\n"
+			path = File.dirname(destination_file)
+			paths = get_path(path)
+			str_code += "%w[ #{paths} ].each do |path|\n"
 			str_code += "  directory path do\n"
 			str_code += "    owner 'root'\n"
 			str_code += "    group 'root'\n"
@@ -215,8 +239,8 @@ require 'uri'
 			str_code += "end\n"
 			str_code += "\n"
 		else
-			path = get_path(destination_file)
-			str_code += "%w[ #{path} ].each do |path|\n"
+			paths = get_path(destination_file)
+			str_code += "%w[ #{paths} ].each do |path|\n"
 			str_code += "  directory path do\n"
 			str_code += "    owner 'root'\n"
 			str_code += "    group 'root'\n"
@@ -278,8 +302,18 @@ require 'uri'
 
 	def ResourceGenerator.create_file(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value)
+		path = File.dirname(value)
+		paths = get_path(path)
 		file_name = File.basename(value)
 		str_code = ""
+		str_code += "%w[ #{paths} ].each do |path|\n"
+		str_code += "  directory path do\n"
+		str_code += "    owner 'root'\n"
+		str_code += "    group 'root'\n"
+		str_code += "    mode '0755'\n"
+		str_code += "  end\n"
+		str_code += "end\n"
+		str_code += "\n"
 		str_code += "template '#{value}' do\n"
 		str_code += "  source '#{file_name}.erb'\n"
 		str_code += "  owner 'root'\n"
