@@ -56,6 +56,21 @@ class ChefResourcesController < ApplicationController
         @chef_resource.chef_properties.build
         @chef_resource.chef_properties.build
       end
+    when "Create_file"
+      @data = nil
+      if !@chef_resource.chef_properties.any?
+        @chef_resource.chef_properties.build
+      else
+        if !@program.nil?
+          value = @chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
+          if !value.nil?
+          file_name = File.basename(value)
+            if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+              @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
+            end
+          end
+        end
+      end
     end # end case
 
   end
@@ -218,6 +233,21 @@ class ChefResourcesController < ApplicationController
             end
           end
         end
+      when "Create_file" # delete file when created_file(path+filename) change
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          if !value[:id].nil? # old_value
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              value = @chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
+              add_remove_resource(value, "file") # delete old file
+              create_file(params[:created_file_content]) # create new file
+            else
+              create_file(params[:created_file_content]) # old file then update content
+            end
+          else
+            create_file(params[:created_file_content]) # new file
+          end
+        end
       end # end case
 
     end
@@ -253,6 +283,17 @@ class ChefResourcesController < ApplicationController
           File.open(file_full_path, "w") do |f|
             f.write(config_file_value)
           end
+        end
+      end
+    end
+
+    def create_file(created_file_content)
+      if !@program.nil?
+        value = @chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
+        file_name = File.basename(value)
+        file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb"
+        File.open(file_full_path, "w") do |f|
+          f.write(config_file_value)
         end
       end
     end

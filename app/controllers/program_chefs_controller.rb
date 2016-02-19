@@ -106,6 +106,9 @@ class ProgramChefsController < ApplicationController
         when "Copy_file"
           value = @chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
           value_type = @chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value).first
+        when "Create_file"
+          value = @chef_resource.chef_properties.where(:value_type => "create_file").pluck(:value).first
+          value_type = "file"
         end
         remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: value_type)
         remove_resource.save

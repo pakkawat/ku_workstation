@@ -16,6 +16,8 @@ module ChefResourcesHelper
       return "Config file"
     when "Copy_file"
       return "Copy file"
+    when "Create_file"
+      return "Create file"
     end
   end
 

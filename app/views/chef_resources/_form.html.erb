@@ -279,6 +279,46 @@
                     <% end %>
                     <% @property_count = @property_count + 1 %>
                   <% end %>
+
+
+                  <% when "Create_file" %>
+                    <%= f.fields_for :chef_properties do |property| %>
+                      <div class='form-group'>
+                        <label for='name'>
+                          <%= property.label :file %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                          <%= property.text_field :value, class: "form-control" %>
+                        </div>
+                        <% if property.object.id != nil %>
+                          <%= property.hidden_field :value_type %>
+                        <% else %>
+                          <%= property.hidden_field :value_type, :value => "created_file" %>
+                        <% end %>
+                    </div>
+                    <div class='form-group'>
+                      <% if @data != nil %>
+                        <label for='name'>
+                          <%= property.label :file_content %>
+                        </label>
+                        <div class='input-group'>
+                          <%= text_area_tag(:created_file_content, @data, :size => "63x60", class: 'form-control') %>
+                        </div>
+                      <% else %>
+                        <label for='name'>
+                          <%= property.label :file_status %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><%= image_tag "error.png" %></span>
+                          <%= text_field_tag 'error', 'File not found, please select program before edit file', disabled: true, class: "form-control" %>
+                        </div>
+                      <% end %>
+                    </div>
+                    <% end %>
+
+
+
             <% end %>
 
 

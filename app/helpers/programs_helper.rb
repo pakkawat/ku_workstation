@@ -24,7 +24,9 @@ module ProgramsHelper
       when "Config_file"
         config_file
       when "Copy_file"
-        conpy_file
+        copy_file
+      when "Create_file"
+        create_file
       end
     end
 
@@ -280,6 +282,26 @@ module ProgramsHelper
       return str_temp.html_safe
     end
 
+    def create_file
+      str_temp = ""
+      @chef_resource.chef_properties.each do |property|
+        str_temp += "<div class='form-group'>"
+        str_temp += "  <label for='name'>"
+        str_temp += "    File:"
+        str_temp += "  </label>"
+        str_temp += "  <div class='input-group'>"
+        str_temp += "    <span class='input-group-addon'>"
+        str_temp += "      <span class='glyphicon glyphicon-file'>"
+        str_temp += "      </span>"
+        str_temp += "    </span>"
+        str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
+        str_temp += "  </div>"
+        str_temp += "</div>"
+
+      end
+      return str_temp.html_safe
+    end
+
   end
 
   def resource_type_full_name(resource_type)
@@ -298,6 +320,8 @@ module ProgramsHelper
       return "Config file"
     when "Copy_file"
       return "Copy file"
+    when "Create_file"
+      return "Create file"
     end
   end
 

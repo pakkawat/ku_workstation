@@ -69,7 +69,7 @@
       <div class="col-md-6">
         <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
                     <%= hidden_field_tag 'program_id', @program.id  %>
-                    <%= select_tag :chef_resource_type, options_for_select([["Download file", "Download"], ["Extract file", "Extract"], ["Edit config file", "Config_file"], ["Copy file", "Copy_file"]]), class: "form-control" %>
+                    <%= select_tag :chef_resource_type, options_for_select([["Download file", "Download"], ["Extract file", "Extract"], ["Edit config file", "Config_file"], ["Copy file", "Copy_file"], ["Create file", "Create_file"]]), class: "form-control" %>
                     <div style="margin-top: 10px"></div>
                     <%= submit_tag "File action", class: "btn btn-primary" %>
             <% end %>

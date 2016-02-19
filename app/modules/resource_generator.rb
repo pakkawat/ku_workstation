@@ -13,6 +13,8 @@ require 'uri'
 			ResourceGenerator.extract_file(chef_resource)
 		elsif chef_resource.resource_type == "Copy_file"
 			ResourceGenerator.copy_file(chef_resource)
+		elsif chef_resource.resource_type == "Create_file"
+			ResourceGenerator.create_file(chef_resource)
 		end
 	end
 
@@ -29,6 +31,8 @@ require 'uri'
 			ResourceGenerator.delete_extract_file(chef_resource)
 		elsif chef_resource.resource_type == "Copy_file"
 			ResourceGenerator.delete_copy_file(chef_resource)
+		elsif chef_resource.resource_type == "Create_file"
+			ResourceGenerator.delete_create_file(chef_resource)
 		end
 	end
 
@@ -154,7 +158,6 @@ require 'uri'
 		str_code += "  not_if \{ \:\:File.exists?(\"#{extract_to}\") \}\n"
 		str_code += "end\n"
 		str_code += "\n"
-		str_code += "\n"
 		return str_code
 	end
 
@@ -272,6 +275,31 @@ require 'uri'
 		return str_temp
 	end
 
+
+	def ResourceGenerator.create_file(chef_resource)
+		value = chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value)
+		file_name = File.basename(value)
+		str_code = ""
+		str_code += "template '#{value}' do\n"
+		str_code += "  source '#{file_name}.erb'\n"
+		str_code += "  owner 'root'\n"
+		str_code += "  group 'root'\n"
+		str_code += "  mode '0755'\n"
+		str_code += "end\n"
+		str_code += "\n"
+		return str_code
+	end
+
+	def ResourceGenerator.delete_create_file(chef_resource)
+		value = chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value)
+		str_code = ""
+		str_code += "file '#{value}' do\n"
+		str_code += "  action :delete\n"
+		str_code += "end\n"
+		str_code += "\n"
+		return str_code
+	end
+
 #########################################################################################################################
 
 
@@ -290,6 +318,8 @@ require 'uri'
 			remove_config_file(remove_resource)
 		elsif remove_resource.resource_type == "Copy_file"
 			remove_copy_file(remove_resource)
+		elsif remove_resource.resource_type == "Create_file"
+			remove_create_file(remove_resource)
 		end
 	end
 
@@ -359,6 +389,7 @@ require 'uri'
 		if remove_resource.value_type == "file"
 			str_code += "file '#{remove_resource.value}' do\n"
 			str_code += "  action :delete\n"
+			str_code += "  only_if \{ ::File.exists?('#{remove_resource.value}') \}\n"
 			str_code += "end\n"
 			str_code += "\n"
 		else
@@ -369,6 +400,20 @@ require 'uri'
 			str_code += "\n"
 		end
 		return str_code
+	end
+
+	def self.remove_create_file(remove_resource)
+		file_name = File.basename(remove_resource.value)
+		program = Program.find(remove_resource.program_id)
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb"
+		File.delete(path_to_file) if File.exist?(path_to_file)
+
+		str_code = ""
+		str_code += "file '#{remove_resource.value}' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('#{remove_resource.value}') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
 	end
 
 end
