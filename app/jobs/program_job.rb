@@ -152,14 +152,22 @@ class ProgramJob < ProgressJob::Base
 
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/uninstall_programs.rb", 'w') do |f|
       @program.chef_resources.each do |chef_resource|
-        f.write(ResourceGenerator.uninstall_resource(chef_resource))
+        if chef_resource.resource_type == "Config_file"
+          f.write(ResourceGenerator.delete_config_file(chef_resource, @program))
+        else
+          f.write(ResourceGenerator.uninstall_resource(chef_resource))
+        end
       end
     end
 
     remove_resources = RemoveResource.where(program_id: @program.id)
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
       remove_resources.each do |remove_resource|
-        f.write(ResourceGenerator.remove_disuse_resource(remove_resource))
+        if chef_resource.resource_type == "Config_file"
+          f.write(ResourceGenerator.remove_config_file(chef_resource, @program))
+        else
+          f.write(ResourceGenerator.remove_disuse_resource(remove_resource))
+        end
       end
     end
 

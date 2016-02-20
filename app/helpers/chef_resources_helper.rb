@@ -18,6 +18,8 @@ module ChefResourcesHelper
       return "Copy file"
     when "Create_file"
       return "Create file"
+    when "Move_file"
+      return "Move file"
     end
   end
 

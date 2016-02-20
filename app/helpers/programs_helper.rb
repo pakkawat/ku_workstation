@@ -27,6 +27,8 @@ module ProgramsHelper
         copy_file
       when "Create_file"
         create_file
+      when "Move_file"
+        move_file
       end
     end
 
@@ -297,10 +299,46 @@ module ProgramsHelper
         str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
         str_temp += "  </div>"
         str_temp += "</div>"
-
       end
       return str_temp.html_safe
     end
+
+    def move_file
+      str_temp = ""
+      @chef_resource.chef_properties.each do |property|
+        if property.value_type == "source_file"
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    Source file:"
+          str_temp += "  </label>"
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <span class='glyphicon glyphicon-save-file'>"
+          str_temp += "      </span>"
+          str_temp += "    </span>"
+          str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
+          str_temp += "  </div>"
+          str_temp += "</div>"
+        else # destination_file
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    Destination:"
+          str_temp += "  </label>"
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <span class='glyphicon glyphicon-folder-open'>"
+          str_temp += "      </span>"
+          str_temp += "    </span>"
+          str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
+          str_temp += "  </div>"
+          str_temp += "</div>"
+        end
+      end
+      return str_temp.html_safe
+    end
+
+
+
 
   end
 
@@ -322,6 +360,8 @@ module ProgramsHelper
       return "Copy file"
     when "Create_file"
       return "Create file"
+    when "Move_file"
+      return "Move file"
     end
   end
 

@@ -109,6 +109,15 @@ class ProgramChefsController < ApplicationController
         when "Create_file"
           value = @chef_resource.chef_properties.where(:value_type => "create_file").pluck(:value).first
           value_type = "file"
+        when "Move_file"
+          source_file = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+          value = @chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
+          src_file_extname = File.extname(source_file)
+          if src_file_extname == ""
+            value_type = "folder"
+          else
+            value_type = "file"
+          end
         end
         remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: value_type)
         remove_resource.save

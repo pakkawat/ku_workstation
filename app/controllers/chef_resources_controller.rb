@@ -30,7 +30,7 @@ class ChefResourcesController < ApplicationController
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
       end
-    when "Download", "Extract", "Deb", "Source"
+    when "Download", "Extract", "Deb", "Source", "Move_file"
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
         @chef_resource.chef_properties.build
@@ -245,6 +245,22 @@ class ChefResourcesController < ApplicationController
             end
           else
             create_file(params[:created_file_content], value[:value]) # new file
+          end
+        end
+      when "Move_file" # delete destination file when source file or destination change
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          if !value[:id].nil? # old_value
+            chef_property = ChefProperty.find(value[:id])
+            if chef_property.value != value[:value]
+              source_file = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+              destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+              src_file_extname = File.extname(source_file)
+              if src_file_extname == ""
+                add_remove_resource(destination_file, "folder")
+              else
+                add_remove_resource(destination_file, "file")
+              end
+            end
           end
         end
       end # end case
