@@ -344,7 +344,7 @@ module ProgramsHelper
       @chef_resource.chef_properties.each do |property|
         str_temp += "<div class='form-group'>"
         str_temp += "  <label for='name'>"
-        str_temp += "    Program name:"
+        str_temp += "    Command:"
         str_temp += "  </label>"
         str_temp += "  <div class='input-group'>"
         str_temp += "    <span class='input-group-addon'>"
@@ -375,7 +375,7 @@ module ProgramsHelper
     when "Extract"
       return "Extract file"
     when "Config_file"
-      return "Config file"
+      return "Edit file"
     when "Copy_file"
       return "Copy file"
     when "Create_file"

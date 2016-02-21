@@ -56,15 +56,16 @@ class ProgramsController < ApplicationController
     #render plain: program_params.inspect
 
     if @program.update_attributes(program_params)
-
-      if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      test_generate_chef_resource
+      #if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         flash[:success] = "Program has been updated"
         redirect_to program_path(@program)+"/edit"
-      else
-        flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-        redirect_to program_path(@program)+"/edit"
-      end
+      #else
+        #flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+        #redirect_to program_path(@program)+"/edit"
+      #end
     else
+      flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       render "edit"
     end
   end
@@ -206,5 +207,43 @@ class ProgramsController < ApplicationController
       if !error
         IO.copy_stream(download, file_full_path)
       end
+    end
+
+    def test_generate_chef_resource
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/install_programs.rb", 'w') do |f|
+        @program.chef_resources.each do |chef_resource|
+          if chef_resource.resource_type == "Config_file"
+            f.write(ResourceGenerator.config_file(chef_resource, @program))
+          else
+            f.write(ResourceGenerator.resource(chef_resource))
+          end
+        end
+      end
+
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/uninstall_programs.rb", 'w') do |f|
+        @program.chef_resources.each do |chef_resource|
+          if chef_resource.resource_type == "Config_file"
+            f.write(ResourceGenerator.delete_config_file(chef_resource, @program))
+          else
+            f.write(ResourceGenerator.uninstall_resource(chef_resource))
+          end
+        end
+      end
+
+      remove_resources = RemoveResource.where(program_id: @program.id)
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
+        remove_resources.each do |remove_resource|
+          if chef_resource.resource_type == "Config_file"
+            f.write(ResourceGenerator.remove_config_file(chef_resource, @program))
+          else
+            f.write(ResourceGenerator.remove_disuse_resource(remove_resource))
+          end
+        end
+      end
+
+      if !KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
+      end
+
     end
 end

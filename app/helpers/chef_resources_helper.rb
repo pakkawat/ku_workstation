@@ -13,7 +13,7 @@ module ChefResourcesHelper
     when "Extract"
       return "Extract file"
     when "Config_file"
-      return "Config file"
+      return "Edit file"
     when "Copy_file"
       return "Copy file"
     when "Create_file"
