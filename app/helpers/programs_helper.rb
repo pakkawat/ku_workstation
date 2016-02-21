@@ -29,6 +29,8 @@ module ProgramsHelper
         create_file
       when "Move_file"
         move_file
+      when "Execute_command"
+        execute_command
       end
     end
 
@@ -337,6 +339,24 @@ module ProgramsHelper
       return str_temp.html_safe
     end
 
+    def execute_command
+      str_temp = ""
+      @chef_resource.chef_properties.each do |property|
+        str_temp += "<div class='form-group'>"
+        str_temp += "  <label for='name'>"
+        str_temp += "    Program name:"
+        str_temp += "  </label>"
+        str_temp += "  <div class='input-group'>"
+        str_temp += "    <span class='input-group-addon'>"
+        str_temp += "      <span class='glyphicon glyphicon-play'>"
+        str_temp += "      </span>"
+        str_temp += "    </span>"
+        str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
+        str_temp += "  </div>"
+        str_temp += "</div>"
+      end
+      return str_temp.html_safe
+    end
 
 
 
@@ -362,6 +382,8 @@ module ProgramsHelper
       return "Create file"
     when "Move_file"
       return "Move file"
+    when "Execute_command"
+      return "Execute command"
     end
   end
 

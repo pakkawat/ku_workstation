@@ -358,6 +358,27 @@
 
 
 
+            <% when "Execute_command" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <div class='form-group'>
+                  <label for='name'>
+                    <%= property.label :execute_command %>
+                  </label>
+                  <div class='input-group'>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-play'></span></span>
+                    <%= property.text_field :value, class: "form-control" %>
+                  </div>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "execute_command" %>
+                  <% end %>
+              </div>
+              <% end %>
+
+
+
+
             <% end %>
 
 

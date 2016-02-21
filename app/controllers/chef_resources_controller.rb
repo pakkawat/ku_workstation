@@ -26,7 +26,7 @@ class ChefResourcesController < ApplicationController
     end
     @property_count = 0
     case @chef_resource.resource_type
-    when "Repository"
+    when "Repository", "Execute_command"
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
       end

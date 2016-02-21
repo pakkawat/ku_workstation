@@ -17,6 +17,8 @@ require 'uri'
 			ResourceGenerator.create_file(chef_resource)
 		elsif chef_resource.resource_type == "Move_file"
 			ResourceGenerator.move_file(chef_resource)
+		elsif chef_resource.resource_type == "Execute_command"
+			ResourceGenerator.execute_command(chef_resource)
 		end
 	end
 
@@ -472,6 +474,18 @@ require 'uri'
 		end
 		return str_code
 	end
+
+
+	def ResourceGenerator.execute_command(chef_resource)
+		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value)
+		str_code = ""
+		str_code += "execute 'execute_command' do\n"
+		str_code += "  command '#{value}'\n"
+		str_code += "end\n"
+		str_code += "\n"
+		return str_code
+	end
+
 
 #########################################################################################################################
 
