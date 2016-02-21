@@ -43,7 +43,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.install_from_repository(chef_resource)
-		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "\%w\{#{value}\}.each do \|pkg\|\n"
 		str_code += "  package pkg do\n"
@@ -55,7 +55,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.uninstall_from_repository(chef_resource)
-		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "\%w\{#{value}\}.each do \|pkg\|\n"
 		str_code += "  package pkg do\n"
@@ -80,8 +80,8 @@ require 'uri'
 	end
 
 	def ResourceGenerator.install_from_deb(chef_resource)
-		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 
 		src_path = File.dirname(source_file)
 		src_file_name = File.basename(source_file)
@@ -104,7 +104,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.uninstall_from_deb(chef_resource)
-		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "dpkg_package '#{program_name}' do\n"
 		str_code += "  action :remove\n"
@@ -114,7 +114,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.install_from_source(chef_resource)
-		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "#{program_name} install_from_source\n"
 		str_code += "\n"
@@ -122,7 +122,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.uninstall_from_source(chef_resource)
-		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "#{program_name} uninstall_from_source\n"
 		str_code += "\n"
@@ -130,8 +130,8 @@ require 'uri'
 	end
 
 	def ResourceGenerator.download_file(chef_resource)
-		url = chef_resource.chef_properties.where(:value_type => "download_url").pluck(:value)
-		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+		url = chef_resource.chef_properties.where(:value_type => "download_url").pluck(:value).first
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 
 		src_path = File.dirname(source_file)
 		src_file_name = File.basename(source_file)
@@ -158,7 +158,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_download_file(chef_resource)
-		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 
 		src_path = File.dirname(source_file)
 		src_file_name = File.basename(source_file)
@@ -173,8 +173,8 @@ require 'uri'
 	end
 
 	def ResourceGenerator.extract_file(chef_resource)
-		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 
 		src_path = File.dirname(source_file)
 		src_file_name = File.basename(source_file)
@@ -206,7 +206,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_extract_file(chef_resource)
-		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
+		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 
 		des_path = File.dirname(extract_to)
 		des_file_name = File.basename(extract_to)
@@ -261,9 +261,9 @@ require 'uri'
 	end
 
 	def ResourceGenerator.copy_file(chef_resource)
-		copy_type = chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value)
-		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+		copy_type = chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value).first
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 		str_code = ""
 		if copy_type == "file"
 			src_path = File.dirname(source_file)
@@ -315,8 +315,8 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_copy_file(chef_resource)
-		copy_type = chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value)
-		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+		copy_type = chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value).first
+		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
 		str_code = ""
 		if copy_type == "file"
@@ -364,7 +364,7 @@ require 'uri'
 
 
 	def ResourceGenerator.create_file(chef_resource)
-		value = chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value)
+		value = chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
 
 		src_path = File.dirname(value)
 		src_file_name = File.basename(value)
@@ -390,7 +390,7 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_create_file(chef_resource)
-		value = chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value)
+		value = chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
 
 		src_path = File.dirname(value)
 		src_file_name = File.basename(value)
@@ -407,8 +407,8 @@ require 'uri'
 
 
 	def ResourceGenerator.move_file(chef_resource)
-		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
 		src_path = File.dirname(source_file)
 		src_file_name = File.basename(source_file)
@@ -446,8 +446,8 @@ require 'uri'
 	end
 
 	def ResourceGenerator.delete_move_file(chef_resource)
-		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
 		src_path = File.dirname(source_file)
 		src_file_name = File.basename(source_file)
@@ -477,7 +477,7 @@ require 'uri'
 
 
 	def ResourceGenerator.execute_command(chef_resource)
-		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value)
+		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value).first
 		str_code = ""
 		str_code += "execute 'execute_command' do\n"
 		str_code += "  command '#{value}'\n"
@@ -624,8 +624,8 @@ require 'uri'
 	def self.remove_move_file(remove_resource)
 		chef_resource = ChefResource.find(remove_resource.chef_resource_id)
 
-		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
 		src_path = File.dirname(source_file)
 		src_file_name = File.basename(source_file)

@@ -241,9 +241,5 @@ class ProgramsController < ApplicationController
         end
       end
 
-      if !KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
-      end
-
     end
 end
