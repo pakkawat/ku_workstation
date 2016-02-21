@@ -110,7 +110,7 @@ class ProgramChefsController < ApplicationController
           value = @chef_resource.chef_properties.where(:value_type => "create_file").pluck(:value).first
           value_type = "file"
         when "Move_file"
-          source_file = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+          source_file = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
           value = @chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
           src_file_extname = File.extname(source_file)
           if src_file_extname == ""

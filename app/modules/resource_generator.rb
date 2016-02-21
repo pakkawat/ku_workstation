@@ -180,9 +180,9 @@ require 'uri'
 		src_file_name = File.basename(source_file)
 		src_paths, src_last_path = get_path(src_path)
 
-		des_path = File.dirname(extract_to)
-		des_file_name = File.basename(extract_to)
-		des_paths, des_last_path = get_path(des_path)
+		#des_path = File.dirname(extract_to)
+		#des_file_name = File.basename(extract_to)
+		des_paths, des_last_path = get_path(extract_to)
 
 		str_code = ""
 		str_code += "%w[ #{des_paths} ].each do |path|\n"
@@ -229,7 +229,7 @@ require 'uri'
 		src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
-		if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb")
+		if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + src_file_name + ".erb")
 			str_code += "template '#{src_last_path}\/#{src_file_name}' do\n"
 			str_code += "  source '#{src_file_name}.erb'\n"
 			str_code += "  owner 'root'\n"
@@ -415,9 +415,9 @@ require 'uri'
 		src_file_extname = File.extname(source_file)
 		src_paths, src_last_path = get_path(src_path)
 
-		des_path = File.dirname(destination_file)
-		des_file_name = File.basename(destination_file)
-		des_paths, des_last_path = get_path(des_path)
+		#des_path = File.dirname(destination_file)
+		#des_file_name = File.basename(destination_file)
+		des_paths, des_last_path = get_path(destination_file)
 
 		str_code = ""
 		str_code += "%w[ #{des_paths} ].each do |path|\n"
