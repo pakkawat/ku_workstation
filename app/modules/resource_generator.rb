@@ -340,7 +340,7 @@ require 'uri'
 		return str_code
 	end
 
-	def get_path(path)
+	def self.get_path(path)
 		paths = path.split("/")
 		if paths.first == ""
 			paths.shift
