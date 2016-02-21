@@ -565,7 +565,7 @@ require 'uri'
 		return str_code
 	end
 
-	def self.remove_config_file(remove_resource)
+	def self.remove_config_file(remove_resource, program)
 		file_name = File.basename(remove_resource.value)
 		program = Program.find(remove_resource.program_id)
 		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb"
