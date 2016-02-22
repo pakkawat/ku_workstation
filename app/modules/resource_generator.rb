@@ -177,7 +177,7 @@ require 'uri'
 		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 
 		src_path = File.dirname(source_file)
-		src_file_name = File.basename(source_file)
+		#src_file_name = File.basename(source_file)
 		src_paths, src_last_path = get_path(src_path)
 
 		#des_path = File.dirname(extract_to)
@@ -194,10 +194,10 @@ require 'uri'
 		str_code += "end\n"
 		str_code += "\n"
 		str_code += "bash 'extract_module' do\n"
-		str_code += "  cwd ::File.dirname('#{src_last_path}\/#{src_file_name}')\n"
+		str_code += "  cwd ::File.dirname('#{source_file}')\n"
 		str_code += "  code \<\<\-EOH\n"
 		#str_code += "    mkdir -p \"#{extract_to}\"\n"
-		str_code += "    tar xzf '#{src_last_path}\" \-C \"#{des_last_path}'\n"
+		str_code += "    tar xzf #{src_last_path} \-C #{des_last_path}\n"
 		str_code += "    EOH\n"
 		str_code += "  not_if \{ \:\:File.exists?('#{des_last_path}') \}\n"
 		str_code += "end\n"
@@ -208,9 +208,9 @@ require 'uri'
 	def ResourceGenerator.delete_extract_file(chef_resource)
 		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 
-		des_path = File.dirname(extract_to)
-		des_file_name = File.basename(extract_to)
-		des_paths, des_last_path = get_path(des_path)
+		#des_path = File.dirname(extract_to)
+		#des_file_name = File.basename(extract_to)
+		des_paths, des_last_path = get_path(extract_to)
 
 		str_code = ""
 		str_code += "directory '" + des_last_path + "' do\n"
@@ -270,9 +270,9 @@ require 'uri'
 			src_file_name = File.basename(source_file)
 			src_paths, src_last_path = get_path(src_path)
 
-			des_path = File.dirname(destination_file)
-			des_file_name = File.basename(destination_file)
-			des_paths, des_last_path = get_path(des_path)
+			#des_path = File.dirname(destination_file)
+			#des_file_name = File.basename(destination_file)
+			des_paths, des_last_path = get_path(destination_file)
 
 			str_code += "%w[ #{des_paths} ].each do |path|\n"
 			str_code += "  directory path do\n"
@@ -282,7 +282,7 @@ require 'uri'
 			str_code += "  end\n"
 			str_code += "end\n"
 			str_code += "\n"
-			str_code += "file '#{des_last_path}\/#{des_file_name}' do\n"
+			str_code += "file '#{des_last_path}\/#{src_file_name}' do\n"
 			str_code += "  content IO.read('#{src_last_path}\/#{src_file_name}')\n"
 			str_code += "  action :create\n"
 			str_code += "end\n"
@@ -410,10 +410,8 @@ require 'uri'
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
-		src_path = File.dirname(source_file)
-		src_file_name = File.basename(source_file)
 		src_file_extname = File.extname(source_file)
-		src_paths, src_last_path = get_path(src_path)
+
 
 		#des_path = File.dirname(destination_file)
 		#des_file_name = File.basename(destination_file)
@@ -429,6 +427,7 @@ require 'uri'
 		str_code += "end\n"
 		str_code += "\n"
 		if src_file_extname == "" # folder
+			src_paths, src_last_path = get_path(source_file)
 			str_code += "if Dir.entries('#{des_last_path}').size == 2\n" # empty folder (have two links "." and ".." only)
 			str_code += "  execute 'copy_all_file_in_folder' do\n"
 			str_code += "    command 'mv  -v #{src_last_path}\/\* #{des_last_path}'\n"
@@ -436,6 +435,9 @@ require 'uri'
 			str_code += "end\n"
 			str_code += "\n"
 		else # file
+			src_path = File.dirname(source_file)
+			src_file_name = File.basename(source_file)
+			src_paths, src_last_path = get_path(src_path)
 			str_code += "execute 'move_file' do\n"
 			str_code += "  command 'mv #{src_last_path}\/#{src_file_name} #{des_last_path}\/'\n"
 			str_code += "  not_if \{ \:\:File.exists?('#{des_last_path}\/#{src_file_name}') \}\n"
@@ -449,14 +451,9 @@ require 'uri'
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
-		src_path = File.dirname(source_file)
-		src_file_name = File.basename(source_file)
 		src_file_extname = File.extname(source_file)
-		src_paths, src_last_path = get_path(src_path)
 
-		des_path = File.dirname(destination_file)
-		des_file_name = File.basename(destination_file)
-		des_paths, des_last_path = get_path(des_path)
+		des_paths, des_last_path = get_path(destination_file)
 
 		str_code = ""
 		if src_file_extname == "" # folder
@@ -466,6 +463,7 @@ require 'uri'
 			str_code += "end\n"
 			str_code += "\n"
 		else # file
+			src_file_name = File.basename(source_file)
 			str_code += "file '#{des_last_path}\/#{src_file_name}' do\n"
 			str_code += "  action :delete\n"
 			str_code += "  only_if \{ ::File.exists?('#{des_last_path}\/#{src_file_name}') \}\n"
@@ -551,9 +549,9 @@ require 'uri'
 	end
 
 	def self.remove_extract_file(remove_resource)
-		des_path = File.dirname(remove_resource.value)
-		des_file_name = File.basename(remove_resource.value)
-		des_paths, des_last_path = get_path(des_path)
+		#des_path = File.dirname(remove_resource.value)
+		#des_file_name = File.basename(remove_resource.value)
+		des_paths, des_last_path = get_path(remove_resource.value)
 
 		str_code = ""
 		str_code += "directory '" + des_last_path + "' do\n"
@@ -623,18 +621,12 @@ require 'uri'
 
 	def self.remove_move_file(remove_resource)
 		chef_resource = ChefResource.find(remove_resource.chef_resource_id)
-
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
-		src_path = File.dirname(source_file)
-		src_file_name = File.basename(source_file)
 		src_file_extname = File.extname(source_file)
-		src_paths, src_last_path = get_path(src_path)
 
-		des_path = File.dirname(destination_file)
-		des_file_name = File.basename(destination_file)
-		des_paths, des_last_path = get_path(des_path)
+		des_paths, des_last_path = get_path(destination_file)
 
 		str_code = ""
 		if src_file_extname == "" # folder
@@ -644,6 +636,7 @@ require 'uri'
 			str_code += "end\n"
 			str_code += "\n"
 		else # file
+			src_file_name = File.basename(source_file)
 			str_code += "file '#{des_last_path}\/#{src_file_name}' do\n"
 			str_code += "  action :delete\n"
 			str_code += "  only_if \{ ::File.exists?('#{des_last_path}\/#{src_file_name}') \}\n"
