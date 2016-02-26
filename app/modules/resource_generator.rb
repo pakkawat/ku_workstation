@@ -39,6 +39,8 @@ require 'uri'
 			ResourceGenerator.delete_create_file(chef_resource)
 		elsif chef_resource.resource_type == "Move_file"
 			ResourceGenerator.delete_move_file(chef_resource)
+		elsif chef_resource.resource_type == "Config_file"
+			ResourceGenerator.delete_config_file(chef_resource)
 		end
 	end
 
@@ -248,11 +250,8 @@ require 'uri'
 		return str_code
 	end
 
-	def ResourceGenerator.delete_config_file(chef_resource, program)
+	def ResourceGenerator.delete_config_file(chef_resource)
 		file_name = File.basename(chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first)
-
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb"
-		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
 		str_code += "file '/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}' do\n"
@@ -507,6 +506,8 @@ require 'uri'
 			remove_copy_file(remove_resource)
 		elsif remove_resource.resource_type == "Create_file"
 			remove_create_file(remove_resource)
+		elsif remove_resource.resource_type == "Config_file"
+			remove_config_file(remove_resource)
 		end
 	end
 
@@ -567,11 +568,8 @@ require 'uri'
 		return str_code
 	end
 
-	def self.remove_config_file(remove_resource, program)
+	def self.remove_config_file(remove_resource)
 		file_name = File.basename(remove_resource.value)
-		program = Program.find(remove_resource.program_id)
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb"
-		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
 		str_code += "file '/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}' do\n"

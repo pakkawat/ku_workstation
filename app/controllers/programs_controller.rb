@@ -74,6 +74,7 @@ class ProgramsController < ApplicationController
     @program = Program.find(params[:id])
     #------- Testtttttttttttttttttttttttttttttttttt
     #check_error, error_msg = KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb")
+    check_error, error_msg = KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
     #if check_error
       #@job = Delayed::Job.enqueue ProgramJob.new(@program,"delete")
       #str_des = "Delete Program:"+@program.program_name
@@ -224,22 +225,14 @@ class ProgramsController < ApplicationController
 
       File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/uninstall_programs.rb", 'w') do |f|
         @program.chef_resources.each do |chef_resource|
-          if chef_resource.resource_type == "Config_file"
-            f.write(ResourceGenerator.delete_config_file(chef_resource, @program))
-          else
-            f.write(ResourceGenerator.uninstall_resource(chef_resource))
-          end
+          f.write(ResourceGenerator.uninstall_resource(chef_resource))
         end
       end
 
       remove_resources = RemoveResource.where(program_id: @program.id)
       File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
         remove_resources.each do |remove_resource|
-          if remove_resource.resource_type == "Config_file"
-            f.write(ResourceGenerator.remove_config_file(remove_resource, @program))
-          else
-            f.write(ResourceGenerator.remove_disuse_resource(remove_resource))
-          end
+          f.write(ResourceGenerator.remove_disuse_resource(remove_resource))
         end
       end
 

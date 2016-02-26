@@ -102,6 +102,7 @@ class ProgramChefsController < ApplicationController
           value_type = "folder"
         when "Config_file"
           value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
+          delete_config_file_in_templates(value)
           value_type = "file"
         when "Copy_file"
           value = @chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
@@ -124,4 +125,12 @@ class ProgramChefsController < ApplicationController
       end
     end
   end
+
+  def delete_config_file_in_templates(value)
+    file_name = File.basename(value)
+
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb"
+		File.delete(path_to_file) if File.exist?(path_to_file)
+  end
+  
 end
