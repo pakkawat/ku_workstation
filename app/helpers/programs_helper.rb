@@ -31,6 +31,8 @@ module ProgramsHelper
         move_file
       when "Execute_command"
         execute_command
+      when "Bash_script"
+        bash_script
       end
     end
 
@@ -358,7 +360,20 @@ module ProgramsHelper
       return str_temp.html_safe
     end
 
-
+    def bash_script
+      str_temp = ""
+      @chef_resource.chef_properties.each do |property|
+        str_temp += "<div class='form-group'>"
+        str_temp += "  <label for='name'>"
+        str_temp += "    Bash script:"
+        str_temp += "  </label>"
+        str_temp += "  <div class='input-group'>"
+        str_temp += "    <textarea name='chef_property_#{property.id}' class='form-control' cols='63' rows='60'>#{property.value}</textarea>"
+        str_temp += "  </div>"
+        str_temp += "</div>"
+      end
+      return str_temp.html_safe
+    end
 
   end
 
@@ -384,6 +399,8 @@ module ProgramsHelper
       return "Move file"
     when "Execute_command"
       return "Execute command"
+    when "Bash_script"
+      return "Bash script"
     end
   end
 

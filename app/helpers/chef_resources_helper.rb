@@ -22,6 +22,8 @@ module ChefResourcesHelper
       return "Move file"
     when "Execute_command"
       return "Execute command"
+    when "Bash_script"
+      return "Bash script"
     end
   end
 

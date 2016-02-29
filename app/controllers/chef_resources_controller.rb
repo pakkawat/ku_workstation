@@ -71,6 +71,15 @@ class ChefResourcesController < ApplicationController
           end
         end
       end
+    when "Bash_script"
+      @data = nil
+      if !@chef_resource.chef_properties.any?
+        @chef_resource.chef_properties.build
+      else
+        value = @chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
+        bash = BashScript.find(value)
+        @data = bash
+      end
     end # end case
 
   end
@@ -261,6 +270,18 @@ class ChefResourcesController < ApplicationController
                 add_remove_resource(destination_file, "file")
               end
             end
+          end
+        end
+      when "Bash_script"
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          if !value[:id].nil? # old_value
+            bash = BashScript.find(value[:value])
+            # check diff between bash.bash_script_content and params[:bash_script_content] then delete text file
+            bash.update_attribute(:bash_script_content, params[:bash_script_content])
+          else
+            bash = BashScript.new(bash_script_content: params[:bash_script_content])
+            bash.save
+            value[:value] = bash.id
           end
         end
       end # end case

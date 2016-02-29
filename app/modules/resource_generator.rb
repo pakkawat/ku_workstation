@@ -19,6 +19,8 @@ require 'uri'
 			ResourceGenerator.move_file(chef_resource)
 		elsif chef_resource.resource_type == "Execute_command"
 			ResourceGenerator.execute_command(chef_resource)
+		elsif chef_resource.resource_type == "Bash_script"
+			ResourceGenerator.bash_script(chef_resource)
 		end
 	end
 
@@ -494,6 +496,26 @@ require 'uri'
 		str_code = ""
 		str_code += "execute 'execute_command' do\n"
 		str_code += "  command '#{value}'\n"
+		str_code += "end\n"
+		str_code += "\n"
+		return str_code
+	end
+
+
+	def ResourceGenerator.bash_script(chef_resource)
+		require 'digest'
+		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
+		bash = BashScript.find(value)
+		md5 = Digest::MD5.new
+		md5.update(bash.bash_script_content)
+		str_code = ""
+		str_code += "bash 'install_something' do\n"
+		str_code += "  user 'root'\n"
+		str_code += "  code <<-EOH\n"
+		str_code += "  #{bash.bash_script_content}\n"
+		str_code += "  : > /var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt\n" #create empty text file
+		str_code += "  EOH\n"
+		str_code += "  not_if { ::File.exists?(/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt) }\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code

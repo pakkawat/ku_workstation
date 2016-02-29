@@ -356,8 +356,6 @@
             <% end %>
 
 
-
-
             <% when "Execute_command" %>
               <%= f.fields_for :chef_properties do |property| %>
                 <div class='form-group'>
@@ -373,6 +371,26 @@
                   <% else %>
                     <%= property.hidden_field :value_type, :value => "execute_command" %>
                   <% end %>
+              </div>
+              <% end %>
+
+
+
+            <% when "Bash_script" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <%= property.hidden_field :value %>
+                <% if property.object.id != nil %>
+                  <%= property.hidden_field :value_type %>
+                <% else %>
+                  <%= property.hidden_field :value_type, :value => "bash_script" %>
+                <% end %>
+              <div class='form-group'>
+                  <label for='name'>
+                    <%= property.label :bash_script %>
+                  </label>
+                  <div class='input-group'>
+                    <%= text_area_tag(:bash_script_content, @data, :size => "63x60", class: 'form-control') %>
+                  </div>
               </div>
               <% end %>
 
