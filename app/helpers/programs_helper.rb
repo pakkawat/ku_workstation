@@ -363,12 +363,13 @@ module ProgramsHelper
     def bash_script
       str_temp = ""
       @chef_resource.chef_properties.each do |property|
+        bash = BashScript.find(property.value)
         str_temp += "<div class='form-group'>"
         str_temp += "  <label for='name'>"
         str_temp += "    Bash script:"
         str_temp += "  </label>"
         str_temp += "  <div class='input-group'>"
-        str_temp += "    <textarea name='chef_property_#{property.id}' class='form-control' cols='63' rows='60'>#{property.value}</textarea>"
+        str_temp += "    <textarea name='chef_property_#{property.id}' class='form-control' cols='63' rows='20'>#{bash.bash_script_content}</textarea>"
         str_temp += "  </div>"
         str_temp += "</div>"
       end

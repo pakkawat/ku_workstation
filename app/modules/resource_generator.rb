@@ -509,13 +509,13 @@ require 'uri'
 		md5 = Digest::MD5.new
 		md5.update(bash.bash_script_content)
 		str_code = ""
-		str_code += "bash 'install_something' do\n"
+		str_code += "bash 'bash_script' do\n"
 		str_code += "  user 'root'\n"
 		str_code += "  code <<-EOH\n"
 		str_code += "  #{bash.bash_script_content}\n"
 		str_code += "  : > /var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt\n" #create empty text file
 		str_code += "  EOH\n"
-		str_code += "  not_if { ::File.exists?(/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt) }\n"
+		str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code

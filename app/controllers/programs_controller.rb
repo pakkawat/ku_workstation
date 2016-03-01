@@ -150,7 +150,7 @@ class ProgramsController < ApplicationController
       flash[:success] = program.program_name + " has been updated"
       redirect_to program_path(program)
     else
-      flash[:danger] = "there are something wrong see system.log"
+      flash[:danger] = "there are something wrong see #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       redirect_to program_path(program)
     end
   end

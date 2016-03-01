@@ -78,7 +78,7 @@ class ChefResourcesController < ApplicationController
       else
         value = @chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
         bash = BashScript.find(value)
-        @data = bash
+        @data = bash.bash_script_content
       end
     end # end case
 
