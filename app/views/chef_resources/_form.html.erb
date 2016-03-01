@@ -365,7 +365,7 @@
                     </label>
                     <div class='input-group'>
                       <span class='input-group-addon'><span class='glyphicon glyphicon-list-alt'></span></span>
-                      <%= property.select :value, [['Only once', 'once'], ['Alway eun', 'alway']], {}, {:class => "form-control"} %>
+                      <%= property.select :value, [['Only once', 'once'], ['Alway run', 'alway']], {}, {:class => "form-control"} %>
                     </div>
                     <% if property.object.id != nil %>
                       <%= property.hidden_field :value_type %>

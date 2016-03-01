@@ -282,9 +282,11 @@ class ChefResourcesController < ApplicationController
               bash.update_attribute(:bash_script_content, params[:bash_script_content])
             end
           else
-            bash = BashScript.new(bash_script_content: params[:bash_script_content])
-            bash.save
-            value[:value] = bash.id
+            if value[:value_type] == "bash_script"
+              bash = BashScript.new(bash_script_content: params[:bash_script_content])
+              bash.save
+              value[:value] = bash.id
+            end
           end
         end
       end # end case
