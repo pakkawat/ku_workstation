@@ -497,6 +497,7 @@ require 'uri'
 		str_code = ""
 		if condition == "alway"
 			str_code += "execute 'execute_command' do\n"
+			str_code += "  user 'root'\n"
 			str_code += "  command '#{value}'\n"
 			str_code += "end\n"
 		else #Only once
@@ -509,6 +510,7 @@ require 'uri'
 			str_code += "end\n"
 			str_code += "\n"
 			str_code += "execute 'execute_command' do\n"
+			str_code += "  user 'root'\n"
 			str_code += "  command '#{value}'\n"
 			str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') }\n"
 			str_code += "end\n"
@@ -532,7 +534,6 @@ require 'uri'
 			str_code += "end\n"
 		else #Only once
 			require 'digest'
-
 			md5 = Digest::MD5.new
 			md5.update(bash.bash_script_content)
 			str_code += "bash 'bash_script' do\n"
