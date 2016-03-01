@@ -521,6 +521,7 @@ require 'uri'
 	def ResourceGenerator.bash_script(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
+		bash = BashScript.find(value)
 		str_code = ""
 		if condition == "alway"
 			str_code += "bash 'bash_script' do\n"
@@ -531,7 +532,7 @@ require 'uri'
 			str_code += "end\n"
 		else #Only once
 			require 'digest'
-			bash = BashScript.find(value)
+
 			md5 = Digest::MD5.new
 			md5.update(bash.bash_script_content)
 			str_code += "bash 'bash_script' do\n"
