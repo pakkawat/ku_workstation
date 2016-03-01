@@ -504,15 +504,15 @@ require 'uri'
 			require 'digest'
 			md5 = Digest::MD5.new
 			md5.update(value)
-			str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
-			str_code += "  content ''\n"
-			str_code += "  mode '0755'\n"
-			str_code += "end\n"
-			str_code += "\n"
 			str_code += "execute 'execute_command' do\n"
 			str_code += "  user 'root'\n"
 			str_code += "  command '#{value}'\n"
 			str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') }\n"
+			str_code += "end\n"
+			str_code += "\n"
+			str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
+			str_code += "  content ''\n"
+			str_code += "  mode '0755'\n"
 			str_code += "end\n"
 		end
 		str_code += "\n"
