@@ -11,10 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160213121734) do
+ActiveRecord::Schema.define(version: 20160229135252) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "bash_scripts", force: :cascade do |t|
+    t.text     "bash_script_content"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
+  end
 
   create_table "chef_properties", force: :cascade do |t|
     t.string   "value"
