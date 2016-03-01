@@ -493,30 +493,56 @@ require 'uri'
 
 	def ResourceGenerator.execute_command(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value).first
+		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 		str_code = ""
-		str_code += "execute 'execute_command' do\n"
-		str_code += "  command '#{value}'\n"
-		str_code += "end\n"
+		if condition == "alway"
+			str_code += "execute 'execute_command' do\n"
+			str_code += "  command '#{value}'\n"
+			str_code += "end\n"
+		else #Only once
+			require 'digest'
+			md5 = Digest::MD5.new
+			md5.update(value)
+			str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
+			str_code += "  content ''\n"
+			str_code += "  mode '0755'\n"
+			str_code += "end\n"
+			str_code += "\n"
+			str_code += "execute 'execute_command' do\n"
+			str_code += "  command '#{value}'\n"
+			str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') }\n"
+			str_code += "end\n"
+		end
 		str_code += "\n"
 		return str_code
 	end
 
 
 	def ResourceGenerator.bash_script(chef_resource)
-		require 'digest'
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
-		bash = BashScript.find(value)
-		md5 = Digest::MD5.new
-		md5.update(bash.bash_script_content)
+		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 		str_code = ""
-		str_code += "bash 'bash_script' do\n"
-		str_code += "  user 'root'\n"
-		str_code += "  code <<-EOH\n"
-		str_code += "  #{bash.bash_script_content}\n"
-		str_code += "  : > /var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt\n" #create empty text file
-		str_code += "  EOH\n"
-		str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
-		str_code += "end\n"
+		if condition == "alway"
+			str_code += "bash 'bash_script' do\n"
+			str_code += "  user 'root'\n"
+			str_code += "  code <<-EOH\n"
+			str_code += "  #{bash.bash_script_content}\n"
+			str_code += "  EOH\n"
+			str_code += "end\n"
+		else #Only once
+			require 'digest'
+			bash = BashScript.find(value)
+			md5 = Digest::MD5.new
+			md5.update(bash.bash_script_content)
+			str_code += "bash 'bash_script' do\n"
+			str_code += "  user 'root'\n"
+			str_code += "  code <<-EOH\n"
+			str_code += "  #{bash.bash_script_content}\n"
+			str_code += "  : > /var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt\n" #create empty text file
+			str_code += "  EOH\n"
+			str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
+			str_code += "end\n"
+		end
 		str_code += "\n"
 		return str_code
 	end

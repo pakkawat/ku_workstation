@@ -57,13 +57,13 @@ class ProgramsController < ApplicationController
 
     if @program.update_attributes(program_params)
       test_generate_chef_resource
-      #if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         flash[:success] = "Program has been updated"
         redirect_to program_path(@program)+"/edit"
-      #else
-        #flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-        #redirect_to program_path(@program)+"/edit"
-      #end
+      else
+        flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+        redirect_to program_path(@program)+"/edit"
+      end
     else
       flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
       render "edit"
@@ -74,7 +74,7 @@ class ProgramsController < ApplicationController
     @program = Program.find(params[:id])
     #------- Testtttttttttttttttttttttttttttttttttt
     #check_error, error_msg = KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb")
-    check_error, error_msg = KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+    check_error, error_msg = KnifeCommand.run("knife cookbook delete " + @program.program_name + " -y -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
     #if check_error
       #@job = Delayed::Job.enqueue ProgramJob.new(@program,"delete")
       #str_des = "Delete Program:"+@program.program_name

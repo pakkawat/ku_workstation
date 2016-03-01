@@ -344,18 +344,37 @@ module ProgramsHelper
     def execute_command
       str_temp = ""
       @chef_resource.chef_properties.each do |property|
-        str_temp += "<div class='form-group'>"
-        str_temp += "  <label for='name'>"
-        str_temp += "    Command:"
-        str_temp += "  </label>"
-        str_temp += "  <div class='input-group'>"
-        str_temp += "    <span class='input-group-addon'>"
-        str_temp += "      <span class='glyphicon glyphicon-play'>"
-        str_temp += "      </span>"
-        str_temp += "    </span>"
-        str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
-        str_temp += "  </div>"
-        str_temp += "</div>"
+        if property.value_type == "condition"
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    Condition:"
+          str_temp += "  </label>"
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <span class='glyphicon glyphicon-list-alt'>"
+          str_temp += "      </span>"
+          str_temp += "    </span>"
+          if property.value == "once"
+            str_temp += "    <select class='form-control'><option value='once' selected>Only once</option><option value='alway'>Alway run</option></select>"
+          else
+            str_temp += "    <select class='form-control'><option value='once'>Only once</option><option value='alway' selected>Alway run</option></select>"
+          end
+          str_temp += "  </div>"
+          str_temp += "</div>"
+        else
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    Command:"
+          str_temp += "  </label>"
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <span class='glyphicon glyphicon-play'>"
+          str_temp += "      </span>"
+          str_temp += "    </span>"
+          str_temp += "    <input type='text' name='chef_property_#{property.id}' value='#{property.value}' class='form-control'>"
+          str_temp += "  </div>"
+          str_temp += "</div>"
+        end
       end
       return str_temp.html_safe
     end
@@ -363,15 +382,34 @@ module ProgramsHelper
     def bash_script
       str_temp = ""
       @chef_resource.chef_properties.each do |property|
-        bash = BashScript.find(property.value)
-        str_temp += "<div class='form-group'>"
-        str_temp += "  <label for='name'>"
-        str_temp += "    Bash script:"
-        str_temp += "  </label>"
-        str_temp += "  <div class='input-group'>"
-        str_temp += "    <textarea name='chef_property_#{property.id}' class='form-control' cols='63' rows='20'>#{bash.bash_script_content}</textarea>"
-        str_temp += "  </div>"
-        str_temp += "</div>"
+        if property.value_type == "condition"
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    Condition:"
+          str_temp += "  </label>"
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    <span class='input-group-addon'>"
+          str_temp += "      <span class='glyphicon glyphicon-list-alt'>"
+          str_temp += "      </span>"
+          str_temp += "    </span>"
+          if property.value == "once"
+            str_temp += "    <select class='form-control'><option value='once' selected>Only once</option><option value='alway'>Alway run</option></select>"
+          else
+            str_temp += "    <select class='form-control'><option value='once'>Only once</option><option value='alway' selected>Alway run</option></select>"
+          end
+          str_temp += "  </div>"
+          str_temp += "</div>"
+        else
+          bash = BashScript.find(property.value)
+          str_temp += "<div class='form-group'>"
+          str_temp += "  <label for='name'>"
+          str_temp += "    Bash script:"
+          str_temp += "  </label>"
+          str_temp += "  <div class='input-group'>"
+          str_temp += "    <textarea name='chef_property_#{property.id}' class='form-control' cols='63' rows='20'>#{bash.bash_script_content}</textarea>"
+          str_temp += "  </div>"
+          str_temp += "</div>"
+        end
       end
       return str_temp.html_safe
     end

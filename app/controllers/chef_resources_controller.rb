@@ -26,11 +26,11 @@ class ChefResourcesController < ApplicationController
     end
     @property_count = 0
     case @chef_resource.resource_type
-    when "Repository", "Execute_command"
+    when "Repository"
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
       end
-    when "Download", "Extract", "Deb", "Source", "Move_file"
+    when "Download", "Extract", "Deb", "Source", "Move_file", "Execute_command"
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
         @chef_resource.chef_properties.build
@@ -74,6 +74,7 @@ class ChefResourcesController < ApplicationController
     when "Bash_script"
       @data = nil
       if !@chef_resource.chef_properties.any?
+        @chef_resource.chef_properties.build
         @chef_resource.chef_properties.build
       else
         value = @chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
@@ -275,9 +276,11 @@ class ChefResourcesController < ApplicationController
       when "Bash_script"
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
           if !value[:id].nil? # old_value
-            bash = BashScript.find(value[:value])
-            # check diff between bash.bash_script_content and params[:bash_script_content] then delete text file
-            bash.update_attribute(:bash_script_content, params[:bash_script_content])
+            if value[:value_type] == "bash_script"
+              bash = BashScript.find(value[:value])
+              # check diff between bash.bash_script_content and params[:bash_script_content] then delete text file
+              bash.update_attribute(:bash_script_content, params[:bash_script_content])
+            end
           else
             bash = BashScript.new(bash_script_content: params[:bash_script_content])
             bash.save

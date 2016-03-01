@@ -358,40 +358,76 @@
 
             <% when "Execute_command" %>
               <%= f.fields_for :chef_properties do |property| %>
-                <div class='form-group'>
-                  <label for='name'>
-                    <%= property.label :execute_command %>
-                  </label>
-                  <div class='input-group'>
-                    <span class='input-group-addon'><span class='glyphicon glyphicon-play'></span></span>
-                    <%= property.text_field :value, class: "form-control" %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :condition %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-list-alt'></span></span>
+                      <%= property.select :value, [['Only once', 'once'], ['Alway eun', 'alway']], {}, {:class => "form-control"} %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "condition" %>
+                    <% end %>
                   </div>
-                  <% if property.object.id != nil %>
-                    <%= property.hidden_field :value_type %>
-                  <% else %>
-                    <%= property.hidden_field :value_type, :value => "execute_command" %>
-                  <% end %>
-              </div>
+                <% else %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :execute_command %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-play'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "execute_command" %>
+                    <% end %>
+                  </div>
+                <% end %> <!-- if @property_count == 0 -->
+                <% @property_count = @property_count + 1 %>
               <% end %>
 
 
 
             <% when "Bash_script" %>
               <%= f.fields_for :chef_properties do |property| %>
-                <%= property.hidden_field :value %>
-                <% if property.object.id != nil %>
-                  <%= property.hidden_field :value_type %>
-                <% else %>
-                  <%= property.hidden_field :value_type, :value => "bash_script" %>
-                <% end %>
-              <div class='form-group'>
-                  <label for='name'>
-                    <%= property.label :bash_script %>
-                  </label>
-                  <div class='input-group'>
-                    <%= text_area_tag(:bash_script_content, @data, :size => "63x60", class: 'form-control') %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :condition %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-list-alt'></span></span>
+                      <%= property.select :value, [['Only once', 'once'], ['Alway run', 'alway']], {}, {:class => "form-control"} %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "condition" %>
+                    <% end %>
                   </div>
-              </div>
+                <% else %>
+                  <%= property.hidden_field :value %>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "bash_script" %>
+                  <% end %>
+                  <div class='form-group'>
+                      <label for='name'>
+                        <%= property.label :bash_script %>
+                      </label>
+                      <div class='input-group'>
+                        <%= text_area_tag(:bash_script_content, @data, :size => "63x60", class: 'form-control') %>
+                      </div>
+                  </div>
+                <% end %> <!-- if @property_count == 0 -->
+                <% @property_count = @property_count + 1 %>
               <% end %>
 
 
