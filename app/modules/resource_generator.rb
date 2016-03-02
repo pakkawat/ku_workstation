@@ -122,17 +122,18 @@ require 'uri'
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		src_paths, src_last_path = get_path(source_file)
 		str_code = ""
-		str_code += "if Dir.entries('#{src_last_path}').size == 2\n" # empty folder (have two links "." and ".." only)
-		str_code += "  bash 'install_#{program_name}_from_source' do\n"
-		str_code += "    user 'root'\n"
-		str_code += "    cwd '#{src_last_path}'\n"
-		str_code += "    code <<-EOH\n"
-		str_code += "    ./configure\n"
-		str_code += "    make\n"
-		str_code += "    make install\n"
-		str_code += "    EOH\n"
-		str_code += "  end\n"
+		#str_code += "if Dir.entries('#{src_last_path}').size == 2\n" # empty folder (have two links "." and ".." only)
+		str_code += "bash 'install_#{program_name}_from_source' do\n"
+		str_code += "  user 'root'\n"
+		str_code += "  cwd '#{src_last_path}'\n"
+		str_code += "  code <<-EOH\n"
+		str_code += "  ./configure\n"
+		str_code += "  make\n"
+		str_code += "  make install\n"
+		str_code += "  EOH\n"
+		str_code += "  not_if \{ Dir.entries('#{des_last_path}').size == 2 \}\n"
 		str_code += "end\n"
+		#str_code += "end\n"
 		str_code += "\n"
 		return str_code
 	end
@@ -210,12 +211,13 @@ require 'uri'
 		str_code += "end\n"
 		str_code += "\n"
 		str_code += "bash 'extract_module' do\n"
-		str_code += "  cwd ::File.dirname('#{source_file}')\n"
+		str_code += "  user 'root'\n"
+		str_code += "  cwd ::File.dirname('#{src_path}')\n"
 		str_code += "  code \<\<\-EOH\n"
 		#str_code += "    mkdir -p \"#{extract_to}\"\n"
-		str_code += "    tar xzf #{src_last_path} \-C #{des_last_path}\n"
+		str_code += "    tar xzf #{source_file} \-C #{des_last_path}\n"
 		str_code += "    EOH\n"
-		str_code += "  not_if \{ \:\:File.exists?('#{des_last_path}') \}\n"
+		str_code += "  only_if \{ Dir.entries('#{des_last_path}').size == 2 \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
