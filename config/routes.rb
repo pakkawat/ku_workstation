@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  resources :attributes
+
   resources :chef_properties
 
   resources :program_chefs
