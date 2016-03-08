@@ -109,7 +109,7 @@ class ProgramsController < ApplicationController
         f.write("\n")
         f.write("include_recipe \'#{program.program_name}::header\'")
         f.write("\n\n")
-        f.write("if node[\'#{program.program_name}_user_list\'].include?(node.name)")
+        f.write("if node['#{program.program_name}']['user_list'].include?(node.name)")
         f.write("\n")
         f.write("  include_recipe \'#{program.program_name}::install_programs\'")
         f.write("\n")
