@@ -64,7 +64,7 @@ class ProgramJob < ProgressJob::Base
 
   def delete_all_user
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/attributes/user_list.rb", 'w') do |f|
-      f.write("default['user_list'] = []")
+      f.write("default['#{@program.program_name}_user_list'] = []")
     end
 
     if !KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
