@@ -1,17 +1,17 @@
 <div class="row">
   <div class="col-sm-10">
-    <span class="pull-left">
-        <h1>
-            <% if @program.persisted? %>
-                Update program information
-            <% else %>
-                Add new program
-            <% end %>
-        </h1>
-    </span>
+
+        <div class="wizard">
+          <% if @program.persisted? %>
+            <a class="current" href='<%= edit_program_path(@program) %>' ><%= @program.program_name %></a>
+          <% else %>
+            <a class="current">Add new program</a>
+          <% end %>
+        </div>
+
   </div>
 </div>
-
+<br><br>
 <%= form_for @program do |f| %>
 <%= render 'shared/error_messages', object: f.object %>
 

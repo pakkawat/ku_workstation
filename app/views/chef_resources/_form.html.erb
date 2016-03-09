@@ -1,25 +1,17 @@
 
 <div class="row">
   <div class="col-sm-10">
-    <span class="pull-left">
-        <h1>
-            Edit action
-        </h1>
-    </span>
-    <span class="pull-right">
-      <h1>
-        <div style="display:inline-block;">
-          <% if !@program.nil? %>
-            <%= button_to 'Back', edit_program_path(@program), :class => "btn btn-default", :method => :get %>
-          <% else %>
-            <%= button_to 'Back', chef_resources_path, :class => "btn btn-default", :method => :get %>
-          <% end %>
-        </div>
-      </h1>
-    </span>
+
+    <div class="wizard">
+      <% if @program.persisted? %>
+        <a href='<%= edit_program_path(@program) %>' ><%= @program.program_name %></a>
+        <a class="current" href='<%= edit_chef_resource_path(program_id: @program.id, id: @chef_resource.id) %>' ><%= resource_type_full_name(@chef_resource.resource_type) %></a>
+      <% end %>
+    </div>
+
   </div>
 </div>
-
+<br><br>
 <%= form_for @chef_resource do |f| %>
 <%= render 'shared/error_messages', object: f.object %>
 

@@ -20,10 +20,7 @@
               <button type="button" class="btn btn-info">Expand</button>
             </div>
             <div class="col-md-4 text-center">
-              <%= form_for(@program, :url => edit_chef_resource_path(chef), :method => :get) do %>
-                      <%= hidden_field_tag 'program_id', @program.id  %>
-                      <%= submit_tag "Edit", class: "btn btn-success" %>
-              <% end %>
+              <%= link_to "Edit", edit_chef_resource_path(program_id: @program.id, id: chef.id), :class => "btn btn-success" %>
             </div>
             <div class="col-md-4 text-center">
               <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs/"+chef.id.to_s, :method => :delete) do %>

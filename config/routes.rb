@@ -1,10 +1,12 @@
 Rails.application.routes.draw do
-  resources :attributes
+  resources :chef_attributes
 
+  #match 'program/:program_id/chef_resource/:chef_resource_id/chef_property/:id', to: 'chef_properties#edit', as: 'edit_chef_property', :via => "get"
   resources :chef_properties
 
   resources :program_chefs
 
+  match 'program/:program_id/chef_resource/:id', to: 'chef_resources#edit', as: 'edit_chef_resource', :via => "get"
   resources :chef_resources
 
   get 'logs/system_log', to: 'logs#system_log'
@@ -36,7 +38,7 @@ Rails.application.routes.draw do
   match "/subjects/:subject_id/user_subjects", :to => "user_subjects#destroy", :via => "delete"
   match "/subjects/:subject_id/programs_subjects", :to => "programs_subjects#destroy", :via => "delete"
   #match "programs/:program_id/*program_file", :to => "program_files#show", :via => "get"
-  
+
 
   resources :programs do
     resources :program_chefs
