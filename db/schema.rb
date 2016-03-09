@@ -11,26 +11,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160308140521) do
+ActiveRecord::Schema.define(version: 20160309134126) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
-
-  create_table "attributes", force: :cascade do |t|
-    t.string   "name"
-    t.integer  "chef_property_id"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
-    t.string   "value"
-  end
-
-  add_index "attributes", ["chef_property_id"], name: "index_attributes_on_chef_property_id", using: :btree
 
   create_table "bash_scripts", force: :cascade do |t|
     t.text     "bash_script_content"
     t.datetime "created_at",          null: false
     t.datetime "updated_at",          null: false
   end
+
+  create_table "chef_attributes", force: :cascade do |t|
+    t.string   "name"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.string   "value"
+    t.integer  "chef_resource_id"
+  end
+
+  add_index "chef_attributes", ["chef_resource_id"], name: "index_chef_attributes_on_chef_resource_id", using: :btree
 
   create_table "chef_properties", force: :cascade do |t|
     t.string   "value"
@@ -197,7 +197,6 @@ ActiveRecord::Schema.define(version: 20160308140521) do
   add_index "users_programs", ["ku_user_id"], name: "index_users_programs_on_ku_user_id", using: :btree
   add_index "users_programs", ["program_id"], name: "index_users_programs_on_program_id", using: :btree
 
-  add_foreign_key "attributes", "chef_properties"
   add_foreign_key "program_files", "programs"
   add_foreign_key "remove_resources", "programs"
 end
