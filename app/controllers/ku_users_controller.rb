@@ -82,6 +82,15 @@ class KuUsersController < ApplicationController
     redirect_to ku_users_path
   end
 
+
+    def edit_attribute
+      @kuuser = KuUser.find(params[:id])
+      @program = Program.find(params[:program_id])
+      #render plain: @kuuser.inspect
+    end
+
+
+
   private
     def ku_user_params
       params.require(:ku_user).permit(:ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :status, :campus)
@@ -108,5 +117,7 @@ class KuUsersController < ApplicationController
     def admin_user
       redirect_to(root_url) unless current_user.admin?
     end
+
+
 
 end

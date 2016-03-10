@@ -55,27 +55,7 @@
   </div><!--/col-5-->
   <div class="col-sm-8">
 
-    <div class="panel panel-info">
-      <!-- Default panel contents -->
-      <div class="panel-heading">Subjects</div>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Subject ID</th>
-              <th>Subject name</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% @kuuser.subjects.where("user_subjects.user_enabled = true").each do |subject| %>
-              <tr>
-                <th scope="row"><%= subject.id %></th>
-                <td><%= link_to subject.subject_name, subject %></td>
-              </tr>
-            <% end %>
-          </tbody>
-      </table>
-    </div>
-
+<h1>Edit attribute here</h1>
 
     <div class="panel panel-warning">
       <!-- Default panel contents -->
