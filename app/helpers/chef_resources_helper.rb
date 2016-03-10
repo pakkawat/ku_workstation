@@ -27,4 +27,14 @@ module ChefResourcesHelper
     end
   end
 
+
+  def chef_resource_form
+    if !@program.nil?
+      form_for(@chef_resource, :url => edit_program_chef_resource_path(program_id: @program.id, id: @chef_resource.id)) { |f| yield f }
+    else
+      form_for(@chef_resource) { |f| yield f }
+    end
+  end
+
+
 end

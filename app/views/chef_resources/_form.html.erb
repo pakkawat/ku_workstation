@@ -3,7 +3,7 @@
   <div class="col-sm-10">
 
     <div class="wizard">
-      <% if @program.persisted? %>
+      <% if !@program.nil? %>
         <a href='<%= edit_program_path(@program) %>' ><%= @program.program_name %></a>
         <a class="current" href='<%= edit_chef_resource_path(program_id: @program.id, id: @chef_resource.id) %>' ><%= resource_type_full_name(@chef_resource.resource_type) %></a>
       <% end %>
@@ -12,7 +12,9 @@
   </div>
 </div>
 <br><br>
-<%= form_for @chef_resource do |f| %>
+
+<%= chef_resource_form do |f| %>
+
 <%= render 'shared/error_messages', object: f.object %>
 
 <div class="row">
@@ -54,11 +56,11 @@
         <%= f.fields_for :chef_attributes do |attribute| %>
           <div class="row" style="padding: 6px 0;">
             <div class="col-sm-8">
-              <%= attribute.text_field :name %>
+              <%= attribute.text_field :name, class: "form-control" %>
             </div>
             <div class="col-sm-4" style="margin: 6px 0;">
               <%= attribute.check_box :_destroy %>
-              <%= attribute.label :_destroy, 'remove' %>
+              <%= attribute.label :_destroy, 'remove', class: "control-label" %>
             </div>
           </div>
         <% end %>

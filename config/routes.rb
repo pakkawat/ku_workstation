@@ -6,7 +6,8 @@ Rails.application.routes.draw do
 
   resources :program_chefs
 
-  match 'program/:program_id/chef_resource/:id', to: 'chef_resources#edit', as: 'edit_chef_resource', :via => "get"
+  match 'program/:program_id/chef_resource/:id', to: 'chef_resources#edit', as: 'edit_program_chef_resource', :via => "get"
+  match 'program/:program_id/chef_resource/:id', to: 'chef_resources#update', as: 'update_program_chef_resource', :via => "patch"
   resources :chef_resources
 
   get 'logs/system_log', to: 'logs#system_log'

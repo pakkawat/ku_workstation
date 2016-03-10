@@ -115,7 +115,7 @@ class ChefResourcesController < ApplicationController
     respond_to do |format|
       if @chef_resource.update(chef_resource_params)
         if !@program.nil?
-          format.html { redirect_to edit_chef_resource_path(@chef_resource, program_id: @program.id), :flash => { :success => "Action was successfully updated." } }
+          format.html { redirect_to edit_program_chef_resource_path(program_id: @program.id, id: @chef_resource.id), :flash => { :success => "Action was successfully updated." } }
         else
           format.html { redirect_to edit_chef_resource_path(@chef_resource), :flash => { :success => "Action was successfully updated." } }
         end

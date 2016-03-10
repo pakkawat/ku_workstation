@@ -20,7 +20,7 @@
               <button type="button" class="btn btn-info">Expand</button>
             </div>
             <div class="col-md-4 text-center">
-              <%= link_to "Edit", edit_chef_resource_path(program_id: @program.id, id: chef.id), :class => "btn btn-success" %>
+              <%= link_to "Edit", edit_program_chef_resource_path(program_id: @program.id, id: chef.id), :class => "btn btn-success" %>
             </div>
             <div class="col-md-4 text-center">
               <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs/"+chef.id.to_s, :method => :delete) do %>
