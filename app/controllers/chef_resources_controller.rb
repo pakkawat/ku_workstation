@@ -73,6 +73,7 @@ class ChefResourcesController < ApplicationController
       end
     when "Bash_script"
       @data = nil
+      @chef_resource.chef_attributes.build
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
         @chef_resource.chef_properties.build

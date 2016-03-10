@@ -112,9 +112,9 @@ footer ul li {
   cursor: move;
 }
 
-.wizard a {padding: 12px 12px 10px 32px; margin-right:5px; background:#efefef; position:relative; display:inline-block; }
+.wizard a {padding: 12px 12px 10px 32px; margin-right:5px; background:#D8D8D8; position:relative; display:inline-block; }
 .wizard a:before {width:0px; height:0px; border-top: 20px inset transparent; border-bottom: 20px inset transparent; border-left: 20px solid #fff; position: absolute; content: ""; top: 0; left: 0;}
-.wizard a:after {width:0px; height:0px; border-top: 20px inset transparent; border-bottom: 20px inset transparent; border-left: 20px solid #efefef; position: absolute; content: ""; top: 0; right: -20px; z-index:2;}
+.wizard a:after {width:0px; height:0px; border-top: 20px inset transparent; border-bottom: 20px inset transparent; border-left: 20px solid #D8D8D8; position: absolute; content: ""; top: 0; right: -20px; z-index:2;}
 .wizard a:first-child:before {border:none;}
 .wizard a:last-child:after {border:none;}
 

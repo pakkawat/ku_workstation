@@ -43,6 +43,27 @@
         </ul>
       </li>
 
+
+      <li class="list-group-item">
+        <span class="pull-left">
+            <strong>
+                <%= f.label :chef_attributes,'Attributes', class: "control-label" %>
+            </strong>
+        </span>
+        <br><br>
+        <%= f.fields_for :chef_attributes do |attribute| %>
+          <div class="row" style="padding: 6px 0;">
+            <div class="col-sm-8">
+              <%= attribute.text_field :name %>
+            </div>
+            <div class="col-sm-4" style="margin: 6px 0;">
+              <%= attribute.check_box :_destroy %>
+              <%= attribute.label :_destroy, 'remove' %>
+            </div>
+          </div>
+        <% end %>
+      </li>
+
       <li class="list-group-item text-center">
         <%= f.submit "Update action", class: "btn btn-primary" %>
       </li>
