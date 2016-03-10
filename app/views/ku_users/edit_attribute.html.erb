@@ -82,6 +82,20 @@
       </table>
     </div>
 
+
+    <%= form_for(@kuuser, :url => update_ku_user_attribute_path(id: @kuuser.id, program_id: program.id)) do |f| %>
+      <% @user.user_programs.each do |program| %>
+        <% f.fields_for program do |p| %>
+          <div class="row">
+            <%= p.text_field :name, class: "form-control" %>
+            <%= p.text_field :value, class: "form-control" %>
+          </div>
+        <% end %>
+      <% end %>
+      <%= f.submit "Update action", class: "btn btn-primary" %>
+    <% end %>
+
+
   </div><!--/col-9-->
 </div>
 <!-- For Test -->

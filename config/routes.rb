@@ -1,7 +1,5 @@
 Rails.application.routes.draw do
 
-  match 'ku_user/:id/program/:program_id', to: 'ku_users#edit_attribute', as: 'edit_ku_user_attribute', :via => "get"
-
   resources :chef_attributes
 
   #match 'program/:program_id/chef_resource/:chef_resource_id/chef_property/:id', to: 'chef_properties#edit', as: 'edit_chef_property', :via => "get"
@@ -28,6 +26,8 @@ Rails.application.routes.draw do
   #get 'welcome/index'
   root 'sessions#new'
   #resources :users
+  match 'ku_user/:id/program/:program_id', to: 'ku_users#edit_attribute', as: 'edit_ku_user_attribute', :via => "get"
+  match 'ku_user/:id/program/:program_id', to: 'ku_users#update_attribute', as: 'update_ku_user_attribute', :via => "patch"
   resources :ku_users
   #match "/ku_users/:ku_user_id/user_programs", :to => "ku_users#user_programs", :via => "get"
   #match '/teacher', to: 'users#teacher', via: :get

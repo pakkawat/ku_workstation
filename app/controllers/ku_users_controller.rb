@@ -5,7 +5,7 @@ class KuUsersController < ApplicationController
   def index
     @kuusers = KuUser.all
   end
-  
+
   def show
     @kuuser = KuUser.find(params[:id])
 
@@ -36,7 +36,7 @@ class KuUsersController < ApplicationController
       #create_ec2_instance
       #log_in @kuuser
       #redirect_to ku_users_path, :notice => "Welcome "
-      
+
       output = File.open("#{Rails.root}/log/knife/#{@kuuser.ku_id}.log","w")
       output << ""
       output.close
@@ -72,7 +72,7 @@ class KuUsersController < ApplicationController
   def destroy
     @kuuser = KuUser.find(params[:id])
     @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"delete","")
-    
+
     str_des = "Delete instance:"+@kuuser.ku_id
     @job.update_column(:description, str_des)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
@@ -82,14 +82,18 @@ class KuUsersController < ApplicationController
     redirect_to ku_users_path
   end
 
+  def edit_attribute
+    @kuuser = KuUser.find(params[:id])
+    @program = Program.find(params[:program_id])
+    #render plain: @kuuser.inspect
+  end
 
-    def edit_attribute
-      @kuuser = KuUser.find(params[:id])
-      @program = Program.find(params[:program_id])
-      #render plain: @kuuser.inspect
-    end
-
-
+  def update_attribute
+    @kuuser = KuUser.find(params[:id])
+    @program = Program.find(params[:program_id])
+    #render plain: @kuuser.inspect
+    raise "test"
+  end
 
   private
     def ku_user_params
@@ -112,7 +116,7 @@ class KuUsersController < ApplicationController
       @user = KuUser.find(params[:id])
       redirect_to(root_url) unless current_user?(@user)
     end
-    
+
     # Confirms an admin user.
     def admin_user
       redirect_to(root_url) unless current_user.admin?
