@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  resources :chef_values
+
   resources :chef_attributes
 
   #match 'program/:program_id/chef_resource/:chef_resource_id/chef_property/:id', to: 'chef_properties#edit', as: 'edit_chef_property', :via => "get"

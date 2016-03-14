@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Chef Values</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Chef attribute</th>
+      <th>Ku user</th>
+      <th>Value</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @chef_values.each do |chef_value| %>
+      <tr>
+        <td><%= chef_value.chef_attribute_id %></td>
+        <td><%= chef_value.ku_user_id %></td>
+        <td><%= chef_value.value %></td>
+        <td><%= link_to 'Show', chef_value %></td>
+        <td><%= link_to 'Edit', edit_chef_value_path(chef_value) %></td>
+        <td><%= link_to 'Destroy', chef_value, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Chef value', new_chef_value_path %>

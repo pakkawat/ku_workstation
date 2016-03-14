@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Chef attribute:</strong>
+  <%= @chef_value.chef_attribute_id %>
+</p>
+
+<p>
+  <strong>Ku user:</strong>
+  <%= @chef_value.ku_user_id %>
+</p>
+
+<p>
+  <strong>Value:</strong>
+  <%= @chef_value.value %>
+</p>
+
+<%= link_to 'Edit', edit_chef_value_path(@chef_value) %> |
+<%= link_to 'Back', chef_values_path %>

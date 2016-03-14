@@ -1,0 +1,29 @@
+<%= form_for(@chef_value) do |f| %>
+  <% if @chef_value.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@chef_value.errors.count, "error") %> prohibited this chef_value from being saved:</h2>
+
+      <ul>
+      <% @chef_value.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :chef_attribute_id %><br>
+    <%= f.number_field :chef_attribute_id %>
+  </div>
+  <div class="field">
+    <%= f.label :ku_user_id %><br>
+    <%= f.number_field :ku_user_id %>
+  </div>
+  <div class="field">
+    <%= f.label :value %><br>
+    <%= f.text_field :value %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160309134126) do
+ActiveRecord::Schema.define(version: 20160314081814) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -48,6 +48,15 @@ ActiveRecord::Schema.define(version: 20160309134126) do
     t.datetime "updated_at",    null: false
     t.integer  "priority"
   end
+
+  create_table "chef_values", force: :cascade do |t|
+    t.integer "chef_attribute_id"
+    t.integer "ku_user_id"
+    t.string  "value"
+  end
+
+  add_index "chef_values", ["chef_attribute_id"], name: "index_chef_values_on_chef_attribute_id", using: :btree
+  add_index "chef_values", ["ku_user_id"], name: "index_chef_values_on_ku_user_id", using: :btree
 
   create_table "delayed_jobs", force: :cascade do |t|
     t.integer  "priority",         default: 0, null: false

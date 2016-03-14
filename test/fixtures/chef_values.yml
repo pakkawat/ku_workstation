@@ -1,0 +1,11 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  chef_attribute_id: 1
+  ku_user_id: 1
+  value: MyString
+
+two:
+  chef_attribute_id: 1
+  ku_user_id: 1
+  value: MyString
