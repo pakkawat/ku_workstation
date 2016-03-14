@@ -109,7 +109,7 @@ class ProgramsController < ApplicationController
         f.write("\n")
         f.write("include_recipe \'#{program.program_name}::header\'")
         f.write("\n\n")
-        f.write("if node['#{program.program_name}']['user_list'].include?(node.name) \&\& CheckUserConfig.user_config")
+        f.write("if node['#{program.program_name}']['user_list'].include?(node.name) \&\& CheckUserConfig.user_config(node['user_config_list'])")
         f.write("\n")
         f.write("  include_recipe \'#{program.program_name}::install_programs\'")
         f.write("\n")
@@ -151,8 +151,8 @@ class ProgramsController < ApplicationController
   def create_function_to_check_user_config
     str_temp = ""
     str_temp += "module CheckUserConfig\n"
-    str_temp += "  def user_config\n"
-    str_temp += "    node['user_config_list'].each do |config|\n"
+    str_temp += "  def self.user_config(user_config_list)\n"
+    str_temp += "    user_config_list.each do |config|\n"
     str_temp += "      if config == ''\n"
     str_temp += "        return false\n"
     str_temp += "      end\n"

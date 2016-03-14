@@ -57,13 +57,12 @@ class SubjectJob < ProgressJob::Base
       if !KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
       end
+
+      prepare_user_config(program)
     end
 
     check_error("1. ")
 
-    prepare_user_config(program)
-
-    check_error("1-2. ")
   end
 
   def prepare_user_config(program)
@@ -89,11 +88,11 @@ class SubjectJob < ProgressJob::Base
     config_names = ""
     user.chef_values.each do |chef_value|
       chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
-      config_names += "default['#{chef_attribute.name}'],"
+      config_names += "node['#{chef_attribute.name}'],"
       str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
     end
     config_names = config_names.gsub(/\,$/, '')
-    str_temp += "default['user_config_list'] = \%w\{#{config_names}\} \n"
+    str_temp += "default['user_config_list'] = [#{config_names}] \n"
 
     return str_temp
   end

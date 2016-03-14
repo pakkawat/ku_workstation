@@ -18,6 +18,7 @@ class ProgramJob < ProgressJob::Base
     @arr_error = Array.new
     @arr_error.push("There are error with following user id:")
 
+    prepare_user_config
     generate_chef_resource
 
     if @type == "delete"
@@ -192,11 +193,11 @@ class ProgramJob < ProgressJob::Base
     config_names = ""
     user.chef_values.each do |chef_value|
       chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
-      config_names += "default['#{chef_attribute.name}'],"
+      config_names += "node['#{chef_attribute.name}'],"
       str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
     end
     config_names = config_names.gsub(/\,$/, '')
-    str_temp += "default['user_config_list'] = \%w\{#{config_names}\} \n"
+    str_temp += "default['user_config_list'] = [#{config_names}] \n"
 
     return str_temp
   end
