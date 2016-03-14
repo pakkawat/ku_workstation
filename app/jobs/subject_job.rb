@@ -22,7 +22,7 @@ class SubjectJob < ProgressJob::Base
 
     @arr_error.push(" There are error with following: ")
 
-    prepare_program
+    prepare_program_and_user_config
 
     first_ssh_run
 
@@ -48,7 +48,7 @@ class SubjectJob < ProgressJob::Base
     output.close
   end
 
-  def prepare_program
+  def prepare_program_and_user_config
     @subject.programs.each do |program|
       File.open("/home/ubuntu/chef-repo/cookbooks/"+program.program_name+"/attributes/user_list.rb", 'w') do |f|
         f.write("default['#{program.program_name}']['user_list'] = " + create_user_list(KuUser.where(id: UsersProgram.where(:program_id => program.id).uniq.pluck(:ku_user_id)).pluck(:ku_id)))
@@ -60,7 +60,44 @@ class SubjectJob < ProgressJob::Base
     end
 
     check_error("1. ")
+
+    prepare_user_config(program)
+
+    check_error("1-2. ")
   end
+
+  def prepare_user_config(program)
+    chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.select("id"))
+    @subject.ku_users.each do |user|
+      chef_attributes.each do |chef_attribute|
+        ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+      end
+
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/attributes/user_config.rb", 'w') do |f|
+        f.write(create_user_config(user))
+      end
+
+      if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
+      end
+
+    end
+  end
+
+  def create_user_config(user)
+    str_temp = ""
+    config_names = ""
+    user.chef_values.each do |chef_value|
+      chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
+      config_names += "default['#{chef_attribute.name}'],"
+      str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
+    end
+    config_names = config_names.gsub(/\,$/, '')
+    str_temp += "default['user_config_list'] = \%w\{#{config_names}\} \n"
+
+    return str_temp
+  end
+
 
   def first_ssh_run
     program_enable_true = create_run_list(@subject.programs.where("programs_subjects.program_enabled = true").pluck(:program_name))

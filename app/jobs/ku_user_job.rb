@@ -130,6 +130,10 @@ class KuUserJob < ProgressJob::Base
       f.write("include_attribute \'#{@user.ku_id}::user_config\'")
       f.write("\n\n")
     end
+
+    output = File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/attributes/user_config.rb","w")
+    output << ""
+    output.close
   end
 
   #def max_attempts
