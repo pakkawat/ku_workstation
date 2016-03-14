@@ -169,6 +169,36 @@ class ProgramJob < ProgressJob::Base
 
   end
 
+  def prepare_user_config
+    chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.select("id"))
+    @users.each do |user|
+      chef_attributes.each do |chef_attribute|
+        ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+      end
 
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/attributes/user_config.rb", 'w') do |f|
+        f.write(create_user_config(user))
+      end
+
+      if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
+      end
+
+    end
+  end
+
+  def create_user_config(user)
+    str_temp = ""
+    config_names = ""
+    user.chef_values.each do |chef_value|
+      chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
+      config_names += "default['#{chef_attribute.name}'],"
+      str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
+    end
+    config_names = config_names.gsub(/\,$/, '')
+    str_temp += "default['user_config_list'] = \%w\{#{config_names}\} \n"
+
+    return str_temp
+  end
 
 end

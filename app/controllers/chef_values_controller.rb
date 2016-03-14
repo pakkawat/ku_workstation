@@ -37,9 +37,22 @@ class ChefValuesController < ApplicationController
     end
   end
 
+
+  def update
+    raise "test"
+  end
   # PATCH/PUT /chef_values/1
   # PATCH/PUT /chef_values/1.json
-  def update
+  def update2
+    if params.has_key?("chef_value")
+      @chef_value.update(chef_value_params(params["chef_value"]))
+    else
+      params["chef_values"].each do |chef_value|
+        if chef_value["value"] != ""
+          @chef_value.update(chef_value_params(chef_value))
+        end
+      end
+    end
     respond_to do |format|
       if @chef_value.update(chef_value_params)
         format.html { redirect_to @chef_value, notice: 'Chef value was successfully updated.' }
@@ -68,7 +81,11 @@ class ChefValuesController < ApplicationController
     end
 
     # Never trust parameters from the scary internet, only allow the white list through.
-    def chef_value_params
-      params.require(:chef_value).permit(:chef_attribute_id, :ku_user_id, :value)
+    #def chef_value_params
+      #params.require(:chef_value).permit(:chef_attribute_id, :ku_user_id, :value)
+    #end
+
+    def chef_value_params(my_params)
+      my_params.permit(:chef_attribute_id, :ku_user_id, :value)
     end
 end

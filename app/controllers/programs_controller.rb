@@ -109,7 +109,7 @@ class ProgramsController < ApplicationController
         f.write("\n")
         f.write("include_recipe \'#{program.program_name}::header\'")
         f.write("\n\n")
-        f.write("if node['#{program.program_name}']['user_list'].include?(node.name)")
+        f.write("if node['#{program.program_name}']['user_list'].include?(node.name) \&\& check_user_config")
         f.write("\n")
         f.write("  include_recipe \'#{program.program_name}::install_programs\'")
         f.write("\n")
@@ -118,6 +118,8 @@ class ProgramsController < ApplicationController
         f.write("  include_recipe \'#{program.program_name}::uninstall_programs\'")
         f.write("\n")
         f.write("end")
+        f.write("\n\n")
+        f.write(create_function_to_check_user_config)
         f.write("\n\n")
       end
       output = File.open(directory+"/recipes/install_programs.rb","w")
@@ -142,6 +144,19 @@ class ProgramsController < ApplicationController
 
     return check_error
 
+  end
+
+  def create_function_to_check_user_config
+    str_temp = ""
+    str_temp += "check_user_config\n"
+    str_temp += "  node['user_config_list'].each do |config|\n"
+    str_temp += "    if config == ''\n"
+    str_temp += "      return false\n"
+    str_temp += "    end\n"
+    str_temp += "  end\n"
+    str_temp += "  return true\n"
+    str_temp += "end\n"
+    return str_temp
   end
 
   def upload_cookbook

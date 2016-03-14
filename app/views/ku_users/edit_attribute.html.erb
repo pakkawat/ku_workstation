@@ -82,19 +82,28 @@
       </table>
     </div>
 
+    <%= form_tag update_chef_value_path do %>
+      <% @kuuser.chef_values.each do |chef_value| %>
+        <%= fields_for 'chef_values[]', chef_value do |c| %>
 
-    <%= form_for(@kuuser, :url => update_ku_user_attribute_path(id: @kuuser.id, program_id: program.id)) do |f| %>
-      <% @user.user_programs.each do |program| %>
-        <% f.fields_for program do |p| %>
-          <div class="row">
-            <%= p.text_field :name, class: "form-control" %>
-            <%= p.text_field :value, class: "form-control" %>
+          <div class="field">
+            <%= c.label :chef_attribute_id %><br>
+            <%= c.number_field :chef_attribute_id %>
+          </div>-- <%= c.chef_attribute_id %>--
+
+          <%= hidden_field_tag :ku_user_id %>
+
+          <div class="field">
+            <%= c.label :value %><br>
+            <%= c.text_field :value %>
           </div>
+
         <% end %>
       <% end %>
-      <%= f.submit "Update action", class: "btn btn-primary" %>
+      <div class="actions">
+        <%= submit_tag %>
+      </div>
     <% end %>
-
 
   </div><!--/col-9-->
 </div>

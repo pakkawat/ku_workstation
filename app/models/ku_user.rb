@@ -1,13 +1,15 @@
 class KuUser < ActiveRecord::Base
   #attr_accessible :ku_id, :username, :password, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :campus, :major_field, :status
   attr_accessor :remember_token
+  has_many :chef_values, dependent: :destroy
+  has_many :chef_attributes, through: :chef_values
   has_many :users_programs, dependent: :destroy
   has_many :user_subjects, dependent: :destroy
   has_many :subjects, through: :user_subjects
   has_one :instance, dependent: :destroy
   has_one :log, dependent: :destroy
   before_save { self.email = email.downcase }
-  validates :ku_id, presence: true, length: { maximum: 15 }  
+  validates :ku_id, presence: true, length: { maximum: 15 }
   validates :username, presence: true, length: { maximum: 50 }
   validates :password, length: { minimum: 6 }
   validates :firstname, presence: true, length: { maximum: 50 }
@@ -48,7 +50,7 @@ class KuUser < ActiveRecord::Base
   end
 
   def user_programs(reload=false)
-    @user_programs = nil if reload 
+    @user_programs = nil if reload
     @user_programs ||=Program.find_by_sql("SELECT DISTINCT p.id, p.program_name, p.note FROM programs p INNER JOIN programs_subjects ps on p.id = ps.program_id INNER JOIN user_subjects us on us.subject_id = ps.subject_id WHERE us.ku_user_id = #{self.id} AND us.user_enabled = true AND ps.program_enabled = true")
   end
 end
