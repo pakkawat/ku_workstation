@@ -82,14 +82,13 @@
       </table>
     </div>
 
-    <%= form_tag update_chef_value_path do %>
       <% @kuuser.chef_values.each do |chef_value| %>
-        <%= fields_for 'chef_values[]', chef_value do |c| %>
+        <%= user_form.fields_for chef_value, index: chef_value.id do |c| %>
 
           <div class="field">
             <%= c.label :chef_attribute_id %><br>
             <%= c.number_field :chef_attribute_id %>
-          </div>-- <%= c.chef_attribute_id %>--
+          </div>-- <%= c.object.chef_attribute_id %>--
 
           <%= hidden_field_tag :ku_user_id %>
 

@@ -89,15 +89,22 @@ class KuUsersController < ApplicationController
   end
 
   def update_attribute
-    @kuuser = KuUser.find(params[:id])
-    @program = Program.find(params[:program_id])
+    #@kuuser = KuUser.find(params[:id])
+    #@program = Program.find(params[:program_id])
     #render plain: @kuuser.inspect
-    raise "test"
+    #raise "test"
+    params[:ku_user][:chef_value].each do |key, value|
+      chef_value = ChefValue.find(key)
+      chef_value.update_attribute(:value,value[:value])
+      #str += "id:"+chef_value.id.to_s+" att_id:"+chef_value.chef_attribute_id.to_s+" value:"+value[:value]+"---"
+    end
+    flash[:success] = "Config has been updated"
+    redirect_to edit_ku_user_attribute_path(id: params[:id], program_id: params[:program_id])
   end
 
   private
     def ku_user_params
-      params.require(:ku_user).permit(:ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :status, :campus)
+      params.require(:ku_user).permit(:ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :status, :campus, chef_value: [ :id, :chef_attribute_id, :value ])
     end
 
     # Before filters
