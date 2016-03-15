@@ -57,49 +57,42 @@
 
 <h1>Edit attribute here</h1>
 
-    <div class="panel panel-warning">
+    <div class="panel panel-info">
       <!-- Default panel contents -->
-      <div class="panel-heading">Programs</div>
+      <div class="panel-heading"><%= @program.program_name %> configuration value</div>
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>Program ID</th>
-              <th>Program name</th>
-              <th>Note</th>
-              <th>att</th>
+              <th>Name</th>
+              <th>Value</th>
             </tr>
           </thead>
           <tbody>
-            <% @kuuser.user_programs.each do |program| %>
-              <tr>
-                <th scope="row"><%= program.id %></th>
-                <td><%= link_to program.program_name, program %></td>
-                <td><%= program.note %></td>
-                <td><%= link_to "Edit", edit_ku_user_attribute_path(id: @kuuser.id, program_id: program.id), :class => "btn btn-success" %></td>
-              </tr>
-            <% end %>
-          </tbody>
-      </table>
-    </div>
 
     <%= form_for(@kuuser, :url => update_ku_user_attribute_path, :method => :patch) do |user_form| %>
-      <% @kuuser.chef_values.each do |chef_value| %>
+      <% @chef_values.each do |chef_value| %>
         <%= user_form.fields_for chef_value, index: chef_value.id do |c| %>
 
-          <div class="field">
-            <%= c.label :chef_attribute_id %><br>
-            <%= c.number_field :chef_attribute_id %>
-          </div>-- <%= c.object.chef_attribute_id %>--
+          <tr>
 
-          <%= hidden_field_tag :ku_user_id %>
+            <th scope="row"><%= ChefAttribute.find(c.object.chef_attribute_id).name %></th>
 
-          <div class="field">
-            <%= c.label :value %><br>
-            <%= c.text_field :value %>
-          </div>
+            <%= hidden_field_tag :ku_user_id %>
+
+            <td>
+              <%= c.label :value %><br>
+              <%= c.text_field :value %>
+            </td>
+
+          </tr>
 
         <% end %>
       <% end %>
+
+          </tbody>
+      </table>
+      </div>
+
       <div class="actions">
         <%= submit_tag %>
       </div>
