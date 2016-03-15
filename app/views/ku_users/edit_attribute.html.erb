@@ -82,6 +82,7 @@
       </table>
     </div>
 
+    <%= form_for(@kuuser, :url => update_ku_user_attribute_path, :method => :patch) do |user_form| %>
       <% @kuuser.chef_values.each do |chef_value| %>
         <%= user_form.fields_for chef_value, index: chef_value.id do |c| %>
 
