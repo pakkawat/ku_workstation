@@ -50,9 +50,9 @@ class SubjectJob < ProgressJob::Base
   end
 
   def error(job, exception)
-    output = File.open("/home/ubuntu/subject_error.txt","w")
-    output << ""
-    output.close
+    #output = File.open("/home/ubuntu/subject_error.txt","w")
+    #output << ""
+    #output.close
   end
 
   def prepare_program_and_user_config
@@ -109,6 +109,7 @@ class SubjectJob < ProgressJob::Base
       end
       config_names = config_names.gsub(/\,$/, '')
       str_temp += "default['#{program.program_name}']['user_config_list'] = [#{config_names}] \n"
+      config_names = ""
     end
 
     return str_temp
