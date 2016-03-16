@@ -36,9 +36,10 @@ class ProgramJob < ProgressJob::Base
     RemoveResource.where(program_id: @program.id).destroy_all
     if @type == "delete"
       if KnifeCommand.run("knife cookbook delete " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
-        #@program.programs_subjects.destroy_all
-        #UsersProgram.where(:sprogram_id => @program.id).destroy_all
-        #@program.subjects.destroy_all
+        chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("chef_resource_id")).pluck("id")
+        users = UsersProgram.where(:program_id => @program.id).pluck("ku_user_id")
+        ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: users).destroy_all
+
         #sleep(2)
         FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
         @program.destroy
@@ -171,14 +172,14 @@ class ProgramJob < ProgressJob::Base
   end
 
   def prepare_user_config
-    chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.select("id"))
+    chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id"))
     @users.each do |user|
       chef_attributes.each do |chef_attribute|
         ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
       end
 
       File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/attributes/user_config.rb", 'w') do |f|
-        f.write(create_user_config(user))
+        f.write(generate_user_config(user))
       end
 
       if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
@@ -188,16 +189,21 @@ class ProgramJob < ProgressJob::Base
     end
   end
 
-  def create_user_config(user)
+  def generate_user_config(user)
     str_temp = ""
     config_names = ""
-    user.chef_values.each do |chef_value|
-      chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
-      config_names += "node['#{chef_attribute.name}'],"
-      str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
+    all_user_programs = Program.where(id: user.users_programs.pluck("program_id"))
+    all_user_programs.each do |program|
+      chef_attributes = user.chef_attributes.where(chef_resource_id: program.chef_resources.pluck("id"))
+      chef_values = user.chef_values.where(chef_attribute_id: chef_attributes)
+      chef_values.each do |chef_value|
+        chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
+        config_names += "node['#{chef_attribute.name}'],"
+        str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
+      end
+      config_names = config_names.gsub(/\,$/, '')
+      str_temp += "default['#{program.program_name}']['user_config_list'] = [#{config_names}] \n"
     end
-    config_names = config_names.gsub(/\,$/, '')
-    str_temp += "default['user_config_list'] = [#{config_names}] \n"
 
     return str_temp
   end

@@ -16,8 +16,6 @@ class SubjectJob < ProgressJob::Base
       @subject.user_subjects.update_all(user_enabled: false)
       #update all programs_subject = false
       @subject.programs_subjects.update_all(program_enabled: false)
-      #destroy all UsersPrograms
-      UsersProgram.where(:subject_id => @subject.id).destroy_all
     end
 
     @arr_error.push(" There are error with following: ")
@@ -32,10 +30,19 @@ class SubjectJob < ProgressJob::Base
 
   def success
     if @type == "delete"
+      #destroy all UsersPrograms
+      UsersProgram.where(:subject_id => @subject.id).destroy_all
       @subject.destroy
     else # apply change
 
       # delete relationship
+      # future job
+      #chef_attributes_with_program_false = ChefAttribute.where(chef_resource_id: ProgramChef.where(program_id: @subject.programs_subjects.where(program_enabled: false).pluck("program_id")).pluck("chef_resource_id")).pluck("id")
+      #users_with_false = @subject.user_subjects.where(user_enabled: false).pluck("ku_user_id")
+      #ChefValue.where(chef_attribute_id: chef_attributes_with_program_false, ku_user_id: users_with_false).destroy_all
+      ###################################################
+      UsersProgram.where(subject_id: @subject.id, program_id: @subject.programs_subjects.where(program_enabled: false).pluck("program_id")).destroy_all
+
       @subject.programs_subjects.where(program_enabled: false).destroy_all
 
       @subject.user_subjects.where(user_enabled: false).destroy_all
@@ -61,38 +68,48 @@ class SubjectJob < ProgressJob::Base
       prepare_user_config(program)
     end
 
+    create_user_config
+
     check_error("1. ")
 
   end
 
   def prepare_user_config(program)
-    chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.select("id"))
-    @subject.ku_users.each do |user|
+    chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
+    @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
       chef_attributes.each do |chef_attribute|
         ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
       end
+    end
+  end
 
+  def create_user_config
+    @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
       File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/attributes/user_config.rb", 'w') do |f|
-        f.write(create_user_config(user))
+        f.write(generate_user_config(user))
       end
 
       if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
       end
-
     end
   end
 
-  def create_user_config(user)
+  def generate_user_config(user)
     str_temp = ""
     config_names = ""
-    user.chef_values.each do |chef_value|
-      chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
-      config_names += "node['#{chef_attribute.name}'],"
-      str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
+    all_user_programs = Program.where(id: user.users_programs.pluck("program_id"))
+    all_user_programs.each do |program|
+      chef_attributes = user.chef_attributes.where(chef_resource_id: program.chef_resources.pluck("id"))
+      chef_values = user.chef_values.where(chef_attribute_id: chef_attributes)
+      chef_values.each do |chef_value|
+        chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
+        config_names += "node['#{chef_attribute.name}'],"
+        str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
+      end
+      config_names = config_names.gsub(/\,$/, '')
+      str_temp += "default['#{program.program_name}']['user_config_list'] = [#{config_names}] \n"
     end
-    config_names = config_names.gsub(/\,$/, '')
-    str_temp += "default['user_config_list'] = [#{config_names}] \n"
 
     return str_temp
   end
