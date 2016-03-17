@@ -117,10 +117,9 @@ class UserSubjectsController < ApplicationController
 
     def add_user_config(program)
       chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
-      #chef_attributes.each do |chef_attribute|
-        #ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: @kuuser).first_or_create
-      #end
-      ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: @kuuser).first_or_create
+      chef_attributes.each do |chef_attribute|
+        ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: @kuuser).first_or_create
+      end
     end
 
     def delete_user_config(program)

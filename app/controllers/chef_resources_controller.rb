@@ -345,11 +345,13 @@ class ChefResourcesController < ApplicationController
     def create_chef_value
       if !@program.nil?
         chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id"))
-        if !chef_attributes.nil?
-          users = UsersProgram.where(program_id: @program.id).pluck("ku_user_id")
-          ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: users).first_or_create
+        users = UsersProgram.where(program_id: @program.id).pluck("ku_user_id")
+        users.each do |user|
+          chef_attributes.each do |chef_attribute|
+            ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+          end
         end
       end
-    end
+    end # end def
 
 end
