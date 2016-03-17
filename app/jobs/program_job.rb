@@ -174,9 +174,9 @@ class ProgramJob < ProgressJob::Base
   def prepare_user_config
     chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id"))
     @users.each do |user|
-      chef_attributes.each do |chef_attribute|
-        ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
-      end
+      #chef_attributes.each do |chef_attribute|
+        #ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+      #end
 
       File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/attributes/user_config.rb", 'w') do |f|
         f.write(generate_user_config(user))

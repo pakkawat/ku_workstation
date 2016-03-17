@@ -116,6 +116,7 @@ class ChefResourcesController < ApplicationController
     find_unuse_program_and_file
     respond_to do |format|
       if @chef_resource.update(chef_resource_params)
+        create_chef_value
         if !@program.nil?
           format.html { redirect_to edit_program_chef_resource_path(program_id: @program.id, id: @chef_resource.id), :flash => { :success => "Action was successfully updated." } }
         else
@@ -337,6 +338,16 @@ class ChefResourcesController < ApplicationController
         file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb"
         File.open(file_full_path, "w") do |f|
           f.write(created_file_content)
+        end
+      end
+    end
+
+    def create_chef_value
+      if !@program.nil?
+        chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id"))
+        if !chef_attributes.nil?
+          users = UsersProgram.where(program_id: @program.id).pluck("ku_user_id")
+          ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: users).first_or_create
         end
       end
     end

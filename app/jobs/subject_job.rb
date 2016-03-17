@@ -65,7 +65,7 @@ class SubjectJob < ProgressJob::Base
         @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
       end
 
-      prepare_user_config(program)
+      #prepare_user_config(program)
     end
 
     create_user_config
@@ -74,14 +74,14 @@ class SubjectJob < ProgressJob::Base
 
   end
 
-  def prepare_user_config(program)
-    chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
-    @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
-      chef_attributes.each do |chef_attribute|
-        ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
-      end
-    end
-  end
+  #def prepare_user_config(program)
+    #chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
+    #@subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
+      #chef_attributes.each do |chef_attribute|
+        #ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+      #end
+    #end
+  #end
 
   def create_user_config
     @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|

@@ -1,6 +1,6 @@
 class UserSubjectsController < ApplicationController
   def index
-    @subject = Subject.find(params[:subject_id])  
+    @subject = Subject.find(params[:subject_id])
     @subjectusers = KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).order("ku_id ASC")
     @kuusers = KuUser.where.not(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).order("ku_id ASC")
   end
@@ -103,13 +103,28 @@ class UserSubjectsController < ApplicationController
       str_temp = ""
       @subject.programs.where("programs_subjects.program_enabled = true").each do |program|
         @kuuser.users_programs.create(:program_id => program.id, :subject_id => @subject.id)
+        add_user_config(program)
       end
     end
 
     def remove_user_programs
       str_temp = ""
       @subject.programs.where("programs_subjects.program_enabled = true").each do |program|
+        delete_user_config(program)
         @kuuser.users_programs.where(:program_id => program.id, :subject_id => @subject.id).destroy_all
       end
+    end
+
+    def add_user_config(program)
+      chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
+      #chef_attributes.each do |chef_attribute|
+        #ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: @kuuser).first_or_create
+      #end
+      ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: @kuuser).first_or_create
+    end
+
+    def delete_user_config(program)
+      chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
+      @kuuser.chef_values.where(chef_attribute_id: chef_attributes).destroy_all
     end
 end
