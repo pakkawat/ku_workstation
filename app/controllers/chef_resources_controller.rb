@@ -43,7 +43,7 @@ class ChefResourcesController < ApplicationController
       else
         if !@program.nil?
           value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-          if !value.nil?
+          if !value.empty?
           file_name = File.basename(value)
             if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
               @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
@@ -65,7 +65,7 @@ class ChefResourcesController < ApplicationController
       else
         if !@program.nil?
           value = @chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
-          if !value.nil?
+          if !value.empty?
           file_name = File.basename(value)
             if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")
               @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb")

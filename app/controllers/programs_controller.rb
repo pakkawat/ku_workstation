@@ -203,7 +203,7 @@ class ProgramsController < ApplicationController
       if chef_resources.any?
         chef_resources.each do |chef_resource|
           value = chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-          if !value.nil?
+          if !value.empty?
         		file_name = File.basename(value)
             file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb"
             if !File.exists?(file_full_path)
