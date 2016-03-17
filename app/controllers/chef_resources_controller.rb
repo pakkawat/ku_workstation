@@ -37,6 +37,7 @@ class ChefResourcesController < ApplicationController
       end
     when "Config_file"
       @data = nil
+      @chef_resource.chef_attributes.build
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
       else
@@ -58,6 +59,7 @@ class ChefResourcesController < ApplicationController
       end
     when "Create_file"
       @data = nil
+      @chef_resource.chef_attributes.build
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
       else

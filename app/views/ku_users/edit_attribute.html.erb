@@ -99,7 +99,9 @@
     </div>
 
     <div class="center">
-    <%= submit_tag "Update", class: "btn btn-primary" %>
+      <% if !@chef_values.nil? %>
+        <%= submit_tag "Update", class: "btn btn-primary" %>
+      <% end %>
     </div>
     <% end %>
 

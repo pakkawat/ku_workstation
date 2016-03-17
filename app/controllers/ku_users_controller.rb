@@ -87,7 +87,7 @@ class KuUsersController < ApplicationController
     @program = Program.find(params[:program_id])
     #render plain: @kuuser.inspect
     chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.select("id"))
-    @chef_values = ChefValue.where(chef_attribute_id: chef_attributes)
+    @chef_values = ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: @kuuser)
   end
 
   def update_attribute
