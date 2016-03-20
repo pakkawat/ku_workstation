@@ -50,7 +50,7 @@
             <% @subject.programs.where("programs_subjects.program_enabled = true").order("programs.program_name ASC").each do |program| %>
               <tr>
                 <th scope="row"><%= program.id %></th>
-                <td><%= link_to program.program_name, program %></td>
+                <td><%= link_to program.program_name, edit_program_path(program) %></td>
               </tr>
             <% end %>
           </tbody>
