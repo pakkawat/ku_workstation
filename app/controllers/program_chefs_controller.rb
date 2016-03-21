@@ -122,6 +122,8 @@ class ProgramChefsController < ApplicationController
             value_type = "file"
           end
         when "Bash_script"
+          value = @program.id.to_s + "_" + @chef_resource.id.to_s
+          value_type = "file"
           delete_chef_attributes
         end
         remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: value_type)

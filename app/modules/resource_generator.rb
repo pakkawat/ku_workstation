@@ -43,6 +43,8 @@ require 'uri'
 			ResourceGenerator.delete_move_file(chef_resource)
 		elsif chef_resource.resource_type == "Config_file"
 			ResourceGenerator.delete_config_file(chef_resource)
+		elsif chef_resource.resource_type == "Bash_script"
+			ResourceGenerator.delete_bash_script_file(chef_resource)
 		end
 	end
 
@@ -535,32 +537,86 @@ require 'uri'
 	def ResourceGenerator.bash_script(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
-		bash = BashScript.find(value)
+		#bash = BashScript.find(value)
 		str_code = ""
+		str_code += "template '/tmp/#{value}.sh' do\n"
+		str_code += "  source '#{value}.sh.erb'\n"
+		str_code += "  owner 'root'\n"
+		str_code += "  group 'root'\n"
+		str_code += "  mode '0755'\n"
+		str_code += "end\n"
+		str_code += "\n"
+
 		if condition == "alway"
-			str_code += "bash 'bash_script' do\n"
+			str_code += "execute 'execute_bash_script_#{value}' do\n"
 			str_code += "  user 'root'\n"
-			str_code += "  code <<-EOH\n"
-			str_code += "  #{bash.bash_script_content}\n"
-			str_code += "  EOH\n"
+			str_code += "  command 'sh /tmp/#{value}.sh'\n"
 			str_code += "end\n"
+			#str_code += "bash 'bash_script' do\n"
+			#str_code += "  user 'root'\n"
+			#str_code += "  code <<-EOH\n"
+			#str_code += "  #{bash.bash_script_content}\n"
+			#str_code += "  EOH\n"
+			#str_code += "end\n"
 		else #Only once
 			require 'digest'
+			program_id = value.split("/").first
+			program = Program.find(program_id)
+			data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
 			md5 = Digest::MD5.new
-			md5.update(bash.bash_script_content)
-			str_code += "bash 'bash_script' do\n"
+			md5.update(data)
+			str_code += "execute 'execute_bash_script_#{value}' do\n"
 			str_code += "  user 'root'\n"
-			str_code += "  code <<-EOH\n"
-			str_code += "  #{bash.bash_script_content}\n"
-			str_code += "  : > /var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt\n" #create empty text file
-			str_code += "  EOH\n"
+			str_code += "  command 'sh /tmp/#{value}.sh'\n"
 			str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
 			str_code += "end\n"
+			str_code += "\n"
+			str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
+			str_code += "  content ''\n"
+			str_code += "  mode '0755'\n"
+			str_code += "end\n"
+			str_code += "\n"
+			#str_code += "bash 'bash_script' do\n"
+			#str_code += "  user 'root'\n"
+			#str_code += "  code <<-EOH\n"
+			#str_code += "  #{bash.bash_script_content}\n"
+			#str_code += "  : > /var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt\n" #create empty text file
+			#str_code += "  EOH\n"
+			#str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
+			#str_code += "end\n"
 		end
-		str_code += "\n"
+		#str_code += "\n"
 		return str_code
 	end
 
+	def ResourceGenerator.delete_bash_script_file(chef_resource)
+		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
+		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
+
+		require 'digest'
+		program_id = value.split("/").first
+		program = Program.find(program_id)
+		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+		md5 = Digest::MD5.new
+		md5.update(data)
+
+		str_code = ""
+		str_code += "file '/tmp/#{value}.sh' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
+
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb"
+		File.delete(path_to_file) if File.exist?(path_to_file)
+
+		return str_code
+	end
 
 #########################################################################################################################
 
@@ -582,6 +638,8 @@ require 'uri'
 			remove_create_file(remove_resource)
 		elsif remove_resource.resource_type == "Config_file"
 			remove_config_file(remove_resource)
+		elsif remove_resource.resource_type == "Bash_script"
+			remove_bash_script_file(remove_resource)
 		end
 	end
 
@@ -651,6 +709,7 @@ require 'uri'
 		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
+		return str_code
 	end
 
 	def self.remove_copy_file(remove_resource)
@@ -693,6 +752,7 @@ require 'uri'
 		str_code += "  only_if \{ ::File.exists?('#{src_last_path}\/#{src_file_name}') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
+		return str_code
 	end
 
 	def self.remove_move_file(remove_resource)
@@ -719,6 +779,32 @@ require 'uri'
 			str_code += "end\n"
 			str_code += "\n"
 		end
+		return str_code
+	end
+
+	def self.remove_bash_script_file(remove_resource)
+
+		require 'digest'
+		program = Program.find(remove_resource.program_id)
+		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + remove_resource.value + ".sh.erb")
+		md5 = Digest::MD5.new
+		md5.update(data)
+
+		str_code = ""
+		str_code += "file '/tmp/#{remove_resource.value}.sh' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/tmp/#{remove_resource.value}.sh') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
+
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + remove_resource.value + ".sh.erb"
+		File.delete(path_to_file) if File.exist?(path_to_file)
+
 		return str_code
 	end
 
