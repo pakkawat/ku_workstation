@@ -550,7 +550,7 @@ require 'uri'
 		if condition == "alway"
 			str_code += "execute 'execute_bash_script_#{value}' do\n"
 			str_code += "  user 'root'\n"
-			str_code += "  command 'sh /tmp/#{value}.sh'\n"
+			str_code += "  command 'bash /tmp/#{value}.sh'\n"
 			str_code += "end\n"
 			#str_code += "bash 'bash_script' do\n"
 			#str_code += "  user 'root'\n"
@@ -560,22 +560,24 @@ require 'uri'
 			#str_code += "end\n"
 		else #Only once
 			require 'digest'
-			program_id = value.split("/").first
+			program_id = value.split("_").first
 			program = Program.find(program_id)
-			data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
-			md5 = Digest::MD5.new
-			md5.update(data)
-			str_code += "execute 'execute_bash_script_#{value}' do\n"
-			str_code += "  user 'root'\n"
-			str_code += "  command 'sh /tmp/#{value}.sh'\n"
-			str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
-			str_code += "end\n"
-			str_code += "\n"
-			str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
-			str_code += "  content ''\n"
-			str_code += "  mode '0755'\n"
-			str_code += "end\n"
-			str_code += "\n"
+                        if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+			  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+			  md5 = Digest::MD5.new
+			  md5.update(data)
+			  str_code += "execute 'execute_bash_script_#{value}' do\n"
+			  str_code += "  user 'root'\n"
+			  str_code += "  command 'bash /tmp/#{value}.sh'\n"
+			  str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
+			  str_code += "end\n"
+			  str_code += "\n"
+			  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
+			  str_code += "  content ''\n"
+			  str_code += "  mode '0755'\n"
+			  str_code += "end\n"
+			  str_code += "\n"
+                        end
 			#str_code += "bash 'bash_script' do\n"
 			#str_code += "  user 'root'\n"
 			#str_code += "  code <<-EOH\n"
@@ -594,26 +596,27 @@ require 'uri'
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 
 		require 'digest'
-		program_id = value.split("/").first
+		program_id = value.split("_").first
 		program = Program.find(program_id)
-		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
-		md5 = Digest::MD5.new
-		md5.update(data)
+                if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+		  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+		  md5 = Digest::MD5.new
+		  md5.update(data)
 
-		str_code = ""
-		str_code += "file '/tmp/#{value}.sh' do\n"
-		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
-		str_code += "end\n"
-		str_code += "\n"
-		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
-		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') \}\n"
-		str_code += "end\n"
-		str_code += "\n"
-
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb"
-		File.delete(path_to_file) if File.exist?(path_to_file)
+		  str_code = ""
+		  str_code += "file '/tmp/#{value}.sh' do\n"
+		  str_code += "  action :delete\n"
+		  str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
+		  str_code += "end\n"
+		  str_code += "\n"
+		  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
+		  str_code += "  action :delete\n"
+		  str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') \}\n"
+		  str_code += "end\n"
+		  str_code += "\n"
+                end
+		  #path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb"
+		  #File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code
 	end

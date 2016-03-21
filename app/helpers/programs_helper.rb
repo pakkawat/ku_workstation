@@ -400,15 +400,28 @@ module ProgramsHelper
           str_temp += "  </div>"
           str_temp += "</div>"
         else
-          bash = BashScript.find(property.value)
-          str_temp += "<div class='form-group'>"
-          str_temp += "  <label for='name'>"
-          str_temp += "    Bash script:"
-          str_temp += "  </label>"
-          str_temp += "  <div class='input-group'>"
-          str_temp += "    <textarea name='chef_property_#{property.id}' class='form-control' cols='63' rows='20'>#{bash.bash_script_content}</textarea>"
-          str_temp += "  </div>"
-          str_temp += "</div>"
+          program_id = property.value.split("_").first
+          program = Program.find(program_id)
+          if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + property.value + ".sh.erb")
+            bash_script_content = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + property.value + ".sh.erb")
+            str_temp += "<div class='form-group'>"
+            str_temp += "  <label for='name'>"
+            str_temp += "    Bash script:"
+            str_temp += "  </label>"
+            str_temp += "  <div class='input-group'>"
+            str_temp += "    <textarea name='chef_property_#{property.id}' class='form-control' cols='63' rows='20'>#{bash_script_content}</textarea>"
+            str_temp += "  </div>"
+            str_temp += "</div>"
+          else
+            str_temp += "<div class='form-group'>"
+            str_temp += "  <label for='name'>"
+            str_temp += "    Bash script:"
+            str_temp += "  </label>"
+            str_temp += "  <div class='input-group'>"
+            str_temp += "    <textarea name='chef_property_#{property.id}' class='form-control' cols='63' rows='20'></textarea>"
+            str_temp += "  </div>"
+            str_temp += "</div>"
+          end
         end
       end
       return str_temp.html_safe
