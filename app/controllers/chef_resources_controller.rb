@@ -80,9 +80,11 @@ class ChefResourcesController < ApplicationController
         @chef_resource.chef_properties.build
         @chef_resource.chef_properties.build
       else
-        value = @chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
-        bash = BashScript.find(value)
-        @data = bash.bash_script_content
+        if !@program.nil?
+          if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + @program.id.to_s + "_" + @chef_resource.id.to_s + ".sh.erb")
+            @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + @program.id.to_s + "_" + @chef_resource.id.to_s + ".sh.erb")
+          end
+        end
       end
     end # end case
 
@@ -281,15 +283,18 @@ class ChefResourcesController < ApplicationController
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
           if !value[:id].nil? # old_value
             if value[:value_type] == "bash_script"
-              bash = BashScript.find(value[:value])
+              create_bash_script_file( @program.id.to_s + "_" + @chef_resource.id.to_s, params[:bash_script_content])
+              #bash = BashScript.find(value[:value])
               # check diff between bash.bash_script_content and params[:bash_script_content] then delete text file
-              bash.update_attribute(:bash_script_content, params[:bash_script_content])
+              #bash.update_attribute(:bash_script_content, params[:bash_script_content])
             end
           else
             if value[:value_type] == "bash_script"
-              bash = BashScript.new(bash_script_content: params[:bash_script_content])
-              bash.save
-              value[:value] = bash.id
+              create_bash_script_file( @program.id.to_s + "_" + @chef_resource.id.to_s, params[:bash_script_content])
+              value[:value] = @program.id.to_s + "_" + @chef_resource.id.to_s
+              #bash = BashScript.new(bash_script_content: params[:bash_script_content])
+              #bash.save
+              #value[:value] = bash.id
             end
           end
         end
@@ -353,5 +358,14 @@ class ChefResourcesController < ApplicationController
         end
       end
     end # end def
+
+    def create_bash_script_file(file_name, bash_script_content)
+      if !@program.nil?
+        file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".sh.erb"
+        File.open(file_full_path, "w") do |f|
+          f.write(bash_script_content)
+        end
+      end
+    end
 
 end
