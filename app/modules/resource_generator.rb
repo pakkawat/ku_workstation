@@ -562,7 +562,7 @@ require 'uri'
 			require 'digest'
 			program_id = value.split("_").first
 			program = Program.find(program_id)
-                        if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+      if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
 			  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
 			  md5 = Digest::MD5.new
 			  md5.update(data)
@@ -577,7 +577,7 @@ require 'uri'
 			  str_code += "  mode '0755'\n"
 			  str_code += "end\n"
 			  str_code += "\n"
-                        end
+      end
 			#str_code += "bash 'bash_script' do\n"
 			#str_code += "  user 'root'\n"
 			#str_code += "  code <<-EOH\n"
@@ -598,7 +598,7 @@ require 'uri'
 		require 'digest'
 		program_id = value.split("_").first
 		program = Program.find(program_id)
-                if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+    if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
 		  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
 		  md5 = Digest::MD5.new
 		  md5.update(data)
@@ -614,7 +614,7 @@ require 'uri'
 		  str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') \}\n"
 		  str_code += "end\n"
 		  str_code += "\n"
-                end
+    end
 		  #path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb"
 		  #File.delete(path_to_file) if File.exist?(path_to_file)
 
