@@ -643,6 +643,8 @@ require 'uri'
 			remove_config_file(remove_resource)
 		elsif remove_resource.resource_type == "Bash_script"
 			remove_bash_script_file(remove_resource)
+		elsif remove_resource.resource_type == "Execute_command"
+			remove_execute_command_file(remove_resource)
 		end
 	end
 
@@ -807,6 +809,22 @@ require 'uri'
 
 		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + remove_resource.value + ".sh.erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
+
+		return str_code
+	end
+
+	def self.remove_execute_command_file(remove_resource)
+
+		require 'digest'
+		md5 = Digest::MD5.new
+		md5.update(remove_resource.value)
+
+		str_code = ""
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
 
 		return str_code
 	end
