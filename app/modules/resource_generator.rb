@@ -45,6 +45,8 @@ require 'uri'
 			ResourceGenerator.delete_config_file(chef_resource)
 		elsif chef_resource.resource_type == "Bash_script"
 			ResourceGenerator.delete_bash_script_file(chef_resource)
+		elsif chef_resource.resource_type == "Execute_command"
+			ResourceGenerator.delete_execute_command_file(chef_resource)
 		end
 	end
 
@@ -533,6 +535,21 @@ require 'uri'
 		return str_code
 	end
 
+	def ResourceGenerator.delete_execute_command_file(chef_resource)
+		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value).first
+
+		str_code = ""
+		require 'digest'
+		md5 = Digest::MD5.new
+		md5.update(value)
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') \}\n"
+		str_code += "end\n"
+
+		str_code += "\n"
+		return str_code
+	end
 
 	def ResourceGenerator.bash_script(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
@@ -708,6 +725,10 @@ require 'uri'
 	def self.remove_config_file(remove_resource)
 		file_name = File.basename(remove_resource.value)
 
+		program = Program.find(remove_resource.program_id)
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb"
+		File.delete(path_to_file) if File.exist?(path_to_file)
+		
 		str_code = ""
 		str_code += "file '/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}' do\n"
 		str_code += "  action :delete\n"
