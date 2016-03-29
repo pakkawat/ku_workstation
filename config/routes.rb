@@ -1,5 +1,13 @@
 Rails.application.routes.draw do
 
+  resources :personal_program_chefs
+
+  resources :personal_chef_resources
+
+  resources :user_personal_programs
+
+  resources :personal_programs
+
   resources :chef_values
 
   resources :chef_attributes

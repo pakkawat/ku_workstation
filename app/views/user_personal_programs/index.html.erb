@@ -1,0 +1,31 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing User Personal Programs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Ku user</th>
+      <th>Personal program</th>
+      <th>Status</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @user_personal_programs.each do |user_personal_program| %>
+      <tr>
+        <td><%= user_personal_program.ku_user_id %></td>
+        <td><%= user_personal_program.personal_program_id %></td>
+        <td><%= user_personal_program.status %></td>
+        <td><%= link_to 'Show', user_personal_program %></td>
+        <td><%= link_to 'Edit', edit_user_personal_program_path(user_personal_program) %></td>
+        <td><%= link_to 'Destroy', user_personal_program, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New User personal program', new_user_personal_program_path %>

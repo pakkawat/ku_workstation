@@ -1,0 +1,29 @@
+<%= form_for(@user_personal_program) do |f| %>
+  <% if @user_personal_program.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user_personal_program.errors.count, "error") %> prohibited this user_personal_program from being saved:</h2>
+
+      <ul>
+      <% @user_personal_program.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :ku_user_id %><br>
+    <%= f.number_field :ku_user_id %>
+  </div>
+  <div class="field">
+    <%= f.label :personal_program_id %><br>
+    <%= f.number_field :personal_program_id %>
+  </div>
+  <div class="field">
+    <%= f.label :status %><br>
+    <%= f.text_field :status %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

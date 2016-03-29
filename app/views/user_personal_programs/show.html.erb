@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Ku user:</strong>
+  <%= @user_personal_program.ku_user_id %>
+</p>
+
+<p>
+  <strong>Personal program:</strong>
+  <%= @user_personal_program.personal_program_id %>
+</p>
+
+<p>
+  <strong>Status:</strong>
+  <%= @user_personal_program.status %>
+</p>
+
+<%= link_to 'Edit', edit_user_personal_program_path(@user_personal_program) %> |
+<%= link_to 'Back', user_personal_programs_path %>

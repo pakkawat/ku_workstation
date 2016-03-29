@@ -1,0 +1,29 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing Personal Programs</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Program name</th>
+      <th>Note</th>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @personal_programs.each do |personal_program| %>
+      <tr>
+        <td><%= personal_program.program_name %></td>
+        <td><%= personal_program.note %></td>
+        <td><%= link_to 'Show', personal_program %></td>
+        <td><%= link_to 'Edit', edit_personal_program_path(personal_program) %></td>
+        <td><%= link_to 'Destroy', personal_program, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Personal program', new_personal_program_path %>
