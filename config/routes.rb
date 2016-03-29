@@ -1,12 +1,16 @@
 Rails.application.routes.draw do
 
-  resources :personal_program_chefs
+  #resources :personal_program_chefs
 
-  resources :personal_chef_resources
+  #resources :personal_chef_resources # = Chef_resources
 
-  resources :user_personal_programs
+  #resources :user_personal_programs
 
-  resources :personal_programs
+  resources :personal_programs do
+    resources :personal_chef_resources # = Chef_resources
+    resources :personal_program_chefs
+    resources :user_personal_programs
+  end
 
   resources :chef_values
 
@@ -15,7 +19,7 @@ Rails.application.routes.draw do
   #match 'program/:program_id/chef_resource/:chef_resource_id/chef_property/:id', to: 'chef_properties#edit', as: 'edit_chef_property', :via => "get"
   resources :chef_properties
 
-  resources :program_chefs
+  #resources :program_chefs
 
   match 'program/:program_id/chef_resource/:id', to: 'chef_resources#edit', as: 'edit_program_chef_resource', :via => "get"
   match 'program/:program_id/chef_resource/:id', to: 'chef_resources#update', as: 'update_program_chef_resource', :via => "patch"
