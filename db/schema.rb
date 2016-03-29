@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160314081814) do
+ActiveRecord::Schema.define(version: 20160329095659) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -123,6 +123,27 @@ ActiveRecord::Schema.define(version: 20160314081814) do
 
   add_index "logs", ["ku_user_id"], name: "index_logs_on_ku_user_id", using: :btree
 
+  create_table "personal_chef_resources", force: :cascade do |t|
+    t.string   "resource_type"
+    t.integer  "priority"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+  end
+
+  create_table "personal_program_chefs", force: :cascade do |t|
+    t.integer  "personal_chef_resource_id"
+    t.integer  "personal_program_id"
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  create_table "personal_programs", force: :cascade do |t|
+    t.string   "program_name"
+    t.text     "note"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+  end
+
   create_table "program_chefs", force: :cascade do |t|
     t.integer  "program_id"
     t.integer  "chef_resource_id"
@@ -186,6 +207,14 @@ ActiveRecord::Schema.define(version: 20160314081814) do
     t.string   "year"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+  end
+
+  create_table "user_personal_programs", force: :cascade do |t|
+    t.integer  "ku_user_id"
+    t.integer  "personal_program_id"
+    t.string   "status"
+    t.datetime "created_at",          null: false
+    t.datetime "updated_at",          null: false
   end
 
   create_table "user_subjects", force: :cascade do |t|
