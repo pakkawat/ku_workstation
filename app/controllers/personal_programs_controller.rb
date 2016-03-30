@@ -5,8 +5,8 @@ class PersonalProgramsController < ApplicationController
   # GET /personal_programs.json
   def index
     @ku_user = current_user
-    @all_personal_programs = PersonalProgram.where.not(id: current_user.personal_programs)
-    @my_personal_programs = @ku_user.personal_programs
+    @my_personal_programs = @ku_user.personal_programs.where("user_personal_programs.status = 'install'")
+    @all_personal_programs = PersonalProgram.where.not(id: @my_personal_programs)
   end
 
   # GET /personal_programs/1
@@ -31,7 +31,7 @@ class PersonalProgramsController < ApplicationController
 
     respond_to do |format|
       if @personal_program.save
-        format.html { redirect_to @personal_program, notice: 'Personal program was successfully created.' }
+        format.html { redirect_to personal_programs_path, notice: @personal_program.program_name + ' was successfully created.' }
         format.json { render :show, status: :created, location: @personal_program }
       else
         format.html { render :new }
@@ -45,7 +45,7 @@ class PersonalProgramsController < ApplicationController
   def update
     respond_to do |format|
       if @personal_program.update(personal_program_params)
-        format.html { redirect_to @personal_program, notice: 'Personal program was successfully updated.' }
+        format.html { redirect_to @personal_program, notice: @personal_program.program_name + ' was successfully updated.' }
         format.json { render :show, status: :ok, location: @personal_program }
       else
         format.html { render :edit }

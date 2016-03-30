@@ -39,7 +39,7 @@ class UserPersonalProgramsController < ApplicationController
       end
     else
       respond_to do |format|
-        if @ku_user.user_personal_programs.create(personal_program: @personal_program)
+        if @ku_user.user_personal_programs.create(personal_program: @personal_program, status: "install")
           format.html { redirect_to personal_programs_path, notice: 'Personal program was successfully added.' }
           format.json { render :show, status: :created, location: personal_programs_path }
         else
