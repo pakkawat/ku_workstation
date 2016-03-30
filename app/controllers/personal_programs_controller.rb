@@ -4,7 +4,9 @@ class PersonalProgramsController < ApplicationController
   # GET /personal_programs
   # GET /personal_programs.json
   def index
-    @personal_programs = PersonalProgram.all
+    @ku_user = current_user
+    @all_personal_programs = PersonalProgram.where.not(id: current_user.personal_programs)
+    @my_personal_programs = @ku_user.personal_programs
   end
 
   # GET /personal_programs/1
@@ -19,6 +21,7 @@ class PersonalProgramsController < ApplicationController
 
   # GET /personal_programs/1/edit
   def edit
+    @personal_program = PersonalProgram.find(params[:id])
   end
 
   # POST /personal_programs

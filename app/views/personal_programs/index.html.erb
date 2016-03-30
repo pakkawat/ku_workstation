@@ -27,3 +27,55 @@
 <br>
 
 <%= link_to 'New Personal program', new_personal_program_path %>
+
+
+
+
+
+<div class="row">
+  <div class="col-sm-12">
+    <span class="pull-left"><h1>Personal Programs</h1></span>
+    <span class="pull-right">
+
+    </span>
+  </div>
+</div>
+
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Personal programs</div>
+  <br>
+  	<table id="" class="datatable_display table table-striped">
+  		<thead>
+  			<tr>
+          <th>Program ID</th>
+  				<th>Program name</th>
+  				<th>Note</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render partial: "my_personal_programs", collection: @my_personal_programs, as: :program %>
+  		</tbody>
+	</table>
+</div>
+
+
+<div class="panel panel-default">
+  <!-- Default panel contents -->
+  <div class="panel-heading">All personal programs</div>
+  <br>
+  	<table id="" class="datatable_display table table-striped">
+  		<thead>
+  			<tr>
+          <th>Program ID</th>
+  				<th>Program name</th>
+  				<th>Note</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render partial: "all_personal_programs", collection: @all_personal_programs, as: :program %>
+  		</tbody>
+	</table>
+</div>

@@ -1,25 +1,67 @@
-<%= form_for(@personal_program) do |f| %>
-  <% if @personal_program.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@personal_program.errors.count, "error") %> prohibited this personal_program from being saved:</h2>
 
-      <ul>
-      <% @personal_program.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
+<div class="row">
+  <div class="col-sm-10">
 
-  <div class="field">
-    <%= f.label :program_name %><br>
-    <%= f.text_field :program_name %>
+        <div class="wizard">
+          <% if @personal_program.persisted? %>
+            <a class="current" href='<%= edit_personal_program_path(@personal_program) %>' ><%= @personal_program.program_name %></a>
+          <% else %>
+            <a class="current">Add new personal program</a>
+          <% end %>
+        </div>
+
   </div>
-  <div class="field">
-    <%= f.label :note %><br>
-    <%= f.text_area :note %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
+</div>
+<br><br>
+<%= form_for @personal_program do |f| %>
+<%= render 'shared/error_messages', object: f.object %>
+
+<div class="row">
+  <div class="col-sm-4"><!--left col-->
+    <ul class="list-group">
+
+      <li class="list-group-item text-muted">Information</li>
+      <li class="list-group-item text-right">
+        <span class="pull-left">
+            <strong>
+                <%= f.label :program_name,'Program name', class: "control-label" %>
+            </strong>
+        </span>
+        <%= f.text_field :program_name, class: "form-control" %>
+      </li>
+
+      <li class="list-group-item text-right">
+        <span class="pull-left">
+            <strong>
+                <%= f.label :note,'Program note', class: "control-label" %>
+            </strong>
+        </span>
+        <%= f.text_area(:note, rows: 10, class: 'form-control') %>
+      </li>
+
+      <li class="list-group-item text-center">
+        <% if @personal_program.persisted? %>
+            <%= f.submit "Update program", class: "btn btn-primary" %>
+        <% else %>
+            <%= f.submit "Add program", class: "btn btn-success" %>
+        <% end %>
+      </li>
+
+    </ul>
+  </div><!--/col-4-->
+
+
+<%= hidden_field_tag :personal_program_id, @personal_program.id %>
+
 <% end %>
+
+<% if @personal_program.persisted? %>
+<div class="col-sm-6">
+ personal_program.persisted
+</div><!--/col-6-->
+<% end %>
+</div><!--row-->
+
+<%= javascript_include_tag "programs/btn_expand_collapse.js"%>
+<%= javascript_include_tag "programs/html.sortable.js"%>
+<%= javascript_include_tag "programs/sort.js"%>

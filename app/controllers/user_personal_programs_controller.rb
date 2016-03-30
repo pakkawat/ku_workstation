@@ -1,5 +1,5 @@
 class UserPersonalProgramsController < ApplicationController
-  before_action :set_user_personal_program, only: [:show, :edit, :update, :destroy]
+  before_action :set_user_personal_program, only: [:show, :edit, :update]
 
   # GET /user_personal_programs
   # GET /user_personal_programs.json
@@ -24,17 +24,31 @@ class UserPersonalProgramsController < ApplicationController
   # POST /user_personal_programs
   # POST /user_personal_programs.json
   def create
-    @user_personal_program = UserPersonalProgram.new(user_personal_program_params)
-
-    respond_to do |format|
-      if @user_personal_program.save
-        format.html { redirect_to @user_personal_program, notice: 'User personal program was successfully created.' }
-        format.json { render :show, status: :created, location: @user_personal_program }
-      else
-        format.html { render :new }
-        format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+    @ku_user = current_user
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
+    user_personal_program = @ku_user.user_personal_programs.find_by(personal_program_id: @personal_program)
+    if user_personal_program.present?
+      respond_to do |format|
+        if user_personal_program.update_attribute(:status, "install")
+          format.html { redirect_to personal_programs_path, notice: 'Personal program was successfully added.' }
+          format.json { render :show, status: :created, location: personal_programs_path }
+        else
+          format.html { redirect_to personal_programs_path }
+          format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      respond_to do |format|
+        if @ku_user.user_personal_programs.create(personal_program: @personal_program)
+          format.html { redirect_to personal_programs_path, notice: 'Personal program was successfully added.' }
+          format.json { render :show, status: :created, location: personal_programs_path }
+        else
+          format.html { redirect_to personal_programs_path }
+          format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+        end
       end
     end
+
   end
 
   # PATCH/PUT /user_personal_programs/1
@@ -54,10 +68,17 @@ class UserPersonalProgramsController < ApplicationController
   # DELETE /user_personal_programs/1
   # DELETE /user_personal_programs/1.json
   def destroy
-    @user_personal_program.destroy
+    @ku_user = current_user
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
+
     respond_to do |format|
-      format.html { redirect_to user_personal_programs_url, notice: 'User personal program was successfully destroyed.' }
-      format.json { head :no_content }
+      if @ku_user.user_personal_programs.find_by(personal_program_id: @personal_program.id).update_attribute(:status, "uninstall")
+        format.html { redirect_to personal_programs_path, notice: 'Personal program was successfully deleted.' }
+        format.json { render :show, status: :created, location: personal_programs_path }
+      else
+        format.html { redirect_to personal_programs_path }
+        format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+      end
     end
   end
 
