@@ -1,5 +1,5 @@
 module PersonalProgramsHelper
-  def expand_collapse_for(chef_resource, ku_user)
+  def personal_program_expand_collapse_for(chef_resource, ku_user)
     render html: ExpandCollapse.new(chef_resource, ku_user).html
   end
 
