@@ -29,7 +29,7 @@ module PersonalChefResourcesHelper
 
 
   def personal_chef_resource_form
-    form_for(@personal_chef_resource, :url => edit_personal_program_personal_chef_resource_path(personal_program_id: @personal_program.id, id: @personal_chef_resource.id)) { |f| yield f }
+    form_for(@personal_chef_resource, :url => personal_program_personal_chef_resource_path(personal_program_id: @personal_program.id, id: @personal_chef_resource.id)) { |f| yield f }
   end
 
 

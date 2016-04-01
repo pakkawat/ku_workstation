@@ -1,41 +1,10 @@
-<%= form_for(@personal_chef_resource) do |f| %>
-  <% if @personal_chef_resource.errors.any? %>
-    <div id="error_explanation">
-      <h2><%= pluralize(@personal_chef_resource.errors.count, "error") %> prohibited this personal_chef_resource from being saved:</h2>
-
-      <ul>
-      <% @personal_chef_resource.errors.full_messages.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-      </ul>
-    </div>
-  <% end %>
-
-  <div class="field">
-    <%= f.label :resource_type %><br>
-    <%= f.text_field :resource_type %>
-  </div>
-  <div class="field">
-    <%= f.label :priority %><br>
-    <%= f.number_field :priority %>
-  </div>
-  <div class="actions">
-    <%= f.submit %>
-  </div>
-<% end %>
-
-
-
-
-
-
 
 <div class="row">
   <div class="col-sm-10">
 
     <div class="wizard">
         <a href='<%= edit_personal_program_path(@personal_program) %>' ><%= @personal_program.program_name %></a>
-        <a class="current" href='<%= edit_personal_chef_resource_path(personal_program_id: @personal_program.id, id: @personal_chef_resource.id) %>' ><%= resource_type_full_name(@personal_chef_resource.resource_type) %></a>
+        <a class="current" href='<%= edit_personal_program_personal_chef_resource_path(personal_program_id: @personal_program.id, id: @personal_chef_resource.id) %>' ><%= resource_type_full_name(@personal_chef_resource.resource_type) %></a>
     </div>
 
   </div>
