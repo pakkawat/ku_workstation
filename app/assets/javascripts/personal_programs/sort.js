@@ -33,7 +33,7 @@ ready = function(){
         $.ajax({
             type: "PUT",
             url: '/personal_programs/sort',
-            data: { program_id: document.getElementById("personal_program_id").value, order: updated_order },
+            data: { personal_program_id: document.getElementById("personal_program_id").value, order: updated_order },
             error: function(xhr, status, error){
               alert(xhr.responseText);
             }

@@ -65,6 +65,14 @@ class PersonalProgramsController < ApplicationController
     end
   end
 
+    def sort
+      personal_program = PersonalProgram.find(params[:personal_program_id])
+      params[:order].each do |key,value|
+        personal_program.personal_chef_resources.find_by(id: value[:id]).update_attribute(:priority,value[:position])
+      end
+      render :nothing => true
+    end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_personal_program
@@ -74,14 +82,6 @@ class PersonalProgramsController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def personal_program_params
       params.require(:personal_program).permit(:program_name, :note)
-    end
-
-    def sort
-      personal_program = PersonalProgram.find(params[:personal_program_id])
-      params[:order].each do |key,value|
-        personal_program.personal_chef_resources.find_by(id: value[:id]).update_attribute(:priority,value[:position])
-      end
-      render :nothing => true
     end
 
     def check_config_file
