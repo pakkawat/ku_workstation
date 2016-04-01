@@ -77,8 +77,9 @@ class PersonalProgramsController < ApplicationController
     end
 
     def sort
+      personal_program = PersonalProgram.find(params[:personal_program_id])
       params[:order].each do |key,value|
-        @personal_program.personal_chef_resources.find_by(id: value[:id]).update_attribute(:priority,value[:position])
+        personal_program.personal_chef_resources.find_by(id: value[:id]).update_attribute(:priority,value[:position])
       end
       render :nothing => true
     end
