@@ -1,5 +1,5 @@
 class UserPersonalProgramsController < ApplicationController
-  before_action :set_user_personal_program, only: [:show, :edit, :update]
+  before_action :set_user_personal_program, only: [:show, :edit, :update, :destroy]
 
   # GET /user_personal_programs
   # GET /user_personal_programs.json
@@ -30,7 +30,7 @@ class UserPersonalProgramsController < ApplicationController
     if user_personal_program.present?
       respond_to do |format|
         if user_personal_program.update_attribute(:status, "install")
-          format.html { redirect_to personal_programs_path, notice: 'Personal program was successfully added.' }
+          format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully added." } }
           format.json { render :show, status: :created, location: personal_programs_path }
         else
           format.html { redirect_to personal_programs_path }
@@ -40,7 +40,7 @@ class UserPersonalProgramsController < ApplicationController
     else
       respond_to do |format|
         if @ku_user.user_personal_programs.create(personal_program: @personal_program, status: "install")
-          format.html { redirect_to personal_programs_path, notice: 'Personal program was successfully added.' }
+          format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully added." } }
           format.json { render :show, status: :created, location: personal_programs_path }
         else
           format.html { redirect_to personal_programs_path }
@@ -73,7 +73,7 @@ class UserPersonalProgramsController < ApplicationController
 
     respond_to do |format|
       if @ku_user.user_personal_programs.find_by(personal_program_id: @personal_program.id).update_attribute(:status, "uninstall")
-        format.html { redirect_to personal_programs_path, notice: 'Personal program was successfully deleted.' }
+        format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
         format.json { render :show, status: :created, location: personal_programs_path }
       else
         format.html { redirect_to personal_programs_path }
