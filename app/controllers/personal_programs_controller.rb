@@ -21,6 +21,7 @@ class PersonalProgramsController < ApplicationController
 
   # GET /personal_programs/1/edit
   def edit
+    @ku_user = current_user
     @personal_program = PersonalProgram.find(params[:id])
   end
 
@@ -74,4 +75,47 @@ class PersonalProgramsController < ApplicationController
     def personal_program_params
       params.require(:personal_program).permit(:program_name, :note)
     end
+
+    def sort
+      params[:order].each do |key,value|
+        @personal_program.personal_chef_resources.find_by(id: value[:id]).update_attribute(:priority,value[:position])
+      end
+      render :nothing => true
+    end
+
+    def check_config_file
+      personal_chef_resources = @personal_program.personal_chef_resources.where(:resource_type => "Config_file")
+      if personal_chef_resources.any?
+        personal_chef_resources.each do |personal_chef_resource|
+          value = personal_chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
+          if !value.nil?
+            file_name = File.basename(value)
+            file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + file_name + ".erb"
+            if !File.exists?(file_full_path)
+              donwload_config_file(file_name, file_full_path)
+            end
+          end
+        end
+      end
+    end
+
+    def donwload_config_file(file_name, file_full_path)
+      require 'chef'
+      require 'open-uri'
+      error = false
+      #ku_id = KuUser.where(id: UsersProgram.where(:program_id => @program.id).uniq.pluck(:ku_user_id)).pluck(:ku_id).first
+      Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
+      query = Chef::Search::Query.new
+      nodes = query.search('node', 'name:' + @ku_user.ku_id).first rescue []
+      node = nodes.first
+      begin
+        download = open("http://" + node.ec2.public_hostname + ":8080/sharedfile/" + file_name)
+      rescue
+        error = true
+      end
+      if !error
+        IO.copy_stream(download, file_full_path)
+      end
+    end
+
 end

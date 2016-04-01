@@ -137,7 +137,7 @@ class ChefResourcesController < ApplicationController
   def destroy
     @chef_resource.destroy
     respond_to do |format|
-      format.html { redirect_to chef_resources_url, notice: 'Chef resource was successfully destroyed.' }
+      format.html { redirect_to chef_resources_url, notice: 'Action was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
@@ -269,7 +269,7 @@ class ChefResourcesController < ApplicationController
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
               source_file = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-              destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+              destination_file = @chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
               src_file_extname = File.extname(source_file)
               if src_file_extname == ""
                 add_remove_resource(destination_file, "folder")

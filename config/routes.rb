@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     resources :personal_chef_resources # = Chef_resources
     resources :personal_program_chefs
     resources :user_personal_programs
+    put :sort, on: :collection
   end
 
   resources :chef_values
