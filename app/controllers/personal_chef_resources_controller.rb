@@ -20,7 +20,7 @@ class PersonalChefResourcesController < ApplicationController
   # GET /personal_chef_resources/1/edit
   def edit
     @ku_user = current_user
-
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
     @property_count = 0
     case @personal_chef_resource.resource_type
     when "Repository"

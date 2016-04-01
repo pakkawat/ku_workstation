@@ -23,3 +23,457 @@
     <%= f.submit %>
   </div>
 <% end %>
+
+
+
+
+
+
+
+<div class="row">
+  <div class="col-sm-10">
+
+    <div class="wizard">
+        <a href='<%= edit_personal_program_path(@personal_program) %>' ><%= @personal_program.program_name %></a>
+        <a class="current" href='<%= edit_personal_chef_resource_path(personal_program_id: @personal_program.id, id: @personal_chef_resource.id) %>' ><%= resource_type_full_name(@personal_chef_resource.resource_type) %></a>
+    </div>
+
+  </div>
+</div>
+<br><br>
+
+<%= personal_chef_resource_form do |f| %>
+
+<%= render 'shared/error_messages', object: f.object %>
+
+<div class="row">
+  <div class="col-sm-4"><!--left col-->
+    <ul class="list-group">
+
+      <li class="list-group-item text-muted">Information</li>
+      <li class="list-group-item text-right">
+        <span class="pull-left">
+            <strong>
+                <%= f.label :resource_type,'Action', class: "control-label" %>
+            </strong>
+        </span>
+        <%= f.text_field :resource_type, class: "form-control", value:resource_type_full_name(@personal_chef_resource.resource_type), disabled: true %>
+      </li>
+
+      <li class="list-group-item">
+        <span class="pull-left">
+            <strong>
+                <%= f.label :related_program,'Related program', class: "control-label" %>
+            </strong>
+        </span>
+        <br><br>
+        <ul>
+          <% @personal_chef_resource.personal_programs.each do |program| %>
+            <li><%= link_to program.program_name, edit_personal_program_path(program) %></li>
+          <% end %>
+        </ul>
+      </li>
+
+      <li class="list-group-item text-center">
+        <%= f.submit "Update action", class: "btn btn-primary" %>
+      </li>
+
+    </ul>
+  </div><!--/col-4-->
+
+
+
+<div class="col-sm-6">
+  <div class="row">
+      <div class="well well-sm" style="background: #D8D8D8;">
+        <div class="row">
+          <div class="col-md-12">
+
+
+
+
+
+
+            <% case @personal_chef_resource.resource_type %>
+            <% when "Repository" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <div class='form-group'>
+                  <label for='name'>
+                    <%= property.label :program_name %>
+                  </label>
+                  <div class='input-group'>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-book'></span></span>
+                    <%= property.text_field :value, class: "form-control" %>
+                  </div>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "program_name" %>
+                  <% end %>
+              </div>
+              <% end %>
+            <% when "Deb", "Source" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :program_name %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-book'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "program_name" %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :source_file %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "source_file" %>
+                  <% end %>
+                  </div>
+                <% end %>
+                <% @property_count = @property_count + 1 %>
+              <% end %>
+            <% when "Download" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :download_url %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-save-file'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "download_url" %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :source_file %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "source_file" %>
+                    <% end %>
+                  </div>
+                <% end %>
+                <% @property_count = @property_count + 1 %>
+              <% end %>
+            <% when "Extract" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :source_file %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-save-file'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "source_file" %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :extract_to %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-folder-open'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "extract_to" %>
+                    <% end %>
+                  </div>
+                <% end %>
+                <% @property_count = @property_count + 1 %>
+              <% end %>
+              <% when "Config_file" %>
+                <%= f.fields_for :chef_properties do |property| %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :file_path %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-book'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "config_file" %>
+                    <% end %>
+                </div>
+                <div class='form-group'>
+                  <% if @data != nil %>
+                    <label for='name'>
+                      <%= property.label :file_content %>
+                    </label>
+                    <div class='input-group'>
+                      <%= text_area_tag(:config_file_value, @data, :size => "63x60", class: 'form-control') %>
+                    </div>
+                  <% else %>
+                    <label for='name'>
+                      <%= property.label :file_status %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><%= image_tag "error.png" %></span>
+                      <%= text_field_tag 'error', 'File not found', disabled: true, class: "form-control" %>
+                    </div>
+                  <% end %>
+                </div>
+                <% end %>
+                <% when "Copy_file" %>
+                  <%= f.fields_for :chef_properties do |property| %>
+                    <% if @property_count == 0 %>
+                      <div class='form-group'>
+                        <label for='name'>
+                          <%= property.label :copy %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><span class='glyphicon glyphicon-list-alt'></span></span>
+                          <%= property.select :value, [['File', 'file'], ['Folder', 'folder']], {}, {:class => "form-control"} %>
+                        </div>
+                        <% if property.object.id != nil %>
+                          <%= property.hidden_field :value_type %>
+                        <% else %>
+                          <%= property.hidden_field :value_type, :value => "copy_type" %>
+                        <% end %>
+                      </div>
+                    <% elsif @property_count == 1 %>
+                      <div class='form-group'>
+                        <label for='name'>
+                          <%= property.label :source %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                          <%= property.text_field :value, class: "form-control" %>
+                        </div>
+                        <% if property.object.id != nil %>
+                          <%= property.hidden_field :value_type %>
+                        <% else %>
+                          <%= property.hidden_field :value_type, :value => "source_file" %>
+                        <% end %>
+                      </div>
+                    <% else %>
+                      <div class='form-group'>
+                        <label for='name'>
+                          <%= property.label :destination %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                          <%= property.text_field :value, class: "form-control" %>
+                        </div>
+                        <% if property.object.id != nil %>
+                          <%= property.hidden_field :value_type %>
+                        <% else %>
+                          <%= property.hidden_field :value_type, :value => "destination_file" %>
+                        <% end %>
+                      </div>
+                    <% end %>
+                    <% @property_count = @property_count + 1 %>
+                  <% end %>
+
+
+                  <% when "Create_file" %>
+                    <%= f.fields_for :chef_properties do |property| %>
+                      <div class='form-group'>
+                        <label for='name'>
+                          <%= property.label :file %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                          <%= property.text_field :value, class: "form-control" %>
+                        </div>
+                        <% if property.object.id != nil %>
+                          <%= property.hidden_field :value_type %>
+                        <% else %>
+                          <%= property.hidden_field :value_type, :value => "created_file" %>
+                        <% end %>
+                    </div>
+                    <div class='form-group'>
+                      <% if @program != nil %>
+                        <label for='name'>
+                          <%= property.label :file_content %>
+                        </label>
+                        <div class='input-group'>
+                          <%= text_area_tag(:created_file_content, @data, :size => "63x60", class: 'form-control') %>
+                        </div>
+                      <% else %>
+                        <label for='name'>
+                          <%= property.label :file_status %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><%= image_tag "error.png" %></span>
+                          <%= text_field_tag 'error', 'File not found, please select program before edit file', disabled: true, class: "form-control" %>
+                        </div>
+                      <% end %>
+                    </div>
+                    <% end %>
+
+
+
+          <% when "Move_file" %>
+            <%= f.fields_for :chef_properties do |property| %>
+              <% if @property_count == 0 %>
+                <div class='form-group'>
+                  <label for='name'>
+                    <%= property.label :source_file %>
+                  </label>
+                  <div class='input-group'>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                    <%= property.text_field :value, class: "form-control" %>
+                  </div>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "source_file" %>
+                  <% end %>
+                </div>
+              <% else %>
+                <div class='form-group'>
+                  <label for='name'>
+                    <%= property.label :destination %>
+                  </label>
+                  <div class='input-group'>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-folder-open'></span></span>
+                    <%= property.text_field :value, class: "form-control" %>
+                  </div>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "destination_file" %>
+                  <% end %>
+                </div>
+              <% end %>
+              <% @property_count = @property_count + 1 %>
+            <% end %>
+
+
+            <% when "Execute_command" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :condition %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-list-alt'></span></span>
+                      <%= property.select :value, [['Only once', 'once'], ['Alway run', 'alway']], {}, {:class => "form-control"} %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "condition" %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :execute_command %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-play'></span></span>
+                      <%= property.text_field :value, class: "form-control" %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "execute_command" %>
+                    <% end %>
+                  </div>
+                <% end %> <!-- if @property_count == 0 -->
+                <% @property_count = @property_count + 1 %>
+              <% end %>
+
+
+
+            <% when "Bash_script" %>
+              <%= f.fields_for :chef_properties do |property| %>
+                <% if @property_count == 0 %>
+                  <div class='form-group'>
+                    <label for='name'>
+                      <%= property.label :condition %>
+                    </label>
+                    <div class='input-group'>
+                      <span class='input-group-addon'><span class='glyphicon glyphicon-list-alt'></span></span>
+                      <%= property.select :value, [['Only once', 'once'], ['Alway run', 'alway']], {}, {:class => "form-control"} %>
+                    </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "condition" %>
+                    <% end %>
+                  </div>
+                <% else %>
+                  <%= property.hidden_field :value %>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "bash_script" %>
+                  <% end %>
+                  <div class='form-group'>
+                      <label for='name'>
+                        <%= property.label :bash_script %>
+                      </label>
+                      <div class='input-group'>
+                        <%= text_area_tag(:bash_script_content, @data, :size => "63x60", class: 'form-control') %>
+                      </div>
+                  </div>
+                <% end %> <!-- if @property_count == 0 -->
+                <% @property_count = @property_count + 1 %>
+              <% end %>
+
+
+
+
+            <% end %>
+
+
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+
+
+</div><!--/col-6-->
+
+</div><!--row-->
+
+
+
+<% end %><!--  form_for @chef_resource do |f| -->

@@ -22,7 +22,7 @@ class PersonalProgramsController < ApplicationController
   # GET /personal_programs/1/edit
   def edit
     @ku_user = current_user
-    @personal_program = PersonalProgram.find(params[:id])
+    #@personal_program = PersonalProgram.find(params[:id])
   end
 
   # POST /personal_programs
