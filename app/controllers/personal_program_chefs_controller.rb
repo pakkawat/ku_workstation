@@ -57,7 +57,7 @@ class PersonalProgramChefsController < ApplicationController
   def destroy
     @personal_program = PersonalProgram.find(params[:personal_program_id])
     @personal_chef_resource = PersonalChefResource.find(@personal_program_chef.personal_chef_resource_id)
-    #add_remove_resource
+    add_remove_resource
     @personal_program_chef.destroy
     respond_to do |format|
       format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully destroyed." } }

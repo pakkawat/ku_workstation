@@ -110,7 +110,7 @@ class PersonalChefResourcesController < ApplicationController
     @ku_user = current_user
     @personal_program = PersonalProgram.find(params[:personal_program_id])
     @property_count = 0
-    #find_unuse_program_and_file
+    find_unuse_program_and_file
     respond_to do |format|
       if @personal_chef_resource.update(personal_chef_resource_params)
         format.html { redirect_to edit_personal_program_personal_chef_resource_path(@personal_program, @personal_chef_resource), :flash => { :success => "Action was successfully updated." } }
@@ -125,9 +125,10 @@ class PersonalChefResourcesController < ApplicationController
   # DELETE /personal_chef_resources/1
   # DELETE /personal_chef_resources/1.json
   def destroy
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
     @personal_chef_resource.destroy
     respond_to do |format|
-      format.html { redirect_to personal_chef_resources_url, notice: 'Action was successfully destroyed.' }
+      format.html { redirect_to personal_program_personal_chef_resources_path(@personal_program), :flash => { :success => "Action was successfully destroyed." } }
       format.json { head :no_content }
     end
   end
