@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160329095659) do
+ActiveRecord::Schema.define(version: 20160401065812) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -217,6 +217,17 @@ ActiveRecord::Schema.define(version: 20160329095659) do
     t.datetime "updated_at",          null: false
   end
 
+  create_table "user_remove_resources", force: :cascade do |t|
+    t.integer "ku_user_id"
+    t.integer "personal_program_id"
+    t.integer "personal_chef_resource_id"
+    t.string  "resource_type"
+    t.string  "value"
+    t.string  "value_type"
+  end
+
+  add_index "user_remove_resources", ["ku_user_id"], name: "index_user_remove_resources_on_ku_user_id", using: :btree
+
   create_table "user_subjects", force: :cascade do |t|
     t.integer "ku_user_id"
     t.integer "subject_id"
@@ -237,4 +248,5 @@ ActiveRecord::Schema.define(version: 20160329095659) do
 
   add_foreign_key "program_files", "programs"
   add_foreign_key "remove_resources", "programs"
+  add_foreign_key "user_remove_resources", "ku_users"
 end

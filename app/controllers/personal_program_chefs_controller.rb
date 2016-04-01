@@ -24,7 +24,7 @@ class PersonalProgramChefsController < ApplicationController
   # POST /personal_program_chefs
   # POST /personal_program_chefs.json
   def create
-    @personal_program = PersonalProgram.find(params[:program_id])
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
     @personal_chef_resource = PersonalChefResource.new(resource_type: params[:chef_resource_type])
 
     respond_to do |format|
