@@ -34,7 +34,7 @@ class PersonalChefResourcesController < ApplicationController
       end
     when "Config_file"
       @data = nil
-      @personal_chef_resource.chef_attributes.build
+      #@personal_chef_resource.chef_attributes.build
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
       else
@@ -56,7 +56,7 @@ class PersonalChefResourcesController < ApplicationController
       end
     when "Create_file"
       @data = nil
-      @personal_chef_resource.chef_attributes.build
+      #@personal_chef_resource.chef_attributes.build
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
       else
@@ -72,7 +72,7 @@ class PersonalChefResourcesController < ApplicationController
       end
     when "Bash_script"
       @data = "#!/bin/bash"
-      @personal_chef_resource.chef_attributes.build
+      #@personal_chef_resource.chef_attributes.build
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
         @personal_chef_resource.chef_properties.build
@@ -112,7 +112,7 @@ class PersonalChefResourcesController < ApplicationController
     #find_unuse_program_and_file
     respond_to do |format|
       if @personal_chef_resource.update(personal_chef_resource_params)
-        format.html { redirect_to edit_personal_program_personal_chef_resource_path(@personal_program, @personal_chef_resource), notice: 'Action was successfully updated.' }
+        format.html { redirect_to edit_personal_program_personal_chef_resource_path(@personal_program, @personal_chef_resource), :flash => { :success => "Action was successfully updated." } }
         format.json { render :show, status: :ok, location: edit_personal_program_personal_chef_resource_path(@personal_program, @personal_chef_resource) }
       else
         format.html { render :edit }

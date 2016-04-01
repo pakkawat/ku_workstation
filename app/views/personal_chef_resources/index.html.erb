@@ -1,29 +1,19 @@
-<p id="notice"><%= notice %></p>
 
-<h1>Listing Personal Chef Resources</h1>
-
-<table>
-  <thead>
-    <tr>
-      <th>Resource type</th>
-      <th>Priority</th>
-      <th colspan="3"></th>
-    </tr>
-  </thead>
-
-  <tbody>
-    <% @personal_chef_resources.each do |personal_chef_resource| %>
-      <tr>
-        <td><%= personal_chef_resource.resource_type %></td>
-        <td><%= personal_chef_resource.priority %></td>
-        <td><%= link_to 'Show', personal_chef_resource %></td>
-        <td><%= link_to 'Edit', edit_personal_chef_resource_path(personal_chef_resource) %></td>
-        <td><%= link_to 'Destroy', personal_chef_resource, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
-
-<br>
-
-<%= link_to 'New Personal chef resource', new_personal_chef_resource_path %>
+<div class="panel panel-primary">
+  <!-- Default panel contents -->
+  <div class="panel-heading">Action index</div>
+  <br>
+  	<table id="" class="datatable_display table table-striped">
+  		<thead>
+  			<tr>
+  				<th>Action ID</th>
+  				<th>Action type</th>
+  				<th>Related program</th>
+  				<th>Action</th>
+  			</tr>
+  		</thead>
+  		<tbody>
+  			<%= render @personal_chef_resources %>
+  		</tbody>
+	</table>
+</div>
