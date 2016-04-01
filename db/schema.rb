@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160401065812) do
+ActiveRecord::Schema.define(version: 20160401082744) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -36,11 +36,13 @@ ActiveRecord::Schema.define(version: 20160401065812) do
     t.string   "value"
     t.string   "value_type"
     t.integer  "chef_resource_id"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+    t.integer  "personal_chef_resource_id"
   end
 
   add_index "chef_properties", ["chef_resource_id"], name: "index_chef_properties_on_chef_resource_id", using: :btree
+  add_index "chef_properties", ["personal_chef_resource_id"], name: "index_chef_properties_on_personal_chef_resource_id", using: :btree
 
   create_table "chef_resources", force: :cascade do |t|
     t.string   "resource_type"
@@ -246,6 +248,7 @@ ActiveRecord::Schema.define(version: 20160401065812) do
   add_index "users_programs", ["ku_user_id"], name: "index_users_programs_on_ku_user_id", using: :btree
   add_index "users_programs", ["program_id"], name: "index_users_programs_on_program_id", using: :btree
 
+  add_foreign_key "chef_properties", "personal_chef_resources"
   add_foreign_key "program_files", "programs"
   add_foreign_key "remove_resources", "programs"
   add_foreign_key "user_remove_resources", "ku_users"
