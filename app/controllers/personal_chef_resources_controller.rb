@@ -5,6 +5,7 @@ class PersonalChefResourcesController < ApplicationController
   # GET /personal_chef_resources.json
   def index
     @personal_chef_resources = PersonalChefResource.all
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
   end
 
   # GET /personal_chef_resources/1
