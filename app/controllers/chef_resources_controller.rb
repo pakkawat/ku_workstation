@@ -188,7 +188,7 @@ class ChefResourcesController < ApplicationController
             if value[:value_type] == "source_file"
               chef_property = ChefProperty.find(value[:id])
               if chef_property.value != value[:value]
-                value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+                value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
                 add_remove_resource(value, "program")
               end
             end
@@ -200,7 +200,7 @@ class ChefResourcesController < ApplicationController
             if value[:value_type] == "source_file"
               chef_property = ChefProperty.find(value[:id])
               if chef_property.value != value[:value]
-                value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value)
+                value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
                 add_remove_resource(value, "program")
               end
             end
@@ -211,7 +211,7 @@ class ChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
+              value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
               add_remove_resource(value, "file")
             end
           end
@@ -221,7 +221,7 @@ class ChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value)
+              value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
               add_remove_resource(value, "folder")
             end
           end
@@ -268,8 +268,8 @@ class ChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              source_file = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value)
-              destination_file = @chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value)
+              source_file = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+              destination_file = @chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
               src_file_extname = File.extname(source_file)
               if src_file_extname == ""
                 add_remove_resource(destination_file, "folder")
