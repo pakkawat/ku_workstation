@@ -111,6 +111,8 @@ class KuUserJob < ProgressJob::Base
       file.puts "  mode '0755'"
       file.puts "end"
       file.puts ""
+      file.puts "include_recipe '#{@user.ku_id}::user_remove_disuse_resources'"
+      file.puts "include_recipe '#{@user.ku_id}::user_personal_program_list'"
     end
 
     file_path = "/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/templates/noauth-config.xml.erb"
@@ -132,6 +134,14 @@ class KuUserJob < ProgressJob::Base
     end
 
     output = File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/attributes/user_config.rb","w")
+    output << ""
+    output.close
+
+    output = File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_remove_disuse_resources.rb","w")
+    output << ""
+    output.close
+
+    output = File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_personal_program_list.rb","w")
     output << ""
     output.close
   end

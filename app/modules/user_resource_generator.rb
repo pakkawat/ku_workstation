@@ -1,56 +1,58 @@
-module ResourceGenerator
-#require 'uri'
-	def ResourceGenerator.resource(chef_resource)
+module UserResourceGenerator
+
+	def UserResourceGenerator.install_resource(chef_resource, kuuser)
+    @kuuser = kuuser
 		if chef_resource.resource_type == "Repository"
-			ResourceGenerator.install_from_repository(chef_resource)
+			UserResourceGenerator.install_from_repository(chef_resource)
 		elsif chef_resource.resource_type == "Deb"
-			ResourceGenerator.install_from_deb(chef_resource)
+			UserResourceGenerator.install_from_deb(chef_resource)
 		elsif chef_resource.resource_type == "Source"
-			ResourceGenerator.install_from_source(chef_resource)
+			UserResourceGenerator.install_from_source(chef_resource)
 		elsif chef_resource.resource_type == "Download"
-			ResourceGenerator.download_file(chef_resource)
+			UserResourceGenerator.download_file(chef_resource)
 		elsif chef_resource.resource_type == "Extract"
-			ResourceGenerator.extract_file(chef_resource)
+			UserResourceGenerator.extract_file(chef_resource)
 		elsif chef_resource.resource_type == "Copy_file"
-			ResourceGenerator.copy_file(chef_resource)
+			UserResourceGenerator.copy_file(chef_resource)
 		elsif chef_resource.resource_type == "Create_file"
-			ResourceGenerator.create_file(chef_resource)
+			UserResourceGenerator.create_file(chef_resource)
 		elsif chef_resource.resource_type == "Move_file"
-			ResourceGenerator.move_file(chef_resource)
+			UserResourceGenerator.move_file(chef_resource)
 		elsif chef_resource.resource_type == "Execute_command"
-			ResourceGenerator.execute_command(chef_resource)
+			UserResourceGenerator.execute_command(chef_resource)
 		elsif chef_resource.resource_type == "Bash_script"
-			ResourceGenerator.bash_script(chef_resource)
+			UserResourceGenerator.bash_script(chef_resource)
 		end
 	end
 
-	def ResourceGenerator.uninstall_resource(chef_resource)
+	def UserResourceGenerator.uninstall_resource(chef_resource, kuuser)
+    @kuuser = kuuser
 		if chef_resource.resource_type == "Repository"
-			ResourceGenerator.uninstall_from_repository(chef_resource)
+			UserResourceGenerator.uninstall_from_repository(chef_resource)
 		elsif chef_resource.resource_type == "Deb"
-			ResourceGenerator.uninstall_from_deb(chef_resource)
+			UserResourceGenerator.uninstall_from_deb(chef_resource)
 		elsif chef_resource.resource_type == "Source"
-			ResourceGenerator.uninstall_from_source(chef_resource)
+			UserResourceGenerator.uninstall_from_source(chef_resource)
 		elsif chef_resource.resource_type == "Download"
-			ResourceGenerator.delete_download_file(chef_resource)
+			UserResourceGenerator.delete_download_file(chef_resource)
 		elsif chef_resource.resource_type == "Extract"
-			ResourceGenerator.delete_extract_file(chef_resource)
+			UserResourceGenerator.delete_extract_file(chef_resource)
 		elsif chef_resource.resource_type == "Copy_file"
-			ResourceGenerator.delete_copy_file(chef_resource)
+			UserResourceGenerator.delete_copy_file(chef_resource)
 		elsif chef_resource.resource_type == "Create_file"
-			ResourceGenerator.delete_create_file(chef_resource)
+			UserResourceGenerator.delete_create_file(chef_resource)
 		elsif chef_resource.resource_type == "Move_file"
-			ResourceGenerator.delete_move_file(chef_resource)
+			UserResourceGenerator.delete_move_file(chef_resource)
 		elsif chef_resource.resource_type == "Config_file"
-			ResourceGenerator.delete_config_file(chef_resource)
+			UserResourceGenerator.delete_config_file(chef_resource)
 		elsif chef_resource.resource_type == "Bash_script"
-			ResourceGenerator.delete_bash_script_file(chef_resource)
+			UserResourceGenerator.delete_bash_script_file(chef_resource)
 		elsif chef_resource.resource_type == "Execute_command"
-			ResourceGenerator.delete_execute_command_file(chef_resource)
+			UserResourceGenerator.delete_execute_command_file(chef_resource)
 		end
 	end
 
-	def ResourceGenerator.install_from_repository(chef_resource)
+	def UserResourceGenerator.install_from_repository(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "\%w\{#{value}\}.each do \|pkg\|\n"
@@ -62,7 +64,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.uninstall_from_repository(chef_resource)
+	def UserResourceGenerator.uninstall_from_repository(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "\%w\{#{value}\}.each do \|pkg\|\n"
@@ -74,7 +76,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.install_from_deb2(chef_resource)
+	def UserResourceGenerator.install_from_deb2(chef_resource)
 		source_file = chef_resource.chef_attributes.where(:att_type => "source_file").pluck(:att_value).first
 		str_code = ""
 		str_code += "src_filepath = \"\#\{Chef::Config\[:file_cache_path\]\}\/#{source_file}\"\n"
@@ -87,7 +89,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.install_from_deb(chef_resource)
+	def UserResourceGenerator.install_from_deb(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 
@@ -111,7 +113,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.uninstall_from_deb(chef_resource)
+	def UserResourceGenerator.uninstall_from_deb(chef_resource)
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "dpkg_package '#{program_name}' do\n"
@@ -121,7 +123,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.install_from_source(chef_resource)
+	def UserResourceGenerator.install_from_source(chef_resource)
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		#src_paths, src_last_path = get_path(source_file)
@@ -142,7 +144,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.uninstall_from_source(chef_resource)
+	def UserResourceGenerator.uninstall_from_source(chef_resource)
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "#{program_name} uninstall_from_source\n"
@@ -150,7 +152,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.download_file(chef_resource)
+	def UserResourceGenerator.download_file(chef_resource)
 		url = chef_resource.chef_properties.where(:value_type => "download_url").pluck(:value).first
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 
@@ -178,7 +180,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.delete_download_file(chef_resource)
+	def UserResourceGenerator.delete_download_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 
 		#src_path = File.dirname(source_file)
@@ -193,7 +195,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.extract_file(chef_resource)
+	def UserResourceGenerator.extract_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 
@@ -227,7 +229,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.delete_extract_file(chef_resource)
+	def UserResourceGenerator.delete_extract_file(chef_resource)
 		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 
 		#des_path = File.dirname(extract_to)
@@ -243,7 +245,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.config_file(chef_resource, program)
+	def UserResourceGenerator.config_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
 
 		#src_path = File.dirname(source_file)
@@ -251,7 +253,7 @@ module ResourceGenerator
 		#src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
-		if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + src_file_name + ".erb")
+		if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb")
 			str_code += "template '#{source_file}' do\n"
 			str_code += "  source '#{src_file_name}.erb'\n"
 			str_code += "  owner 'root'\n"
@@ -269,7 +271,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.delete_config_file(chef_resource)
+	def UserResourceGenerator.delete_config_file(chef_resource)
 		file_name = File.basename(chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first)
 
 		str_code = ""
@@ -280,7 +282,7 @@ module ResourceGenerator
 		str_code += "\n"
 	end
 
-	def ResourceGenerator.copy_file(chef_resource)
+	def UserResourceGenerator.copy_file(chef_resource)
 		copy_type = chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value).first
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
@@ -347,7 +349,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.delete_copy_file(chef_resource)
+	def UserResourceGenerator.delete_copy_file(chef_resource)
 		copy_type = chef_resource.chef_properties.where(:value_type => "copy_type").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
@@ -396,7 +398,7 @@ module ResourceGenerator
 	end
 
 
-	def ResourceGenerator.create_file(chef_resource)
+	def UserResourceGenerator.create_file(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
 
 		src_path = File.dirname(value)
@@ -422,7 +424,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.delete_create_file(chef_resource)
+	def UserResourceGenerator.delete_create_file(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
 
 		src_path = File.dirname(value)
@@ -439,7 +441,7 @@ module ResourceGenerator
 	end
 
 
-	def ResourceGenerator.move_file(chef_resource)
+	def UserResourceGenerator.move_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
@@ -480,7 +482,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.delete_move_file(chef_resource)
+	def UserResourceGenerator.delete_move_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
 
@@ -507,7 +509,7 @@ module ResourceGenerator
 	end
 
 
-	def ResourceGenerator.execute_command(chef_resource)
+	def UserResourceGenerator.execute_command(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value).first
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 		str_code = ""
@@ -535,7 +537,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.delete_execute_command_file(chef_resource)
+	def UserResourceGenerator.delete_execute_command_file(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value).first
 
 		str_code = ""
@@ -551,7 +553,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.bash_script(chef_resource)
+	def UserResourceGenerator.bash_script(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 		#bash = BashScript.find(value)
@@ -577,10 +579,9 @@ module ResourceGenerator
 			#str_code += "end\n"
 		else #Only once
 			require 'digest'
-			program_id = value.split("_").first
-			program = Program.find(program_id)
-      if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
-			  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+
+      if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
+			  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
 			  md5 = Digest::MD5.new
 			  md5.update(data)
 			  str_code += "execute 'execute_bash_script_#{value}' do\n"
@@ -608,15 +609,14 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.delete_bash_script_file(chef_resource)
+	def UserResourceGenerator.delete_bash_script_file(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 
 		require 'digest'
-		program_id = value.split("_").first
-		program = Program.find(program_id)
-    if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
-		  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+
+    if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
+		  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
 		  md5 = Digest::MD5.new
 		  md5.update(data)
 
@@ -641,7 +641,8 @@ module ResourceGenerator
 #########################################################################################################################
 
 
-	def ResourceGenerator.remove_disuse_resource(remove_resource)
+	def UserResourceGenerator.remove_disuse_resource(remove_resource, kuuser)
+    @kuuser = kuuser
 		if remove_resource.resource_type == "Repository"
 			remove_repository(remove_resource)
 		elsif remove_resource.resource_type == "Deb"
@@ -726,7 +727,7 @@ module ResourceGenerator
 		file_name = File.basename(remove_resource.value)
 
 		program = Program.find(remove_resource.program_id)
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb"
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + file_name + ".erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
@@ -768,8 +769,8 @@ module ResourceGenerator
 		src_file_name = File.basename(remove_resource.value)
 		src_paths, src_last_path = get_path(src_path)
 
-		program = Program.find(remove_resource.program_id)
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + src_file_name + ".erb"
+		#program = Program.find(remove_resource.program_id)
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
@@ -811,8 +812,8 @@ module ResourceGenerator
 	def self.remove_bash_script_file(remove_resource)
 
 		require 'digest'
-		program = Program.find(remove_resource.program_id)
-		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + remove_resource.value + ".sh.erb")
+		#program = Program.find(remove_resource.program_id)
+		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + remove_resource.value + ".sh.erb")
 		md5 = Digest::MD5.new
 		md5.update(data)
 
@@ -828,7 +829,7 @@ module ResourceGenerator
 		str_code += "end\n"
 		str_code += "\n"
 
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + remove_resource.value + ".sh.erb"
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + remove_resource.value + ".sh.erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code

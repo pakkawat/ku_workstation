@@ -1,4 +1,5 @@
 class KuUsersController < ApplicationController
+  include UserResourceGenerator
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
   before_action :correct_user,   only: [:edit, :update]
   before_action :admin_user,     only: :destroy
@@ -102,6 +103,40 @@ class KuUsersController < ApplicationController
     end
     flash[:success] = "Config has been updated"
     redirect_to edit_ku_user_attribute_path(id: params[:id], program_id: params[:program_id])
+  end
+
+  def apply_change
+    @kuuser = KuUser.find(params[:id])
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/recipes/user_personal_program_list.rb", 'w') do |f|
+      @kuuser.personal_programs.each do |personal_program|
+        f.write("include_attribute '#{@kuuser.ku_id}::#{personal_program.program_name}'")
+      end
+    end
+
+    @kuuser.personal_programs.where("user_personal_programs.status = 'install'").each do |personal_program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
+        personal_program.personal_chef_resources.each do |personal_chef_resource|
+          f.write(UserResourceGenerator.install_resource(personal_chef_resource, @kuuser))
+        end
+      end
+    end
+
+    @kuuser.personal_programs.where("user_personal_programs.status = 'uninstall'").each do |personal_program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
+        personal_program.personal_chef_resources.each do |personal_chef_resource|
+          f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, @kuuser))
+        end
+      end
+    end
+
+    @kuuser.user_remove_resources.each do |remove_resource|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
+        f.write(ResourceGenerator.remove_disuse_resource(remove_resource, @kuuser))
+      end
+    end
+
+    flash[:success] = "Apply change"
+    redirect_to @kuuser
   end
 
   private
