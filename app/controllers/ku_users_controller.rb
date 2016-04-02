@@ -129,9 +129,9 @@ class KuUsersController < ApplicationController
       end
     end
 
-    @kuuser.user_remove_resources.each do |remove_resource|
-      File.open("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
-        f.write(ResourceGenerator.remove_disuse_resource(remove_resource, @kuuser))
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
+      @kuuser.user_remove_resources.each do |remove_resource|
+        f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, @kuuser))
       end
     end
 

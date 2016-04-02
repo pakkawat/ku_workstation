@@ -4,7 +4,7 @@
 
     <div class="wizard">
       <% if !@program.nil? %>
-        <a href='<%= edit_program_path(@program) %>' ><%= @program.program_name %></a>
+        <%= link_to(@program.program_name, edit_program_path(@program), method: :get) %>
         <a class="current" href='<%= edit_chef_resource_path(program_id: @program.id, id: @chef_resource.id) %>' ><%= resource_type_full_name(@chef_resource.resource_type) %></a>
       <% end %>
     </div>

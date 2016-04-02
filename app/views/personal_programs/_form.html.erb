@@ -4,7 +4,7 @@
 
         <div class="wizard">
           <% if @personal_program.persisted? %>
-            <a class="current" href='<%= edit_personal_program_path(@personal_program) %>' ><%= @personal_program.program_name %></a>
+            <%= link_to(@personal_program.program_name, edit_personal_program_path(@personal_program), class: "current", method: :get) %>
           <% else %>
             <a class="current">Add new personal program</a>
           <% end %>

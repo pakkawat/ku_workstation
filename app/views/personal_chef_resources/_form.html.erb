@@ -3,7 +3,7 @@
   <div class="col-sm-10">
 
     <div class="wizard">
-        <a href='<%= edit_personal_program_path(@personal_program) %>' ><%= @personal_program.program_name %></a>
+        <%= link_to(@personal_program.program_name, edit_personal_program_path(@personal_program), method: :get) %>
         <a class="current" href='<%= edit_personal_program_personal_chef_resource_path(personal_program_id: @personal_program.id, id: @personal_chef_resource.id) %>' ><%= resource_type_full_name(@personal_chef_resource.resource_type) %></a>
     </div>
 

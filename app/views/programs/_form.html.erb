@@ -3,7 +3,7 @@
 
         <div class="wizard">
           <% if @program.persisted? %>
-            <a class="current" href='<%= edit_program_path(@program) %>' ><%= @program.program_name %></a>
+            <%= link_to(@program.program_name, edit_program_path(@program), class: "current", method: :get) %>
           <% else %>
             <a class="current">Add new program</a>
           <% end %>

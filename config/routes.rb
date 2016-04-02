@@ -41,7 +41,7 @@ Rails.application.routes.draw do
   #get 'welcome/index'
   root 'sessions#new'
   #resources :users
-  get 'ku_user/:id/apply_change', to: 'ku_users#apply_change', via: :get
+  get 'ku_users/:id/apply_change', to: 'ku_users#apply_change', via: :get
   match 'ku_user/:id/program/:program_id', to: 'ku_users#edit_attribute', as: 'edit_ku_user_attribute', :via => "get"
   match 'ku_user/:id/program/:program_id', to: 'ku_users#update_attribute', as: 'update_ku_user_attribute', :via => "patch"
   resources :ku_users
