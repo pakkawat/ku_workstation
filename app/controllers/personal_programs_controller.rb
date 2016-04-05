@@ -22,6 +22,7 @@ class PersonalProgramsController < ApplicationController
   # GET /personal_programs/1/edit
   def edit
     @ku_user = current_user
+    check_config_file
     #@personal_program = PersonalProgram.find(params[:id])
   end
 

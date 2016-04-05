@@ -290,7 +290,7 @@
                         <% end %>
                     </div>
                     <div class='form-group'>
-                      <% if @program != nil %>
+                      <% if @personal_program.ku_users.any? %>
                         <label for='name'>
                           <%= property.label :file_content %>
                         </label>
@@ -303,7 +303,7 @@
                         </label>
                         <div class='input-group'>
                           <span class='input-group-addon'><%= image_tag "error.png" %></span>
-                          <%= text_field_tag 'error', 'File not found, please select program before edit file', disabled: true, class: "form-control" %>
+                          <%= text_field_tag 'error', 'Please add user before create file', disabled: true, class: "form-control" %>
                         </div>
                       <% end %>
                     </div>
@@ -411,12 +411,24 @@
                     <%= property.hidden_field :value_type, :value => "bash_script" %>
                   <% end %>
                   <div class='form-group'>
-                      <label for='name'>
-                        <%= property.label :bash_script %>
-                      </label>
-                      <div class='input-group'>
-                        <%= text_area_tag(:bash_script_content, @data, :size => "63x60", class: 'form-control') %>
-                      </div>
+
+                      <% if @personal_program.ku_users.any? %>
+                        <label for='name'>
+                          <%= property.label :bash_script %>
+                        </label>
+                        <div class='input-group'>
+                          <%= text_area_tag(:bash_script_content, @data, :size => "63x60", class: 'form-control') %>
+                        </div>
+                      <% else %>
+                        <label for='name'>
+                          <%= property.label :bash_script %>
+                        </label>
+                        <div class='input-group'>
+                          <span class='input-group-addon'><%= image_tag "error.png" %></span>
+                          <%= text_field_tag 'error', 'Please add user before create bash', disabled: true, class: "form-control" %>
+                        </div>
+                      <% end %>
+
                   </div>
                 <% end %> <!-- if @property_count == 0 -->
                 <% @property_count = @property_count + 1 %>
