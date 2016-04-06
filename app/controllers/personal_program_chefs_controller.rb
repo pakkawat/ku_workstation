@@ -89,7 +89,7 @@ class PersonalProgramChefsController < ApplicationController
       else
         @personal_chef_resource.personal_programs.each do |personal_program|
           personal_program.ku_users.each do |user|
-            if user.user_remove_resources.find_by(personal_chef_resource_id: @personal_chef_resource.id).present? # check Is chef_resource_id alredy in remove_resources
+            if !user.user_remove_resources.find_by(personal_chef_resource_id: @personal_chef_resource.id).present? # check Is chef_resource_id alredy in remove_resources
               value = nil
               value_type = nil
               case @personal_chef_resource.resource_type
