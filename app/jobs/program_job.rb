@@ -18,7 +18,7 @@ class ProgramJob < ProgressJob::Base
     @arr_error = Array.new
     @arr_error.push("There are error with following user id:")
 
-    prepare_user_config
+    #prepare_user_config ปล่อยให้ user กำหนดค่า config แล้ว apply change กันเอง
     generate_chef_resource
 
     if @type == "delete"
@@ -172,7 +172,7 @@ class ProgramJob < ProgressJob::Base
   end
 
   def prepare_user_config
-    chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id"))
+    #chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id"))
     @users.each do |user|
       #chef_attributes.each do |chef_attribute|
         #ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create

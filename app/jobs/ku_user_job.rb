@@ -11,62 +11,14 @@ class KuUserJob < ProgressJob::Base
   def perform
     # Do something later
     update_stage('Run command')
-    update_progress_max(@type == "create" ? 5 : 2)
-    new_password = encryp_password
-    #@users.each do |user|
-      #Dir.chdir("/home/ubuntu") do
-      	#system "ruby long.rb"
-      #end
-      #update_progress
-    #end
-    str_temp = ""
     if @type == "create"
-      if KnifeCommand.run("knife ec2 server create -x ubuntu -I ami-96f1c1c4 -f t2.small -G 'Chef Clients' -N " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        sleep(10)
-        update_progress
-      else
-        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-      end
-      if KnifeCommand.run("knife cookbook create " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb",nil)
-        write_file(new_password)
-        update_progress
-      else
-        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-      end
-      if KnifeCommand.run("knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        update_progress
-      else
-        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-      end
-      if KnifeCommand.run("knife node run_list add " + @user.ku_id + " 'recipe[chef-client],recipe[" + @user.ku_id + "],recipe[base-client]' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        sleep(5)
-        update_progress
-      else
-        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-      end
-      if KnifeCommand.run("knife ssh 'name:" + @user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        update_progress
-      else
-        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-      end
-    else #delete user
-      require 'chef'
-      Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
-      query = Chef::Search::Query.new
-      node = query.search('node', 'name:' + @user.ku_id).first rescue []
-      if KnifeCommand.run("knife ec2 server delete " + node[0].ec2.instance_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb --purge -y", nil)
-        update_progress
-      else
-        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-      end
-      if KnifeCommand.run("knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
-        FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
-        update_progress
-      else
-        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-      end
+      create_user_and_instance
+    elsif @type == "delete"
+      delete_user_and_instance
+    else # apply_change
+      user_apply_change
     end
-    #File.open('/home/ubuntu/myapp/public/ku_user_job.txt', 'w') { |f| f.write(str_temp) }
+
   end
 
   def success
@@ -74,12 +26,85 @@ class KuUserJob < ProgressJob::Base
       FileUtils.rm("#{Rails.root}/log/knife/#{@user.ku_id}.log")
       #to_do delete logrotate( g0001.log.2) ???
       @user.destroy
+    elsif @type == "apply_change"
+      @user.personal_programs.where("user_personal_programs.status = 'uninstall'").destroy_all
+      @user.user_remove_resources.destroy_all
     end
   end
 
   def error(job, exception)
     if @type == "create"
       @user.destroy
+    end
+  end
+
+  def create_user_and_instance
+    update_progress_max(5)
+    new_password = encryp_password
+
+    if KnifeCommand.run("knife ec2 server create -x ubuntu -I ami-96f1c1c4 -f t2.small -G 'Chef Clients' -N " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      sleep(10)
+      update_progress
+    else
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+    end
+    if KnifeCommand.run("knife cookbook create " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb",nil)
+      write_file(new_password)
+      update_progress
+    else
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+    end
+    if KnifeCommand.run("knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      update_progress
+    else
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+    end
+    if KnifeCommand.run("knife node run_list add " + @user.ku_id + " 'recipe[chef-client],recipe[" + @user.ku_id + "],recipe[base-client]' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      sleep(5)
+      update_progress
+    else
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+    end
+    if KnifeCommand.run("knife ssh 'name:" + @user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      update_progress
+    else
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+    end
+
+  end
+
+  def delete_user_and_instance
+    update_progress_max(2)
+    require 'chef'
+    Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
+    query = Chef::Search::Query.new
+    node = query.search('node', 'name:' + @user.ku_id).first rescue []
+    if KnifeCommand.run("knife ec2 server delete " + node[0].ec2.instance_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb --purge -y", nil)
+      update_progress
+    else
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+    end
+    if KnifeCommand.run("knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
+      FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
+      update_progress
+    else
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+    end
+  end
+
+  def user_apply_change
+    update_progress_max(3)
+
+    prepare_user_config
+    update_progress
+
+    generate_chef_resource_for_personal_program
+    update_progress
+
+    if KnifeCommand.run("knife ssh 'name:" + @user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", @user)
+      update_progress
+    else
+      raise "#{ActionController::Base.helpers.link_to ku_id, '/logs/'+@user.log.id.to_s}, "
     end
   end
 
@@ -144,6 +169,66 @@ class KuUserJob < ProgressJob::Base
     output = File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_personal_program_list.rb","w")
     output << ""
     output.close
+  end
+
+  def prepare_user_config
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/attributes/user_config.rb", 'w') do |f|
+      f.write(generate_user_config)
+    end
+
+    if !KnifeCommand.run("knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
+    end
+  end
+
+  def generate_user_config
+    str_temp = ""
+    config_names = ""
+    all_user_programs = Program.where(id: @user.users_programs.pluck("program_id"))
+    all_user_programs.each do |program|
+      chef_attributes = @user.chef_attributes.where(chef_resource_id: program.chef_resources.pluck("id"))
+      chef_values = @user.chef_values.where(chef_attribute_id: chef_attributes)
+      chef_values.each do |chef_value|
+        chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
+        config_names += "node['#{chef_attribute.name}'],"
+        str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
+      end
+      config_names = config_names.gsub(/\,$/, '')
+      str_temp += "default['#{program.program_name}']['user_config_list'] = [#{config_names}] \n"
+      config_names = ""
+    end
+
+    return str_temp
+  end
+
+  def generate_chef_resource_for_personal_program
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_personal_program_list.rb", 'w') do |f|
+      @user.personal_programs.each do |personal_program|
+        f.write("include_attribute '#{@user.ku_id}::#{personal_program.program_name}'")
+      end
+    end
+
+    @user.personal_programs.where("user_personal_programs.status = 'install'").each do |personal_program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
+        personal_program.personal_chef_resources.each do |personal_chef_resource|
+          f.write(UserResourceGenerator.install_resource(personal_chef_resource, @user))
+        end
+      end
+    end
+
+    @user.personal_programs.where("user_personal_programs.status = 'uninstall'").each do |personal_program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
+        personal_program.personal_chef_resources.each do |personal_chef_resource|
+          f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, @user))
+        end
+      end
+    end
+
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
+      @user.user_remove_resources.each do |remove_resource|
+        f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, @user))
+      end
+    end
   end
 
   #def max_attempts

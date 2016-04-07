@@ -105,6 +105,17 @@ class KuUsersController < ApplicationController
     redirect_to edit_ku_user_attribute_path(id: params[:id], program_id: params[:program_id])
   end
 
+  def apply_change2
+    @kuuser = KuUser.find(params[:id])
+    @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"apply_change","")
+
+    str_des = "Apply change on:"+@kuuser.ku_id
+    @job.update_column(:description, str_des)
+    flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+
+    redirect_to @kuuser
+  end
+
   def apply_change
     @kuuser = KuUser.find(params[:id])
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/recipes/user_personal_program_list.rb", 'w') do |f|
