@@ -272,15 +272,15 @@ class PersonalChefResourcesController < ApplicationController
         params[:personal_chef_resource][:chef_properties_attributes].each do |key, value|
           if !value[:id].nil? # old_value
             if value[:value_type] == "bash_script"
-              create_bash_script_file( @ku_user.id.to_s + "_" + @personal_chef_resource.id.to_s, params[:bash_script_content])
+              create_bash_script_file(@personal_chef_resource.id.to_s, params[:bash_script_content])
               #bash = BashScript.find(value[:value])
               # check diff between bash.bash_script_content and params[:bash_script_content] then delete text file
               #bash.update_attribute(:bash_script_content, params[:bash_script_content])
             end
           else
             if value[:value_type] == "bash_script"
-              create_bash_script_file( @ku_user.id.to_s + "_" + @personal_chef_resource.id.to_s, params[:bash_script_content])
-              value[:value] = @ku_user.id.to_s + "_" + @personal_chef_resource.id.to_s
+              create_bash_script_file(@personal_chef_resource.id.to_s, params[:bash_script_content])
+              value[:value] = "_" + @personal_chef_resource.id.to_s
               #bash = BashScript.new(bash_script_content: params[:bash_script_content])
               #bash.save
               #value[:value] = bash.id
@@ -336,9 +336,9 @@ class PersonalChefResourcesController < ApplicationController
       end
     end
 
-    def create_bash_script_file(file_name, bash_script_content)
+    def create_bash_script_file(personal_chef_resource_id, bash_script_content)
       @personal_program.ku_users.each do |user|
-        file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/templates/" + file_name + ".sh.erb"
+        file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/templates/" + user.id.to_s + "_" + personal_chef_resource_id + ".sh.erb"
         File.open(file_full_path, "w") do |f|
           f.write(bash_script_content)
         end

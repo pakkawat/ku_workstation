@@ -20,7 +20,7 @@ class SubjectJob < ProgressJob::Base
 
     @arr_error.push(" There are error with following: ")
 
-    prepare_program_and_user_config
+    prepare_user_list
 
     first_ssh_run
 
@@ -55,7 +55,7 @@ class SubjectJob < ProgressJob::Base
     #output.close
   end
 
-  def prepare_program_and_user_config
+  def prepare_user_list
     @subject.programs.each do |program|
       File.open("/home/ubuntu/chef-repo/cookbooks/"+program.program_name+"/attributes/user_list.rb", 'w') do |f|
         f.write("default['#{program.program_name}']['user_list'] = " + create_user_list(KuUser.where(id: UsersProgram.where(:program_id => program.id).uniq.pluck(:ku_user_id)).pluck(:ku_id)))
@@ -68,7 +68,7 @@ class SubjectJob < ProgressJob::Base
       #prepare_user_config(program)
     end
 
-    create_user_config
+    #create_user_config
 
     check_error("1. ")
 
@@ -83,17 +83,17 @@ class SubjectJob < ProgressJob::Base
     #end
   #end
 
-  def create_user_config
-    @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
-      File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/attributes/user_config.rb", 'w') do |f|
-        f.write(generate_user_config(user))
-      end
+  #def create_user_config
+    #@subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
+      #File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/attributes/user_config.rb", 'w') do |f|
+        #f.write(generate_user_config(user))
+      #end
 
-      if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
-      end
-    end
-  end
+      #if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        #@arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
+      #end
+    #end
+  #end
 
   def generate_user_config(user)
     str_temp = ""

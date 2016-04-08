@@ -276,6 +276,9 @@ module UserResourceGenerator
 	def UserResourceGenerator.delete_config_file(chef_resource)
 		file_name = File.basename(chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first)
 
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + file_name + ".erb"
+		File.delete(path_to_file) if File.exist?(path_to_file)
+
 		str_code = ""
 		str_code += "file '/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}' do\n"
 		str_code += "  action :delete\n"
@@ -433,6 +436,9 @@ module UserResourceGenerator
 		src_file_name = File.basename(value)
 		src_paths, src_last_path = get_path(src_path)
 
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb"
+		File.delete(path_to_file) if File.exist?(path_to_file)
+
 		str_code = ""
 		str_code += "file '#{src_last_path}\/#{src_file_name}' do\n"
 		str_code += "  action :delete\n"
@@ -558,6 +564,7 @@ module UserResourceGenerator
 	def UserResourceGenerator.bash_script(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
+		value = @kuuser.ku_id + value
 		#bash = BashScript.find(value)
 		str_code = ""
 		str_code += "template '/tmp/#{value}.sh' do\n"
@@ -573,6 +580,7 @@ module UserResourceGenerator
 			str_code += "  user 'root'\n"
 			str_code += "  command 'bash /tmp/#{value}.sh'\n"
 			str_code += "end\n"
+			str_code += "\n"
 			#str_code += "bash 'bash_script' do\n"
 			#str_code += "  user 'root'\n"
 			#str_code += "  code <<-EOH\n"
@@ -614,7 +622,7 @@ module UserResourceGenerator
 	def UserResourceGenerator.delete_bash_script_file(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
-
+		value = @kuuser.ku_id + value
 		require 'digest'
 
     if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
@@ -634,8 +642,8 @@ module UserResourceGenerator
 		  str_code += "end\n"
 		  str_code += "\n"
     end
-		  #path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb"
-		  #File.delete(path_to_file) if File.exist?(path_to_file)
+		  path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb"
+		  File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code
 	end
@@ -814,14 +822,15 @@ module UserResourceGenerator
 
 		require 'digest'
 		#program = Program.find(remove_resource.program_id)
-		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + remove_resource.value + ".sh.erb")
+		value = @kuuser.ku_id + remove_resource.value
+		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
 		md5 = Digest::MD5.new
 		md5.update(data)
 
 		str_code = ""
-		str_code += "file '/tmp/#{remove_resource.value}.sh' do\n"
+		str_code += "file '/tmp/#{value}.sh' do\n"
 		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?('/tmp/#{remove_resource.value}.sh') \}\n"
+		str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
@@ -830,7 +839,7 @@ module UserResourceGenerator
 		str_code += "end\n"
 		str_code += "\n"
 
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + remove_resource.value + ".sh.erb"
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code
