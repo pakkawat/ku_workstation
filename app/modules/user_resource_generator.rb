@@ -22,6 +22,8 @@ module UserResourceGenerator
 			UserResourceGenerator.execute_command(chef_resource)
 		elsif chef_resource.resource_type == "Bash_script"
 			UserResourceGenerator.bash_script(chef_resource)
+		elsif chef_resource.resource_type == "Config_file"
+			UserResourceGenerator.config_file(chef_resource)
 		end
 	end
 
@@ -726,7 +728,6 @@ module UserResourceGenerator
 	def self.remove_config_file(remove_resource)
 		file_name = File.basename(remove_resource.value)
 
-		program = Program.find(remove_resource.program_id)
 		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + file_name + ".erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
