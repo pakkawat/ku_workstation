@@ -125,7 +125,7 @@ class PersonalProgramChefsController < ApplicationController
                 value_type = "file"
               end
             when "Bash_script"
-              value = user.id.to_s + "_" + @personal_chef_resource.id.to_s
+              value = "_" + @personal_chef_resource.id.to_s
               value_type = "file"
 
             when "Execute_command"

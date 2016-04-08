@@ -1,6 +1,7 @@
 module ResourceGenerator
 #require 'uri'
-	def ResourceGenerator.resource(chef_resource)
+	def ResourceGenerator.resource(chef_resource, program)
+		@program = program
 		if chef_resource.resource_type == "Repository"
 			ResourceGenerator.install_from_repository(chef_resource)
 		elsif chef_resource.resource_type == "Deb"
@@ -24,7 +25,8 @@ module ResourceGenerator
 		end
 	end
 
-	def ResourceGenerator.uninstall_resource(chef_resource)
+	def ResourceGenerator.uninstall_resource(chef_resource, program)
+		@program = program
 		if chef_resource.resource_type == "Repository"
 			ResourceGenerator.uninstall_from_repository(chef_resource)
 		elsif chef_resource.resource_type == "Deb"
@@ -243,7 +245,7 @@ module ResourceGenerator
 		return str_code
 	end
 
-	def ResourceGenerator.config_file(chef_resource, program)
+	def ResourceGenerator.config_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
 
 		#src_path = File.dirname(source_file)
@@ -251,7 +253,7 @@ module ResourceGenerator
 		#src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
-		if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + src_file_name + ".erb")
+		if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + src_file_name + ".erb")
 			str_code += "template '#{source_file}' do\n"
 			str_code += "  source '#{src_file_name}.erb'\n"
 			str_code += "  owner 'root'\n"
@@ -569,6 +571,7 @@ module ResourceGenerator
 			str_code += "  user 'root'\n"
 			str_code += "  command 'bash /tmp/#{value}.sh'\n"
 			str_code += "end\n"
+			str_code += "\n"
 			#str_code += "bash 'bash_script' do\n"
 			#str_code += "  user 'root'\n"
 			#str_code += "  code <<-EOH\n"
@@ -577,10 +580,10 @@ module ResourceGenerator
 			#str_code += "end\n"
 		else #Only once
 			require 'digest'
-			program_id = value.split("_").first
-			program = Program.find(program_id)
-      if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
-			  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+			#program_id = value.split("_").first
+			#program = Program.find(program_id)
+      if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb")
+			  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb")
 			  md5 = Digest::MD5.new
 			  md5.update(data)
 			  str_code += "execute 'execute_bash_script_#{value}' do\n"
@@ -613,10 +616,10 @@ module ResourceGenerator
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 
 		require 'digest'
-		program_id = value.split("_").first
-		program = Program.find(program_id)
-    if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
-		  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb")
+		#program_id = value.split("_").first
+		#program = Program.find(program_id)
+    if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb")
+		  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb")
 		  md5 = Digest::MD5.new
 		  md5.update(data)
 
@@ -632,8 +635,6 @@ module ResourceGenerator
 		  str_code += "end\n"
 		  str_code += "\n"
     end
-		  #path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + value + ".sh.erb"
-		  #File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code
 	end
@@ -641,7 +642,8 @@ module ResourceGenerator
 #########################################################################################################################
 
 
-	def ResourceGenerator.remove_disuse_resource(remove_resource)
+	def ResourceGenerator.remove_disuse_resource(remove_resource, program)
+		@program = program
 		if remove_resource.resource_type == "Repository"
 			remove_repository(remove_resource)
 		elsif remove_resource.resource_type == "Deb"
@@ -725,8 +727,8 @@ module ResourceGenerator
 	def self.remove_config_file(remove_resource)
 		file_name = File.basename(remove_resource.value)
 
-		program = Program.find(remove_resource.program_id)
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + file_name + ".erb"
+		#program = Program.find(remove_resource.program_id)
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
@@ -768,8 +770,8 @@ module ResourceGenerator
 		src_file_name = File.basename(remove_resource.value)
 		src_paths, src_last_path = get_path(src_path)
 
-		program = Program.find(remove_resource.program_id)
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + src_file_name + ".erb"
+		#program = Program.find(remove_resource.program_id)
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + src_file_name + ".erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
@@ -811,8 +813,8 @@ module ResourceGenerator
 	def self.remove_bash_script_file(remove_resource)
 
 		require 'digest'
-		program = Program.find(remove_resource.program_id)
-		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + remove_resource.value + ".sh.erb")
+		#program = Program.find(remove_resource.program_id)
+		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + remove_resource.value + ".sh.erb")
 		md5 = Digest::MD5.new
 		md5.update(data)
 
@@ -828,7 +830,7 @@ module ResourceGenerator
 		str_code += "end\n"
 		str_code += "\n"
 
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + remove_resource.value + ".sh.erb"
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + remove_resource.value + ".sh.erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code
