@@ -118,7 +118,7 @@ class ChefResourcesController < ApplicationController
     find_unuse_program_and_file
     respond_to do |format|
       if @chef_resource.update(chef_resource_params)
-        create_chef_value
+        #create_chef_value
         if !@program.nil?
           format.html { redirect_to edit_program_chef_resource_path(program_id: @program.id, id: @chef_resource.id), :flash => { :success => "Action was successfully updated." } }
         else
@@ -347,7 +347,7 @@ class ChefResourcesController < ApplicationController
       end
     end
 
-    def create_chef_value
+    def create_chef_value # mark not use
       if !@program.nil?
         chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id"))
         users = UsersProgram.where(program_id: @program.id).pluck("ku_user_id")

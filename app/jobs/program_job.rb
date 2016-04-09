@@ -27,6 +27,7 @@ class ProgramJob < ProgressJob::Base
     else # apply_change
       apply_change
       clear_remove_disuse_resource
+      create_user_config_for_each_user
     end
     second_ssh_run
     #File.open('/home/ubuntu/myapp/public/programs_job.txt', 'w') { |f| f.write(str_temp) }
@@ -167,7 +168,7 @@ class ProgramJob < ProgressJob::Base
 
   end
 
-  def prepare_user_config
+  def prepare_user_config # mark not use
     #chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id"))
     @users.each do |user|
       #chef_attributes.each do |chef_attribute|
@@ -185,7 +186,7 @@ class ProgramJob < ProgressJob::Base
     end
   end
 
-  def generate_user_config(user)
+  def generate_user_config(user) # mark not use
     str_temp = ""
     config_names = ""
     all_user_programs = Program.where(id: user.users_programs.pluck("program_id"))
@@ -204,5 +205,15 @@ class ProgramJob < ProgressJob::Base
 
     return str_temp
   end
+
+  def create_user_config_for_each_user
+    chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id"))
+    users = UsersProgram.where(program_id: @program.id).pluck("ku_user_id")
+    users.each do |user|
+      chef_attributes.each do |chef_attribute|
+        ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+      end
+    end
+  end # end def
 
 end

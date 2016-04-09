@@ -11,14 +11,14 @@ class UserSubjectsController < ApplicationController
     @user_enabled = @subject.user_subjects.find_by(ku_user_id: @kuuser.id)
     if @user_enabled.present?
       if @user_enabled.update_attribute(:user_enabled, true)
-        add_user_programs
+        #add_user_programs
         flash[:success] = @kuuser.ku_id + " has been added"
       else
         flash[:danger] = "Error1!!"
       end
     else
       if @subject.user_subjects.create(ku_user: @kuuser)
-        add_user_programs
+        #add_user_programs
         flash[:success] = @kuuser.ku_id + " has been added"
       else
         flash[:danger] = "Error2!!"
@@ -32,7 +32,7 @@ class UserSubjectsController < ApplicationController
     @subject = Subject.find(params[:subject_id])
     #UserSubject.find_by(ku_user_id: @kuuser.id, subject_id: @subject.id).destroy
     if @subject.user_subjects.find_by(ku_user_id: @kuuser.id).update_attribute(:user_enabled, false)
-      remove_user_programs
+      #remove_user_programs
       flash[:success] = @kuuser.ku_id + " has been deleted from subject"
     else
       flash[:danger] = "Error3!!"
@@ -99,7 +99,7 @@ class UserSubjectsController < ApplicationController
       return @kuuser.subjects.where(id: ProgramsSubject.select("subject_id").where(:program_id => program.id, :program_enabled => true).where.not(subject_id: @subject.id)).empty?
     end
 
-    def add_user_programs
+    def add_user_programs # mark not use
       str_temp = ""
       @subject.programs.where("programs_subjects.program_enabled = true").each do |program|
         @kuuser.users_programs.create(:program_id => program.id, :subject_id => @subject.id)
@@ -107,7 +107,7 @@ class UserSubjectsController < ApplicationController
       end
     end
 
-    def remove_user_programs
+    def remove_user_programs # mark not use
       str_temp = ""
       @subject.programs.where("programs_subjects.program_enabled = true").each do |program|
         delete_user_config(program)
@@ -115,14 +115,14 @@ class UserSubjectsController < ApplicationController
       end
     end
 
-    def add_user_config(program)
+    def add_user_config(program) # mark not use
       chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
       chef_attributes.each do |chef_attribute|
         ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: @kuuser).first_or_create
       end
     end
 
-    def delete_user_config(program)
+    def delete_user_config(program) # mark not use
       chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
       @kuuser.chef_values.where(chef_attribute_id: chef_attributes).destroy_all
     end

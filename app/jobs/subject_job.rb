@@ -12,10 +12,13 @@ class SubjectJob < ProgressJob::Base
     update_progress_max(@subject.ku_users.count*2) # each user run ssh two times
     @arr_error = Array.new
     if @type == "delete"
+      delete_user_program_and_user_config
       #update all user_subject = false
       @subject.user_subjects.update_all(user_enabled: false)
       #update all programs_subject = false
       @subject.programs_subjects.update_all(program_enabled: false)
+    else # apply_change
+      calculate_user_program_and_user_config
     end
 
     @arr_error.push(" There are error with following: ")
@@ -95,7 +98,7 @@ class SubjectJob < ProgressJob::Base
     #end
   #end
 
-  def generate_user_config(user)
+  def generate_user_config(user) # mark not use
     str_temp = ""
     config_names = ""
     all_user_programs = Program.where(id: user.users_programs.pluck("program_id"))
@@ -117,12 +120,12 @@ class SubjectJob < ProgressJob::Base
 
 
   def first_ssh_run
-    program_enable_true = create_run_list(@subject.programs.where("programs_subjects.program_enabled = true").pluck(:program_name))
 
     @subject.ku_users.each do |user|
       ku_id = user.ku_id
       if KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         if user.user_subjects.where(:subject_id => @subject.id).pluck(:user_enabled).first
+          program_enable_true = create_run_list(@subject.programs.where("programs_subjects.program_enabled = true").pluck(:program_name))
           if KnifeCommand.run("knife node run_list add " + ku_id + " '" + program_enable_true.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
             program_enable_false = create_run_list(@subject.programs.where("programs_subjects.program_enabled = false").where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
             if !KnifeCommand.run("knife node run_list remove " + ku_id + " '" + program_enable_false.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
@@ -133,6 +136,7 @@ class SubjectJob < ProgressJob::Base
           end
         else # user.user_enabled = false
           # all program that in this subject but not in UsersProgram table because when user_enabled = false will deleted all program_id(program_enabled = true) with subject_id in UserProgram table
+          # Program ทั้งหมดที่อยู่ใน Subject นี้และไม่ใช่ Program ที่ยังอยู่ในตาราง UsersProgram ( ของ User ที่ถูกถอดออกจาก Subject นี้ )
           all_programs = create_run_list(@subject.programs.where.not(:id => UsersProgram.where(:ku_user_id => user.id).uniq.pluck(:program_id)).pluck(:program_name))
           if !KnifeCommand.run("knife node run_list remove " + ku_id + " '" + all_programs.gsub(/\,$/, '') + "' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
             @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
@@ -188,6 +192,55 @@ class SubjectJob < ProgressJob::Base
         str_error += error
       end
       raise test + str_error
+    end
+  end
+
+  def calculate_user_program_and_user_config
+
+    @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
+      @subject.programs.where("programs_subjects.program_enabled = true").each do |program|
+        user.users_programs.create(:program_id => program.id, :subject_id => @subject.id)
+        add_user_config(user, program)
+      end
+      @subject.programs.where("programs_subjects.program_enabled = false").each do |program|
+        if user.users_programs.where(:program_id => program.id).count == 1
+          delete_user_config(user, program)
+        end
+        user.users_programs.where(:program_id => program.id, :subject_id => @subject.id).destroy
+      end
+    end
+
+    @subject.ku_users.where("user_subjects.user_enabled = false").each do |user|
+      @subject.programs.each do |program|
+        if user.users_programs.where(:program_id => program.id).count == 1
+          delete_user_config(user, program)
+        end
+        user.users_programs.where(:program_id => program.id, :subject_id => @subject.id).destroy
+      end
+    end
+
+  end
+
+  def add_user_config(user, program)
+    chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
+    chef_attributes.each do |chef_attribute|
+      ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+    end
+  end
+
+  def delete_user_config(user, program)
+    chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id"))
+    user.chef_values.where(chef_attribute_id: chef_attributes).destroy_all
+  end
+
+  def delete_user_program_and_user_config
+    @subject.ku_users.each do |user|
+      @subject.programs.each do |program|
+        if user.users_programs.where(:program_id => program.id).count == 1
+          delete_user_config(user, program)
+        end
+        user.users_programs.where(:program_id => program.id, :subject_id => @subject.id).destroy
+      end
     end
   end
 
