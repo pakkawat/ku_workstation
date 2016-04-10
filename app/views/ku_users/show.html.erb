@@ -101,7 +101,39 @@
           </tbody>
       </table>
     </div>
-<%= link_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-primary" %>
+
+
+
+    <div class="panel panel-success">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Personal programs</div>
+        <table class="table table-striped">
+          <thead>
+            <tr>
+              <th>Program ID</th>
+              <th>Program name</th>
+              <th>Note</th>
+              <th>Edit</th>
+              <th>Delete</th>
+            </tr>
+          </thead>
+          <tbody>
+              <tr>
+                <th scope="row"><%= program.id %></th>
+                <td><%= link_to program.program_name, program %></td>
+                <td><%= program.note %></td>
+                <td><%= link_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary" %></td>
+                <td><%= button_to 'Delete', personal_program_user_personal_program_path(program ,@ku_user.user_personal_programs.find_by(personal_program_id: program).id), :class => "btn btn-default", :method => :delete %></td>
+              </tr>
+            <% end %>
+          </tbody>
+      </table>
+    </div>
+
+
+
+
+<%= link_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-success" %>
   </div><!--/col-9-->
 </div>
 <!-- For Test -->

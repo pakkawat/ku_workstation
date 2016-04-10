@@ -72,7 +72,8 @@ class UserPersonalProgramsController < ApplicationController
     @personal_program = PersonalProgram.find(params[:personal_program_id])
 
     respond_to do |format|
-      if @ku_user.user_personal_programs.find_by(personal_program_id: @personal_program.id).update_attribute(:status, "uninstall")
+      #if @ku_user.user_personal_programs.find_by(personal_program_id: @personal_program.id).update_attribute(:status, "uninstall")
+      if @user_personal_program.update_attribute(:status, "uninstall")
         format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
         format.json { render :show, status: :created, location: personal_programs_path }
       else
