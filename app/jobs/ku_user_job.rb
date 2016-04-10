@@ -204,7 +204,7 @@ class KuUserJob < ProgressJob::Base
   def generate_chef_resource_for_personal_program
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_personal_program_list.rb", 'w') do |f|
       @user.personal_programs.each do |personal_program|
-        f.write("include_attribute '#{@user.ku_id}::#{personal_program.program_name}'")
+        f.write("include_recipe '#{@user.ku_id}::#{personal_program.program_name}'\n")
       end
     end
 
