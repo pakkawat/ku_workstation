@@ -118,6 +118,7 @@
             </tr>
           </thead>
           <tbody>
+            <% @kuuser.personal_programs.where("user_personal_programs.status = 'install'").each do |program| %>
               <tr>
                 <th scope="row"><%= program.id %></th>
                 <td><%= link_to program.program_name, program %></td>
