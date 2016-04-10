@@ -101,10 +101,14 @@ class KuUserJob < ProgressJob::Base
     generate_chef_resource_for_personal_program
     update_progress
 
+    if !KnifeCommand.run("knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
+    end
+
     if KnifeCommand.run("knife ssh 'name:" + @user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", @user)
       update_progress
     else
-      raise "#{ActionController::Base.helpers.link_to ku_id, '/logs/'+@user.log.id.to_s}, "
+      raise "#{ActionController::Base.helpers.link_to @user.ku_id, '/logs/'+@user.log.id.to_s}, "
     end
   end
 
@@ -174,10 +178,6 @@ class KuUserJob < ProgressJob::Base
   def prepare_user_config
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/attributes/user_config.rb", 'w') do |f|
       f.write(generate_user_config)
-    end
-
-    if !KnifeCommand.run("knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
     end
   end
 
