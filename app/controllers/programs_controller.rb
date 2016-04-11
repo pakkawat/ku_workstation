@@ -79,6 +79,7 @@ class ProgramsController < ApplicationController
       #@job = Delayed::Job.enqueue ProgramJob.new(@program,"delete")
       #str_des = "Delete Program:"+@program.program_name
       #@job.update_column(:description, str_des)
+      #@job.update_column(:owner, 0)
       #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
       #redirect_to programs_path
     #else
@@ -181,6 +182,7 @@ class ProgramsController < ApplicationController
     @job = Delayed::Job.enqueue ProgramJob.new(@program,"apply_change")
     str_des = "Apply change on Program:"+@program.program_name
     @job.update_column(:description, str_des)
+    @job.update_column(:owner, 0)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     redirect_to programs_path
   end

@@ -9,7 +9,7 @@ class KuUsersController < ApplicationController
 
   def show
     @kuuser = KuUser.find(params[:id])
-
+    @user_job =  Delayed::Job.where(owner: @kuuser.id)
     ###############      For Test      #####################
     require 'open3'
     captured_stdout = ''
@@ -45,6 +45,7 @@ class KuUsersController < ApplicationController
       @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"create",ku_user_params[:password])
       str_des = "Create instance:"+@kuuser.ku_id
       @job.update_column(:description, str_des)
+      @job.update_column(:owner, 0)
       flash[:success] = str_des+" with Job ID:"+@job.id.to_s
 
       redirect_to ku_users_path
@@ -76,6 +77,7 @@ class KuUsersController < ApplicationController
 
     str_des = "Delete instance:"+@kuuser.ku_id
     @job.update_column(:description, str_des)
+    @job.update_column(:owner, 0)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
 
     #@kuuser.find(params[:id]).destroy
@@ -111,6 +113,7 @@ class KuUsersController < ApplicationController
 
     str_des = "Apply change on:"+@kuuser.ku_id
     @job.update_column(:description, str_des)
+    @job.update_column(:owner, @kuuser.id)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
 
     redirect_to @kuuser

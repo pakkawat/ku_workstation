@@ -1,8 +1,8 @@
 class SubjectsController < ApplicationController
   def index
-    @subjects = Subject.all  
+    @subjects = Subject.all
   end
-  
+
   def show
     @subject = Subject.find(params[:id])
   end
@@ -43,6 +43,7 @@ class SubjectsController < ApplicationController
     @job = Delayed::Job.enqueue SubjectJob.new(@subject.id,"delete")
     str_des = "Delete Subject:"+@subject.subject_name
     @job.update_column(:description, str_des)
+    @job.update_column(:owner, 0)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     redirect_to subjects_path
   end
@@ -52,6 +53,7 @@ class SubjectsController < ApplicationController
     @job = Delayed::Job.enqueue SubjectJob.new(@subject.id,"apply_change")
     str_des = "Apply change on Subject:"+@subject.subject_name
     @job.update_column(:description, str_des)
+    @job.update_column(:owner, 0)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     redirect_to @subject
   end
