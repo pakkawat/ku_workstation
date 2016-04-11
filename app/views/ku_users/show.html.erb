@@ -132,9 +132,54 @@
     </div>
 
 
+    <% if @user_job.any? %>
+      <% progress=0 %>
+      <% if @user_job.progress_max != 0 %>
+      	<% progress = ((@user_job.progress_current.to_f / @user_job.progress_max) * 100).round %>
+      <% end %>
+      <div class="col-12" style="margin-top: 20px;">
+        <div class="thumbnail" style="padding: 0">
+          <div class="caption">
+            <div class="row">
+              <div class="col-md-4"  style="text-align:center">
+                <% if @user_job.progress_stage.nil? %>
+                  <b>Waitting</b>
+                <% else %>
+                  <% if @job_error %>
+                    <b>Error</b>
+                  <% else %>
+                    <b>Working</b>
+                  <% end %>
+                <% end %>
+                <br><small>Status</small></div>
+              <div class="col-md-4"  style="text-align:center"> Log </div>
+              <div class="col-md-4"  style="text-align:center"><%= button_to 'Delete', command_job_path(@user_job), :class => "btn btn-default pull-right", :method => :delete, :disabled =>  @job_error ? false : true  %></div>
+            </div>
+          </div>
+          <div class="modal-footer" style="text-align: left">
+          	<div class="progress">
+  	          	<% if @job_error %>
+  	            	<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar progress-bar-danger") %>
+  	            <% else %>
+  	            	<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar") %>
+  	            <% end %>
+              </div>
+          </div>
+          <div class="row">
+              <div class="col-md-4" style="text-align:center"><%= ("<b>"+progress.to_s+"%</b>").html_safe %><br/><small>Successed</small></div>
+              <div class="col-md-4" style="text-align:center"><%= ("<b>"+@user_job.progress_current.to_s+"</b>").html_safe %><br/><small>Current</small></div>
+              <div class="col-md-4" style="text-align:center"><%= ("<b>"+@user_job.progress_max.to_s+"</b>").html_safe %><br/><small>Max</small></div>
+          </div>
 
 
-<%= button_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-success", :disabled => @user_job.any? true : false  %>
+        </div>
+      </div>
+    <% end %>
+
+
+
+
+<%= button_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-success", :method => :get, :disabled => @user_job.any? ? true : false  %>
   </div><!--/col-9-->
 </div>
 <!-- For Test -->

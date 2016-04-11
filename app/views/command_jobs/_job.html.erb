@@ -7,7 +7,7 @@
     <li class="col-md-3" style="margin-top: 20px;">
       <div class="thumbnail" style="padding: 0">
         <div class="caption">
-        <%= button_to 'Delete', command_job_path(job), :class => "btn btn-default pull-right", :method => :delete, :disabled => job.id == Delayed::Job.first.id ? true : false  %>
+        <%= button_to 'Delete', command_job_path(job), :class => "btn btn-default pull-right", :method => :delete %>
           <%= ("<h2>Job id:"+job.id.to_s+"</h2>").html_safe %>
           <%= ("<p>"+job.description+"</p>").html_safe %>
         </div>
