@@ -10,7 +10,9 @@ class KuUsersController < ApplicationController
   def show
     @kuuser = KuUser.find(params[:id])
     @user_job =  Delayed::Job.where(owner: @kuuser.id)
-    @job_error = !job.last_error.nil?
+    if @user_job.any?
+      @job_error = !@user_job.last_error.nil?
+    end
     ###############      For Test      #####################
     require 'open3'
     captured_stdout = ''
