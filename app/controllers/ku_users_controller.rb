@@ -9,15 +9,10 @@ class KuUsersController < ApplicationController
 
   def show
     @kuuser = KuUser.find(params[:id])
-    sql = "select id from delayed_jobs where owner = #{@kuuser.id}"
-    @result = ActiveRecord::Base.connection.execute(sql)
+    @result = Delayed::Job.where(owner: @kuuser.id)
     if @result.any?
-      @user_job =  Delayed::Job.where(owner: @kuuser.id)
-      begin
-        @job_error = !@user_job.last_error.nil?
-      rescue Exception => e
-        @user_job = false
-      end
+      @user_job =  @result.first
+      @job_error = !@user_job.last_error.nil?
     end
     ###############      For Test      #####################
     require 'open3'
