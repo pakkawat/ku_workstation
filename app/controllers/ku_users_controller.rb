@@ -9,8 +9,10 @@ class KuUsersController < ApplicationController
 
   def show
     @kuuser = KuUser.find(params[:id])
-    @user_job =  Delayed::Job.where(owner: @kuuser.id)
-    if @user_job.any?
+    sql = "select id from delayed_jobs where owner = #{@kuuser.id}"
+    @result = ActiveRecord::Base.connection.execute(sql)
+    if @result.any?
+      @user_job =  Delayed::Job.where(owner: @kuuser.id)
       @job_error = !@user_job.last_error.nil?
     end
     ###############      For Test      #####################

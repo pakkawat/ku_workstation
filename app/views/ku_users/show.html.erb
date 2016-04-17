@@ -132,7 +132,7 @@
     </div>
 
 
-    <% if @user_job.any? %>
+    <% if @result.any? %>
       <% progress=0 %>
       <% if @user_job.progress_max != 0 %>
       	<% progress = ((@user_job.progress_current.to_f / @user_job.progress_max) * 100).round %>
