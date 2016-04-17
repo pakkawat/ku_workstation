@@ -13,7 +13,11 @@ class KuUsersController < ApplicationController
     @result = ActiveRecord::Base.connection.execute(sql)
     if @result.any?
       @user_job =  Delayed::Job.where(owner: @kuuser.id)
-      @job_error = !@user_job.last_error.nil?
+      begin
+        @job_error = !@user_job.last_error.nil?
+      rescue Exception => e
+        @user_job = false
+      end
     end
     ###############      For Test      #####################
     require 'open3'
