@@ -123,7 +123,7 @@
                 <th scope="row"><%= program.id %></th>
                 <td><%= program.program_name %></td>
                 <td><%= program.note %></td>
-                <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary" %></td>
+                <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
                 <td><%= button_to 'Delete', delete_personal_program_from_user_path(id: @kuuser.id ,user_personal_program_id: @kuuser.user_personal_programs.find_by(personal_program_id: program).id), :class => "btn btn-default", :method => :delete %></td>
               </tr>
             <% end %>
@@ -152,7 +152,7 @@
                   <% end %>
                 <% end %>
                 <br><small>Status</small></div>
-              <div class="col-md-4"  style="text-align:center"><%= button_to 'Log', logs_path(@kuuser.log), :class => "btn btn-default", :disabled =>  @job_error ? false : true  %></div>
+              <div class="col-md-4"  style="text-align:center"><%= button_to 'Log', log_path(@kuuser.log), :class => "btn btn-default", :method => :get, :disabled =>  @job_error ? false : true  %></div>
               <div class="col-md-4"  style="text-align:center"><%= button_to 'Delete', delete_user_job_path(id: @kuuser.id, job_id: @user_job.id), :class => "btn btn-default pull-right", :method => :delete, :disabled =>  @job_error ? false : true  %></div>
             </div>
           </div>
