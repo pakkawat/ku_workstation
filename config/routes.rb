@@ -41,6 +41,8 @@ Rails.application.routes.draw do
   #get 'welcome/index'
   root 'sessions#new'
   #resources :users
+  match 'ku_user/:id/command_job/:job_id', to: 'ku_users#delete_user_job', as: 'delete_user_job', :via => "delete"
+  match 'ku_user/:id/user_personal_program/:user_personal_program_id', to: 'ku_users#delete_personal_program_from_user', as: 'delete_personal_program_from_user', :via => "delete"
   get 'ku_users/:id/apply_change', to: 'ku_users#apply_change', via: :get
   match 'ku_user/:id/program/:program_id', to: 'ku_users#edit_attribute', as: 'edit_ku_user_attribute', :via => "get"
   match 'ku_user/:id/program/:program_id', to: 'ku_users#update_attribute', as: 'update_ku_user_attribute', :via => "patch"

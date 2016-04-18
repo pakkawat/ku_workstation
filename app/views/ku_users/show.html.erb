@@ -124,7 +124,7 @@
                 <td><%= link_to program.program_name, program %></td>
                 <td><%= program.note %></td>
                 <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary" %></td>
-                <td><%= button_to 'Delete', personal_program_user_personal_program_path(program ,@kuuser.user_personal_programs.find_by(personal_program_id: program).id), :class => "btn btn-default", :method => :delete %></td>
+                <td><%= button_to 'Delete', delete_personal_program_from_user_path(id: @kuuser.id ,user_personal_program_id: @kuuser.user_personal_programs.find_by(personal_program_id: program).id), :class => "btn btn-default", :method => :delete %></td>
               </tr>
             <% end %>
           </tbody>
@@ -153,7 +153,7 @@
                 <% end %>
                 <br><small>Status</small></div>
               <div class="col-md-4"  style="text-align:center"> Log </div>
-              <div class="col-md-4"  style="text-align:center"><%= button_to 'Delete', command_job_path(@user_job), :class => "btn btn-default pull-right", :method => :delete, :disabled =>  @job_error ? false : true  %></div>
+              <div class="col-md-4"  style="text-align:center"><%= button_to 'Delete', delete_user_job_path(id: @kuuser.id, job_id: @user_job.id), :class => "btn btn-default pull-right", :method => :delete, :disabled =>  @job_error ? false : true  %></div>
             </div>
           </div>
           <div class="modal-footer" style="text-align: left">

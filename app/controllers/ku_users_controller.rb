@@ -157,6 +157,37 @@ class KuUsersController < ApplicationController
     redirect_to @kuuser
   end
 
+  def delete_personal_program_from_user
+    @kuuser = KuUser.find(params[:id])
+    @user_personal_program = UserPersonalProgram.find(params[:user_personal_program_id])
+    @personal_program = PersonalProgram.find(@user_personal_program.personal_program_id)
+
+    respond_to do |format|
+      if @user_personal_program.update_attribute(:status, "uninstall")
+        format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
+        format.json { render :show, status: :created, location: @kuuser }
+      else
+        format.html { redirect_to @kuuser }
+        format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def delete_user_job
+    @kuuser = KuUser.find(params[:id])
+    @user_job = Delayed::Job.where(owner: params[:job_id]).first
+
+    respond_to do |format|
+      if @user_job.destroy
+        format.html { redirect_to @kuuser, :flash => { :success => "Job was successfully deleted." } }
+        format.json { render :show, status: :created, location: @kuuser }
+      else
+        format.html { redirect_to @kuuser }
+        format.json { render json: @user_job.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
   private
     def ku_user_params
       params.require(:ku_user).permit(:ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :status, :campus, chef_value: [ :id, :chef_attribute_id, :value ])
