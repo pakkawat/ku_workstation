@@ -36,45 +36,51 @@
             </ul>
           </li>
 
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Program<span class="caret"></span></a>
-            <ul class="dropdown-menu" role="menu">
-              <li><%= link_to "Add Program", new_program_path %></li>
-              <li><%= link_to "Program List", programs_path %></li>
-            </ul>
-          </li>
+          <% if current_user.admin? %>
 
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Subject<span class="caret"></span></a>
-            <ul class="dropdown-menu" role="menu">
-              <li><%= link_to "Add Subject", new_subject_path %></li>
-              <li><%= link_to "Subject List", subjects_path %></li>
-            </ul>
-          </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Program<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><%= link_to "Add Program", new_program_path %></li>
+                  <li><%= link_to "Program List", programs_path %></li>
+                </ul>
+              </li>
 
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">User<span class="caret"></span></a>
-            <ul class="dropdown-menu" role="menu">
-              <li><%= link_to "Add Users", new_ku_user_path %></li>
-              <li><a href="#">Teacher List</a></li>
-              <li><a href="#">Student List</a></li>
-              <li><%= link_to "All Users", ku_users_path %></li>
-            </ul>
-          </li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Subject<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><%= link_to "Add Subject", new_subject_path %></li>
+                  <li><%= link_to "Subject List", subjects_path %></li>
+                </ul>
+              </li>
 
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Instance<span class="caret"></span></a>
-            <ul class="dropdown-menu" role="menu">
-              <li><a href="#">Teacher Instance</a></li>
-              <li><a href="#">Student Instance</a></li>
-              <li><%= link_to "All Instances", instances_path %></li>
-            </ul>
-          </li>
-          <li><%= link_to "Job List", command_jobs_index_path %></li>
-          <li><%= link_to "Logs", logs_path %></li>
-          <li><a href="#">Contact</a></li>
-          <li><%= link_to "Log out", logout_path, method: :delete %></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">User<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><%= link_to "Add Users", new_ku_user_path %></li>
+                  <li><a href="#">Teacher List</a></li>
+                  <li><a href="#">Student List</a></li>
+                  <li><%= link_to "All Users", ku_users_path %></li>
+                </ul>
+              </li>
 
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Instance<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#">Teacher Instance</a></li>
+                  <li><a href="#">Student Instance</a></li>
+                  <li><%= link_to "All Instances", instances_path %></li>
+                </ul>
+              </li>
+              <li><%= link_to "Job List", command_jobs_index_path %></li>
+              <li><%= link_to "Logs", logs_path %></li>
+              <li><a href="#">Contact</a></li>
+              <li><%= link_to "Log out", logout_path, method: :delete %></li>
+          <% else %>
+
+              <li><%= link_to current_user.ku_id, current_user %></li>
+
+          <% end %>
         </ul><!-- <ul class="nav navbar-nav"> -->
 
 

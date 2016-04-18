@@ -175,7 +175,7 @@ class KuUsersController < ApplicationController
 
   def delete_user_job
     @kuuser = KuUser.find(params[:id])
-    @user_job = Delayed::Job.where(owner: params[:job_id]).first
+    @user_job = Delayed::Job.where(id: params[:job_id]).first
 
     respond_to do |format|
       if @user_job.destroy
