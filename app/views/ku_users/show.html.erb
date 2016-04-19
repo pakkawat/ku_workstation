@@ -54,158 +54,182 @@
     </ul>
   </div><!--/col-5-->
   <div class="col-sm-8">
-    <div class="container">
 
-      <ul class="nav nav-tabs">
-        <li class="active"><a data-toggle="tab" href="#instance">Instance</a></li>
-        <li><a data-toggle="tab" href="#subjects">Subjects</a></li>
-        <li><a data-toggle="tab" href="#programs">Programs</a></li>
-        <li><a data-toggle="tab" href="#personal_programs">Personal programs</a></li>
-      </ul>
 
-      <div class="tab-content">
+    <ul class="nav nav-tabs">
+      <li class="active"><a data-toggle="tab" href="#instance">Instance</a></li>
+      <li><a data-toggle="tab" href="#subjects">Subjects</a></li>
+      <li><a data-toggle="tab" href="#programs">Programs</a></li>
+      <li><a data-toggle="tab" href="#personal_programs">Personal programs</a></li>
+    </ul>
 
-        <div id="instance" class="tab-pane fade in active">
-          <h3>Instance</h3>
-        </div>
+    <div class="tab-content">
 
-        <div id="subjects" class="tab-pane fade">
-          <div class="panel panel-info">
-            <!-- Default panel contents -->
-            <div class="panel-heading">Subjects</div>
-              <table class="table table-striped">
-                <thead>
-                  <tr>
-                    <th>Subject ID</th>
-                    <th>Subject name</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <% @kuuser.subjects.where("user_subjects.user_enabled = true").each do |subject| %>
-                    <tr>
-                      <th scope="row"><%= subject.id %></th>
-                      <td><%= link_to subject.subject_name, subject %></td>
-                    </tr>
+      <div id="instance" class="tab-pane fade in active">
+        <br>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Remote</th>
+                  <th>Instance name</th>
+                  <th>Uptime</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th><a class="btn btn-primary" href='<%= "http://"+@node.ec2.public_hostname.to_s+":8080/guacamole" %>'>RDP</a></th>
+                  <th><%= @node.name %></th>
+                  <th><%= @node.uptime.split(" ")[0..1].join(" ") %></th>
+                  <% date = DateTime.parse(Time.at(@node[:ohai_time]).to_s) %>
+                  <% if date < 1.hour.ago %>
+                    <th><%= image_tag "error.png" %> error</th>
+                  <% else %>
+                    <th><%= image_tag "running.png" %> running</th>
                   <% end %>
-                </tbody>
+                </tr>
+              </tbody>
             </table>
           </div>
         </div>
+      </div>
 
-        <div id="programs" class="tab-pane fade">
-          <div class="panel panel-warning">
-            <!-- Default panel contents -->
-            <div class="panel-heading">Programs</div>
-              <table class="table table-striped">
-                <thead>
+      <div id="subjects" class="tab-pane fade">
+        <br>
+        <div class="panel panel-info">
+          <!-- Default panel contents -->
+          <div class="panel-heading">Subjects</div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Subject ID</th>
+                  <th>Subject name</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @kuuser.subjects.where("user_subjects.user_enabled = true").each do |subject| %>
                   <tr>
-                    <th>Program ID</th>
-                    <th>Program name</th>
-                    <th>Note</th>
-                    <th>Configure</th>
+                    <th scope="row"><%= subject.id %></th>
+                    <td><%= link_to subject.subject_name, subject %></td>
                   </tr>
-                </thead>
-                <tbody>
-                  <% @kuuser.user_programs.each do |program| %>
-                    <tr>
-                      <th scope="row"><%= program.id %></th>
-                      <td><%= link_to program.program_name, program %></td>
-                      <td><%= program.note %></td>
-                      <td><%= link_to "Edit", edit_ku_user_attribute_path(id: @kuuser.id, program_id: program.id), :class => "btn btn-success" %></td>
-                    </tr>
-                  <% end %>
-                </tbody>
-            </table>
-          </div>
+                <% end %>
+              </tbody>
+          </table>
         </div>
+      </div>
 
-
-        <div id="personal_programs" class="tab-pane fade">
-          <div class="panel panel-success">
-            <!-- Default panel contents -->
-            <div class="panel-heading">Personal programs</div>
-              <table class="table table-striped">
-                <thead>
+      <div id="programs" class="tab-pane fade">
+        <br>
+        <div class="panel panel-warning">
+          <!-- Default panel contents -->
+          <div class="panel-heading">Programs</div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Program ID</th>
+                  <th>Program name</th>
+                  <th>Note</th>
+                  <th>Configure</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @kuuser.user_programs.each do |program| %>
                   <tr>
-                    <th>Program ID</th>
-                    <th>Program name</th>
-                    <th>Note</th>
-                    <th>Edit</th>
-                    <th>Delete</th>
+                    <th scope="row"><%= program.id %></th>
+                    <td><%= link_to program.program_name, program %></td>
+                    <td><%= program.note %></td>
+                    <td><%= link_to "Edit", edit_ku_user_attribute_path(id: @kuuser.id, program_id: program.id), :class => "btn btn-success" %></td>
                   </tr>
-                </thead>
-                <tbody>
-                  <% @kuuser.personal_programs.where("user_personal_programs.status = 'install'").each do |program| %>
-                    <tr>
-                      <th scope="row"><%= program.id %></th>
-                      <td><%= program.program_name %></td>
-                      <td><%= program.note %></td>
-                      <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
-                      <td><%= button_to 'Delete', delete_personal_program_from_user_path(id: @kuuser.id ,user_personal_program_id: @kuuser.user_personal_programs.find_by(personal_program_id: program).id), :class => "btn btn-default", :method => :delete %></td>
-                    </tr>
-                  <% end %>
-                </tbody>
-            </table>
-          </div>
+                <% end %>
+              </tbody>
+          </table>
         </div>
-
-      </div><!--tab-content-->
-
-        <% if @result.any? %>
-          <% progress=0 %>
-          <% if @user_job.progress_max != 0 %>
-          	<% progress = ((@user_job.progress_current.to_f / @user_job.progress_max) * 100).round %>
-          <% end %>
-          <div class="col-12" style="margin-top: 20px;">
-            <div class="thumbnail" style="padding: 0">
-              <div class="caption">
-                <div class="row">
-                  <div class="col-md-4"  style="text-align:center">
-                    <% if @user_job.progress_stage.nil? %>
-                      <b>Waitting</b>
-                    <% else %>
-                      <% if @job_error %>
-                        <b>Error</b>
-                      <% else %>
-                        <b>Working</b>
-                      <% end %>
-                    <% end %>
-                    <br><small>Status</small></div>
-                  <div class="col-md-4"  style="text-align:center"><%= button_to 'Log', log_path(@kuuser.log), :class => "btn btn-default", :method => :get, :disabled =>  @job_error ? false : true  %></div>
-                  <div class="col-md-4"  style="text-align:center"><%= button_to 'Delete', delete_user_job_path(id: @kuuser.id, job_id: @user_job.id), :class => "btn btn-default pull-right", :method => :delete, :disabled =>  @job_error ? false : true  %></div>
-                </div>
-              </div>
-              <div class="modal-footer" style="text-align: left">
-              	<div class="progress">
-      	          	<% if @job_error %>
-      	            	<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar progress-bar-danger") %>
-      	            <% else %>
-      	            	<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar") %>
-      	            <% end %>
-                  </div>
-              </div>
-              <div class="row">
-                  <div class="col-md-4" style="text-align:center"><%= ("<b>"+progress.to_s+"%</b>").html_safe %><br/><small>Successed</small></div>
-                  <div class="col-md-4" style="text-align:center"><%= ("<b>"+@user_job.progress_current.to_s+"</b>").html_safe %><br/><small>Current</small></div>
-                  <div class="col-md-4" style="text-align:center"><%= ("<b>"+@user_job.progress_max.to_s+"</b>").html_safe %><br/><small>Max</small></div>
-              </div>
+      </div>
 
 
-            </div>
-          </div>
+      <div id="personal_programs" class="tab-pane fade">
+        <br>
+        <div class="panel panel-success">
+          <!-- Default panel contents -->
+          <div class="panel-heading">Personal programs</div>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>Program ID</th>
+                  <th>Program name</th>
+                  <th>Note</th>
+                  <th>Edit</th>
+                  <th>Delete</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @kuuser.personal_programs.where("user_personal_programs.status = 'install'").each do |program| %>
+                  <tr>
+                    <th scope="row"><%= program.id %></th>
+                    <td><%= program.program_name %></td>
+                    <td><%= program.note %></td>
+                    <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
+                    <td><%= button_to 'Delete', delete_personal_program_from_user_path(id: @kuuser.id ,user_personal_program_id: @kuuser.user_personal_programs.find_by(personal_program_id: program).id), :class => "btn btn-default", :method => :delete %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!--tab-content-->
+
+      <% if @result.any? %>
+        <% progress=0 %>
+        <% if @user_job.progress_max != 0 %>
+        	<% progress = ((@user_job.progress_current.to_f / @user_job.progress_max) * 100).round %>
         <% end %>
+        <div class="col-12" style="margin-top: 20px;">
+          <div class="thumbnail" style="padding: 0">
+            <div class="caption">
+              <div class="row">
+                <div class="col-md-4"  style="text-align:center">
+                  <% if @user_job.progress_stage.nil? %>
+                    <b>Waitting</b>
+                  <% else %>
+                    <% if @job_error %>
+                      <b>Error</b>
+                    <% else %>
+                      <b>Working</b>
+                    <% end %>
+                  <% end %>
+                  <br><small>Status</small></div>
+                <div class="col-md-4"  style="text-align:center"><%= button_to 'Log', log_path(@kuuser.log), :class => "btn btn-default", :method => :get, :disabled =>  @job_error ? false : true  %></div>
+                <div class="col-md-4"  style="text-align:center"><%= button_to 'Delete', delete_user_job_path(id: @kuuser.id, job_id: @user_job.id), :class => "btn btn-default pull-right", :method => :delete, :disabled =>  @job_error ? false : true  %></div>
+              </div>
+            </div>
+            <div class="modal-footer" style="text-align: left">
+            	<div class="progress">
+    	          	<% if @job_error %>
+    	            	<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar progress-bar-danger") %>
+    	            <% else %>
+    	            	<%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar") %>
+    	            <% end %>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4" style="text-align:center"><%= ("<b>"+progress.to_s+"%</b>").html_safe %><br/><small>Successed</small></div>
+                <div class="col-md-4" style="text-align:center"><%= ("<b>"+@user_job.progress_current.to_s+"</b>").html_safe %><br/><small>Current</small></div>
+                <div class="col-md-4" style="text-align:center"><%= ("<b>"+@user_job.progress_max.to_s+"</b>").html_safe %><br/><small>Max</small></div>
+            </div>
+
+
+          </div>
+        </div>
+      <% end %>
 
 
 
 
-    <%= button_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-success", :method => :get, :disabled => @result.any? ? true : false  %>
+  <%= button_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-success", :method => :get, :disabled => @result.any? ? true : false  %>
 
-    </div>
+
   </div><!--/col-8-->
 </div>
-<!-- For Test -->
-------<br>
-Run_list:<%= @kuuser.run_list %>
-<br>------<br>
-Actual Run List:<br>
-<%= @actual_run_list %>

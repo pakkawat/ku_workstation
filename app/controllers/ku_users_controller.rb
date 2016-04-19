@@ -8,25 +8,20 @@ class KuUsersController < ApplicationController
   end
 
   def show
+    require 'chef'
+
     @kuuser = KuUser.find(params[:id])
     @result = Delayed::Job.where(owner: @kuuser.id)
     if @result.any?
       @user_job =  @result.first
       @job_error = !@user_job.last_error.nil?
     end
-    ###############      For Test      #####################
-    require 'open3'
-    captured_stdout = ''
-    captured_stderr = ''
-    exit_status = Open3.popen3(ENV, "knife node show " + @kuuser.ku_id + " -r -c /home/ubuntu/chef-repo/.chef/knife.rb") {|stdin, stdout, stderr, wait_thr|
-      pid = wait_thr.pid # pid of the started process.
-      stdin.close
-      captured_stdout = stdout.read
-      captured_stderr = stderr.read
-      wait_thr.value # Process::Status object returned.
-    }
-    @actual_run_list = captured_stdout
-    ##########################################################
+
+    Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
+    query = Chef::Search::Query.new
+    nodes = query.search('node', 'name:' + @kuuser.ku_id).first rescue []
+    @node = nodes.first
+
   end
 
   def new
