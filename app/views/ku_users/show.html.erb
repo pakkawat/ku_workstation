@@ -67,33 +67,35 @@
 
       <div id="instance" class="tab-pane fade in active">
         <br>
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Remote</th>
-                  <th>Instance name</th>
-                  <th>Uptime</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th><a class="btn btn-primary" href='<%= "http://"+@node.ec2.public_hostname.to_s+":8080/guacamole" %>'>RDP</a></th>
-                  <th><%= @node.name %></th>
-                  <th><%= @node.uptime.split(" ")[0..1].join(" ") %></th>
-                  <% date = DateTime.parse(Time.at(@node[:ohai_time]).to_s) %>
-                  <% if date < 1.hour.ago %>
-                    <th><%= image_tag "error.png" %> error</th>
-                  <% else %>
-                    <th><%= image_tag "running.png" %> running</th>
-                  <% end %>
-                </tr>
-              </tbody>
-            </table>
+        <% if !@node.nil? %>
+          <div class="panel panel-default">
+            <div class="panel-body">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>Remote</th>
+                    <th>Instance name</th>
+                    <th>Uptime</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th><a class="btn btn-primary" href='<%= "http://"+@node.ec2.public_hostname.to_s+":8080/guacamole" %>'>RDP</a></th>
+                    <th><%= @node.name %></th>
+                    <th><%= @node.uptime.split(" ")[0..1].join(" ") %></th>
+                    <% date = DateTime.parse(Time.at(@node[:ohai_time]).to_s) %>
+                    <% if date < 1.hour.ago %>
+                      <th><%= image_tag "error.png" %> error</th>
+                    <% else %>
+                      <th><%= image_tag "running.png" %> running</th>
+                    <% end %>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
+        <% end %>
       </div>
 
       <div id="subjects" class="tab-pane fade">

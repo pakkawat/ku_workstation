@@ -34,6 +34,7 @@ class KuUserJob < ProgressJob::Base
 
   def error(job, exception)
     if @type == "create"
+      delete_instance
       @user.destroy
     end
   end
@@ -87,6 +88,21 @@ class KuUserJob < ProgressJob::Base
     if KnifeCommand.run("knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
       FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
       update_progress
+    else
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+    end
+  end
+
+  def delete_instance
+    require 'chef'
+    Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
+    query = Chef::Search::Query.new
+    node = query.search('node', 'name:' + @user.ku_id).first rescue []
+    if !KnifeCommand.run("knife ec2 server delete " + node[0].ec2.instance_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb --purge -y", nil)
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+    end
+    if KnifeCommand.run("knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
+      FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
     else
       raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
     end
