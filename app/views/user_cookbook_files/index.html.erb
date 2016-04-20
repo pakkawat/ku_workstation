@@ -1,0 +1,25 @@
+<p id="notice"><%= notice %></p>
+
+<h1>Listing User Cookbook Files</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="3"></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <% @user_cookbook_files.each do |user_cookbook_file| %>
+      <tr>
+        <td><%= link_to 'Show', user_cookbook_file %></td>
+        <td><%= link_to 'Edit', edit_user_cookbook_file_path(user_cookbook_file) %></td>
+        <td><%= link_to 'Destroy', user_cookbook_file, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New User cookbook file', new_user_cookbook_file_path %>

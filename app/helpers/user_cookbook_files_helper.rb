@@ -1,0 +1,2 @@
+module UserCookbookFilesHelper
+end
