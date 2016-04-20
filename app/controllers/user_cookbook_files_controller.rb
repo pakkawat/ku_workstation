@@ -10,10 +10,12 @@ class UserCookbookFilesController < ApplicationController
   # GET /user_cookbook_files/1
   # GET /user_cookbook_files/1.json
   def show
-    render plain: params[:cookbook_paths].inspect
     @kuuser = KuUser.find(params[:id])
     @user_dir = "/home/ubuntu/chef-repo/cookbooks/"+@kuuser.ku_id+"/"
-    @path = params[:cookbook_paths]
+    @path = params[:cookbook_paths].sub(/^#{@kuuser.ku_id}\//, '')
+    if @path == @kuuser.ku_id # if it true then it is home directory
+      @path = ""
+    end
     @current_file = @user_dir+@path
     if File.directory?(@current_file)
       @all_files = Dir.glob(@current_file+"/*").sort_by{|e| e}

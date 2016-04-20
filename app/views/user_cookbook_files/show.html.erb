@@ -2,8 +2,17 @@
 
 <div class="panel panel-default">
   <div class="panel-heading">
-    <%= link_to @kuuser.ku_id, ku_user_path(@kuuser)+"/cookbook/" %><%= " / " %>
-
+    <%= link_to @kuuser.ku_id, ku_user_path(@kuuser)+"/cookbook/"+@kuuser.ku_id+"/" %><%= " / " %>
+    <% temp_path = "" %>
+    <% last_index = @path.split("/").count %>
+    <% @path.split("/").each_with_index do |item, index| %>
+      <% if (index+1) == last_index %>
+        <strong><%= item %></strong><%= " / " %>
+      <% else %>
+        <% temp_path += "/"+item %>
+        <%= link_to item, ku_user_path(@kuuser)+"/cookbook/"+@kuuser.ku_id+"/"+temp_path %><%= " / " %>
+      <% end %>
+    <% end %>
   </div>
   <div class="panel-body">
     File
@@ -29,8 +38,17 @@
 
     <div class="panel panel-default">
       <div class="panel-heading">
-        <%= link_to @kuuser.ku_id, ku_user_path(@kuuser)+"/cookbook/" %><%= " / " %>
-
+        <%= link_to @kuuser.ku_id, ku_user_path(@kuuser)+"/cookbook/"+@kuuser.ku_id+"/" %><%= " / " %>
+        <% temp_path = "" %>
+        <% last_index = @path.split("/").count %>
+        <% @path.split("/").each_with_index do |item, index| %>
+          <% if (index+1) == last_index %>
+            <strong><%= item %></strong><%= " / " %>
+          <% else %>
+            <% temp_path += "/"+item %>
+            <%= link_to item, ku_user_path(@kuuser)+"/cookbook/"+@kuuser.ku_id+"/"+temp_path %><%= " / " %>
+          <% end %>
+        <% end %>
       </div>
       <div class="panel-body">
         Directory
