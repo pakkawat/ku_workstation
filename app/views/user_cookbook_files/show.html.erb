@@ -15,7 +15,7 @@
     <% end %>
   </div>
   <div class="panel-body">
-    File
+    <div id="editor"><%= @data %></div>
   </div>
 </div>
 
@@ -51,7 +51,22 @@
         <% end %>
       </div>
       <div class="panel-body">
-        Directory
+        <table class="table table-striped">
+          <tbody>
+          <% @all_files.each do |file| %>
+            <tr>
+              <td>
+                <% if File.directory?(file) %>
+                  <%= image_tag "icon_folder.png" %>
+                <% else %>
+                  <%= image_tag "icon_file.png" %>
+                <% end %>
+                <%= link_to file.gsub(@current_file+"/", ""), ku_user_path(@kuuser)+"/"+@path+file.gsub(@current_file, "") %>
+              </td>
+            </tr>
+          <% end %>
+          </tbody>
+        </table>
       </div>
     </div>
 
