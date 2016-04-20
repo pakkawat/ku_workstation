@@ -4,13 +4,13 @@
   <div class="panel-heading">
     <%= link_to @program.program_name, program_path(@program) %><%= " / " %>
     <% temp_path = "" %>
-    <% last = @path.split("/").last %>
-    <% @path.split("/").each do |p| %>
-      <% if p == last %>
-        <strong><%= p %></strong><%= " / " %>
+    <% last_index = @path.split("/").count %>
+    <% @path.split("/").each_with_index do |item, index| %>
+      <% if (index+1) == last_index %>
+        <strong><%= item %></strong><%= " / " %>
       <% else %>
-        <% temp_path += "/"+p %>
-        <%= link_to p, program_path(@program)+temp_path %><%= " / " %>
+        <% temp_path += "/"+item %>
+        <%= link_to item, program_path(@program)+temp_path %><%= " / " %>
       <% end %>
     <% end %>
   </div>
@@ -83,13 +83,13 @@
       <div class="panel-heading">
         <%= link_to @program.program_name, program_path(@program) %><%= " / " %>
         <% temp_path = "" %>
-        <% last = @path.split("/").last %>
-        <% @path.split("/").each do |p| %>
-          <% if p == last %>
-            <strong><%= p %></strong><%= " / " %>
+        <% last_index = @path.split("/").count %>
+        <% @path.split("/").each_with_index do |item, index| %>
+          <% if (index+1) == last_index %>
+            <strong><%= item %></strong><%= " / " %>
           <% else %>
-            <% temp_path += "/"+p %>
-            <%= link_to p, program_path(@program)+temp_path %><%= " / " %>
+            <% temp_path += "/"+item %>
+            <%= link_to item, program_path(@program)+temp_path %><%= " / " %>
           <% end %>
         <% end %>
       </div>
