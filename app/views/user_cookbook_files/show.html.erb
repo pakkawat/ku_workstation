@@ -1,4 +1,47 @@
-<p id="notice"><%= notice %></p>
+<% if File.file?(@current_file) %>
 
-<%= link_to 'Edit', edit_user_cookbook_file_path(@user_cookbook_file) %> |
-<%= link_to 'Back', user_cookbook_files_path %>
+<div class="panel panel-default">
+  <div class="panel-heading">
+    <%= link_to @kuuser.ku_id, ku_user_path(@kuuser)+"/cookbook/" %><%= " / " %>
+
+  </div>
+  <div class="panel-body">
+    File
+  </div>
+</div>
+
+<%= javascript_include_tag "ace/src-min/ace.js", "ace/text_area_ace.js" %>
+<% elsif File.directory?(@current_file) %>
+
+
+<div class="row">
+  <div class="col-sm-12">
+    <span class="pull-left"><h1><%= @kuuser.ku_id %></h1></span>
+    <span class="pull-right">
+
+    </span>
+  </div>
+</div>
+
+<div class="row">
+
+  <div class="col-sm-9">
+
+    <div class="panel panel-default">
+      <div class="panel-heading">
+        <%= link_to @kuuser.ku_id, ku_user_path(@kuuser)+"/cookbook/" %><%= " / " %>
+
+      </div>
+      <div class="panel-body">
+        Directory
+      </div>
+    </div>
+
+
+  </div><!--/col-9-->
+</div>
+
+
+<% else %>
+	File not found
+<% end %>

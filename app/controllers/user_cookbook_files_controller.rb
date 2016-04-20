@@ -1,5 +1,5 @@
 class UserCookbookFilesController < ApplicationController
-  before_action :set_user_cookbook_file, only: [:show, :edit, :update, :destroy]
+  #before_action :set_user_cookbook_file, only: [:show, :edit, :update, :destroy]
 
   # GET /user_cookbook_files
   # GET /user_cookbook_files.json
@@ -10,6 +10,16 @@ class UserCookbookFilesController < ApplicationController
   # GET /user_cookbook_files/1
   # GET /user_cookbook_files/1.json
   def show
+    render plain: params[:cookbook_paths].inspect
+    @kuuser = KuUser.find(params[:id])
+    @user_dir = "/home/ubuntu/chef-repo/cookbooks/"+@kuuser.ku_id+"/"
+    @path = params[:cookbook_paths]
+    @current_file = @user_dir+@path
+    if File.directory?(@current_file)
+      @all_files = Dir.glob(@current_file+"/*").sort_by{|e| e}
+    elsif File.file?(@current_file)
+      @data = File.read(@current_file)
+    end
   end
 
   # GET /user_cookbook_files/new

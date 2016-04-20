@@ -46,6 +46,7 @@ Rails.application.routes.draw do
   get 'ku_users/:id/apply_change', to: 'ku_users#apply_change', via: :get
   match 'ku_user/:id/program/:program_id', to: 'ku_users#edit_attribute', as: 'edit_ku_user_attribute', :via => "get"
   match 'ku_user/:id/program/:program_id', to: 'ku_users#update_attribute', as: 'update_ku_user_attribute', :via => "patch"
+  match "ku_users/:id/cookbook/*cookbook_paths", :to => "user_cookbook_files#show", :via => "get", :constraints => { :cookbook_paths => /[^*]+/ }
   resources :ku_users
   #match "/ku_users/:ku_user_id/user_programs", :to => "ku_users#user_programs", :via => "get"
   #match '/teacher', to: 'users#teacher', via: :get
