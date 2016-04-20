@@ -15,6 +15,8 @@ class UserCookbookFilesController < ApplicationController
     @path = params[:cookbook_paths].sub(/^#{@kuuser.ku_id}\//, '')
     if @path == @kuuser.ku_id # if it true then it is home directory
       @path = ""
+    else
+      @path = "/"+@path
     end
     @current_file = @user_dir+@path
     if File.directory?(@current_file)

@@ -61,7 +61,7 @@
                 <% else %>
                   <%= image_tag "icon_file.png" %>
                 <% end %>
-                <%= link_to file.gsub(@current_file+"/", ""), ku_user_path(@kuuser)+"/"+@path+file.gsub(@current_file, "") %>
+                <%= link_to file.gsub(@current_file+"/", ""), ku_user_path(@kuuser)+"/cookbook/"+@kuuser.ku_id+@path+file.gsub(@current_file, "") %>
               </td>
             </tr>
           <% end %>
