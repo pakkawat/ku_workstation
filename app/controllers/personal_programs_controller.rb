@@ -33,7 +33,7 @@ class PersonalProgramsController < ApplicationController
 
     respond_to do |format|
       if @personal_program.save
-        format.html { redirect_to personal_programs_path, notice: @personal_program.program_name + ' was successfully created.' }
+        format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + ' was successfully created.' } }
         format.json { render :show, status: :created, location: @personal_program }
       else
         format.html { render :new }
@@ -47,7 +47,7 @@ class PersonalProgramsController < ApplicationController
   def update
     respond_to do |format|
       if @personal_program.update(personal_program_params)
-        format.html { redirect_to @personal_program, notice: @personal_program.program_name + ' was successfully updated.' }
+        format.html { redirect_to @personal_program, :flash => { :success => @personal_program.program_name + ' was successfully updated.' } }
         format.json { render :show, status: :ok, location: @personal_program }
       else
         format.html { render :edit }
@@ -61,7 +61,7 @@ class PersonalProgramsController < ApplicationController
   def destroy
     @personal_program.destroy
     respond_to do |format|
-      format.html { redirect_to personal_programs_url, notice: 'Personal program was successfully destroyed.' }
+      format.html { redirect_to personal_programs_url, :flash => { :success => 'Personal program was successfully destroyed.' } }
       format.json { head :no_content }
     end
   end
