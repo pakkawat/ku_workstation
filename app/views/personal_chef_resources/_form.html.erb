@@ -28,21 +28,21 @@
         </span>
         <%= f.text_field :resource_type, class: "form-control", value:resource_type_full_name(@personal_chef_resource.resource_type), disabled: true %>
       </li>
-
+<!--related_program
       <li class="list-group-item">
         <span class="pull-left">
             <strong>
-                <%= f.label :related_program,'Related program', class: "control-label" %>
+                < f.label :related_program,'Related program', class: "control-label" >
             </strong>
         </span>
         <br><br>
         <ul>
-          <% @personal_chef_resource.personal_programs.each do |program| %>
-            <li><%= link_to program.program_name, edit_personal_program_path(program) %></li>
-          <% end %>
+          < @personal_chef_resource.personal_programs.each do |program| >
+            <li>< link_to program.program_name, edit_personal_program_path(program) ></li>
+          < end >
         </ul>
       </li>
-
+-->
       <li class="list-group-item text-center">
         <%= f.submit "Update action", class: "btn btn-primary" %>
       </li>
