@@ -47,7 +47,7 @@ class PersonalProgramsController < ApplicationController
   def update
     respond_to do |format|
       if @personal_program.update(personal_program_params)
-        format.html { redirect_to @personal_program, :flash => { :success => @personal_program.program_name + ' was successfully updated.' } }
+        format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => @personal_program.program_name + ' was successfully updated.' } }
         format.json { render :show, status: :ok, location: @personal_program }
       else
         format.html { render :edit }
