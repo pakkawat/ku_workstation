@@ -57,54 +57,93 @@
 
 <% if @personal_program.persisted? %>
 <div class="col-sm-6">
-  <div class="row">
-    <div class="col-md-12">
-      <table>
-        <tr>
-          <td class="col-md-6">
-            <div>
-              <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs", :method => :post) do %>
 
-                          <%= select_tag :chef_resource_type, options_for_select([["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"]]), class: "form-control" %>
-                          <div style="margin-top: 10px"></div>
-                          <%= submit_tag "Install action", class: "btn btn-primary" %>
-                  <% end %>
-            </div>
-          </td>
-          <td class="col-md-6">
-            <div>
-              <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs", :method => :post) do %>
+  <ul class="nav nav-tabs">
+    <li class="active"><a data-toggle="tab" href="#action">Action</a></li>
+    <li><a data-toggle="tab" href="#related_users">Related users</a></li>
+  </ul>
 
-                          <%= select_tag :chef_resource_type, options_for_select([["Download file", "Download"], ["Extract file", "Extract"], ["Edit file", "Config_file"], ["Create file", "Create_file"]]), class: "form-control" %>
-                          <div style="margin-top: 10px"></div>
-                          <%= submit_tag "File action", class: "btn btn-primary" %>
-                  <% end %>
-            </div>
-          </td>
-      </tr>
-      <tr><td>&nbsp;</td></tr>
-      <tr>
-        <td class="col-md-6">
-          <div>
-            <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs", :method => :post) do %>
+  <div class="tab-content">
 
-                        <%= select_tag :chef_resource_type, options_for_select([["Execute command", "Execute_command"], ["Bash script", "Bash_script"]]), class: "form-control" %>
-                        <div style="margin-top: 10px"></div>
-                        <%= submit_tag "Other action", class: "btn btn-primary" %>
-                <% end %>
-          </div>
-        </td>
-      </tr>
-      </table>
-    </div>
-  </div>
-  <div style="margin-top: 10px">
-  </div>
-  <div class="sortable">
-    <% if @personal_program.personal_chef_resources.any? %>
-      <%= render partial: "personal_chef_resources", collection: @personal_program.personal_chef_resources, as: :chef %>
-    <% end %>
-  </div>
+    <div id="action" class="tab-pane fade in active">
+      <br>
+      <div class="row">
+        <div class="col-md-12">
+          <table>
+            <tr>
+              <td class="col-md-6">
+                <div>
+                  <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs", :method => :post) do %>
+
+                              <%= select_tag :chef_resource_type, options_for_select([["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"]]), class: "form-control" %>
+                              <div style="margin-top: 10px"></div>
+                              <%= submit_tag "Install action", class: "btn btn-primary" %>
+                      <% end %>
+                </div>
+              </td>
+              <td class="col-md-6">
+                <div>
+                  <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs", :method => :post) do %>
+
+                              <%= select_tag :chef_resource_type, options_for_select([["Download file", "Download"], ["Extract file", "Extract"], ["Edit file", "Config_file"], ["Create file", "Create_file"]]), class: "form-control" %>
+                              <div style="margin-top: 10px"></div>
+                              <%= submit_tag "File action", class: "btn btn-primary" %>
+                      <% end %>
+                </div>
+              </td>
+          </tr>
+          <tr><td>&nbsp;</td></tr>
+          <tr>
+            <td class="col-md-6">
+              <div>
+                <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs", :method => :post) do %>
+
+                            <%= select_tag :chef_resource_type, options_for_select([["Execute command", "Execute_command"], ["Bash script", "Bash_script"]]), class: "form-control" %>
+                            <div style="margin-top: 10px"></div>
+                            <%= submit_tag "Other action", class: "btn btn-primary" %>
+                    <% end %>
+              </div>
+            </td>
+          </tr>
+          </table>
+        </div>
+      </div>
+      <div style="margin-top: 10px">
+      </div>
+      <div class="sortable">
+        <% if @personal_program.personal_chef_resources.any? %>
+          <%= render partial: "personal_chef_resources", collection: @personal_program.personal_chef_resources, as: :chef %>
+        <% end %>
+      </div>
+    </div><!-- id=action class=tab-pane fade in active-->
+
+    <div id="related_users" class="tab-pane fade">
+      <br>
+      <div class="panel panel-info">
+        <!-- Default panel contents -->
+        <div class="panel-heading">Related users</div>
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Ku ID</th>
+                <th>Firstname</th>
+                <th>Lastname</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% @personal_program.ku_users.each do |user| %>
+                <tr>
+                  <th scope="row"><%= user.ku_id %></th>
+                  <td><%= user.firstname %></td>
+                  <td><%= user.lastname %></td>
+                </tr>
+              <% end %>
+            </tbody>
+        </table>
+      </div>
+    </div><!-- id=related_users class=tab-pane fade -->
+
+  </div><!--tab-content-->
 </div><!--/col-6-->
 <% end %>
 </div><!--row-->

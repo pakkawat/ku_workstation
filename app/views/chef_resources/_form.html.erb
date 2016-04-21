@@ -31,20 +31,21 @@
         <%= f.text_field :resource_type, class: "form-control", value:resource_type_full_name(@chef_resource.resource_type), disabled: true %>
       </li>
 
+<!--Related program
       <li class="list-group-item">
         <span class="pull-left">
             <strong>
-                <%= f.label :related_program,'Related program', class: "control-label" %>
+                < f.label :related_program,'Related program', class: "control-label" >
             </strong>
         </span>
         <br><br>
         <ul>
-          <% @chef_resource.programs.each do |program| %>
-            <li><%= link_to program.program_name, edit_program_path(program) %></li>
-          <% end %>
+          < @chef_resource.programs.each do |program| >
+            <li>< link_to program.program_name, edit_program_path(program) ></li>
+          < end >
         </ul>
       </li>
-
+-->
 
       <li class="list-group-item">
         <span class="pull-left">
