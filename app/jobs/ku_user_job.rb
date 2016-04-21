@@ -27,7 +27,7 @@ class KuUserJob < ProgressJob::Base
       #to_do delete logrotate( g0001.log.2) ???
       @user.destroy
     elsif @type == "apply_change"
-      @user.personal_programs.where("user_personal_programs.status = 'uninstall'").destroy_all
+      @user.user_personal_programs.where(status: 'uninstall').destroy_all
       @user.user_remove_resources.destroy_all
     end
   end
