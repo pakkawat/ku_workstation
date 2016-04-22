@@ -27,6 +27,9 @@ class KuUserJob < ProgressJob::Base
       #to_do delete logrotate( g0001.log.2) ???
       @user.destroy
     elsif @type == "apply_change"
+      @user.personal_programs.where("user_personal_programs.status = 'uninstall'").each do |personal_program|
+        File.delete("/home/ubuntu/chef-repo/cookbooks/#{@user.ku_id}/recipes/#{personal_program.program_name}.rb") if File.exist?("/home/ubuntu/chef-repo/cookbooks/#{@user.ku_id}/recipes/#{personal_program.program_name}.rb")
+      end
       @user.user_personal_programs.where(status: 'uninstall').destroy_all
       @user.user_remove_resources.destroy_all
     end
