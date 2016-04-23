@@ -39,14 +39,9 @@ class PersonalChefResourcesController < ApplicationController
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
       else
-        if !@ku_user.nil?
-          value = @personal_chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-          if !value.empty?
-          file_name = File.basename(value)
-            if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + file_name + ".erb")
-              @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + file_name + ".erb")
-            end
-          end
+        #value = @personal_chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
+        if @personal_chef_resource.chef_file.any?
+          @data = @personal_chef_resource.chef_file.content
         end
       end
     when "Copy_file"
@@ -62,12 +57,9 @@ class PersonalChefResourcesController < ApplicationController
         @personal_chef_resource.chef_properties.build
       else
         if !@personal_program.nil?
-          value = @personal_chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
-          if !value.empty?
-          file_name = File.basename(value)
-            if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + file_name + ".erb")
-              @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + file_name + ".erb")
-            end
+          #value = @personal_chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
+          if @personal_chef_resource.chef_file.any?
+            @data = @personal_chef_resource.chef_file.content
           end
         end
       end
@@ -78,10 +70,8 @@ class PersonalChefResourcesController < ApplicationController
         @personal_chef_resource.chef_properties.build
         @personal_chef_resource.chef_properties.build
       else
-        if !@ku_user.nil?
-          if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + @ku_user.id.to_s + "_" + @personal_chef_resource.id.to_s + ".sh.erb")
-            @data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + @ku_user.id.to_s + "_" + @personal_chef_resource.id.to_s + ".sh.erb")
-          end
+        if @personal_chef_resource.chef_file.any?
+          @data = @personal_chef_resource.chef_file.content
         end
       end
     end # end case
@@ -222,8 +212,9 @@ class PersonalChefResourcesController < ApplicationController
             if chef_property.value != value[:value]
               #value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
               add_remove_resource(chef_property.value, "file")
+              @personal_chef_resource.chef_file.destroy
             else
-              save_config_file(params[:config_file_value])
+              save_file_content(params[:config_file_value])
             end
           end
         end
@@ -244,12 +235,15 @@ class PersonalChefResourcesController < ApplicationController
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
               add_remove_resource(chef_property.value, "file") # delete old file
-              create_file(params[:created_file_content], value[:value]) # create new file
+              #create_file(params[:created_file_content], value[:value]) # create new file
+              save_file_content(params[:created_file_content])
             else
-              create_file(params[:created_file_content], chef_property.value) # old file then update content
+              #create_file(params[:created_file_content], chef_property.value) # old file then update content
+              save_file_content(params[:created_file_content])
             end
           else
-            create_file(params[:created_file_content], value[:value]) # new file
+            #create_file(params[:created_file_content], value[:value]) # new file
+            save_file_content(params[:created_file_content])
           end
         end
       when "Move_file" # delete destination file when source file or destination change
@@ -272,14 +266,16 @@ class PersonalChefResourcesController < ApplicationController
         params[:personal_chef_resource][:chef_properties_attributes].each do |key, value|
           if !value[:id].nil? # old_value
             if value[:value_type] == "bash_script"
-              create_bash_script_file(@personal_chef_resource.id.to_s, params[:bash_script_content])
+              #create_bash_script_file(@personal_chef_resource.id.to_s, params[:bash_script_content])
+              save_file_content(params[:bash_script_content])
               #bash = BashScript.find(value[:value])
               # check diff between bash.bash_script_content and params[:bash_script_content] then delete text file
               #bash.update_attribute(:bash_script_content, params[:bash_script_content])
             end
           else
             if value[:value_type] == "bash_script"
-              create_bash_script_file(@personal_chef_resource.id.to_s, params[:bash_script_content])
+              #create_bash_script_file(@personal_chef_resource.id.to_s, params[:bash_script_content])
+              save_file_content(params[:bash_script_content])
               value[:value] = "_" + @personal_chef_resource.id.to_s
               #bash = BashScript.new(bash_script_content: params[:bash_script_content])
               #bash.save
@@ -315,13 +311,14 @@ class PersonalChefResourcesController < ApplicationController
       return (array1 - array2).join(" ")
     end
 
-    def save_config_file(config_file_value)
-      value = @personal_chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-      file_name = File.basename(value)
-      @personal_program.ku_users.each do |user|
-        file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/templates/" + file_name + ".erb"
-        File.open(file_full_path, "w") do |f|
-          f.write(config_file_value)
+    def save_file_content(file_content)
+      if @personal_chef_resource.chef_file.any?
+        @personal_chef_resource.chef_file.update_attribute(:content, file_content)
+      else
+        @personal_chef_resource.resource_type != "Config_file" # chef_file ของ config_file จะถูกสร้างก็ต่อเมื่อ file ได้ถูก donwload ครั้งแรกที่ personal_program edit
+          chef_file = ChefFile.new(content: file_content)
+          chef_file.save
+          @personal_chef_resource.chef_file.create(chef_file: chef_file)
         end
       end
     end

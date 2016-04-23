@@ -255,7 +255,12 @@ module UserResourceGenerator
 		#src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
-		if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb")
+		#if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb")
+		if chef_resource.chef_file.any?
+			file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb"
+			File.open(file_full_path, "w") do |f|
+				f.write(chef_resource.chef_file.content)
+			end
 			str_code += "template '#{source_file}' do\n"
 			str_code += "  source '#{src_file_name}.erb'\n"
 			str_code += "  owner 'root'\n"
@@ -409,6 +414,11 @@ module UserResourceGenerator
 		src_path = File.dirname(value)
 		src_file_name = File.basename(value)
 		src_paths, src_last_path = get_path(src_path)
+
+		file_full_path = "/home/ubuntu/chef-repo/cookbooks/" +  @kuuser.ku_id + "/templates/" + src_file_name + ".erb"
+		File.open(file_full_path, "w") do |f|
+			f.write(chef_resource.chef_file.content)
+		end
 
 		str_code = ""
 		str_code += "%w[ #{src_paths} ].each do |path|\n"
@@ -566,6 +576,12 @@ module UserResourceGenerator
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 		value = @kuuser.ku_id + value
 		#bash = BashScript.find(value)
+
+		file_full_path = "/home/ubuntu/chef-repo/cookbooks/" +  @kuuser.ku_id + "/templates/" + value + ".sh.erb"
+		File.open(file_full_path, "w") do |f|
+			f.write(chef_resource.chef_file.content)
+		end
+
 		str_code = ""
 		str_code += "template '/tmp/#{value}.sh' do\n"
 		str_code += "  source '#{value}.sh.erb'\n"
@@ -590,22 +606,22 @@ module UserResourceGenerator
 		else #Only once
 			require 'digest'
 
-      if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
-			  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
-			  md5 = Digest::MD5.new
-			  md5.update(data)
-			  str_code += "execute 'execute_bash_script_#{value}' do\n"
-			  str_code += "  user 'root'\n"
-			  str_code += "  command 'bash /tmp/#{value}.sh'\n"
-			  str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
-			  str_code += "end\n"
-			  str_code += "\n"
-			  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
-			  str_code += "  content ''\n"
-			  str_code += "  mode '0755'\n"
-			  str_code += "end\n"
-			  str_code += "\n"
-      end
+
+		  data = chef_resource.chef_file.content
+		  md5 = Digest::MD5.new
+		  md5.update(data)
+		  str_code += "execute 'execute_bash_script_#{value}' do\n"
+		  str_code += "  user 'root'\n"
+		  str_code += "  command 'bash /tmp/#{value}.sh'\n"
+		  str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
+		  str_code += "end\n"
+		  str_code += "\n"
+		  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
+		  str_code += "  content ''\n"
+		  str_code += "  mode '0755'\n"
+		  str_code += "end\n"
+		  str_code += "\n"
+
 			#str_code += "bash 'bash_script' do\n"
 			#str_code += "  user 'root'\n"
 			#str_code += "  code <<-EOH\n"
@@ -621,29 +637,29 @@ module UserResourceGenerator
 
 	def UserResourceGenerator.delete_bash_script_file(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
-		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
+		#condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 		value = @kuuser.ku_id + value
 		require 'digest'
 
-    if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
-		  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
-		  md5 = Digest::MD5.new
-		  md5.update(data)
 
-		  str_code = ""
-		  str_code += "file '/tmp/#{value}.sh' do\n"
-		  str_code += "  action :delete\n"
-		  str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
-		  str_code += "end\n"
-		  str_code += "\n"
-		  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
-		  str_code += "  action :delete\n"
-		  str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') \}\n"
-		  str_code += "end\n"
-		  str_code += "\n"
-    end
-		  path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb"
-		  File.delete(path_to_file) if File.exist?(path_to_file)
+	  data = chef_resource.chef_file.content
+	  md5 = Digest::MD5.new
+	  md5.update(data)
+
+	  str_code = ""
+	  str_code += "file '/tmp/#{value}.sh' do\n"
+	  str_code += "  action :delete\n"
+	  str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
+	  str_code += "end\n"
+	  str_code += "\n"
+	  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
+	  str_code += "  action :delete\n"
+	  str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') \}\n"
+	  str_code += "end\n"
+	  str_code += "\n"
+
+	  path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb"
+	  File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code
 	end
@@ -823,9 +839,15 @@ module UserResourceGenerator
 		require 'digest'
 		#program = Program.find(remove_resource.program_id)
 		value = @kuuser.ku_id + remove_resource.value
-		data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
+		#data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
+		#md5 = Digest::MD5.new
+		#md5.update(data)
+
+		personal_chef_resource = PersonalChefResource.find(remove_resource.personal_chef_resource_id)
+		data = personal_chef_resource.chef_file.content
 		md5 = Digest::MD5.new
 		md5.update(data)
+		#personal_chef_resource.chef_file.destroy
 
 		str_code = ""
 		str_code += "file '/tmp/#{value}.sh' do\n"

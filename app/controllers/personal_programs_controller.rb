@@ -90,18 +90,15 @@ class PersonalProgramsController < ApplicationController
       if personal_chef_resources.any?
         personal_chef_resources.each do |personal_chef_resource|
           value = personal_chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-          if !value.nil?
+          if !personal_chef_resource.chef_file.any?
             file_name = File.basename(value)
-            file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + file_name + ".erb"
-            if !File.exists?(file_full_path)
-              donwload_config_file(file_name, file_full_path)
-            end
+            donwload_config_file(file_name, personal_chef_resource)
           end
         end
       end
     end
 
-    def donwload_config_file(file_name, file_full_path)
+    def donwload_config_file(file_name, personal_chef_resource)
       require 'chef'
       require 'open-uri'
       error = false
@@ -116,7 +113,10 @@ class PersonalProgramsController < ApplicationController
         error = true
       end
       if !error
-        IO.copy_stream(download, file_full_path)
+        #IO.copy_stream(download, file_full_path)
+        chef_file = ChefFile.new(content: download.read)
+        chef_file.save
+        personal_chef_resource.chef_file.create(chef_file: chef_file)
       end
     end
 
