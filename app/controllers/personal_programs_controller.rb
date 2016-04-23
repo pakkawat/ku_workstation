@@ -114,9 +114,7 @@ class PersonalProgramsController < ApplicationController
       end
       if !error
         #IO.copy_stream(download, file_full_path)
-        chef_file = ChefFile.new(content: download.read)
-        chef_file.save
-        personal_chef_resource.chef_file.create(chef_file: chef_file)
+        personal_chef_resource.create_chef_file(content: download.read)
       end
     end
 

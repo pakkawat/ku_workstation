@@ -316,9 +316,7 @@ class PersonalChefResourcesController < ApplicationController
         @personal_chef_resource.chef_file.update_attribute(:content, file_content)
       else
         if @personal_chef_resource.resource_type != "Config_file" # chef_file ของ config_file จะถูกสร้างก็ต่อเมื่อ file ได้ถูก donwload ครั้งแรกที่ personal_program edit
-          chef_file = ChefFile.new(content: file_content)
-          chef_file.save
-          @personal_chef_resource.chef_file.create(chef_file: chef_file)
+          @personal_chef_resource.create_chef_file(content: file_content)
         end
       end
     end

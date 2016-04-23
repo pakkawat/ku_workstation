@@ -207,7 +207,8 @@ module PersonalProgramsHelper
         str_temp += "  </div>"
         str_temp += "</div>"
         file_name = File.basename(property.value)
-        if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + file_name + ".erb")
+        #if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + file_name + ".erb")
+        if !@chef_resource.chef_file.nil?
           str_temp += "<div class='form-group'>"
           str_temp += "  <label for='name'>"
           str_temp += "    File status:"
@@ -402,8 +403,10 @@ module PersonalProgramsHelper
         else
           #program_id = property.value.split("_").first
           #program = Program.find(program_id)
-          if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + property.value + ".sh.erb")
-            bash_script_content = File.read("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + property.value + ".sh.erb")
+          #if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + property.value + ".sh.erb")
+          if !@chef_resource.chef_file.nil?
+            #bash_script_content = File.read("/home/ubuntu/chef-repo/cookbooks/" + @ku_user.ku_id + "/templates/" + property.value + ".sh.erb")
+            bash_script_content = @chef_resource.chef_file.content
             str_temp += "<div class='form-group'>"
             str_temp += "  <label for='name'>"
             str_temp += "    Bash script:"
