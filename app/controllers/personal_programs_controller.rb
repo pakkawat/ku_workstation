@@ -90,7 +90,7 @@ class PersonalProgramsController < ApplicationController
       if personal_chef_resources.any?
         personal_chef_resources.each do |personal_chef_resource|
           value = personal_chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-          if !personal_chef_resource.chef_file.any?
+          if personal_chef_resource.chef_file.nil?
             file_name = File.basename(value)
             donwload_config_file(file_name, personal_chef_resource)
           end

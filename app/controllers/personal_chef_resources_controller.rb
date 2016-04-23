@@ -40,7 +40,7 @@ class PersonalChefResourcesController < ApplicationController
         @personal_chef_resource.chef_properties.build
       else
         #value = @personal_chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-        if @personal_chef_resource.chef_file.any?
+        if !@personal_chef_resource.chef_file.nil?
           @data = @personal_chef_resource.chef_file.content
         end
       end
@@ -58,7 +58,7 @@ class PersonalChefResourcesController < ApplicationController
       else
         if !@personal_program.nil?
           #value = @personal_chef_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
-          if @personal_chef_resource.chef_file.any?
+          if !@personal_chef_resource.chef_file.nil?
             @data = @personal_chef_resource.chef_file.content
           end
         end
@@ -70,7 +70,7 @@ class PersonalChefResourcesController < ApplicationController
         @personal_chef_resource.chef_properties.build
         @personal_chef_resource.chef_properties.build
       else
-        if @personal_chef_resource.chef_file.any?
+        if !@personal_chef_resource.chef_file.nil?
           @data = @personal_chef_resource.chef_file.content
         end
       end
@@ -312,10 +312,10 @@ class PersonalChefResourcesController < ApplicationController
     end
 
     def save_file_content(file_content)
-      if @personal_chef_resource.chef_file.any?
+      if !@personal_chef_resource.chef_file.nil?
         @personal_chef_resource.chef_file.update_attribute(:content, file_content)
       else
-        @personal_chef_resource.resource_type != "Config_file" # chef_file ของ config_file จะถูกสร้างก็ต่อเมื่อ file ได้ถูก donwload ครั้งแรกที่ personal_program edit
+        if @personal_chef_resource.resource_type != "Config_file" # chef_file ของ config_file จะถูกสร้างก็ต่อเมื่อ file ได้ถูก donwload ครั้งแรกที่ personal_program edit
           chef_file = ChefFile.new(content: file_content)
           chef_file.save
           @personal_chef_resource.chef_file.create(chef_file: chef_file)

@@ -256,7 +256,7 @@ module UserResourceGenerator
 
 		str_code = ""
 		#if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb")
-		if chef_resource.chef_file.any?
+		if !chef_resource.chef_file.nil?
 			file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb"
 			File.open(file_full_path, "w") do |f|
 				f.write(chef_resource.chef_file.content)
