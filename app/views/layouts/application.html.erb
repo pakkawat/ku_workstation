@@ -75,12 +75,15 @@
               <li><%= link_to "Job List", command_jobs_index_path %></li>
               <li><%= link_to "Logs", logs_path %></li>
               <li><a href="#">Contact</a></li>
-              <li><%= link_to "Log out", logout_path, method: :delete %></li>
+
           <% else %>
 
               <li><%= link_to current_user.ku_id, current_user %></li>
 
           <% end %>
+
+              <li><%= link_to "Log out", logout_path, method: :delete %></li>
+              
         </ul><!-- <ul class="nav navbar-nav"> -->
 
 
