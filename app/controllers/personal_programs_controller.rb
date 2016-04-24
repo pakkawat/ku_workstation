@@ -33,6 +33,7 @@ class PersonalProgramsController < ApplicationController
 
     respond_to do |format|
       if @personal_program.save
+        @personal_program.update_attribute(:owner, current_user.ku_id)
         format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + ' was successfully created.' } }
         format.json { render :show, status: :created, location: @personal_program }
       else
