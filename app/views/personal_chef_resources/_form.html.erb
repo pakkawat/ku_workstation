@@ -44,7 +44,7 @@
       </li>
 -->
       <li class="list-group-item text-center">
-        <% if @personal_program.owner == current_user.ku_id %>
+        <% if @personal_program.owner == current_user.id %>
           <%= f.submit "Update action", class: "btn btn-primary" %>
         <% end %>
       </li>
