@@ -339,6 +339,21 @@
             <%= f.fields_for :chef_properties do |property| %>
               <% if @property_count == 0 %>
                 <div class='form-group'>
+                  <label for='type'>
+                    <%= property.label :type %>
+                  </label>
+                  <div class='input-group'>
+                    <span class='input-group-addon'><span class='glyphicon glyphicon-list-alt'></span></span>
+                    <%= property.select :value, [['File', 'file'], ['Folder', 'folder']], {}, {:class => "form-control"} %>
+                  </div>
+                  <% if property.object.id != nil %>
+                    <%= property.hidden_field :value_type %>
+                  <% else %>
+                    <%= property.hidden_field :value_type, :value => "move_type" %>
+                  <% end %>
+                </div>
+              <% elsif @property_count == 1 %>
+                <div class='form-group'>
                   <label for='name'>
                     <%= property.label :source_file %>
                   </label>

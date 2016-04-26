@@ -444,8 +444,8 @@ module ResourceGenerator
 	def ResourceGenerator.move_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
+		move_type = chef_resource.chef_properties.where(:value_type => "move_type").pluck(:value).first
 
-		src_file_extname = File.extname(source_file)
 
 
 		#des_path = File.dirname(destination_file)
@@ -461,7 +461,7 @@ module ResourceGenerator
 		str_code += "  end\n"
 		str_code += "end\n"
 		str_code += "\n"
-		if src_file_extname == "" # folder # ไฟล์บางประเภทก็ไม่มีนามสกุล
+		if move_type == "folder"
 			src_paths, src_last_path = get_path(source_file)
 			str_code += "if Dir.entries('#{des_last_path}').size == 2\n" # empty folder (have two links "." and ".." only)
 			str_code += "  execute 'copy_all_file_in_folder' do\n"
@@ -485,13 +485,12 @@ module ResourceGenerator
 	def ResourceGenerator.delete_move_file(chef_resource)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
-
-		src_file_extname = File.extname(source_file)
+		move_type = chef_resource.chef_properties.where(:value_type => "move_type").pluck(:value).first
 
 		des_paths, des_last_path = get_path(destination_file)
 
 		str_code = ""
-		if src_file_extname == "" # folder
+		if move_type == "folder" # folder
 			str_code += "directory '" + des_last_path + "' do\n"
 			str_code += "  recursive true\n"
 			str_code += "  action :delete\n"
@@ -787,13 +786,12 @@ module ResourceGenerator
 		chef_resource = ChefResource.find(remove_resource.chef_resource_id)
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		destination_file = chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
-
-		src_file_extname = File.extname(source_file)
+		move_type = chef_resource.chef_properties.where(:value_type => "move_type").pluck(:value).first
 
 		des_paths, des_last_path = get_path(destination_file)
 
 		str_code = ""
-		if src_file_extname == "" # folder
+		if move_type == "folder" # folder
 			str_code += "directory '" + des_last_path + "' do\n"
 			str_code += "  recursive true\n"
 			str_code += "  action :delete\n"

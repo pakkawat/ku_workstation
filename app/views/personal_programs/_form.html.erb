@@ -41,7 +41,9 @@
 
       <li class="list-group-item text-center">
         <% if @personal_program.persisted? %>
-            <%= f.submit "Update program", class: "btn btn-primary" %>
+            <% if @personal_program.owner == current_user.id %>
+              <%= f.submit "Update program", class: "btn btn-primary" %>
+            <% end %>
         <% else %>
             <%= f.submit "Add program", class: "btn btn-success" %>
         <% end %>
