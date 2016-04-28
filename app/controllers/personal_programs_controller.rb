@@ -1,5 +1,6 @@
 class PersonalProgramsController < ApplicationController
   before_action :set_personal_program, only: [:show, :edit, :update, :destroy]
+  before_action :owner_program, only: [:update, :destroy]
 
   # GET /personal_programs
   # GET /personal_programs.json
@@ -91,9 +92,11 @@ class PersonalProgramsController < ApplicationController
       if personal_chef_resources.any?
         personal_chef_resources.each do |personal_chef_resource|
           value = personal_chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-          if personal_chef_resource.chef_file.nil?
-            file_name = File.basename(value)
-            donwload_config_file(file_name, personal_chef_resource)
+          if !value.nil?
+            if personal_chef_resource.chef_file.nil?
+              file_name = File.basename(value)
+              donwload_config_file(file_name, personal_chef_resource)
+            end
           end
         end
       end
@@ -117,6 +120,10 @@ class PersonalProgramsController < ApplicationController
         #IO.copy_stream(download, file_full_path)
         personal_chef_resource.create_chef_file(content: download.read)
       end
+    end
+
+    def owner_program
+      redirect_to(current_user) unless @personal_program.owner == current_user.id
     end
 
 end

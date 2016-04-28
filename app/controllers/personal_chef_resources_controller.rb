@@ -1,5 +1,6 @@
 class PersonalChefResourcesController < ApplicationController
   before_action :set_personal_chef_resource, only: [:show, :edit, :update, :destroy]
+  before_action :owner_program, only: [:update, :destroy]
 
   # GET /personal_chef_resources
   # GET /personal_chef_resources.json
@@ -132,6 +133,11 @@ class PersonalChefResourcesController < ApplicationController
     # Never trust parameters from the scary internet, only allow the white list through.
     def personal_chef_resource_params
       params.require(:personal_chef_resource).permit(:resource_type, chef_properties_attributes: [ :id, :value, :value_type ])
+    end
+
+    def owner_program
+      @personal_program = PersonalProgram.find(params[:personal_program_id])
+      redirect_to(current_user) unless @personal_program.owner == current_user.id
     end
 
     #1. repo
