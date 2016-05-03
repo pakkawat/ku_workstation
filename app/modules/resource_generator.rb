@@ -317,7 +317,7 @@ module ResourceGenerator
 			str_code += "  only_if { File.exist?('#{source_file}') && !File.exist?('#{des_last_path}\/#{src_file_name}')}\n"
 			str_code += "end\n"
 			str_code += "\n"
-		else
+		elsif copy_type == "folder"
 			#src_path = File.dirname(source_file)
 			#src_file_name = File.basename(source_file)
 			src_paths, src_last_path = get_path(source_file)
@@ -363,7 +363,7 @@ module ResourceGenerator
 			str_code += "  action :delete\n"
 			str_code += "end\n"
 			str_code += "\n"
-		else
+		elsif copy_type == "folder"
 			des_paths, des_last_path = get_path(destination_file)
 
 			str_code += "directory '#{des_last_path}' do\n"
@@ -469,7 +469,7 @@ module ResourceGenerator
 			str_code += "  end\n"
 			str_code += "end\n"
 			str_code += "\n"
-		else # file
+		elsif move_type == "file"
 			src_path = File.dirname(source_file)
 			src_file_name = File.basename(source_file)
 			src_paths, src_last_path = get_path(src_path)
@@ -496,7 +496,7 @@ module ResourceGenerator
 			str_code += "  action :delete\n"
 			str_code += "end\n"
 			str_code += "\n"
-		else # file
+		elsif move_type == "file"
 			src_file_name = File.basename(source_file)
 			str_code += "file '#{des_last_path}\/#{src_file_name}' do\n"
 			str_code += "  action :delete\n"
@@ -517,7 +517,7 @@ module ResourceGenerator
 			str_code += "  user 'root'\n"
 			str_code += "  command '#{value}'\n"
 			str_code += "end\n"
-		else #Only once
+		elsif condition == "once"
 			require 'digest'
 			md5 = Digest::MD5.new
 			md5.update(value)
@@ -540,14 +540,15 @@ module ResourceGenerator
 		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value).first
 
 		str_code = ""
-		require 'digest'
-		md5 = Digest::MD5.new
-		md5.update(value)
-		str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
-		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') \}\n"
-		str_code += "end\n"
-
+		if !value.nil?
+			require 'digest'
+			md5 = Digest::MD5.new
+			md5.update(value)
+			str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
+			str_code += "  action :delete\n"
+			str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') \}\n"
+			str_code += "end\n"
+		end
 		str_code += "\n"
 		return str_code
 	end
@@ -577,7 +578,7 @@ module ResourceGenerator
 			#str_code += "  #{bash.bash_script_content}\n"
 			#str_code += "  EOH\n"
 			#str_code += "end\n"
-		else #Only once
+		elsif condition == "once"
 			require 'digest'
 			#program_id = value.split("_").first
 			#program = Program.find(program_id)
