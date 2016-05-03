@@ -29,7 +29,7 @@ class UserPersonalProgramsController < ApplicationController
     user_personal_program = @ku_user.user_personal_programs.find_by(personal_program_id: @personal_program)
     if user_personal_program.present?
       respond_to do |format|
-        if user_personal_program.update_attribute(:status, "install")
+        if user_personal_program.update(status: "install", was_updated: true)
           format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully added." } }
           format.json { render :show, status: :created, location: personal_programs_path }
         else
@@ -73,7 +73,7 @@ class UserPersonalProgramsController < ApplicationController
 
     respond_to do |format|
       #if @ku_user.user_personal_programs.find_by(personal_program_id: @personal_program.id).update_attribute(:status, "uninstall")
-      if @user_personal_program.update_attribute(:status, "uninstall")
+      if @user_personal_program.update(status: "uninstall", was_updated: true)
         format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
         format.json { render :show, status: :created, location: personal_programs_path }
       else

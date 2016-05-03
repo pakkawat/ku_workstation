@@ -22,6 +22,8 @@ class KuUsersController < ApplicationController
     nodes = query.search('node', 'name:' + @kuuser.ku_id).first rescue []
     @node = nodes.first
 
+    @was_updated = @kuuser.user_personal_programs.where(was_updated: true).count
+
   end
 
   def new
