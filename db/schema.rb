@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160424091727) do
+ActiveRecord::Schema.define(version: 20160503091445) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -190,6 +190,7 @@ ActiveRecord::Schema.define(version: 20160424091727) do
     t.integer "program_id"
     t.integer "subject_id"
     t.boolean "program_enabled", default: true
+    t.boolean "was_updated",     default: true
   end
 
   add_index "programs_subjects", ["program_id"], name: "index_programs_subjects_on_program_id", using: :btree
@@ -228,8 +229,9 @@ ActiveRecord::Schema.define(version: 20160424091727) do
     t.integer  "ku_user_id"
     t.integer  "personal_program_id"
     t.string   "status"
-    t.datetime "created_at",          null: false
-    t.datetime "updated_at",          null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
+    t.boolean  "was_updated",         default: true
   end
 
   create_table "user_remove_resources", force: :cascade do |t|
@@ -247,6 +249,7 @@ ActiveRecord::Schema.define(version: 20160424091727) do
     t.integer "ku_user_id"
     t.integer "subject_id"
     t.boolean "user_enabled", default: true
+    t.boolean "was_updated",  default: true
   end
 
   add_index "user_subjects", ["ku_user_id"], name: "index_user_subjects_on_ku_user_id", using: :btree
