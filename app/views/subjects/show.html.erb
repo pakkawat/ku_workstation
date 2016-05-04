@@ -81,3 +81,12 @@
 
   </div><!--/col-9-->
 </div>
+Updated Users:
+<% @updated_users.each do |user| %>
+<%= user.ku_id+", " %>
+<% end %>
+<br>
+Updated Programs:
+<% @updated_programs.each do |program| %>
+<%= program.program_name+", "%>
+<% end %>
