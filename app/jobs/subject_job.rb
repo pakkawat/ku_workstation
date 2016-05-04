@@ -49,6 +49,9 @@ class SubjectJob < ProgressJob::Base
       @subject.programs_subjects.where(program_enabled: false).destroy_all
 
       @subject.user_subjects.where(user_enabled: false).destroy_all
+
+      @subject.programs_subjects.update_all(:was_updated => false)
+      @subject.user_subjects.update_all(:was_updated => false)
     end
   end
 

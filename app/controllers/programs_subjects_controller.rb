@@ -15,7 +15,7 @@ class ProgramsSubjectsController < ApplicationController
 
     @program_enabled = @subject.programs_subjects.find_by(program_id: @program.id)
     if @program_enabled.present?
-      if @program_enabled.update_attribute(:program_enabled, true)
+      if @program_enabled.update(program_enabled: true, was_updated: true)
         #add_user_programs
         flash[:success] = @program.program_name + " has been added"
       else
@@ -39,7 +39,7 @@ class ProgramsSubjectsController < ApplicationController
     #add_remove_program_to_run_list
     #redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
 
-    if @subject.programs_subjects.find_by(program_id: @program.id).update_attribute(:program_enabled, false)
+    if @subject.programs_subjects.find_by(program_id: @program.id).update(program_enabled: false, was_updated: true)
       #remove_user_programs
       flash[:success] = @program.program_name + " has been deleted from subject"
     else

@@ -10,7 +10,7 @@ class UserSubjectsController < ApplicationController
     @subject = Subject.find(params[:subject_id])
     @user_enabled = @subject.user_subjects.find_by(ku_user_id: @kuuser.id)
     if @user_enabled.present?
-      if @user_enabled.update_attribute(:user_enabled, true)
+      if @user_enabled.update(user_enabled: true, was_updated: true)
         #add_user_programs
         flash[:success] = @kuuser.ku_id + " has been added"
       else
@@ -31,7 +31,7 @@ class UserSubjectsController < ApplicationController
     @kuuser = KuUser.find(params[:ku_user_id])
     @subject = Subject.find(params[:subject_id])
     #UserSubject.find_by(ku_user_id: @kuuser.id, subject_id: @subject.id).destroy
-    if @subject.user_subjects.find_by(ku_user_id: @kuuser.id).update_attribute(:user_enabled, false)
+    if @subject.user_subjects.find_by(ku_user_id: @kuuser.id).update(user_enabled: false, was_updated: true)
       #remove_user_programs
       flash[:success] = @kuuser.ku_id + " has been deleted from subject"
     else
