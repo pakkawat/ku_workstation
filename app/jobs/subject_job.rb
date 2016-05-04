@@ -209,7 +209,7 @@ class SubjectJob < ProgressJob::Base
         if user.users_programs.where(:program_id => program.id).count == 1
           delete_user_config(user, program)
         end
-        user.users_programs.where(:program_id => program.id, :subject_id => @subject.id).destroy
+        user.users_programs.where(:program_id => program.id, :subject_id => @subject.id).destroy_all
       end
     end
 
@@ -218,7 +218,7 @@ class SubjectJob < ProgressJob::Base
         if user.users_programs.where(:program_id => program.id).count == 1
           delete_user_config(user, program)
         end
-        user.users_programs.where(:program_id => program.id, :subject_id => @subject.id).destroy
+        user.users_programs.where(:program_id => program.id, :subject_id => @subject.id).destroy_all
       end
     end
 
