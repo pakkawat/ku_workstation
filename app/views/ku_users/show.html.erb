@@ -255,7 +255,6 @@
       </div>
       <div class="modal-body">
         <%= form_tag ku_user_create_personal_program_path, method: :post, :class => "form-horizontal" do %>
-        <%= form_for @personal_program do |f| %>
               <%= label_tag 'name', 'Program name', :class => 'control-label' %>
               <%= text_field_tag :program_name, params[:program_name], :class => "form-control" %>
               <br>
