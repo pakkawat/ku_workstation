@@ -240,3 +240,33 @@
 
   </div><!--/col-8-->
 </div>
+
+<!-- Button trigger modal -->
+<button class="btn btn-success" data-toggle="modal" data-target="#personal_program_Modal">
+  Create program
+</button>
+<!-- Modal -->
+<div class="modal fade" id="personal_program_Modal" tabindex="-1" role="dialog" aria-labelledby="personal_program_Modal_Label" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title">Personal Program</h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag ku_user_create_personal_program_path, method: :post, :class => "form-horizontal" do %>
+        <%= form_for @personal_program do |f| %>
+              <%= label_tag 'name', 'Program name', :class => 'control-label' %>
+              <%= text_field_tag :program_name, params[:program_name], :class => "form-control" %>
+              <br>
+              <%= label_tag 'note', 'Program note', :class => 'control-label' %>
+              <%= text_area_tag :note, params[:note], :class => "form-control" %>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+           <%= submit_tag "Create program", name: nil, class: "btn btn-success" %>
+        <% end %>
+      </div>
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

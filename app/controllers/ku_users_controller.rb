@@ -185,6 +185,11 @@ class KuUsersController < ApplicationController
     end
   end
 
+  def create_personal_program
+    str_temp = params[:program_name] + "---" + params[:note]
+    render plain: str_temp.inspect
+  end
+
   private
     def ku_user_params
       params.require(:ku_user).permit(:ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :status, :campus, chef_value: [ :id, :chef_attribute_id, :value ])
