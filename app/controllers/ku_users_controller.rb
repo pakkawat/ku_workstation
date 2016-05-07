@@ -24,9 +24,6 @@ class KuUsersController < ApplicationController
 
     @was_updated = @kuuser.user_personal_programs.where(was_updated: true).count
 
-    @my_personal_programs = @ku_user.personal_programs.where("user_personal_programs.status = 'install'")
-    @all_personal_programs = PersonalProgram.where.not(id: @my_personal_programs)
-
   end
 
   def new
