@@ -191,10 +191,11 @@ class KuUsersController < ApplicationController
   def create_personal_program
     #str_temp = params[:program_name] + "---" + params[:note]
     #render plain: str_temp.inspect
+    @kuuser = KuUser.find(params[:id])
     if params[:program_name] != ""
       personal_program = PersonalProgram.new(program_name: params[:program_name], note: params[:note])
       if personal_program.save
-        @ku_user.user_personal_programs.create(personal_program: personal_program, status: "install")
+        @kuuser.user_personal_programs.create(personal_program: personal_program, status: "install")
         format.html { redirect_to @kuuser, :flash => { :success => personal_program.program_name + " was successfully created." } }
         format.json { render :show, status: :created, location: @kuuser }
       else
