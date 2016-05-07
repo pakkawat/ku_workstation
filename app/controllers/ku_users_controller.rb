@@ -194,12 +194,14 @@ class KuUsersController < ApplicationController
     @kuuser = KuUser.find(params[:id])
     if params[:program_name] != ""
       personal_program = PersonalProgram.new(program_name: params[:program_name], note: params[:note])
-      if personal_program.save
-        @kuuser.user_personal_programs.create(personal_program: personal_program, status: "install")
-        format.html { redirect_to @kuuser, :flash => { :success => personal_program.program_name + " was successfully created." } }
-        format.json { render :show, status: :created, location: @kuuser }
-      else
-        format.html { redirect_to @kuuser, :flash => { :danger => "Create personal program error." } }
+      respond_to do |format|
+        if personal_program.save
+          @kuuser.user_personal_programs.create(personal_program: personal_program, status: "install")
+          format.html { redirect_to @kuuser, :flash => { :success => personal_program.program_name + " was successfully created." } }
+          format.json { render :show, status: :created, location: @kuuser }
+        else
+          format.html { redirect_to @kuuser, :flash => { :danger => "Create personal program error." } }
+        end
       end
     else
       flash[:danger] = "Program name cannot be null or empty."
