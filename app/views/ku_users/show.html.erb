@@ -42,7 +42,7 @@
           <hr>
 
           <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
-            <%= button_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-success", :method => :get, :disabled => @result.any? ? true : false  %>
+            <%= button_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-primary", :method => :get, :disabled => @result.any? ? true : false  %>
             (<%= @was_updated %> Personal programs has been updated)
           </div>
 
@@ -104,10 +104,10 @@
 
             <div id="personal_programs" class="tab-pane fade in active">
               <br>
-              <div class="panel panel-success">
+              <div class="panel panel-primary">
                 <!-- Default panel contents -->
                 <div class="panel-heading">Personal programs</div>
-                  <table class="table table-striped">
+                  <table class="datatable_display table table-striped">
                     <thead>
                       <tr>
                         <th>Program ID</th>
@@ -165,10 +165,10 @@
 
             <div id="all_personal_programs" class="tab-pane fade">
               <br>
-              <div class="panel panel-success">
+              <div class="panel panel-primary">
                 <!-- Default panel contents -->
                 <div class="panel-heading">All personal programs</div>
-                  <table class="table table-striped">
+                  <table class="datatable_display table table-striped">
                     <thead>
                       <tr>
                         <th>Program ID</th>
