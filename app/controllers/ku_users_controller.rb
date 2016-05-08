@@ -212,7 +212,7 @@ class KuUsersController < ApplicationController
   def delete_personal_program
     @kuuser = KuUser.find(params[:id])
     @personal_program = PersonalProgram.find(params[:personal_program_id])
-    user_personal_program = @kuuser.user_personal_programs.find_by(personal_program_id: @personal_program).id
+    user_personal_program = @kuuser.user_personal_programs.find_by(personal_program_id: @personal_program)
     respond_to do |format|
       if user_personal_program.update(status: "uninstall", was_updated: true)
         format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
@@ -231,20 +231,20 @@ class KuUsersController < ApplicationController
     if user_personal_program.present?
       respond_to do |format|
         if user_personal_program.update(status: "install", was_updated: true)
-          format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully added." } }
+          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully added." } }
           #format.json { render :show, status: :created, location: personal_programs_path }
         else
-          format.html { redirect_to personal_programs_path }
+          format.html { redirect_to @kuuser, :flash => { :danger => "Error add " + @personal_program.program_name + "." } }
           #format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
         end
       end
     else
       respond_to do |format|
-        if @ku_user.user_personal_programs.create(personal_program: @personal_program, status: "install")
-          format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully added." } }
+        if @kuuser.user_personal_programs.create(personal_program: @personal_program, status: "install")
+          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully added." } }
           #format.json { render :show, status: :created, location: personal_programs_path }
         else
-          format.html { redirect_to personal_programs_path }
+          format.html { redirect_to @kuuser, :flash => { :danger => "Error add " + @personal_program.program_name + "." } }
           #format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
         end
       end
