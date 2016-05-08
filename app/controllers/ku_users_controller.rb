@@ -1,7 +1,7 @@
 class KuUsersController < ApplicationController
   include UserResourceGenerator
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
-  before_action :correct_user,   only: [:edit, :update]
+  before_action :correct_user_or_admin,   only: [:show, :edit, :update, :create_personal_program, :delete_personal_program, :add_personal_program, :apply_change, :delete_user_job]
   before_action :admin_user,     only: :destroy
   def index
     @kuusers = KuUser.all
@@ -157,7 +157,7 @@ class KuUsersController < ApplicationController
     redirect_to @kuuser
   end
 
-  def delete_personal_program_from_user
+  def delete_personal_program_from_user # mark not use
     @kuuser = KuUser.find(params[:id])
     @user_personal_program = UserPersonalProgram.find(params[:user_personal_program_id])
     @personal_program = PersonalProgram.find(@user_personal_program.personal_program_id)
@@ -193,7 +193,7 @@ class KuUsersController < ApplicationController
     #render plain: str_temp.inspect
     @kuuser = KuUser.find(params[:id])
     if params[:program_name] != ""
-      personal_program = PersonalProgram.new(program_name: params[:program_name], note: params[:note])
+      personal_program = PersonalProgram.new(program_name: params[:program_name], note: params[:note], owner: @kuuser.id)
       respond_to do |format|
         if personal_program.save
           @kuuser.user_personal_programs.create(personal_program: personal_program, status: "install")
@@ -206,6 +206,48 @@ class KuUsersController < ApplicationController
     else
       flash[:danger] = "Program name cannot be null or empty."
       redirect_to @kuuser
+    end
+  end
+
+  def delete_personal_program
+    @kuuser = KuUser.find(params[:id])
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
+    user_personal_program = @kuuser.user_personal_programs.find_by(personal_program_id: @personal_program).id
+    respond_to do |format|
+      if user_personal_program.update(status: "uninstall", was_updated: true)
+        format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
+        #format.json { render :show, status: :created, location: @kuuser }
+      else
+        format.html { redirect_to @kuuser, :flash => { :danger => "Error delete " + @personal_program.program_name + "." } }
+        #format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+      end
+    end
+  end
+
+  def add_personal_program
+    @kuuser = KuUser.find(params[:id])
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
+    user_personal_program = @kuuser.user_personal_programs.find_by(personal_program_id: @personal_program)
+    if user_personal_program.present?
+      respond_to do |format|
+        if user_personal_program.update(status: "install", was_updated: true)
+          format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully added." } }
+          #format.json { render :show, status: :created, location: personal_programs_path }
+        else
+          format.html { redirect_to personal_programs_path }
+          #format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      respond_to do |format|
+        if @ku_user.user_personal_programs.create(personal_program: @personal_program, status: "install")
+          format.html { redirect_to personal_programs_path, :flash => { :success => @personal_program.program_name + " was successfully added." } }
+          #format.json { render :show, status: :created, location: personal_programs_path }
+        else
+          format.html { redirect_to personal_programs_path }
+          #format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+        end
+      end
     end
   end
 
@@ -226,9 +268,9 @@ class KuUsersController < ApplicationController
     end
 
     # Confirms the correct user.
-    def correct_user
+    def correct_user_or_admin
       @user = KuUser.find(params[:id])
-      redirect_to(root_url) unless current_user?(@user)
+      redirect_to(current_user) unless current_user?(@user) || current_user.admin?
     end
 
     # Confirms an admin user.

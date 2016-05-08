@@ -124,7 +124,7 @@
                           <td><%= program.program_name %></td>
                           <td><%= program.note %></td>
                           <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
-                          <td><%= button_to 'Delete', delete_personal_program_from_user_path(id: @kuuser.id ,user_personal_program_id: @kuuser.user_personal_programs.find_by(personal_program_id: program).id), :class => "btn btn-default", :method => :delete %></td>
+                          <td><%= button_to 'Delete', ku_user_delete_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :delete %></td>
                         </tr>
                       <% end %>
                     </tbody>
@@ -185,7 +185,7 @@
                           <td><%= program.program_name %></td>
                           <td><%= program.note %></td>
                           <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
-                          <td><%= button_to 'Add', personal_program_user_personal_programs_path(program), :class => "btn btn-default", :method => :post %></td>
+                          <td><%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :post %></td>
                         </tr>
                       <% end %>
                     </tbody>
