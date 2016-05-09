@@ -42,6 +42,9 @@
           <hr>
 
           <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+            <%= button_to [:apply_change, @kuuser], :class => "btn btn-primary", :method => :get, :disabled => @result.any? ? true : false do %>
+              Apply change <%= content_tag :span, @was_updated, class: 'badge' %>
+            <% end %>
             <%= button_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-primary", :method => :get, :disabled => @result.any? ? true : false  %>
             (<%= @was_updated %> Personal programs has been updated)
           </div>
@@ -110,7 +113,7 @@
                   <table class="datatable_display table table-striped">
                     <thead>
                       <tr>
-                        <th>Program ID</th>
+                        <th></th>
                         <th>Program name</th>
                         <th>Note</th>
                         <th>Edit</th>
@@ -120,7 +123,11 @@
                     <tbody>
                       <% @my_personal_programs.each do |program| %>
                         <tr>
-                          <th scope="row"><%= program.id %></th>
+                          <th scope="row">
+                            <% if @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("was_updated").first %>
+                              <span class="label label-success">Updated</span>
+                            <% end %>
+                          </th>
                           <td><%= program.program_name %></td>
                           <td><%= program.note %></td>
                           <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
