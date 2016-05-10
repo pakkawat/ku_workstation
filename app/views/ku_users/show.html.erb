@@ -45,8 +45,6 @@
             <%= button_to [:apply_change, @kuuser], :class => "btn btn-primary", :method => :get, :disabled => @result.any? ? true : false do %>
               Apply change <%= content_tag :span, @was_updated, class: 'badge' %>
             <% end %>
-            <%= button_to "Apply change", ku_user_path(@kuuser)+"/apply_change", :class => "btn btn-primary", :method => :get, :disabled => @result.any? ? true : false  %>
-            (<%= @was_updated %> Personal programs has been updated)
           </div>
 
           <hr>
