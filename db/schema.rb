@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160510094813) do
+ActiveRecord::Schema.define(version: 20160510102247) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -190,7 +190,7 @@ ActiveRecord::Schema.define(version: 20160510094813) do
     t.integer "program_id"
     t.integer "subject_id"
     t.boolean "program_enabled", default: true
-    t.boolean "installed",       default: true
+    t.boolean "installed",       default: false
     t.string  "status"
   end
 
@@ -230,9 +230,9 @@ ActiveRecord::Schema.define(version: 20160510094813) do
     t.integer  "ku_user_id"
     t.integer  "personal_program_id"
     t.string   "status"
-    t.datetime "created_at",                         null: false
-    t.datetime "updated_at",                         null: false
-    t.boolean  "installed",           default: true
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
+    t.boolean  "installed",           default: false
   end
 
   create_table "user_remove_resources", force: :cascade do |t|
@@ -250,7 +250,7 @@ ActiveRecord::Schema.define(version: 20160510094813) do
     t.integer "ku_user_id"
     t.integer "subject_id"
     t.boolean "user_enabled", default: true
-    t.boolean "installed",    default: true
+    t.boolean "installed",    default: false
     t.string  "status"
   end
 
