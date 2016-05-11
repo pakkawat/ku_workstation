@@ -153,6 +153,10 @@ class KuUsersController < ApplicationController
       end
     end
 
+    @kuuser.user_personal_programs.where(status: 'uninstall').destroy_all
+    @kuuser.user_personal_programs.update_all(:installed => true, :status => "none",:was_updated => false, :state => "none")
+    @kuuser.user_remove_resources.destroy_all
+
     flash[:success] = "Apply change"
     redirect_to @kuuser
   end

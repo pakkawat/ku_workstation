@@ -31,7 +31,7 @@ class KuUserJob < ProgressJob::Base
         File.delete("/home/ubuntu/chef-repo/cookbooks/#{@user.ku_id}/recipes/#{personal_program.program_name}.rb") if File.exist?("/home/ubuntu/chef-repo/cookbooks/#{@user.ku_id}/recipes/#{personal_program.program_name}.rb")
       end
       @user.user_personal_programs.where(status: 'uninstall').destroy_all
-      @user.user_personal_programs.update_all(:installed => true, :status => "none",:was_updated => false)
+      @user.user_personal_programs.update_all(:installed => true, :status => "none",:was_updated => false, :state => "none")
       @user.user_remove_resources.destroy_all
     end
   end
