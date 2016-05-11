@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160510112956) do
+ActiveRecord::Schema.define(version: 20160511111422) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -190,8 +190,7 @@ ActiveRecord::Schema.define(version: 20160510112956) do
     t.integer "program_id"
     t.integer "subject_id"
     t.boolean "program_enabled", default: true
-    t.boolean "installed",       default: false
-    t.string  "status"
+    t.boolean "applied",         default: false
     t.boolean "was_updated"
     t.string  "state"
   end
@@ -254,9 +253,7 @@ ActiveRecord::Schema.define(version: 20160510112956) do
     t.integer "ku_user_id"
     t.integer "subject_id"
     t.boolean "user_enabled", default: true
-    t.boolean "installed",    default: false
-    t.string  "status"
-    t.boolean "was_updated"
+    t.boolean "applied",      default: false
     t.string  "state"
   end
 
