@@ -30,6 +30,7 @@ class PersonalProgramChefsController < ApplicationController
     respond_to do |format|
       if @personal_program.personal_program_chefs.create(personal_chef_resource: @personal_chef_resource)
         UserPersonalProgram.where(:personal_program_id => @personal_program.id).update_all(:was_updated => true)
+        UserPersonalProgram.where(:personal_program_id => @personal_program.id, :state => "none").update_all(:state => "update")
         format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully created." } }
         format.json { render :show, status: :created, location: edit_personal_program_path(@personal_program) }
       else
@@ -62,6 +63,7 @@ class PersonalProgramChefsController < ApplicationController
     @personal_program_chef.destroy
     respond_to do |format|
       UserPersonalProgram.where(:personal_program_id => @personal_program.id).update_all(:was_updated => true)
+      UserPersonalProgram.where(:personal_program_id => @personal_program.id, :state => "none").update_all(:state => "update")
       format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully destroyed." } }
       format.json { head :no_content }
     end

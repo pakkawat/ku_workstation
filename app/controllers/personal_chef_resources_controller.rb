@@ -105,6 +105,7 @@ class PersonalChefResourcesController < ApplicationController
     respond_to do |format|
       if @personal_chef_resource.update(personal_chef_resource_params)
         UserPersonalProgram.where(:personal_program_id => @personal_program.id).update_all(:was_updated => true)
+        UserPersonalProgram.where(:personal_program_id => @personal_program.id, :state => "none").update_all(:state => "update")
         format.html { redirect_to edit_personal_program_personal_chef_resource_path(@personal_program, @personal_chef_resource), :flash => { :success => "Action was successfully updated." } }
         format.json { render :show, status: :ok, location: edit_personal_program_personal_chef_resource_path(@personal_program, @personal_chef_resource) }
       else

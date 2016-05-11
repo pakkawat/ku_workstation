@@ -119,17 +119,28 @@
                       </tr>
                     </thead>
                     <tbody>
-                      <% @my_personal_programs.each do |program| %>
+                      <% @kuuser.personal_programs.each do |program| %>
                         <tr>
                           <th scope="row">
-                            <% if @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("was_updated").first %>
-                              <span class="label label-success">Updated</span>
+                            <% state = @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("state").first %>
+                            <% if state != "none" %>
+                              <% if state == "uninstall" %>
+                                <span class="label label-danger">uninstall</span>
+                              <% else %>
+                                <span class="label label-success"><%= state %></span>
+                              <% end %>
                             <% end %>
                           </th>
                           <td><%= program.program_name %></td>
                           <td><%= program.note %></td>
                           <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
-                          <td><%= button_to 'Delete', ku_user_delete_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :delete %></td>
+                          <td>
+                            <% if state == "uninstall" %>
+                              <%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :post %>
+                            <% else %>
+                              <%= button_to 'Delete', ku_user_delete_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :delete %>
+                            <% end %>
+                          </td>
                         </tr>
                       <% end %>
                     </tbody>

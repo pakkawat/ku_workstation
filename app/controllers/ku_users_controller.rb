@@ -22,9 +22,9 @@ class KuUsersController < ApplicationController
     nodes = query.search('node', 'name:' + @kuuser.ku_id).first rescue []
     @node = nodes.first
 
-    @was_updated = @kuuser.user_personal_programs.where(was_updated: true).count
+    @was_updated = @kuuser.user_personal_programs.where.not(state: "none").count
 
-    @my_personal_programs = @kuuser.personal_programs.where("user_personal_programs.status = 'install'")
+    #@my_personal_programs = @kuuser.personal_programs.where("user_personal_programs.status = 'install'")
     @all_personal_programs = PersonalProgram.where.not(id: @my_personal_programs)
 
   end
@@ -196,7 +196,7 @@ class KuUsersController < ApplicationController
       personal_program = PersonalProgram.new(program_name: params[:program_name], note: params[:note], owner: @kuuser.id)
       respond_to do |format|
         if personal_program.save
-          @kuuser.user_personal_programs.create(personal_program: personal_program, status: "install")
+          @kuuser.user_personal_programs.create(personal_program: personal_program, status: "install", state: "install")
           format.html { redirect_to @kuuser, :flash => { :success => personal_program.program_name + " was successfully created." } }
           format.json { render :show, status: :created, location: @kuuser }
         else
@@ -213,15 +213,28 @@ class KuUsersController < ApplicationController
     @kuuser = KuUser.find(params[:id])
     @personal_program = PersonalProgram.find(params[:personal_program_id])
     user_personal_program = @kuuser.user_personal_programs.find_by(personal_program_id: @personal_program)
-    respond_to do |format|
-      if user_personal_program.update(status: "uninstall", was_updated: true)
-        format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
-        #format.json { render :show, status: :created, location: @kuuser }
-      else
-        format.html { redirect_to @kuuser, :flash => { :danger => "Error delete " + @personal_program.program_name + "." } }
-        #format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+    if user_personal_program.installed # true
+      respond_to do |format|
+        if user_personal_program.update(status: "uninstall", state: "uninstall")
+          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
+          #format.json { render :show, status: :created, location: @kuuser }
+        else
+          format.html { redirect_to @kuuser, :flash => { :danger => "Error delete " + @personal_program.program_name + "." } }
+          #format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+        end
+      end
+    else
+      respond_to do |format|
+        if user_personal_program.destroy
+          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
+          #format.json { render :show, status: :created, location: @kuuser }
+        else
+          format.html { redirect_to @kuuser, :flash => { :danger => "Error delete " + @personal_program.program_name + "." } }
+          #format.json { render json: @user_personal_program.errors, status: :unprocessable_entity }
+        end
       end
     end
+
   end
 
   def add_personal_program
@@ -230,7 +243,13 @@ class KuUsersController < ApplicationController
     user_personal_program = @kuuser.user_personal_programs.find_by(personal_program_id: @personal_program)
     if user_personal_program.present?
       respond_to do |format|
-        if user_personal_program.update(status: "install", was_updated: true)
+        check_error = true
+        if user_personal_program.was_updated
+          check_error = user_personal_program.update(status: "install", state: "update")
+        else
+          check_error = user_personal_program.update(status: "install", state: "none")
+        end
+        if check_error
           format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully added." } }
           #format.json { render :show, status: :created, location: personal_programs_path }
         else
@@ -240,7 +259,7 @@ class KuUsersController < ApplicationController
       end
     else
       respond_to do |format|
-        if @kuuser.user_personal_programs.create(personal_program: @personal_program, status: "install")
+        if @kuuser.user_personal_programs.create(personal_program: @personal_program, status: "install", state: "install")
           format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully added." } }
           #format.json { render :show, status: :created, location: personal_programs_path }
         else
