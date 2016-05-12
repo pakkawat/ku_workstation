@@ -54,6 +54,8 @@ Rails.application.routes.draw do
   #match "/ku_users/:ku_user_id/user_programs", :to => "ku_users#user_programs", :via => "get"
   #match '/teacher', to: 'users#teacher', via: :get
   #match '/student', to: 'users#student', via: :get
+  match 'subjects/:subject_id/ku_users/:ku_user_id/add_user_to_subject', to: 'user_subjects#create', as: 'add_user_to_subject', :via => "post"
+  match 'subjects/:subject_id/programs/:program_id/add_program_to_subject', to: 'programs_subjects#create', as: 'add_program_to_subject', :via => "post"
   resources :subjects do
     resources :user_subjects
     resources :programs_subjects
@@ -61,7 +63,7 @@ Rails.application.routes.draw do
   get    'login'   => 'sessions#new'
   post   'login'   => 'sessions#create'
   delete 'logout'  => 'sessions#destroy'
-  match "/subjects/:subject_id/user_subjects", :to => "user_subjects#destroy", :via => "delete"
+  #match "/subjects/:subject_id/user_subjects", :to => "user_subjects#destroy", :via => "delete"
   match "/subjects/:subject_id/programs_subjects", :to => "programs_subjects#destroy", :via => "delete"
   #match "programs/:program_id/*program_file", :to => "program_files#show", :via => "get"
 

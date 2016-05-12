@@ -1,8 +1,8 @@
 class ProgramsSubjectsController < ApplicationController
   def index
     @subject = Subject.find(params[:subject_id])
-    @subjectprograms = Program.where(id: @subject.programs_subjects.select("program_id").where(program_enabled: true)).order("program_name ASC")
-    @programs = Program.where.not(id: @subject.programs_subjects.select("program_id").where(program_enabled: true)).order("program_name ASC")
+    @subjectprograms = @subject.programs.order("program_name ASC")
+    @programs = Program.where.not(id: @subjectprograms).order("program_name ASC")
   end
 
   def create
@@ -13,16 +13,22 @@ class ProgramsSubjectsController < ApplicationController
     #redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
 
 
-    @program_enabled = @subject.programs_subjects.find_by(program_id: @program.id)
-    if @program_enabled.present?
-      if @program_enabled.update(program_enabled: true, was_updated: true)
+    programs_subject = @subject.programs_subjects.find_by(program_id: @program.id)
+    if programs_subject.present?
+      check_error = true
+      if programs_subject.was_updated
+        check_error = programs_subject.update(program_enabled: true, state: "update")
+      else
+        check_error = programs_subject.update(program_enabled: true, state: "none")
+      end
+      if check_error
         #add_user_programs
         flash[:success] = @program.program_name + " has been added"
       else
         flash[:danger] = "Error1!!"
       end
     else
-      if @subject.programs_subjects.create(program: @program)
+      if @subject.programs_subjects.create(program: @program, state: "install")
         #add_user_programs
         flash[:success] = @program.program_name + " has been added"
       else
@@ -33,13 +39,21 @@ class ProgramsSubjectsController < ApplicationController
   end
 
   def destroy
-    @program = Program.find(params[:program_id])
+    programs_subject = ProgramsSubject.find(params[:id])
+    @program = Program.find(programs_subject.program_id)
     @subject = Subject.find(params[:subject_id])
     #ProgramsSubject.find_by(program_id: @program.id, subject_id: @subject.id).destroy
     #add_remove_program_to_run_list
     #redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
 
-    if @subject.programs_subjects.find_by(program_id: @program.id).update(program_enabled: false, was_updated: true)
+    check_error = true
+    if programs_subject.applied
+      check_error = programs_subject.update(program_enabled: false, state: "uninstall")
+    else
+      check_error = programs_subject.destroy
+    end
+
+    if check_error
       #remove_user_programs
       flash[:success] = @program.program_name + " has been deleted from subject"
     else

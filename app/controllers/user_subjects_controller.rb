@@ -1,8 +1,8 @@
 class UserSubjectsController < ApplicationController
   def index
     @subject = Subject.find(params[:subject_id])
-    @subjectusers = KuUser.where(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).order("ku_id ASC")
-    @kuusers = KuUser.where.not(id: @subject.user_subjects.select("ku_user_id").where(user_enabled: true)).order("ku_id ASC")
+    @subjectusers = @subject.ku_users.order("ku_id ASC")
+    @kuusers = KuUser.where.not(id: @subjectusers).order("ku_id ASC")
   end
 
   def create
@@ -10,14 +10,14 @@ class UserSubjectsController < ApplicationController
     @subject = Subject.find(params[:subject_id])
     @user_enabled = @subject.user_subjects.find_by(ku_user_id: @kuuser.id)
     if @user_enabled.present?
-      if @user_enabled.update(user_enabled: true, was_updated: true)
+      if @user_enabled.update(user_enabled: true, state: "none")
         #add_user_programs
         flash[:success] = @kuuser.ku_id + " has been added"
       else
         flash[:danger] = "Error1!!"
       end
     else
-      if @subject.user_subjects.create(ku_user: @kuuser)
+      if @subject.user_subjects.create(ku_user: @kuuser, state: "new")
         #add_user_programs
         flash[:success] = @kuuser.ku_id + " has been added"
       else
@@ -28,15 +28,23 @@ class UserSubjectsController < ApplicationController
   end
 
   def destroy
-    @kuuser = KuUser.find(params[:ku_user_id])
+    user_subject = UserSubject.find(params[:id])
+    @kuuser = KuUser.find(user_subject.ku_user_id)
     @subject = Subject.find(params[:subject_id])
-    #UserSubject.find_by(ku_user_id: @kuuser.id, subject_id: @subject.id).destroy
-    if @subject.user_subjects.find_by(ku_user_id: @kuuser.id).update(user_enabled: false, was_updated: true)
-      #remove_user_programs
+
+    check_error = true
+    if user_subject.applied
+      check_error = user_subject.update(user_enabled: false, state: "remove")
+    else
+      check_error = user_subject.destroy
+    end
+
+    if check_error
       flash[:success] = @kuuser.ku_id + " has been deleted from subject"
     else
-      flash[:danger] = "Error3!!"
+      flash[:danger] = "delete error"
     end
+
     redirect_to subject_user_subjects_path(:subject_id => @subject.id)
   end
 

@@ -1,12 +1,22 @@
 <tr>
-	<th scope="row"><%= link_to user.ku_id, user %></th>
-	<th><%= user.firstname %></th>
-	<th><%= user.lastname %></th>
-	<th>
-		<%= form_for subject_user_subjects_path, :html => {:method => :delete} do %>
-		        <%= hidden_field_tag 'ku_user_id', user.id  %>
-		        <%= hidden_field_tag 'subject_id', @subject.id  %>
-		        <%= submit_tag "delete", class: "btn btn-default" %>
+	<th scope="row">
+		<% user_subject = user.user_subjects.where(subject_id: @subject.id).first %>
+		<% if user_subject.state != "none" %>
+			<% if user_subject.state == "remove" %>
+				<span class="label label-danger">remove</span>
+			<% else %>
+				<span class="label label-success"><%= user_subject.state %></span>
+			<% end %>
 		<% end %>
 	</th>
+	<td><%= link_to user.ku_id, user %></td>
+	<td><%= user.firstname %></td>
+	<td><%= user.lastname %></td>
+	<td>
+		<% if user_subject.state == "remove" %>
+			<%= button_to 'Add', add_user_to_subject_path(@subject, user), :class => "btn btn-default", :method => :post %>
+		<% else %>
+			<%= button_to 'Delete', subject_user_subject_path(@subject, user_subject), :class => "btn btn-default", :method => :delete %>
+		<% end %>
+	</td>
 </tr>
