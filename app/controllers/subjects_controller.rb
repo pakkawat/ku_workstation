@@ -5,8 +5,8 @@ class SubjectsController < ApplicationController
 
   def show
     @subject = Subject.find(params[:id])
-    @updated_users = KuUser.where(id: @subject.user_subjects.where(was_updated: true).pluck("ku_user_id"))
-    @updated_programs = Program.where(id: @subject.programs_subjects.where(was_updated: true).pluck("program_id"))
+    @updated_users = @subject.ku_users.where("user_subjects.state != 'none'")
+    @updated_programs = @subject.programs.where("programs_subjects.state != 'none'")
   end
 
   def new

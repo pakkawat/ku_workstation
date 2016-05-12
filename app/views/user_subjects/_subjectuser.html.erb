@@ -14,7 +14,7 @@
 	<td><%= user.lastname %></td>
 	<td>
 		<% if user_subject.state == "remove" %>
-			<%= button_to 'Add', add_user_to_subject_path(@subject, user), :class => "btn btn-default", :method => :post %>
+			<%= button_to 'Add', add_user_to_subject_path(@subject, user), :class => "btn btn-success", :method => :post %>
 		<% else %>
 			<%= button_to 'Delete', subject_user_subject_path(@subject, user_subject), :class => "btn btn-default", :method => :delete %>
 		<% end %>

@@ -2,6 +2,6 @@
 	<th scope="row"><%= link_to program.program_name, program %></th>
 	<td><%= program.note %></td>
 	<td>
-		<%= button_to 'Add', add_program_to_subject_path(@subject, program), :class => "btn btn-default", :method => :post %>
+		<%= button_to 'Add', add_program_to_subject_path(@subject, program), :class => "btn btn-success", :method => :post %>
 	</td>
 </tr>

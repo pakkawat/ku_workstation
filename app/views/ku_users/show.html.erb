@@ -139,7 +139,7 @@
                           <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
                           <td>
                             <% if state == "uninstall" %>
-                              <%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :post %>
+                              <%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-success", :method => :post %>
                             <% else %>
                               <%= button_to 'Delete', ku_user_delete_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :delete %>
                             <% end %>
@@ -204,7 +204,7 @@
                           <td><%= program.program_name %></td>
                           <td><%= program.note %></td>
                           <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
-                          <td><%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :post %></td>
+                          <td><%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-success", :method => :post %></td>
                         </tr>
                       <% end %>
                     </tbody>
@@ -257,7 +257,7 @@
                           <th scope="row"><%= program.id %></th>
                           <td><%= link_to program.program_name, program %></td>
                           <td><%= program.note %></td>
-                          <td><%= link_to "Edit", edit_ku_user_attribute_path(id: @kuuser.id, program_id: program.id), :class => "btn btn-success" %></td>
+                          <td><%= link_to "Edit", edit_ku_user_attribute_path(id: @kuuser.id, program_id: program.id), :class => "btn btn-primary" %></td>
                         </tr>
                       <% end %>
                     </tbody>
