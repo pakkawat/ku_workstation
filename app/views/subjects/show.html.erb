@@ -49,7 +49,16 @@
           <tbody>
             <% @subject.programs.where("programs_subjects.program_enabled = true").order("programs.program_name ASC").each do |program| %>
               <tr>
-                <th scope="row"><%= program.id %></th>
+                <% state = @subject.programs_subjects.where(program_id: program.id).pluck("state") %>
+                <th scope="row">
+                  <% if state != "none" %>
+                    <% if state == "uninstall" %>
+                      <span class="label label-danger">uninstall</span>
+                    <% else %>
+                      <span class="label label-success"><%= state %></span>
+                    <% end %>
+                  <% end %>
+                </th>
                 <td><%= link_to program.program_name, edit_program_path(program) %></td>
               </tr>
             <% end %>
@@ -64,6 +73,7 @@
         <table class="table table-striped">
           <thead>
             <tr>
+              <th></th>
               <th>Student ID</th>
               <th>Student name</th>
             </tr>
@@ -71,7 +81,17 @@
           <tbody>
             <% @subject.ku_users.where("user_subjects.user_enabled = true").order("ku_users.ku_id ASC").each do |user| %>
               <tr>
-                <th scope="row"><%= link_to user.ku_id, user %></th>
+                <% state = @subject.user_subjects.where(ku_user_id: user.id).pluck("state") %>
+                <th scope="row">
+                  <% if state != "none" %>
+                    <% if state == "remove" %>
+                      <span class="label label-danger">remove</span>
+                    <% else %>
+                      <span class="label label-success"><%= state %></span>
+                    <% end %>
+                  <% end %>
+                </th>
+                <td><%= link_to user.ku_id, user %></td>
                 <td><%= user.firstname+" "+user.lastname %></td>
               </tr>
             <% end %>
