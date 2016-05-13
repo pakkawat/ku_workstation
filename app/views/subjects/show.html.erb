@@ -42,13 +42,14 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th></th>
               <th>Program name</th>
+              <th>State</th>
             </tr>
           </thead>
           <tbody>
-            <% @subject.programs.where("programs_subjects.program_enabled = true").order("programs.program_name ASC").each do |program| %>
+            <% @subject.programs.order("programs.program_name ASC").each do |program| %>
               <tr>
+                <td><%= link_to program.program_name, edit_program_path(program) %></td>
                 <% state = @subject.programs_subjects.where(program_id: program.id).pluck("state").first %>
                 <th scope="row">
                   <% if state != "none" %>
@@ -59,7 +60,7 @@
                     <% end %>
                   <% end %>
                 </th>
-                <td><%= link_to program.program_name, edit_program_path(program) %></td>
+                
               </tr>
             <% end %>
           </tbody>
@@ -73,14 +74,16 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th></th>
               <th>Student ID</th>
               <th>Student name</th>
+              <th>State</th>
             </tr>
           </thead>
           <tbody>
-            <% @subject.ku_users.where("user_subjects.user_enabled = true").order("ku_users.ku_id ASC").each do |user| %>
+            <% @subject.ku_users.order("ku_users.ku_id ASC").each do |user| %>
               <tr>
+                <td><%= link_to user.ku_id, user %></td>
+                <td><%= user.firstname+" "+user.lastname %></td>
                 <% state = @subject.user_subjects.where(ku_user_id: user.id).pluck("state").first %>
                 <th scope="row">
                   <% if state != "none" %>
@@ -91,8 +94,6 @@
                     <% end %>
                   <% end %>
                 </th>
-                <td><%= link_to user.ku_id, user %></td>
-                <td><%= user.firstname+" "+user.lastname %></td>
               </tr>
             <% end %>
           </tbody>
