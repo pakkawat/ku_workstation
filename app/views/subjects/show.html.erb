@@ -42,14 +42,14 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th>Program ID</th>
+              <th></th>
               <th>Program name</th>
             </tr>
           </thead>
           <tbody>
             <% @subject.programs.where("programs_subjects.program_enabled = true").order("programs.program_name ASC").each do |program| %>
               <tr>
-                <% state = @subject.programs_subjects.where(program_id: program.id).pluck("state") %>
+                <% state = @subject.programs_subjects.where(program_id: program.id).pluck("state").first %>
                 <th scope="row">
                   <% if state != "none" %>
                     <% if state == "uninstall" %>
@@ -81,7 +81,7 @@
           <tbody>
             <% @subject.ku_users.where("user_subjects.user_enabled = true").order("ku_users.ku_id ASC").each do |user| %>
               <tr>
-                <% state = @subject.user_subjects.where(ku_user_id: user.id).pluck("state") %>
+                <% state = @subject.user_subjects.where(ku_user_id: user.id).pluck("state").first %>
                 <th scope="row">
                   <% if state != "none" %>
                     <% if state == "remove" %>
