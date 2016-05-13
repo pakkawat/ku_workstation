@@ -9,15 +9,23 @@ class SubjectJob < ProgressJob::Base
   def perform
     # Do something later
     update_stage('Run command')
-    update_progress_max(@subject.ku_users.count*2) # each user run ssh two times
+    @users = @subject.ku_users
+    #update_progress_max(@subject.ku_users.count*2) # each user run ssh two times
     @arr_error = Array.new
     if @type == "delete"
+      update_progress_max(@users.count*2)
       delete_user_program_and_user_config
       #update all user_subject = false
       @subject.user_subjects.update_all(user_enabled: false)
       #update all programs_subject = false
       @subject.programs_subjects.update_all(program_enabled: false)
     else # apply_change
+      if @subject.programs.where("programs_subjects.state != 'none'").count != 0
+        update_progress_max(@users.count*2)
+      else
+        @users = @subject.ku_users.where("user_subjects.state != 'none'")
+        update_progress_max(@users.count*2)
+      end
       calculate_user_program_and_user_config
     end
 
@@ -50,8 +58,8 @@ class SubjectJob < ProgressJob::Base
 
       @subject.user_subjects.where(user_enabled: false).destroy_all
 
-      @subject.programs_subjects.update_all(:was_updated => false)
-      @subject.user_subjects.update_all(:was_updated => false)
+      @subject.programs_subjects.update_all(:was_updated => false, :state => "none", :applied => true)
+      @subject.user_subjects.update_all(:state => "none", :applied => true)
     end
   end
 
@@ -124,7 +132,7 @@ class SubjectJob < ProgressJob::Base
 
   def first_ssh_run
 
-    @subject.ku_users.each do |user|
+    @users.each do |user|
       ku_id = user.ku_id
       if KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         if user.user_subjects.where(:subject_id => @subject.id).pluck(:user_enabled).first
@@ -158,7 +166,7 @@ class SubjectJob < ProgressJob::Base
 
   def second_ssh_run
 
-    @subject.ku_users.each do |user|
+    @users.each do |user|
       ku_id = user.ku_id
       if !KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         @arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/logs/'+user.log.id.to_s}, ")
@@ -200,9 +208,11 @@ class SubjectJob < ProgressJob::Base
 
   def calculate_user_program_and_user_config
 
-    @subject.ku_users.where("user_subjects.user_enabled = true").each do |user|
+    @users.where("user_subjects.user_enabled = true").each do |user|
       @subject.programs.where("programs_subjects.program_enabled = true").each do |program|
-        user.users_programs.create(:program_id => program.id, :subject_id => @subject.id)
+        if !user.users_programs.find_by(:program_id => program.id, :subject_id => @subject.id).present?
+          user.users_programs.create(:program_id => program.id, :subject_id => @subject.id)
+        end
         add_user_config(user, program)
       end
       @subject.programs.where("programs_subjects.program_enabled = false").each do |program|
@@ -213,7 +223,7 @@ class SubjectJob < ProgressJob::Base
       end
     end
 
-    @subject.ku_users.where("user_subjects.user_enabled = false").each do |user|
+    @users.where("user_subjects.user_enabled = false").each do |user|
       @subject.programs.each do |program|
         if user.users_programs.where(:program_id => program.id).count == 1
           delete_user_config(user, program)
