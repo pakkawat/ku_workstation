@@ -228,7 +228,7 @@
                     <tbody>
                       <% @kuuser.subjects.where("user_subjects.user_enabled = true").each do |subject| %>
                         <tr>
-                          <th scope="row"><%= subject.id %></th>
+                          <th scope="row"><%= subject.subject_id %></th>
                           <td><%= link_to subject.subject_name, subject %></td>
                         </tr>
                       <% end %>
