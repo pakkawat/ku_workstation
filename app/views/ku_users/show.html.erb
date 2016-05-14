@@ -256,11 +256,10 @@
                         <tr>
                           <th scope="row"><%= link_to program.program_name, program %></th>
                           <td>
-                            <%= link_to "Edit", edit_ku_user_attribute_path(id: @kuuser.id, program_id: program.id), :class => "btn btn-primary" %>
-
                             <% chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.select("id")) %>
                             <% @chef_values = ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: @kuuser) %>
 
+                            <% if !@chef_values.empty? %>
                             <!-- Button trigger modal -->
                             <button class="btn btn-primary" data-toggle="modal" data-target="#program_<%= program.id %>_attributes_Modal">
                               Edit
@@ -285,14 +284,13 @@
                                     </div>
                                     <div class="modal-footer">
                                       <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                                         <% if !@chef_values.empty? %>
-                                           <%= submit_tag "Update", class: "btn btn-success" %>
-                                         <% end %>
+                                      <%= submit_tag "Update", class: "btn btn-success" %>
                                     </div>
                                   <% end %>
                                 </div><!-- /.modal-content -->
                               </div><!-- /.modal-dialog -->
                             </div><!-- /.modal -->
+                            <% end %>
 
                           </td>
                         </tr>
