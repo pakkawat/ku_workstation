@@ -52,8 +52,8 @@ class KuUser < ActiveRecord::Base
     update_attribute(:remember_digest, nil)
   end
 
-  def user_programs(reload=false)
-    @user_programs = nil if reload
-    @user_programs ||=Program.find_by_sql("SELECT DISTINCT p.id, p.program_name, p.note FROM programs p INNER JOIN programs_subjects ps on p.id = ps.program_id INNER JOIN user_subjects us on us.subject_id = ps.subject_id WHERE us.ku_user_id = #{self.id} AND us.user_enabled = true AND ps.program_enabled = true")
-  end
+  #def user_programs(reload=false)
+    #@user_programs = nil if reload
+    #@user_programs ||=Program.find_by_sql("SELECT DISTINCT p.id, p.program_name, p.note FROM programs p INNER JOIN programs_subjects ps on p.id = ps.program_id INNER JOIN user_subjects us on us.subject_id = ps.subject_id WHERE us.ku_user_id = #{self.id} AND us.user_enabled = true AND ps.program_enabled = true")
+  #end
 end

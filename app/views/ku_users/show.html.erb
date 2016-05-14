@@ -245,19 +245,56 @@
                   <table class="table table-striped">
                     <thead>
                       <tr>
-                        <th>Program ID</th>
+
                         <th>Program name</th>
-                        <th>Note</th>
+
                         <th>Configure</th>
                       </tr>
                     </thead>
                     <tbody>
-                      <% @kuuser.user_programs.each do |program| %>
+                      <% @user_programs.each do |program| %>
                         <tr>
-                          <th scope="row"><%= program.id %></th>
-                          <td><%= link_to program.program_name, program %></td>
-                          <td><%= program.note %></td>
-                          <td><%= link_to "Edit", edit_ku_user_attribute_path(id: @kuuser.id, program_id: program.id), :class => "btn btn-primary" %></td>
+                          <th scope="row"><%= link_to program.program_name, program %></th>
+                          <td>
+                            <%= link_to "Edit", edit_ku_user_attribute_path(id: @kuuser.id, program_id: program.id), :class => "btn btn-primary" %>
+
+                            <% chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.select("id")) %>
+                            <% @chef_values = ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: @kuuser) %>
+
+                            <!-- Button trigger modal -->
+                            <button class="btn btn-primary" data-toggle="modal" data-target="#program_<%= program.id %>_attributes_Modal">
+                              Edit
+                            </button>
+                            <!-- Modal -->
+                            <div class="modal fade" id="program_<%= program.id %>_attributes_Modal" tabindex="-1" role="dialog" aria-labelledby="program_<%= program.id %>_attributes_Modal_Label" aria-hidden="true">
+                              <div class="modal-dialog">
+                                <div class="modal-content">
+                                  <%= form_for(@kuuser, :url => update_ku_user_attribute_path, :method => :patch) do |user_form| %>
+                                    <div class="modal-header">
+                                      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                                      <h4 class="modal-title"><%= program.program_name %></h4>
+                                    </div>
+                                    <div class="modal-body">
+                                        <% @chef_values.each do |chef_value| %>
+                                          <%= user_form.fields_for chef_value, index: chef_value.id do |c| %>
+                                            <%= label_tag 'name', ChefAttribute.find(c.object.chef_attribute_id).name, :class => 'control-label' %>
+                                            <%= c.text_field :value, :class => "form-control" %>
+                                            <br>
+                                          <% end %>
+                                        <% end %>
+                                    </div>
+                                    <div class="modal-footer">
+                                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                                         <% if !@chef_values.empty? %>
+                                           <%= submit_tag "Update", class: "btn btn-success" %>
+                                         <% end %>
+                                    </div>
+                                  <% end %>
+                                </div><!-- /.modal-content -->
+                              </div><!-- /.modal-dialog -->
+                            </div><!-- /.modal -->
+
+                          </td>
                         </tr>
                       <% end %>
                     </tbody>

@@ -120,7 +120,8 @@ class ChefResourcesController < ApplicationController
       if @chef_resource.update(chef_resource_params)
         #create_chef_value
         if !@program.nil?
-          ProgramsSubject.where(:program_id => @program.id).update_all(:was_updated => true, :state => "update")
+          ProgramsSubject.where(:program_id => @program.id).update_all(:was_updated => true)
+          ProgramsSubject.where(:program_id => @program.id, :state => "none").update_all(:state => "update")
           format.html { redirect_to edit_program_chef_resource_path(program_id: @program.id, id: @chef_resource.id), :flash => { :success => "Action was successfully updated." } }
         else
           format.html { redirect_to edit_chef_resource_path(@chef_resource), :flash => { :success => "Action was successfully updated." } }

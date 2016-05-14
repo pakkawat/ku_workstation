@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   #match 'ku_user/:id/user_personal_program/:user_personal_program_id', to: 'ku_users#delete_personal_program_from_user', as: 'delete_personal_program_from_user', :via => "delete"
   match 'ku_users/:id/apply_change', to: 'ku_users#apply_change', as: 'apply_change_ku_user', via: :get
   match 'ku_user/:id/program/:program_id', to: 'ku_users#edit_attribute', as: 'edit_ku_user_attribute', :via => "get"
-  match 'ku_user/:id/program/:program_id', to: 'ku_users#update_attribute', as: 'update_ku_user_attribute', :via => "patch"
+  match 'ku_users/:id/update_attribute', to: 'ku_users#update_attribute', as: 'update_ku_user_attribute', :via => "patch"
   match "ku_users/:id/cookbook/*cookbook_paths", :to => "user_cookbook_files#show", :via => "get", :constraints => { :cookbook_paths => /[^*]+/ }
   resources :ku_users
   #match "/ku_users/:ku_user_id/user_programs", :to => "ku_users#user_programs", :via => "get"

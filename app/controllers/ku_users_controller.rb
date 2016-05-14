@@ -27,6 +27,7 @@ class KuUsersController < ApplicationController
     #@my_personal_programs = @kuuser.personal_programs.where("user_personal_programs.status = 'install'")
     @all_personal_programs = PersonalProgram.where.not(id: @my_personal_programs)
 
+    @user_programs = Program.where(id: ProgramsSubject.where(subject_id: @kuuser.subjects.where("user_subjects.user_enabled = true").pluck(:id), program_enabled: true).pluck(:program_id))
   end
 
   def new
@@ -89,7 +90,7 @@ class KuUsersController < ApplicationController
     redirect_to ku_users_path
   end
 
-  def edit_attribute
+  def edit_attribute # mark not use
     @kuuser = KuUser.find(params[:id])
     @program = Program.find(params[:program_id])
     #render plain: @kuuser.inspect
@@ -98,7 +99,7 @@ class KuUsersController < ApplicationController
   end
 
   def update_attribute
-    #@kuuser = KuUser.find(params[:id])
+    @kuuser = KuUser.find(params[:id])
     #@program = Program.find(params[:program_id])
     #render plain: @kuuser.inspect
     #raise "test"
@@ -108,7 +109,8 @@ class KuUsersController < ApplicationController
       #str += "id:"+chef_value.id.to_s+" att_id:"+chef_value.chef_attribute_id.to_s+" value:"+value[:value]+"---"
     end
     flash[:success] = "Config has been updated"
-    redirect_to edit_ku_user_attribute_path(id: params[:id], program_id: params[:program_id])
+    redirect_to @kuuser
+    #redirect_to edit_ku_user_attribute_path(id: params[:id], program_id: params[:program_id])
   end
 
   def apply_change

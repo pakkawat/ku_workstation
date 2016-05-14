@@ -1,5 +1,13 @@
 <tr>
-	<th scope="row">
+	<th scope="row"><%= link_to program.program_name, program %></th>
+	<td>
+		<% if programs_subject.state == "uninstall" %>
+			<%= button_to 'Add', add_program_to_subject_path(@subject, program), :class => "btn btn-success", :method => :post %>
+		<% else %>
+			<%= button_to 'Delete', subject_programs_subject_path(@subject, programs_subject), :class => "btn btn-default", :method => :delete %>
+		<% end %>
+	</td>
+	<td>
 		<% programs_subject = program.programs_subjects.where(subject_id: @subject.id).first %>
 		<% if programs_subject.state != "none" %>
 			<% if programs_subject.state == "uninstall" %>
@@ -7,15 +15,6 @@
 			<% else %>
 				<span class="label label-success"><%= programs_subject.state %></span>
 			<% end %>
-		<% end %>
-	</th>
-	<td><%= link_to program.program_name, program %></td>
-	<td><%= program.note %></td>
-	<td>
-		<% if programs_subject.state == "uninstall" %>
-			<%= button_to 'Add', add_program_to_subject_path(@subject, program), :class => "btn btn-success", :method => :post %>
-		<% else %>
-			<%= button_to 'Delete', subject_programs_subject_path(@subject, programs_subject), :class => "btn btn-default", :method => :delete %>
 		<% end %>
 	</td>
 </tr>
