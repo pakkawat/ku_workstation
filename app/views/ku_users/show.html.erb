@@ -114,27 +114,17 @@
                   <table class="datatable_display table table-striped">
                     <thead>
                       <tr>
-                        <th></th>
                         <th>Program name</th>
                         <th>Note</th>
                         <th>Edit</th>
                         <th>Delete</th>
+                        <th>State</th>
                       </tr>
                     </thead>
                     <tbody>
                       <% @kuuser.personal_programs.each do |program| %>
                         <tr>
-                          <th scope="row">
-                            <% state = @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("state").first %>
-                            <% if state != "none" %>
-                              <% if state == "uninstall" %>
-                                <span class="label label-danger">uninstall</span>
-                              <% else %>
-                                <span class="label label-success"><%= state %></span>
-                              <% end %>
-                            <% end %>
-                          </th>
-                          <td><%= program.program_name %></td>
+                          <th scope="row"><%= program.program_name %></th>
                           <td><%= program.note %></td>
                           <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
                           <td>
@@ -142,6 +132,16 @@
                               <%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-success", :method => :post %>
                             <% else %>
                               <%= button_to 'Delete', ku_user_delete_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :delete %>
+                            <% end %>
+                          </td>
+                          <td>
+                            <% state = @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("state").first %>
+                            <% if state != "none" %>
+                              <% if state == "uninstall" %>
+                                <span class="label label-danger">uninstall</span>
+                              <% else %>
+                                <span class="label label-success"><%= state %></span>
+                              <% end %>
                             <% end %>
                           </td>
                         </tr>

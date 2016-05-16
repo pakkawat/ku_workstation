@@ -48,7 +48,7 @@ class ProgramJob < ProgressJob::Base
         raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
       end
     else #apply_change
-      @program.programs_subjects.update_all(:was_updated => false)
+      @program.programs_subjects.update_all(:was_updated => false, :state => "none", :applied => true)
     end
   end
 

@@ -20,8 +20,10 @@ class SubjectJob < ProgressJob::Base
       #update all programs_subject = false
       @subject.programs_subjects.update_all(program_enabled: false)
     else # apply_change
-      if @subject.programs.where("programs_subjects.state != 'none'").count != 0
+      updated_programs = @subject.programs.where("programs_subjects.state != 'none'")
+      if updated_programs.count != 0
         update_progress_max(@users.count*2)
+        generate_chef_resource(updated_programs)
       else
         @users = @subject.ku_users.where("user_subjects.state != 'none'")
         update_progress_max(@users.count*2)
@@ -57,6 +59,8 @@ class SubjectJob < ProgressJob::Base
       @subject.programs_subjects.where(program_enabled: false).destroy_all
 
       @subject.user_subjects.where(user_enabled: false).destroy_all
+
+      RemoveResource.where(program: @subject.programs).destroy_all
 
       @subject.programs_subjects.update_all(:was_updated => false, :state => "none", :applied => true)
       @subject.user_subjects.update_all(:state => "none", :applied => true)
@@ -256,5 +260,32 @@ class SubjectJob < ProgressJob::Base
       end
     end
   end
+
+  def generate_chef_resource(programs)
+    programs.each do |program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/recipes/install_programs.rb", 'w') do |f|
+        program.chef_resources.each do |chef_resource|
+          f.write(ResourceGenerator.resource(chef_resource, program))
+        end
+      end
+
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/recipes/uninstall_programs.rb", 'w') do |f|
+        program.chef_resources.each do |chef_resource|
+          f.write(ResourceGenerator.uninstall_resource(chef_resource, program))
+        end
+      end
+
+      remove_resources = RemoveResource.where(program_id: program.id)
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
+        remove_resources.each do |remove_resource|
+          f.write(ResourceGenerator.remove_disuse_resource(remove_resource, program))
+        end
+      end
+
+      if !KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
+      end
+    end # programs.each do |program|
+  end # def
 
 end
