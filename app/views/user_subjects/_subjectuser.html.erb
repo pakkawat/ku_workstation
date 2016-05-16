@@ -1,15 +1,6 @@
+<% user_subject = user.user_subjects.where(subject_id: @subject.id).first %>
 <tr>
-	<th scope="row">
-		<% user_subject = user.user_subjects.where(subject_id: @subject.id).first %>
-		<% if user_subject.state != "none" %>
-			<% if user_subject.state == "remove" %>
-				<span class="label label-danger">remove</span>
-			<% else %>
-				<span class="label label-success"><%= user_subject.state %></span>
-			<% end %>
-		<% end %>
-	</th>
-	<td><%= link_to user.ku_id, user %></td>
+	<th scope="row"><%= link_to user.ku_id, user %></th>
 	<td><%= user.firstname %></td>
 	<td><%= user.lastname %></td>
 	<td>
@@ -17,6 +8,15 @@
 			<%= button_to 'Add', add_user_to_subject_path(@subject, user), :class => "btn btn-success", :method => :post %>
 		<% else %>
 			<%= button_to 'Delete', subject_user_subject_path(@subject, user_subject), :class => "btn btn-default", :method => :delete %>
+		<% end %>
+	</td>
+	<td>
+		<% if user_subject.state != "none" %>
+			<% if user_subject.state == "remove" %>
+				<span class="label label-danger">remove</span>
+			<% else %>
+				<span class="label label-success"><%= user_subject.state %></span>
+			<% end %>
 		<% end %>
 	</td>
 </tr>

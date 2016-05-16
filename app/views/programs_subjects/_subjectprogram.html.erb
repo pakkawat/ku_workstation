@@ -1,3 +1,4 @@
+<% programs_subject = program.programs_subjects.where(subject_id: @subject.id).first %>
 <tr>
 	<th scope="row"><%= link_to program.program_name, program %></th>
 	<td>
@@ -8,7 +9,6 @@
 		<% end %>
 	</td>
 	<td>
-		<% programs_subject = program.programs_subjects.where(subject_id: @subject.id).first %>
 		<% if programs_subject.state != "none" %>
 			<% if programs_subject.state == "uninstall" %>
 				<span class="label label-danger">uninstall</span>
