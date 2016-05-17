@@ -25,9 +25,10 @@ class ProgramJob < ProgressJob::Base
       delete_all_user
       remove_program_from_users
     else # apply_change
+      create_user_config_for_each_user
+      check_program_config
       apply_change
       clear_remove_disuse_resource
-      create_user_config_for_each_user
     end
     second_ssh_run
     #File.open('/home/ubuntu/myapp/public/programs_job.txt', 'w') { |f| f.write(str_temp) }
@@ -164,9 +165,9 @@ class ProgramJob < ProgressJob::Base
       end
     end
 
-    if !KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
-    end
+    #if !KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      #raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
+    #end
 
   end
 
@@ -217,5 +218,43 @@ class ProgramJob < ProgressJob::Base
       end
     end
   end # end def
+
+  def check_program_config
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/libraries/check_user_config.rb", 'w') do |f|
+      if ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id")).count != 0
+        f.write(create_function_to_check_user_config(true))
+      else
+        f.write(create_function_to_check_user_config(false))
+      end
+    end
+
+    if !KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+      raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
+    end
+
+  end
+
+  def create_function_to_check_user_config(has_config)
+    str_temp = ""
+    str_temp += "module CheckUserConfig\n"
+    str_temp += "  def self.user_config(user_config_list)\n"
+    if has_config
+      str_temp += "    if !user_config_list.nil?\n"
+      str_temp += "      user_config_list.each do |config|\n"
+      str_temp += "        if config == ''\n"
+      str_temp += "          return false\n"
+      str_temp += "        end\n"
+      str_temp += "      end\n"
+      str_temp += "    else\n"
+      str_temp += "      return false\n"
+      str_temp += "    end\n"
+      str_temp += "    return true\n"
+    else
+      str_temp += "    return true\n"
+    end
+    str_temp += "  end\n"
+    str_temp += "end\n"
+    return str_temp
+  end
 
 end

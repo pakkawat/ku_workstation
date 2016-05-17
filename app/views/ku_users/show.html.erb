@@ -123,6 +123,7 @@
                     </thead>
                     <tbody>
                       <% @kuuser.personal_programs.each do |program| %>
+                      <% state = @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("state").first %>
                         <tr>
                           <th scope="row"><%= program.program_name %></th>
                           <td><%= program.note %></td>
@@ -135,7 +136,6 @@
                             <% end %>
                           </td>
                           <td>
-                            <% state = @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("state").first %>
                             <% if state != "none" %>
                               <% if state == "uninstall" %>
                                 <span class="label label-danger">uninstall</span>

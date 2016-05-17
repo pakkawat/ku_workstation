@@ -142,30 +142,10 @@ class ProgramsController < ApplicationController
       output << ""
       output.close
 
-      File.open(directory+"/libraries/check_user_config.rb", 'w') do |f|
-        f.write(create_function_to_check_user_config)
-      end
     end
 
     return check_error
 
-  end
-
-  def create_function_to_check_user_config
-    str_temp = ""
-    str_temp += "module CheckUserConfig\n"
-    str_temp += "  def self.user_config(user_config_list)\n"
-    str_temp += "    if !user_config_list.nil?\n"
-    str_temp += "      user_config_list.each do |config|\n"
-    str_temp += "        if config == ''\n"
-    str_temp += "          return false\n"
-    str_temp += "        end\n"
-    str_temp += "      end\n"
-    str_temp += "    end\n"
-    str_temp += "    return true\n"
-    str_temp += "  end\n"
-    str_temp += "end\n"
-    return str_temp
   end
 
   def upload_cookbook

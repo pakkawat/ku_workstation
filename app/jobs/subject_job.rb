@@ -24,6 +24,7 @@ class SubjectJob < ProgressJob::Base
       if updated_programs.count != 0
         update_progress_max(@users.count*2)
         generate_chef_resource(updated_programs)
+        check_program_config(updated_programs)
       else
         @users = @subject.ku_users.where("user_subjects.state != 'none'")
         update_progress_max(@users.count*2)
@@ -282,10 +283,45 @@ class SubjectJob < ProgressJob::Base
         end
       end
 
-      if !KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
-      end
+      #if !KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        #raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, "
+      #end
     end # programs.each do |program|
   end # def
+
+  def check_program_config(programs)
+    programs.each do |program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/libraries/check_user_config.rb", 'w') do |f|
+        if ChefAttribute.where(chef_resource_id: program.chef_resources.pluck("id")).count != 0
+          f.write(create_function_to_check_user_config(true))
+        else
+          f.write(create_function_to_check_user_config(false))
+        end
+      end
+    end
+  end
+
+  def create_function_to_check_user_config(has_config)
+    str_temp = ""
+    str_temp += "module CheckUserConfig\n"
+    str_temp += "  def self.user_config(user_config_list)\n"
+    if has_config
+      str_temp += "    if !user_config_list.nil?\n"
+      str_temp += "      user_config_list.each do |config|\n"
+      str_temp += "        if config == ''\n"
+      str_temp += "          return false\n"
+      str_temp += "        end\n"
+      str_temp += "      end\n"
+      str_temp += "    else\n"
+      str_temp += "      return false\n"
+      str_temp += "    end\n"
+      str_temp += "    return true\n"
+    else
+      str_temp += "    return true\n"
+    end
+    str_temp += "  end\n"
+    str_temp += "end\n"
+    return str_temp
+  end
 
 end
