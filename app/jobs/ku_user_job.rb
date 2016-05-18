@@ -33,6 +33,10 @@ class KuUserJob < ProgressJob::Base
       @user.user_personal_programs.where(status: 'uninstall').destroy_all
       @user.user_personal_programs.update_all(:installed => true, :status => "none",:was_updated => false, :state => "none")
       @user.user_remove_resources.destroy_all
+    elsif @type == "create"
+      if !KnifeCommand.run("knife node run_list remove " + @user.ku_id + " 'recipe[base-client]' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'} "
+      end
     end
   end
 
