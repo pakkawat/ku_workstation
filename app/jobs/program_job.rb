@@ -222,9 +222,9 @@ class ProgramJob < ProgressJob::Base
   def check_program_config
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/libraries/check_user_config.rb", 'w') do |f|
       if ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("id")).count != 0
-        f.write(create_function_to_check_user_config(true))
+        f.write(create_function_to_check_user_config(true, program.id))
       else
-        f.write(create_function_to_check_user_config(false))
+        f.write(create_function_to_check_user_config(false, program.id))
       end
     end
 
@@ -234,10 +234,10 @@ class ProgramJob < ProgressJob::Base
 
   end
 
-  def create_function_to_check_user_config(has_config)
+  def create_function_to_check_user_config(has_config, program_id)
     str_temp = ""
     str_temp += "module CheckUserConfig\n"
-    str_temp += "  def self.user_config(user_config_list)\n"
+    str_temp += "  def self.user_config_#{program_id}(user_config_list)\n"
     if has_config
       str_temp += "    if !user_config_list.nil?\n"
       str_temp += "      user_config_list.each do |config|\n"

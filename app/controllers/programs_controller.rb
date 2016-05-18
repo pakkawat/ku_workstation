@@ -112,7 +112,7 @@ class ProgramsController < ApplicationController
         f.write("\n\n")
         f.write("if node['#{program.program_name}']['user_list'].include?(node.name)")
         f.write("\n")
-        f.write("  if CheckUserConfig.user_config(node['#{program.program_name}']['user_config_list'])\n")
+        f.write("  if CheckUserConfig.user_config_#{program.id}(node['#{program.program_name}']['user_config_list'])\n")
         f.write("    include_recipe \'#{program.program_name}::install_programs\'")
         f.write("\n")
         f.write("  end\n")
