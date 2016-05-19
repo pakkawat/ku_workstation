@@ -69,7 +69,7 @@ class KuUsersController < ApplicationController
     @kuuser = KuUser.find(params[:id])
 
     if @kuuser.update_attributes(ku_user_params)
-      flash[:success] = "User has been updated"
+      flash[:success] = "User was successfully updated"
       redirect_to @kuuser
     else
       render "edit"
@@ -100,7 +100,7 @@ class KuUsersController < ApplicationController
       chef_value.update_attribute(:value,value[:value])
       #str += "id:"+chef_value.id.to_s+" att_id:"+chef_value.chef_attribute_id.to_s+" value:"+value[:value]+"---"
     end
-    flash[:success] = "Config has been updated"
+    flash[:success] = "Config was successfully updated"
     redirect_to @kuuser
     #redirect_to edit_ku_user_attribute_path(id: params[:id], program_id: params[:program_id])
   end
@@ -214,7 +214,7 @@ class KuUsersController < ApplicationController
     if user_personal_program.installed # true
       respond_to do |format|
         if user_personal_program.update(status: "uninstall", state: "uninstall")
-          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully deleted." } }
+          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " has changed state to uninstall" } }
           #format.json { render :show, status: :created, location: @kuuser }
         else
           format.html { redirect_to @kuuser, :flash => { :danger => "Error delete " + @personal_program.program_name + "." } }
@@ -238,17 +238,20 @@ class KuUsersController < ApplicationController
   def add_personal_program
     @kuuser = KuUser.find(params[:id])
     @personal_program = PersonalProgram.find(params[:personal_program_id])
+    state = ""
     user_personal_program = @kuuser.user_personal_programs.find_by(personal_program_id: @personal_program)
     if user_personal_program.present?
       respond_to do |format|
         check_error = true
         if user_personal_program.was_updated
           check_error = user_personal_program.update(status: "install", state: "update")
+          state = "update"
         else
           check_error = user_personal_program.update(status: "install", state: "none")
+          state = "normal"
         end
         if check_error
-          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully added." } }
+          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " has changed state to " + state } }
           #format.json { render :show, status: :created, location: personal_programs_path }
         else
           format.html { redirect_to @kuuser, :flash => { :danger => "Error add " + @personal_program.program_name + "." } }
@@ -258,7 +261,7 @@ class KuUsersController < ApplicationController
     else
       respond_to do |format|
         if @kuuser.user_personal_programs.create(personal_program: @personal_program, status: "install", state: "install")
-          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " was successfully added." } }
+          format.html { redirect_to @kuuser, :flash => { :success => @personal_program.program_name + " has changed state to install" } }
           #format.json { render :show, status: :created, location: personal_programs_path }
         else
           format.html { redirect_to @kuuser, :flash => { :danger => "Error add " + @personal_program.program_name + "." } }

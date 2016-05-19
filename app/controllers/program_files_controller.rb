@@ -20,7 +20,7 @@ class ProgramFilesController < ApplicationController
   	@program = Program.find(params[:program_id])
   	@program_dir = "/home/ubuntu/chef-repo/cookbooks/"+@program.program_name+"/"
   	@path = ""
-  	if params[:program_files] == "create_from_loot_dir_form_tag" # form_tag view/programs/show.html.erb 
+  	if params[:program_files] == "create_from_loot_dir_form_tag" # form_tag view/programs/show.html.erb
   		@path = ""
       @program_dir = @program_dir.chomp("/") # fix double slash("//") when create file from root folder and select current dir ("/")
   	else
@@ -49,7 +49,7 @@ class ProgramFilesController < ApplicationController
   				flash[:danger] = "A Folder with the same name already exists. Please choose a different name and try again."
   			else
   				FileUtils.mkdir_p(full_path)
-  				flash[:success] = "Folder has been created at "+full_path.gsub("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name, "")
+  				flash[:success] = "Folder was successfully created at "+full_path.gsub("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name, "")
   			end
   		else #new file
   			if params[:name].index(".").present? && params[:name][-1] != "."
@@ -59,7 +59,7 @@ class ProgramFilesController < ApplicationController
   					File.open(full_path, "w+") do |f|
   						f.write("")
   					end
-  					flash[:success] = "File has been created at "+full_path.gsub("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name, "")
+  					flash[:success] = "File was successfully created at "+full_path.gsub("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name, "")
   				end
   			else
   				flash[:danger] = "File name was incorrect format. Please try again."

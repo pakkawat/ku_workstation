@@ -12,14 +12,14 @@ class UserSubjectsController < ApplicationController
     if @user_enabled.present?
       if @user_enabled.update(user_enabled: true, state: "none")
         #add_user_programs
-        flash[:success] = @kuuser.ku_id + " has been added"
+        flash[:success] = @kuuser.ku_id + " has changed state to normal"
       else
         flash[:danger] = "Error1!!"
       end
     else
       if @subject.user_subjects.create(ku_user: @kuuser, state: "new")
         #add_user_programs
-        flash[:success] = @kuuser.ku_id + " has been added"
+        flash[:success] = @kuuser.ku_id + " has changed state to new"
       else
         flash[:danger] = "Error2!!"
       end
@@ -31,16 +31,22 @@ class UserSubjectsController < ApplicationController
     user_subject = UserSubject.find(params[:id])
     @kuuser = KuUser.find(user_subject.ku_user_id)
     @subject = Subject.find(params[:subject_id])
+    state = ""
 
     check_error = true
     if user_subject.applied
       check_error = user_subject.update(user_enabled: false, state: "remove")
+      state = "remove"
     else
       check_error = user_subject.destroy
     end
 
     if check_error
-      flash[:success] = @kuuser.ku_id + " has been deleted from subject"
+      if state == ""
+        flash[:success] = @kuuser.ku_id + " has deleted from subject"
+      else
+        flash[:success] = @kuuser.ku_id + " has changed state to remove"
+      end
     else
       flash[:danger] = "delete error"
     end

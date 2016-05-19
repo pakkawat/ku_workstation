@@ -11,26 +11,28 @@ class ProgramsSubjectsController < ApplicationController
     #@subject.programs_subjects.create(program: @program)
     #add_program_to_run_list
     #redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
-
+    state = ""
 
     programs_subject = @subject.programs_subjects.find_by(program_id: @program.id)
     if programs_subject.present?
       check_error = true
       if programs_subject.was_updated
         check_error = programs_subject.update(program_enabled: true, state: "update")
+        state = "update"
       else
         check_error = programs_subject.update(program_enabled: true, state: "none")
+        state = "normal"
       end
       if check_error
         #add_user_programs
-        flash[:success] = @program.program_name + " has been added"
+        flash[:success] = @program.program_name + " has changed state to " + state
       else
         flash[:danger] = "Error1!!"
       end
     else
       if @subject.programs_subjects.create(program: @program, state: "install")
         #add_user_programs
-        flash[:success] = @program.program_name + " has been added"
+        flash[:success] = @program.program_name + " has changed state to install"
       else
         flash[:danger] = "Error2!!"
       end
@@ -45,17 +47,23 @@ class ProgramsSubjectsController < ApplicationController
     #ProgramsSubject.find_by(program_id: @program.id, subject_id: @subject.id).destroy
     #add_remove_program_to_run_list
     #redirect_to subject_programs_subjects_path(:subject_id => @subject.id)
+    state = ""
 
     check_error = true
     if programs_subject.applied
       check_error = programs_subject.update(program_enabled: false, state: "uninstall")
+      state = "uninstall"
     else
       check_error = programs_subject.destroy
     end
 
     if check_error
       #remove_user_programs
-      flash[:success] = @program.program_name + " has been deleted from subject"
+      if state == ""
+        flash[:success] = @program.program_name + " has deleted from subject"
+      else
+        flash[:success] = @program.program_name + " has changed state to uninstall"
+      end
     else
       flash[:danger] = "Error3!!"
     end

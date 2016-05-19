@@ -65,6 +65,8 @@ class SubjectJob < ProgressJob::Base
 
       @subject.programs_subjects.update_all(:was_updated => false, :state => "none", :applied => true)
       @subject.user_subjects.update_all(:state => "none", :applied => true)
+
+      clear_remove_disuse_resource
     end
   end
 
@@ -326,6 +328,19 @@ class SubjectJob < ProgressJob::Base
     str_temp += "  end\n"
     str_temp += "end\n"
     return str_temp
+  end
+
+  def clear_remove_disuse_resource
+    @subject.programs.each do |program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
+        f.write("")
+      end
+      if !KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        @arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
+      end
+    end
+
+    check_error("5. ")
   end
 
 end

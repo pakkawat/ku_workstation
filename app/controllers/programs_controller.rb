@@ -58,7 +58,7 @@ class ProgramsController < ApplicationController
     if @program.update_attributes(program_params)
       test_generate_chef_resource
       if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        flash[:success] = "Program has been updated"
+        flash[:success] = "Program was successfully updated"
         redirect_to program_path(@program)+"/edit"
       else
         flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
@@ -151,7 +151,7 @@ class ProgramsController < ApplicationController
   def upload_cookbook
     program = Program.find(params[:program_id])
     if KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-      flash[:success] = program.program_name + " has been updated"
+      flash[:success] = program.program_name + " was successfully updated"
       redirect_to program_path(program)
     else
       flash[:danger] = "there are something wrong see #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
