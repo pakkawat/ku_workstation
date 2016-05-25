@@ -32,6 +32,7 @@ class SubjectJob < ProgressJob::Base
       calculate_user_program_and_user_config
     end
 
+    KnifeCommand.create_empty_log(@users)
     @arr_error.push(" There are error with following: ")
 
     prepare_user_list

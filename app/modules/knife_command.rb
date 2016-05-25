@@ -31,7 +31,7 @@ module KnifeCommand
 			while line=stdout_err.gets do
 				log.info(line)
 			end
-                        
+
 			if wait_thr.value.success?
 				user.log.update(error: false) if !user.nil?
 				check_error = true
@@ -43,6 +43,12 @@ module KnifeCommand
 		log.info("------------------------------------ End ---------------------------------------\n\n")
 		log.close
 		return check_error
+	end
+
+	def KnifeCommand.create_empty_log(users)
+		users.each do |user|
+			FileUtils.touch("#{Rails.root}/log/knife/#{user.ku_id}.log")
+		end
 	end
 
 end

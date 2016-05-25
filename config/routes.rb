@@ -26,6 +26,7 @@ Rails.application.routes.draw do
   match 'program/:program_id/chef_resource/:id', to: 'chef_resources#update', as: 'update_program_chef_resource', :via => "patch"
   resources :chef_resources
 
+  match 'logs/clear_system_log', to: 'logs#clear_system_log', as: 'clear_system_log', :via => "delete"
   get 'logs/system_log', to: 'logs#system_log'
   resources :logs, :only => [:index, :show]
   #get 'logs/system_log', to: 'logs#system_log'

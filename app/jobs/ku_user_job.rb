@@ -17,6 +17,7 @@ class KuUserJob < ProgressJob::Base
       delete_user_and_instance
     else # apply_change
       user_apply_change
+      KnifeCommand.create_empty_log(@user)
     end
 
   end

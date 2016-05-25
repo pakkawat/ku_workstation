@@ -15,6 +15,7 @@ class ProgramJob < ProgressJob::Base
       #sleep(5)
       #update_progress
     #end
+    KnifeCommand.create_empty_log(@users)
     @arr_error = Array.new
     @arr_error.push("There are error with following user id:")
 

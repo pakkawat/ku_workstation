@@ -1,5 +1,7 @@
 
-<%= link_to "System.log", logs_system_log_path, :class => "btn btn-default" %>
+<%= link_to "System.log", logs_system_log_path, :class => "btn btn-primary" %>
+<%= button_to 'Clear', clear_system_log_path, :class => "btn btn-default", :method => :delete %>
+<br>
 <br>
 <div class="panel panel-danger">
   <!-- Default panel contents -->

@@ -68,6 +68,12 @@ class LogsController < ApplicationController
     @data = File.read("#{Rails.root}/log/knife/system.log")
   end
 
+  def clear_system_log
+    FileUtils.touch("#{Rails.root}/log/knife/system.log")
+    flash[:success] = "system.log was successfully cleared"
+    redirect_to logs_path
+  end
+
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_log
