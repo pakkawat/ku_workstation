@@ -108,7 +108,7 @@ module UserResourceGenerator
 		str_code += "end\n"
 		str_code += "\n"
 		str_code += "execute 'apt-get-install-f' do\n"
-		str_code += "  command 'sudo apt-get install -f'\n"
+		str_code += "  command 'sudo apt-get -f install'\n"
 		str_code += "  action :run\n"
 		str_code += "end\n"
 		str_code += "\n"

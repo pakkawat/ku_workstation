@@ -47,7 +47,7 @@ module KnifeCommand
 
 	def KnifeCommand.create_empty_log(users)
 		users.each do |user|
-			FileUtils.touch("#{Rails.root}/log/knife/#{user.ku_id}.log")
+			File.open("#{Rails.root}/log/knife/#{user.ku_id}.log", "w") {}
 		end
 	end
 

@@ -69,7 +69,7 @@ class LogsController < ApplicationController
   end
 
   def clear_system_log
-    FileUtils.touch("#{Rails.root}/log/knife/system.log")
+    File.open("#{Rails.root}/log/knife/system.log", "w") {}
     flash[:success] = "system.log was successfully cleared"
     redirect_to logs_path
   end
