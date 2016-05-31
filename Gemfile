@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'awscosts'
+
 gem 'puma'
 
 #fix error CookieOverflow

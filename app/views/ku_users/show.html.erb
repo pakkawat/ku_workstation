@@ -19,6 +19,7 @@
                       <th>Instance name</th>
                       <th>Uptime</th>
                       <th>Status</th>
+                      <th>Cost</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -32,6 +33,7 @@
                       <% else %>
                         <th><%= image_tag "running.png" %> running</th>
                       <% end %>
+                      <th><%= @ec2_cost %></th>
                     </tr>
                   </tbody>
                 </table>

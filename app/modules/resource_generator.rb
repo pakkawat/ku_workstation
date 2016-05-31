@@ -22,6 +22,8 @@ module ResourceGenerator
 			ResourceGenerator.execute_command(chef_resource)
 		elsif chef_resource.resource_type == "Bash_script"
 			ResourceGenerator.bash_script(chef_resource)
+		elsif chef_resource.resource_type == "Config_file"
+			ResourceGenerator.config_file(chef_resource)
 		end
 	end
 

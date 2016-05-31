@@ -22,6 +22,8 @@ class KuUsersController < ApplicationController
     nodes = query.search('node', 'name:' + @kuuser.ku_id).first rescue []
     @node = nodes.first
 
+    @ec2_cost = calculate_ec2_cost(@node.uptime)
+
     @was_updated = @kuuser.user_personal_programs.where.not(state: "none").count
 
     #@my_personal_programs = @kuuser.personal_programs.where("user_personal_programs.status = 'install'")
@@ -298,6 +300,18 @@ class KuUsersController < ApplicationController
       redirect_to(root_url) unless current_user.admin?
     end
 
+    def calculate_ec2_cost(time)
+      require 'awscosts'
+      time_to_int = time.scan(/\d+/)
+      region = AWSCosts.region('ap-southeast-1')
+      instance_rate = region.ec2.on_demand(:linux).price('t2.large')
+      ebs_rate = 0.12
+      storage = 10
 
+      hour = time_to_int[0]
+      min = time_to_int[1]
+
+      return hour*instance_rate + (min*instance_rate)/60 + (ebs_rate*storage*hour)/(24*30)
+    end
 
 end
