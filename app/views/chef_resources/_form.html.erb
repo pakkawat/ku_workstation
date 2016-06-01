@@ -105,7 +105,7 @@
                   <% end %>
               </div>
               <% end %>
-            <% when "Deb", "Source" %>
+            <% when "Deb" %>
               <%= f.fields_for :chef_properties do |property| %>
                 <% if @property_count == 0 %>
                   <div class='form-group'>
@@ -140,6 +140,58 @@
                 <% end %>
                 <% @property_count = @property_count + 1 %>
               <% end %>
+
+              <% when "Source" %>
+                <%= f.fields_for :chef_properties do |property| %>
+                  <% if @property_count == 0 %>
+                    <div class='form-group'>
+                      <label for='name'>
+                        <%= property.label :program_name %>
+                      </label>
+                      <div class='input-group'>
+                        <span class='input-group-addon'><span class='glyphicon glyphicon-book'></span></span>
+                        <%= property.text_field :value, class: "form-control" %>
+                      </div>
+                      <% if property.object.id != nil %>
+                        <%= property.hidden_field :value_type %>
+                      <% else %>
+                        <%= property.hidden_field :value_type, :value => "program_name" %>
+                      <% end %>
+                    </div>
+                  <% elsif @property_count == 1 %>
+                    <div class='form-group'>
+                      <label for='name'>
+                        <%= property.label :source_file %>
+                      </label>
+                      <div class='input-group'>
+                        <span class='input-group-addon'><span class='glyphicon glyphicon-file'></span></span>
+                        <%= property.text_field :value, class: "form-control" %>
+                      </div>
+                    <% if property.object.id != nil %>
+                      <%= property.hidden_field :value_type %>
+                    <% else %>
+                      <%= property.hidden_field :value_type, :value => "source_file" %>
+                    <% end %>
+                    </div>
+                  <% else %>
+                    <div class='form-group'>
+                      <label for='name'>
+                        <%= property.label :configure_optional %>
+                      </label>
+                      <div class='input-group'>
+                        <span class='input-group-addon'><span class='glyphicon glyphicon-list'></span></span>
+                        <%= property.text_field :value, class: "form-control" %>
+                      </div>
+                      <% if property.object.id != nil %>
+                        <%= property.hidden_field :value_type %>
+                      <% else %>
+                        <%= property.hidden_field :value_type, :value => "configure_optional" %>
+                      <% end %>
+                    </div>
+                  <% end %>
+                  <% @property_count = @property_count + 1 %>
+                <% end %>
+
             <% when "Download" %>
               <%= f.fields_for :chef_properties do |property| %>
                 <% if @property_count == 0 %>

@@ -128,6 +128,7 @@ module UserResourceGenerator
 	def UserResourceGenerator.install_from_source(chef_resource)
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+		configure_optional = chef_resource.chef_properties.where(:value_type => "configure_optional").pluck(:value).first
 		#src_paths, src_last_path = get_path(source_file)
 		str_code = ""
 		#str_code += "if Dir.entries('#{src_last_path}').size == 2\n" # empty folder (have two links "." and ".." only)
@@ -135,9 +136,9 @@ module UserResourceGenerator
 		str_code += "  user 'root'\n"
 		str_code += "  cwd '#{source_file}'\n"
 		str_code += "  code <<-EOH\n"
-		str_code += "  ./configure\n"
+		str_code += "  ./configure #{configure_optional}\n"
 		str_code += "  make\n"
-		str_code += "  make install\n"
+		str_code += "  sudo checkinstall\n"
 		str_code += "  EOH\n"
 		str_code += "  not_if \{ Dir.entries('#{source_file}').size == 2 \}\n"
 		str_code += "end\n"
@@ -149,7 +150,9 @@ module UserResourceGenerator
 	def UserResourceGenerator.uninstall_from_source(chef_resource)
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
-		str_code += "#{program_name} uninstall_from_source\n"
+		str_code += "dpkg_package '#{program_name}' do\n"
+		str_code += "  action :remove\n"
+		str_code += "end\n"
 		str_code += "\n"
 		return str_code
 	end

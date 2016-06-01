@@ -30,7 +30,7 @@ class ChefResourcesController < ApplicationController
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
       end
-    when "Download", "Extract", "Deb", "Source", "Execute_command"
+    when "Download", "Extract", "Deb", "Execute_command"
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
         @chef_resource.chef_properties.build
@@ -51,7 +51,7 @@ class ChefResourcesController < ApplicationController
           end
         end
       end
-    when "Copy_file", "Move_file"
+    when "Copy_file", "Move_file", "Source"
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
         @chef_resource.chef_properties.build

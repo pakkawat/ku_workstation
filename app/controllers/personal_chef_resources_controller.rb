@@ -29,7 +29,7 @@ class PersonalChefResourcesController < ApplicationController
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
       end
-    when "Download", "Extract", "Deb", "Source", "Execute_command"
+    when "Download", "Extract", "Deb", "Execute_command"
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
         @personal_chef_resource.chef_properties.build
@@ -45,7 +45,7 @@ class PersonalChefResourcesController < ApplicationController
           @data = @personal_chef_resource.chef_file.content
         end
       end
-    when "Copy_file", "Move_file"
+    when "Copy_file", "Move_file", "Source"
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
         @personal_chef_resource.chef_properties.build
