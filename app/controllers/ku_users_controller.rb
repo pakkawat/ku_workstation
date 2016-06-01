@@ -22,7 +22,7 @@ class KuUsersController < ApplicationController
     nodes = query.search('node', 'name:' + @kuuser.ku_id).first rescue []
     @node = nodes.first
 
-    @ec2_cost = calculate_ec2_cost(@node.uptime)
+    @ec2_cost = calculate_ec2_cost(@node.uptime) if !@node.nil?
 
     @was_updated = @kuuser.user_personal_programs.where.not(state: "none").count
 
