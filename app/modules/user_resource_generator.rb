@@ -226,7 +226,7 @@ module UserResourceGenerator
 		str_code += "  cwd ::File.dirname('#{src_path}')\n"
 		str_code += "  code \<\<\-EOH\n"
 		#str_code += "    mkdir -p \"#{extract_to}\"\n"
-		str_code += "    tar xzf #{source_file} \-C #{des_last_path}\n"
+		str_code += "    tar xf #{source_file} \-C #{des_last_path}\n"
 		str_code += "    EOH\n"
 		str_code += "  only_if \{ Dir.entries('#{des_last_path}').size == 2 \}\n" # จะแตกไฟล์ก็ต่อเมื่อ folder ปลายทางว่าง
 		str_code += "end\n"
@@ -717,7 +717,9 @@ module UserResourceGenerator
 
 	def self.remove_source(remove_resource)
 		str_code = ""
-		str_code += "#{remove_resource.value} uninstall_from_source\n"
+		str_code += "dpkg_package '#{remove_resource.value}' do\n"
+		str_code += "  action :remove\n"
+		str_code += "end\n"
 		str_code += "\n"
 		return str_code
 	end

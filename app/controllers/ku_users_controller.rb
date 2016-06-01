@@ -308,8 +308,13 @@ class KuUsersController < ApplicationController
       ebs_rate = 0.12
       storage = 10
 
-      hour = time_to_int[0].to_i
-      min = time_to_int[1].to_i
+      if time_to_int.count == 3
+        hour = time_to_int[0].to_i
+        min = time_to_int[1].to_i
+      else
+        hour = 0
+        min = time_to_int[0].to_i
+      end
 
       return (hour*instance_rate + (min*instance_rate)/60 + (ebs_rate*storage*hour)/(24*30)).round(3)
     end
