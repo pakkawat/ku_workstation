@@ -859,8 +859,8 @@ module UserResourceGenerator
 		str_code += "end\n"
 		str_code += "\n"
 
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb"
-		File.delete(path_to_file) if File.exist?(path_to_file)
+		#path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb"
+		#File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code
 	end
