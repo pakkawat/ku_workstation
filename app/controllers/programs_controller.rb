@@ -25,6 +25,31 @@ class ProgramsController < ApplicationController
   end
 
   def create
+    if params[:program_name] != ""
+      program = Program.new(program_name: params[:program_name], note: params[:note])
+      if program.save
+        if create_file(program)
+          #check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+          #if check_error
+            flash[:success] = "Program was saved"
+            #redirect_to programs_path
+          #else
+            #flash[:danger] = "Error can not upload cookbook to server"
+            #redirect_to programs_path
+          #end
+        else
+          flash[:danger] = "Error can not create program #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+        end
+      else
+        flash[:danger] = "Create program error."
+      end
+    else
+      flash[:danger] = "Program name cannot be null or empty."
+    end
+    redirect_to programs_path
+  end
+
+  def create_old
     @program = Program.new(program_params)
 
     if @program.save

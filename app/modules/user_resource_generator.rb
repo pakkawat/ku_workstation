@@ -138,7 +138,7 @@ module UserResourceGenerator
 		str_code += "  code <<-EOH\n"
 		str_code += "  ./configure #{configure_optional}\n"
 		str_code += "  make\n"
-		str_code += "  sudo checkinstall\n"
+		str_code += "  sudo make install\n"
 		str_code += "  EOH\n"
 		str_code += "  not_if \{ Dir.entries('#{source_file}').size == 2 \}\n"
 		str_code += "end\n"
@@ -839,18 +839,12 @@ module UserResourceGenerator
 	end
 
 	def self.remove_bash_script_file(remove_resource)
-
-		require 'digest'
 		#program = Program.find(remove_resource.program_id)
-		value = @kuuser.ku_id + remove_resource.value
+		value = @kuuser.ku_id + "_" + remove_resource.personal_chef_resource_id
 		#data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
 		#md5 = Digest::MD5.new
 		#md5.update(data)
 
-		personal_chef_resource = PersonalChefResource.find(remove_resource.personal_chef_resource_id)
-		data = personal_chef_resource.chef_file.content
-		md5 = Digest::MD5.new
-		md5.update(data)
 		#personal_chef_resource.chef_file.destroy
 
 		str_code = ""
@@ -859,9 +853,9 @@ module UserResourceGenerator
 		str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
-		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{remove_resource.value}.txt' do\n"
 		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') \}\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{remove_resource.value}.txt') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 

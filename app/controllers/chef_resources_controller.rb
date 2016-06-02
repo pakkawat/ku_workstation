@@ -280,7 +280,11 @@ class ChefResourcesController < ApplicationController
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
           if !value[:id].nil? # old_value
             if value[:value_type] == "bash_script"
-              create_bash_script_file( @program.id.to_s + "_" + @chef_resource.id.to_s, params[:bash_script_content])
+              old_md5, new_md5 = check_diff_bash_script(@program.id.to_s + "_" + @chef_resource.id.to_s, params[:bash_script_content])
+              if old_md5 != new_md5
+                create_bash_script_file( @program.id.to_s + "_" + @chef_resource.id.to_s, params[:bash_script_content])
+                add_remove_resource(old_md5, "bash_script")
+              end
               #bash = BashScript.find(value[:value])
               # check diff between bash.bash_script_content and params[:bash_script_content] then delete text file
               #bash.update_attribute(:bash_script_content, params[:bash_script_content])
@@ -355,6 +359,27 @@ class ChefResourcesController < ApplicationController
         end
       end
     end # end def
+
+    def check_diff_bash_script(file_name, bash_script_content)
+      require 'digest'
+      old_data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".sh.erb")
+      new_data = bash_script_content
+
+      old_md5 = Digest::MD5.new
+      old_md5.update(old_data)
+
+      new_md5 = Digest::MD5.new
+      new_md5.update(new_data)
+
+      return old_md5.hexdigest, new_md5.hexdigest
+
+      #File.open("/home/ubuntu/x2.txt", "w") do |f|
+        #f.write(old_md5.hexdigest)
+        #f.write("\n")
+        #f.write(new_md5.hexdigest)
+        #f.write("\n")
+      #end
+    end
 
     def create_bash_script_file(file_name, bash_script_content)
       if !@program.nil?
