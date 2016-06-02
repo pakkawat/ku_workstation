@@ -840,7 +840,7 @@ module UserResourceGenerator
 
 	def self.remove_bash_script_file(remove_resource)
 		#program = Program.find(remove_resource.program_id)
-		value = @kuuser.ku_id + "_" + remove_resource.personal_chef_resource_id
+		value = @kuuser.ku_id.to_s + "_" + remove_resource.personal_chef_resource_id.to_s
 		#data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
 		#md5 = Digest::MD5.new
 		#md5.update(data)

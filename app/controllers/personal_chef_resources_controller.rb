@@ -269,7 +269,7 @@ class PersonalChefResourcesController < ApplicationController
         params[:personal_chef_resource][:chef_properties_attributes].each do |key, value|
           if !value[:id].nil? # old_value
             if value[:value_type] == "bash_script"
-              old_md5, new_md5 = check_diff_bash_script(bash_script_content)
+              old_md5, new_md5 = check_diff_bash_script(params[:bash_script_content])
               if old_md5 != new_md5
                 save_file_content(params[:bash_script_content])
                 add_remove_resource(old_md5, "bash_script")
