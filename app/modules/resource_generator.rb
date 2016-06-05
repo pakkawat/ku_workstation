@@ -163,7 +163,7 @@ module ResourceGenerator
 		str_code += "  code <<-EOH\n"
 		str_code += "  sudo make uninstall\n"
 		str_code += "  EOH\n"
-		str_code += "  not_if \{ Dir.entries('#{source_file}').size == 2 \}\n"
+		str_code += "  only_if \{ Dir.exists?('#{source_file}') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 
@@ -256,12 +256,8 @@ module ResourceGenerator
 	def ResourceGenerator.delete_extract_file(chef_resource)
 		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 
-		#des_path = File.dirname(extract_to)
-		#des_file_name = File.basename(extract_to)
-		des_paths, des_last_path = get_path(extract_to)
-
 		str_code = ""
-		str_code += "directory '#{des_last_path}' do\n"
+		str_code += "directory '#{extract_to}' do\n"
 		str_code += "  recursive true\n"
 		str_code += "  action :delete\n"
 		str_code += "end\n"
@@ -714,7 +710,7 @@ module ResourceGenerator
 		str_code += "  code <<-EOH\n"
 		str_code += "  sudo make uninstall\n"
 		str_code += "  EOH\n"
-		str_code += "  not_if \{ Dir.entries('#{remove_resource.value}').size == 2 \}\n"
+		str_code += "  only_if \{ Dir.exists?('#{remove_resource.value}') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 
@@ -743,12 +739,8 @@ module ResourceGenerator
 	end
 
 	def self.remove_extract_file(remove_resource)
-		#des_path = File.dirname(remove_resource.value)
-		#des_file_name = File.basename(remove_resource.value)
-		des_paths, des_last_path = get_path(remove_resource.value)
-
 		str_code = ""
-		str_code += "directory '" + des_last_path + "' do\n"
+		str_code += "directory #{remove_resource.value} do\n"
 		str_code += "  recursive true\n"
 		str_code += "  action :delete\n"
 		str_code += "end\n"
