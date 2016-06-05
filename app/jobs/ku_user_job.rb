@@ -243,22 +243,22 @@ class KuUserJob < ProgressJob::Base
 
     @user.personal_programs.where("user_personal_programs.status = 'uninstall'").each do |personal_program|
       File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
-        personal_program.personal_chef_resources.where("personal_chef_resource.resource_type = 'Source'").each do |personal_chef_resource|
+        personal_program.personal_chef_resources.where(resource_type: "Source").each do |personal_chef_resource|
           f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, @user))
         end
 
-        personal_program.personal_chef_resources.where("personal_chef_resource.resource_type != 'Source'").each do |personal_chef_resource|
+        personal_program.personal_chef_resources.where.not(resource_type: "Source").each do |personal_chef_resource|
           f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, @user))
         end
       end
     end
 
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
-      @user.user_remove_resources.where("user_remove_resource.resource_type = 'Source'").each do |remove_resource|
+      @user.user_remove_resources.where(resource_type: "Source").each do |remove_resource|
         f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, @user))
       end
 
-      @user.user_remove_resources.where("user_remove_resource.resource_type = 'Source'").each do |remove_resource|
+      @user.user_remove_resources.where.not(resource_type: "Source").each do |remove_resource|
         f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, @user))
       end
     end
