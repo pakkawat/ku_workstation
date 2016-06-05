@@ -304,7 +304,7 @@ class KuUsersController < ApplicationController
       require 'awscosts'
       time_to_int = time.scan(/\d+/)
       region = AWSCosts.region('ap-southeast-1')
-      instance_rate = region.ec2.on_demand(:linux).price('t2.large')
+      instance_rate = region.ec2.on_demand(:linux).price('t2.medium')
       ebs_rate = 0.12
       storage = 10
 

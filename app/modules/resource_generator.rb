@@ -108,7 +108,7 @@ module ResourceGenerator
 		str_code += "end\n"
 		str_code += "\n"
 		str_code += "execute 'apt-get-install-f' do\n"
-		str_code += "  command 'sudo apt-get -f install'\n"
+		str_code += "  command 'sudo apt-get -f install -y'\n"
 		str_code += "  action :run\n"
 		str_code += "end\n"
 		str_code += "\n"
@@ -129,9 +129,8 @@ module ResourceGenerator
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		configure_optional = chef_resource.chef_properties.where(:value_type => "configure_optional").pluck(:value).first
-		#src_paths, src_last_path = get_path(source_file)
+
 		str_code = ""
-		#str_code += "if Dir.entries('#{src_last_path}').size == 2\n" # empty folder (have two links "." and ".." only)
 		str_code += "bash 'install_#{program_name}_from_source' do\n"
 		str_code += "  user 'root'\n"
 		str_code += "  cwd '#{source_file}'\n"
@@ -140,20 +139,40 @@ module ResourceGenerator
 		str_code += "  make\n"
 		str_code += "  sudo make install\n"
 		str_code += "  EOH\n"
-		str_code += "  not_if \{ Dir.entries('#{source_file}').size == 2 \}\n"
+		str_code += "  not_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/chef_resource_#{chef_resource.id}.txt') || Dir.entries('#{source_file}').size == 2 \}\n"
 		str_code += "end\n"
-		#str_code += "end\n"
 		str_code += "\n"
+
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/install_from_source/chef_resource_#{chef_resource.id}.txt' do\n"
+		str_code += "  content ''\n"
+		str_code += "  mode '0755'\n"
+		str_code += "end\n"
+		str_code += "\n"
+
 		return str_code
 	end
 
 	def ResourceGenerator.uninstall_from_source(chef_resource)
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
+		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+
 		str_code = ""
-		str_code += "dpkg_package '#{program_name}' do\n"
-		str_code += "  action :remove\n"
+		str_code += "bash 'uninstall_#{program_name}_from_source' do\n"
+		str_code += "  user 'root'\n"
+		str_code += "  cwd '#{source_file}'\n"
+		str_code += "  code <<-EOH\n"
+		str_code += "  sudo make uninstall\n"
+		str_code += "  EOH\n"
+		str_code += "  not_if \{ Dir.entries('#{source_file}').size == 2 \}\n"
 		str_code += "end\n"
 		str_code += "\n"
+
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/install_from_source/chef_resource_#{chef_resource.id}.txt' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/chef_resource_#{chef_resource.id}.txt') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
+
 		return str_code
 	end
 
@@ -588,16 +607,13 @@ module ResourceGenerator
 			#program_id = value.split("_").first
 			#program = Program.find(program_id)
       if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb")
-			  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb")
-			  md5 = Digest::MD5.new
-			  md5.update(data)
 			  str_code += "execute 'execute_bash_script_#{value}' do\n"
 			  str_code += "  user 'root'\n"
 			  str_code += "  command 'bash /tmp/#{value}.sh'\n"
-			  str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') }\n"
+			  str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/chef_resource_#{chef_resource.id}.txt') }\n"
 			  str_code += "end\n"
 			  str_code += "\n"
-			  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
+			  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/chef_resource_#{chef_resource.id}.txt' do\n"
 			  str_code += "  content ''\n"
 			  str_code += "  mode '0755'\n"
 			  str_code += "end\n"
@@ -618,28 +634,24 @@ module ResourceGenerator
 
 	def ResourceGenerator.delete_bash_script_file(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "bash_script").pluck(:value).first
-		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
+		#condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 
-		require 'digest'
 		#program_id = value.split("_").first
 		#program = Program.find(program_id)
-    if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb")
-		  data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb")
-		  md5 = Digest::MD5.new
-		  md5.update(data)
+	  str_code = ""
+	  str_code += "file '/tmp/#{value}.sh' do\n"
+	  str_code += "  action :delete\n"
+	  str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
+	  str_code += "end\n"
+	  str_code += "\n"
+	  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/chef_resource_#{chef_resource.id}.txt' do\n"
+	  str_code += "  action :delete\n"
+	  str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/chef_resource_#{chef_resource.id}.txt') \}\n"
+	  str_code += "end\n"
+	  str_code += "\n"
 
-		  str_code = ""
-		  str_code += "file '/tmp/#{value}.sh' do\n"
-		  str_code += "  action :delete\n"
-		  str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
-		  str_code += "end\n"
-		  str_code += "\n"
-		  str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt' do\n"
-		  str_code += "  action :delete\n"
-		  str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{md5.hexdigest}.txt') \}\n"
-		  str_code += "end\n"
-		  str_code += "\n"
-    end
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb"
+	  File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code
 	end
@@ -693,11 +705,25 @@ module ResourceGenerator
 	end
 
 	def self.remove_source(remove_resource)
+		chef_resource = ChefResource.find(remove_resource.chef_resource_id)
+		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
-		str_code += "dpkg_package '#{remove_resource.value}' do\n"
-		str_code += "  action :remove\n"
+		str_code += "bash 'uninstall_#{program_name}_from_source' do\n"
+		str_code += "  user 'root'\n"
+		str_code += "  cwd '#{remove_resource.value}'\n"
+		str_code += "  code <<-EOH\n"
+		str_code += "  sudo make uninstall\n"
+		str_code += "  EOH\n"
+		str_code += "  not_if \{ Dir.entries('#{remove_resource.value}').size == 2 \}\n"
 		str_code += "end\n"
 		str_code += "\n"
+
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/install_from_source/chef_resource_#{chef_resource.id}.txt' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/chef_resource_#{chef_resource.id}.txt') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
+
 		return str_code
 	end
 
@@ -826,14 +852,14 @@ module ResourceGenerator
 		str_code += "  only_if \{ ::File.exists?('/tmp/#{file_name}.sh') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
-		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/#{remove_resource.value}.txt' do\n"
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/chef_resource_#{remove_resource.value}.txt' do\n"
 		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/#{remove_resource.value}.txt') \}\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/chef_resource_#{remove_resource.value}.txt') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 
-		#path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".sh.erb"
-		#File.delete(path_to_file) if File.exist?(path_to_file)
+		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".sh.erb"
+		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		return str_code
 	end

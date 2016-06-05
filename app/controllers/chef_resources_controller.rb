@@ -202,7 +202,7 @@ class ChefResourcesController < ApplicationController
             if value[:value_type] == "source_file"
               chef_property = ChefProperty.find(value[:id])
               if chef_property.value != value[:value]
-                value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
+                value = chef_property.value
                 add_remove_resource(value, "program")
               end
             end
@@ -276,14 +276,22 @@ class ChefResourcesController < ApplicationController
             end
           end
         end
-      when "Bash_script"
+      when "Bash_script" # ไม่ต้องตรวจสอบ diff แล้วเพราะใช้ chef_resource_id เป็นชื่อไฟล์ .txt แทน และเราไม่สนว่าใน bash_script จะเปลี่ยนไปอย่างไรเพราะก็ทำอะไรไม่ได้
+        params[:chef_resource][:chef_properties_attributes].each do |key, value|
+          if value[:value_type] == "bash_script"
+            if value[:id].nil? # new_value
+              value[:value] = @program.id.to_s + "_" + @chef_resource.id.to_s
+            end
+            create_bash_script_file( @program.id.to_s + "_" + @chef_resource.id.to_s, params[:bash_script_content])
+          end
+        end
+      when "Bash_script2" # mark not use
         params[:chef_resource][:chef_properties_attributes].each do |key, value|
           if !value[:id].nil? # old_value
             if value[:value_type] == "bash_script"
-              old_md5, new_md5 = check_diff_bash_script(@program.id.to_s + "_" + @chef_resource.id.to_s, params[:bash_script_content])
-              if old_md5 != new_md5
+              if check_diff_bash_script(@program.id.to_s + "_" + @chef_resource.id.to_s, params[:bash_script_content])
                 create_bash_script_file( @program.id.to_s + "_" + @chef_resource.id.to_s, params[:bash_script_content])
-                add_remove_resource(old_md5, "bash_script")
+                add_remove_resource(@chef_resource.id.to_s, "bash_script")
               end
               #bash = BashScript.find(value[:value])
               # check diff between bash.bash_script_content and params[:bash_script_content] then delete text file
@@ -360,7 +368,7 @@ class ChefResourcesController < ApplicationController
       end
     end # end def
 
-    def check_diff_bash_script(file_name, bash_script_content)
+    def check_diff_bash_script(file_name, bash_script_content) # mark not use
       require 'digest'
       old_data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + file_name + ".sh.erb")
       new_data = bash_script_content
@@ -371,7 +379,7 @@ class ChefResourcesController < ApplicationController
       new_md5 = Digest::MD5.new
       new_md5.update(new_data)
 
-      return old_md5.hexdigest, new_md5.hexdigest
+      return old_md5.hexdigest != new_md5.hexdigest
 
       #File.open("/home/ubuntu/x2.txt", "w") do |f|
         #f.write(old_md5.hexdigest)

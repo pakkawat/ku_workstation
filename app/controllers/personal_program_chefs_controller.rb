@@ -98,7 +98,7 @@ class PersonalProgramChefsController < ApplicationController
               value = @personal_chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
               value_type = "program"
             when "Source"
-              value = @personal_chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
+              value = @personal_chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
               value_type = "program"
             when "Download"
               value = @personal_chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
@@ -123,8 +123,8 @@ class PersonalProgramChefsController < ApplicationController
               move_type = @personal_chef_resource.chef_properties.where(:value_type => "move_type").pluck(:value).first
               value = @personal_chef_resource.chef_properties.where(:value_type => "destination_file").pluck(:value).first
               value_type = move_type
-            when "Bash_script"
-              value = "_" + @personal_chef_resource.id.to_s
+            when "Bash_script"  # เพื่อลบไฟล์ใน instance (/tmp/xxx กับ /var/lib/tomcat7/webapps/ROOT/bash_script/xxx) และลบไฟล์ใน template ของ cookbook user
+              value = @personal_chef_resource.id.to_s
               value_type = "file"
 
             when "Execute_command"
