@@ -646,9 +646,6 @@ module ResourceGenerator
 	  str_code += "end\n"
 	  str_code += "\n"
 
-		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/templates/" + value + ".sh.erb"
-	  File.delete(path_to_file) if File.exist?(path_to_file)
-
 		return str_code
 	end
 
