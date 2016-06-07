@@ -2,7 +2,8 @@ class ChefPropertyValidator < ActiveModel::Validator
   def validate(record)
     if record.value_type != "configure_optional"
       unless record.value != ""
-        record.errors[:value] << "Value can't be blank"
+        record.errors[:value] << "can't be blank"
+        #return false
       end
     end
   end

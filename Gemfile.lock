@@ -50,6 +50,9 @@ GEM
     autoprefixer-rails (5.2.0)
       execjs
       json
+    awscosts (0.0.12)
+      httparty (~> 0.11.0)
+      oj (~> 2.1)
     bcrypt (3.1.7)
     binding_of_caller (0.7.2)
       debug_inspector (>= 0.0.1)
@@ -224,6 +227,9 @@ GEM
     hashie (2.1.2)
     highline (1.7.2)
     hike (1.2.3)
+    httparty (0.11.0)
+      multi_json (~> 1.0)
+      multi_xml (>= 0.5.2)
     httpclient (2.6.0.1)
     i18n (0.7.0)
     inflecto (0.0.2)
@@ -270,6 +276,7 @@ GEM
     mixlib-log (1.6.0)
     mixlib-shellout (2.1.0)
     multi_json (1.11.0)
+    multi_xml (0.5.5)
     net-scp (1.2.1)
       net-ssh (>= 2.6.5)
     net-ssh (2.9.2)
@@ -294,6 +301,7 @@ GEM
       rake (~> 10.1)
       systemu (~> 2.6.4)
       wmi-lite (~> 1.0)
+    oj (2.15.1)
     pg (0.18.1)
     plist (3.1.0)
     progress_job (0.0.4)
@@ -421,6 +429,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-session_store!
+  awscosts
   bcrypt (= 3.1.7)
   bootstrap-sass (~> 3.3.4)
   byebug
@@ -447,4 +456,4 @@ DEPENDENCIES
   web-console (~> 2.0)
 
 BUNDLED WITH
-   1.10.6
+   1.11.2
