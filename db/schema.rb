@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160608082309) do
+ActiveRecord::Schema.define(version: 20160608090635) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -57,10 +57,10 @@ ActiveRecord::Schema.define(version: 20160608082309) do
 
   create_table "chef_resources", force: :cascade do |t|
     t.string   "resource_type"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.integer  "priority"
-    t.string   "status"
+    t.string   "status",        default: "install"
   end
 
   create_table "chef_values", force: :cascade do |t|
