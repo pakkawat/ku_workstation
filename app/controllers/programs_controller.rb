@@ -73,6 +73,7 @@ class ProgramsController < ApplicationController
 
   def edit
     @program = Program.find(params[:id])
+    @removes = RemoveResource.where(program_id: @program.id)
     check_config_file
   end
 

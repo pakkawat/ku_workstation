@@ -23,7 +23,9 @@ en:
   activerecord:
     attributes:
       chef_properties:
-        value: "XXX"
+        value: "Value"
+      ku_user:
+        ku_id: "Ku ID"
     errors:
       models:
         chef_property:
