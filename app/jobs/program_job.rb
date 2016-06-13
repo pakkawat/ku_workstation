@@ -51,6 +51,7 @@ class ProgramJob < ProgressJob::Base
       end
     else #apply_change
       @program.programs_subjects.update_all(:was_updated => false, :state => "none", :applied => true)
+      @program.chef_resources.where.not(status: "install").destroy_all
     end
   end
 

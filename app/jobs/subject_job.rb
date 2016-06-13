@@ -39,6 +39,8 @@ class SubjectJob < ProgressJob::Base
 
     first_ssh_run
 
+    clear_remove_disuse_resource
+
     second_ssh_run
 
   end
@@ -67,7 +69,11 @@ class SubjectJob < ProgressJob::Base
       @subject.programs_subjects.update_all(:was_updated => false, :state => "none", :applied => true)
       @subject.user_subjects.update_all(:state => "none", :applied => true)
 
-      clear_remove_disuse_resource
+      #clear_remove_disuse_resource
+      ChefResource.where.not(status: "install").where(id: ProgramChef.where(program_id: @subject.programs.pluck(:id)).pluck(:chef_resource_id)).destroy_all
+
+      #การลบ ChefResource ที่ไม่มีความเกี่ยวข้องกับ Program ทั้งหมด
+      #ChefResource.where.not(id: ProgramChef.where(program: Program.all).pluck(:chef_resource_id)).destroy_all
     end
   end
 

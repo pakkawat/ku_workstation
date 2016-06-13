@@ -750,7 +750,7 @@ module UserResourceGenerator
 	def self.remove_extract_file(remove_resource)
 		extract_to = remove_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 		str_code = ""
-		str_code += "directory #{extract_to} do\n"
+		str_code += "directory '#{extract_to}' do\n"
 		str_code += "  recursive true\n"
 		str_code += "  action :delete\n"
 		str_code += "end\n"
