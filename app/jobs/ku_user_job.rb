@@ -235,7 +235,7 @@ class KuUserJob < ProgressJob::Base
 
     @user.personal_programs.where("user_personal_programs.status = 'install'").each do |personal_program|
       File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
-        personal_program.personal_chef_resources.each do |personal_chef_resource|
+        personal_program.personal_chef_resources.where(status: "install").each do |personal_chef_resource|
           f.write(UserResourceGenerator.install_resource(personal_chef_resource, @user))
         end
       end
@@ -243,11 +243,11 @@ class KuUserJob < ProgressJob::Base
 
     @user.personal_programs.where("user_personal_programs.status = 'uninstall'").each do |personal_program|
       File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
-        personal_program.personal_chef_resources.where(resource_type: "Source").each do |personal_chef_resource|
+        personal_program.personal_chef_resources.where(resource_type: "Source", status: "install").each do |personal_chef_resource|
           f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, @user))
         end
 
-        personal_program.personal_chef_resources.where.not(resource_type: "Source").each do |personal_chef_resource|
+        personal_program.personal_chef_resources.where(status: "install").where.not(resource_type: "Source").each do |personal_chef_resource|
           f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, @user))
         end
       end

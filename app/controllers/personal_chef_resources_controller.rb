@@ -165,7 +165,8 @@ class PersonalChefResourcesController < ApplicationController
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
               diff_program_name = find_diff_program_name(chef_property.value, value[:value])
-              add_remove_resource(diff_program_name, "program")
+              #add_remove_resource(diff_program_name, "program")
+              create_remove_resource_for_repo(diff_program_name)
             end
           end
         end
@@ -175,8 +176,9 @@ class PersonalChefResourcesController < ApplicationController
             if value[:value_type] == "source_file"
               chef_property = ChefProperty.find(value[:id])
               if chef_property.value != value[:value]
-                value = @personal_chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
-                add_remove_resource(value, "program")
+                #value = @personal_chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
+                #add_remove_resource(value, "program")
+                remove_resource = create_remove_resource
               end
             end
           end
@@ -187,8 +189,9 @@ class PersonalChefResourcesController < ApplicationController
             if value[:value_type] == "source_file"
               chef_property = ChefProperty.find(value[:id])
               if chef_property.value != value[:value]
-                value = chef_property.value
-                add_remove_resource(value, "program")
+                #value = chef_property.value
+                #add_remove_resource(value, "program")
+                remove_resource = create_remove_resource
               end
             end
           end
@@ -198,8 +201,9 @@ class PersonalChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              value = @personal_chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
-              add_remove_resource(value, "file")
+              #value = @personal_chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+              #add_remove_resource(value, "file")
+              remove_resource = create_remove_resource
             end
           end
         end
@@ -208,8 +212,9 @@ class PersonalChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              value = @personal_chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
-              add_remove_resource(value, "folder")
+              #value = @personal_chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
+              #add_remove_resource(value, "folder")
+              remove_resource = create_remove_resource
             end
           end
         end
@@ -219,10 +224,12 @@ class PersonalChefResourcesController < ApplicationController
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
               #value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-              add_remove_resource(chef_property.value, "file")
-              @personal_chef_resource.chef_file.destroy
+              remove_resource = create_remove_resource
+            #  add_remove_resource(chef_property.value, "file")
+              #@personal_chef_resource.chef_file.destroy
+              save_file_content(remove_resource, params[:created_file_content])
             else
-              save_file_content(params[:config_file_value])
+              save_file_content(@personal_chef_resource, params[:config_file_value])
             end
           end
         end
@@ -242,16 +249,17 @@ class PersonalChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              add_remove_resource(chef_property.value, "file") # delete old file
+              remove_resource = create_remove_resource
+              #add_remove_resource(chef_property.value, "file") # delete old file
               #create_file(params[:created_file_content], value[:value]) # create new file
-              save_file_content(params[:created_file_content])
+              save_file_content(remove_resource, params[:created_file_content])
             else
               #create_file(params[:created_file_content], chef_property.value) # old file then update content
-              save_file_content(params[:created_file_content])
+              save_file_content(@personal_chef_resource, params[:created_file_content])
             end
           else
             #create_file(params[:created_file_content], value[:value]) # new file
-            save_file_content(params[:created_file_content])
+            save_file_content(@personal_chef_resource, params[:created_file_content])
           end
         end
       when "Move_file" # delete destination file when source file or destination change
@@ -271,7 +279,7 @@ class PersonalChefResourcesController < ApplicationController
             if value[:id].nil? # new_value
               value[:value] = "_" + @personal_chef_resource.id.to_s
             end
-            save_file_content(params[:bash_script_content])
+            save_file_content(@personal_chef_resource, params[:bash_script_content])
           end
         end
       when "Bash_script2" # mark not use
@@ -279,7 +287,7 @@ class PersonalChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             if value[:value_type] == "bash_script"
               if check_diff_bash_script(params[:bash_script_content])
-                save_file_content(params[:bash_script_content])
+                save_file_content(@personal_chef_resource, params[:bash_script_content])
                 add_remove_resource(@personal_chef_resource.id.to_s, "bash_script")
               end
               #bash = BashScript.find(value[:value])
@@ -289,7 +297,7 @@ class PersonalChefResourcesController < ApplicationController
           else
             if value[:value_type] == "bash_script"
               #create_bash_script_file(@personal_chef_resource.id.to_s, params[:bash_script_content])
-              save_file_content(params[:bash_script_content])
+              save_file_content(@personal_chef_resource, params[:bash_script_content])
               value[:value] = "_" + @personal_chef_resource.id.to_s
               #bash = BashScript.new(bash_script_content: params[:bash_script_content])
               #bash.save
@@ -301,7 +309,7 @@ class PersonalChefResourcesController < ApplicationController
 
     end
 
-    def add_remove_resource(value, value_type)
+    def add_remove_resource(value, value_type)# mark not use
       if @personal_chef_resource.resource_type == "Repository" # repo not check chef_resource_id because install from repo will have one or more program
         @personal_chef_resource.personal_programs.each do |personal_program|
           personal_program.ku_users.each do |user|
@@ -319,18 +327,55 @@ class PersonalChefResourcesController < ApplicationController
       end
     end
 
+    def create_remove_resource
+      remove_resource = PersonalChefResource.new(resource_type: @personal_chef_resource.resource_type, status: "diff")
+      remove_resource.save
+      @personal_chef_resource.chef_properties.each do |chef_property|
+        remove_resource.chef_properties.new(value: chef_property.value, value_type: chef_property.value_type)
+      end
+      remove_resource.save
+      @personal_chef_resource.personal_programs.each do |personal_program|
+        personal_program.ku_users.each do |user|
+          user.user_remove_resources.create(personal_chef_resource_id: remove_resource.id)
+        end
+      end
+
+      return remove_resource
+    end
+
+    def create_remove_resource_for_repo(diff_program_name)
+      remove_resource = PersonalChefResource.new(resource_type: @personal_chef_resource.resource_type, status: "diff")
+      remove_resource.save
+      @personal_chef_resource.chef_properties.each do |chef_property|
+        remove_resource.chef_properties.new(value: diff_program_name, value_type: chef_property.value_type)
+      end
+      remove_resource.save
+      @personal_chef_resource.personal_programs.each do |personal_program|
+        personal_program.ku_users.each do |user|
+          user.user_remove_resources.create(personal_chef_resource_id: remove_resource.id)
+        end
+      end
+    end
+
     def find_diff_program_name(resource1, resource2)
       array1 = resource1.split(' ')
       array2 = resource2.split(' ')
       return (array1 - array2).join(" ")
     end
 
-    def save_file_content(file_content)
-      if !@personal_chef_resource.chef_file.nil?
-        @personal_chef_resource.chef_file.update_attribute(:content, file_content)
-      else
-        if @personal_chef_resource.resource_type != "Config_file" # chef_file ของ config_file จะถูกสร้างก็ต่อเมื่อ file ได้ถูก donwload ครั้งแรกที่ personal_program edit
-          @personal_chef_resource.create_chef_file(content: file_content)
+    def save_file_content(personal_chef_resource, file_content)
+      if !personal_chef_resource.chef_file.nil?
+        personal_chef_resource.chef_file.update_attribute(:content, file_content)
+      else # จะเข้า else นี้ก็ต่อเมื่อ @personal_chef_resource เป็นตัวแรกสุด หรือ เกิดจากการ diff จะทำให้ gen personal_chef_resource อีกตัวขึ้นมา
+        if personal_chef_resource.resource_type != "Config_file" # chef_file ของ config_file จะถูกสร้างก็ต่อเมื่อ file ได้ถูก donwload ครั้งแรกที่ personal_program edit
+          #personal_chef_resource.create_chef_file(content: file_content)
+          if @personal_chef_resource.chef_file.nil? # @personal_chef_resource ที่เป็น new value
+            chef_file = ChefFile.new(content: file_content)
+            chef_file.save
+            @personal_chef_resource.update_attribute(:chef_file, chef_file)
+          else # source_file เกิด diff ดังนั้นต้องสร้างความสัมพันธ์ของ chef_file ให้กับ personal_chef_resource ตัวใหม่
+            personal_chef_resource.update_attribute(:chef_file, @personal_chef_resource.chef_file)
+          end
         end
       end
     end
@@ -358,7 +403,7 @@ class PersonalChefResourcesController < ApplicationController
     end
 
 
-    def create_file(created_file_content, value)
+    def create_file(created_file_content, value)# mark not use
       file_name = File.basename(value)
       @personal_program.ku_users.each do |user|
         file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/templates/" + file_name + ".erb"
@@ -368,7 +413,7 @@ class PersonalChefResourcesController < ApplicationController
       end
     end
 
-    def create_bash_script_file(personal_chef_resource_id, bash_script_content)
+    def create_bash_script_file(personal_chef_resource_id, bash_script_content)# mark not use
       @personal_program.ku_users.each do |user|
         file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/templates/" + user.id.to_s + "_" + personal_chef_resource_id + ".sh.erb"
         File.open(file_full_path, "w") do |f|

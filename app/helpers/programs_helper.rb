@@ -39,7 +39,11 @@ module ProgramsHelper
     def repository
       str_temp = ""
       @chef_resource.chef_properties.each do |property|
-        str_temp += "<div class='form-group'>"
+        if @chef_resource.status == "install"
+          str_temp += "<div class='form-group'>"
+        else
+          str_temp += "<div class='form-group has-error'>"
+        end
         str_temp += "  <label for='name'>"
         str_temp += "    Program name:"
         str_temp += "  </label>"
@@ -59,7 +63,11 @@ module ProgramsHelper
       str_temp = ""
       @chef_resource.chef_properties.each do |property|
         if property.value_type == "program_name"
-          str_temp += "<div class='form-group'>"
+          if @chef_resource.status == "install"
+            str_temp += "<div class='form-group'>"
+          else
+            str_temp += "<div class='form-group has-error'>"
+          end
           str_temp += "  <label for='name'>"
           str_temp += "    Program name:"
           str_temp += "  </label>"
@@ -93,7 +101,11 @@ module ProgramsHelper
       str_temp = ""
       @chef_resource.chef_properties.each do |property|
         if property.value_type == "program_name"
-          str_temp += "<div class='form-group'>"
+          if @chef_resource.status == "install"
+            str_temp += "<div class='form-group'>"
+          else
+            str_temp += "<div class='form-group has-error'>"
+          end
           str_temp += "  <label for='name'>"
           str_temp += "    Program name:"
           str_temp += "  </label>"
@@ -153,7 +165,11 @@ module ProgramsHelper
           str_temp += "  </div>"
           str_temp += "</div>"
         else #source_file
-          str_temp += "<div class='form-group'>"
+          if @chef_resource.status == "install"
+            str_temp += "<div class='form-group'>"
+          else
+            str_temp += "<div class='form-group has-error'>"
+          end
           str_temp += "  <label for='name'>"
           str_temp += "    Source file:"
           str_temp += "  </label>"
@@ -187,7 +203,11 @@ module ProgramsHelper
           str_temp += "  </div>"
           str_temp += "</div>"
         else #extract_to
-          str_temp += "<div class='form-group'>"
+          if @chef_resource.status == "install"
+            str_temp += "<div class='form-group'>"
+          else
+            str_temp += "<div class='form-group has-error'>"
+          end
           str_temp += "  <label for='name'>"
           str_temp += "    Extract to:"
           str_temp += "  </label>"
@@ -207,7 +227,11 @@ module ProgramsHelper
     def config_file
       str_temp = ""
       @chef_resource.chef_properties.each do |property|
-        str_temp += "<div class='form-group'>"
+        if @chef_resource.status == "install"
+          str_temp += "<div class='form-group'>"
+        else
+          str_temp += "<div class='form-group has-error'>"
+        end
         str_temp += "  <label for='name'>"
         str_temp += "    File path:"
         str_temp += "  </label>"
@@ -304,7 +328,11 @@ module ProgramsHelper
     def create_file
       str_temp = ""
       @chef_resource.chef_properties.each do |property|
-        str_temp += "<div class='form-group'>"
+        if @chef_resource.status == "install"
+          str_temp += "<div class='form-group'>"
+        else
+          str_temp += "<div class='form-group has-error'>"
+        end
         str_temp += "  <label for='name'>"
         str_temp += "    File:"
         str_temp += "  </label>"
@@ -392,7 +420,11 @@ module ProgramsHelper
           str_temp += "  </div>"
           str_temp += "</div>"
         else
-          str_temp += "<div class='form-group'>"
+          if @chef_resource.status == "install"
+            str_temp += "<div class='form-group'>"
+          else
+            str_temp += "<div class='form-group has-error'>"
+          end
           str_temp += "  <label for='name'>"
           str_temp += "    Command:"
           str_temp += "  </label>"
@@ -434,7 +466,11 @@ module ProgramsHelper
           program = Program.find(program_id)
           if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + property.value + ".sh.erb")
             bash_script_content = File.read("/home/ubuntu/chef-repo/cookbooks/" + program.program_name + "/templates/" + property.value + ".sh.erb")
-            str_temp += "<div class='form-group'>"
+            if @chef_resource.status == "install"
+              str_temp += "<div class='form-group'>"
+            else
+              str_temp += "<div class='form-group has-error'>"
+            end
             str_temp += "  <label for='name'>"
             str_temp += "    Bash script:"
             str_temp += "  </label>"
@@ -443,7 +479,11 @@ module ProgramsHelper
             str_temp += "  </div>"
             str_temp += "</div>"
           else
-            str_temp += "<div class='form-group'>"
+            if @chef_resource.status == "install"
+              str_temp += "<div class='form-group'>"
+            else
+              str_temp += "<div class='form-group has-error'>"
+            end
             str_temp += "  <label for='name'>"
             str_temp += "    Bash script:"
             str_temp += "  </label>"
@@ -486,5 +526,25 @@ module ProgramsHelper
     end
   end
 
+  def action_remove_resource_name(resource_type)
+    case resource_type
+    when "Repository", "Deb", "Source"
+      return "program"
+    when "Download"
+      return "source file"
+    when "Extract"
+      return "all file in folder"
+    when "Config_file", "Create_file"
+      return "file"
+    when "Copy_file"
+      return "Copy file"
+    when "Move_file"
+      return "Move file"
+    when "Execute_command"
+      return "execute command"
+    when "Bash_script"
+      return "bash script"
+    end
+  end
 
 end

@@ -552,16 +552,13 @@ module UserResourceGenerator
 			str_code += "  command '#{value}'\n"
 			str_code += "end\n"
 		elsif condition == "once"
-			require 'digest'
-			md5 = Digest::MD5.new
-			md5.update(value)
 			str_code += "execute 'execute_command' do\n"
 			str_code += "  user 'root'\n"
 			str_code += "  command '#{value}'\n"
-			str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') }\n"
+			str_code += "  not_if { ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{chef_resource.id}.txt') }\n"
 			str_code += "end\n"
 			str_code += "\n"
-			str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
+			str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{chef_resource.id}.txt' do\n"
 			str_code += "  content ''\n"
 			str_code += "  mode '0755'\n"
 			str_code += "end\n"
@@ -571,19 +568,11 @@ module UserResourceGenerator
 	end
 
 	def UserResourceGenerator.delete_execute_command_file(chef_resource)
-		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value).first
-
 		str_code = ""
-		if !value.nil?
-			require 'digest'
-			md5 = Digest::MD5.new
-			md5.update(value)
-			str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
-			str_code += "  action :delete\n"
-			str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') \}\n"
-			str_code += "end\n"
-		end
-
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{chef_resource.id}.txt' do\n"
+		str_code += "  action :delete\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{chef_resource.id}.txt') \}\n"
+		str_code += "end\n"
 		str_code += "\n"
 		return str_code
 	end
@@ -698,8 +687,9 @@ module UserResourceGenerator
 	end
 
 	def self.remove_repository(remove_resource)
+		program_name = remove_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
-		str_code += "\%w\{#{remove_resource.value}\}.each do \|pkg\|\n"
+		str_code += "\%w\{#{program_name}\}.each do \|pkg\|\n"
 		str_code += "  package pkg do\n"
 		str_code += "    action :remove\n"
 		str_code += "  end\n"
@@ -709,8 +699,9 @@ module UserResourceGenerator
 	end
 
 	def self.remove_deb(remove_resource)
+		program_name = remove_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
-		str_code += "dpkg_package '#{remove_resource.value}' do\n"
+		str_code += "dpkg_package '#{program_name}' do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
 		str_code += "\n"
@@ -718,22 +709,22 @@ module UserResourceGenerator
 	end
 
 	def self.remove_source(remove_resource)
-		chef_resource = ChefResource.find(remove_resource.chef_resource_id)
-		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
+		source_file = remove_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+		program_name = remove_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
 		str_code += "bash 'uninstall_#{program_name}_from_source' do\n"
 		str_code += "  user 'root'\n"
-		str_code += "  cwd '#{remove_resource.value}'\n"
+		str_code += "  cwd '#{source_file}'\n"
 		str_code += "  code <<-EOH\n"
 		str_code += "  sudo make uninstall\n"
 		str_code += "  EOH\n"
-		str_code += "  only_if \{ Dir.exists?('#{remove_resource.value}') \}\n"
+		str_code += "  only_if \{ Dir.exists?('#{source_file}') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 
-		str_code += "file '/var/lib/tomcat7/webapps/ROOT/install_from_source/personal_chef_resource_#{chef_resource.id}.txt' do\n"
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/install_from_source/personal_chef_resource_#{remove_resource.id}.txt' do\n"
 		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/personal_chef_resource_#{chef_resource.id}.txt') \}\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/personal_chef_resource_#{remove_resource.id}.txt') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 
@@ -741,8 +732,9 @@ module UserResourceGenerator
 	end
 
 	def self.remove_download_file(remove_resource)
-		src_path = File.dirname(remove_resource.value)
-		src_file_name = File.basename(remove_resource.value)
+		source_file = remove_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+		src_path = File.dirname(source_file)
+		src_file_name = File.basename(source_file)
 		src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
@@ -756,8 +748,9 @@ module UserResourceGenerator
 	end
 
 	def self.remove_extract_file(remove_resource)
+		extract_to = remove_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 		str_code = ""
-		str_code += "directory #{remove_resource.value} do\n"
+		str_code += "directory #{extract_to} do\n"
 		str_code += "  recursive true\n"
 		str_code += "  action :delete\n"
 		str_code += "end\n"
@@ -767,7 +760,8 @@ module UserResourceGenerator
 	end
 
 	def self.remove_config_file(remove_resource)
-		file_name = File.basename(remove_resource.value)
+		config_file = remove_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
+		file_name = File.basename(config_file)
 
 		path_to_file = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + file_name + ".erb"
 		File.delete(path_to_file) if File.exist?(path_to_file)
@@ -807,8 +801,9 @@ module UserResourceGenerator
 	end
 
 	def self.remove_create_file(remove_resource)
-		src_path = File.dirname(remove_resource.value)
-		src_file_name = File.basename(remove_resource.value)
+		created_file = remove_resource.chef_properties.where(:value_type => "created_file").pluck(:value).first
+		src_path = File.dirname(created_file)
+		src_file_name = File.basename(created_file)
 		src_paths, src_last_path = get_path(src_path)
 
 		#program = Program.find(remove_resource.program_id)
@@ -852,7 +847,7 @@ module UserResourceGenerator
 
 	def self.remove_bash_script_file(remove_resource)
 		#program = Program.find(remove_resource.program_id)
-		value = @kuuser.ku_id.to_s + "_" + remove_resource.personal_chef_resource_id.to_s
+		value = @kuuser.ku_id.to_s + "_" + remove_resource.id.to_s
 		#data = File.read("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + value + ".sh.erb")
 		#md5 = Digest::MD5.new
 		#md5.update(data)
@@ -865,9 +860,9 @@ module UserResourceGenerator
 		str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
-		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/personal_chef_resource_#{remove_resource.value}.txt' do\n"
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/bash_script/personal_chef_resource_#{remove_resource.id}.txt' do\n"
 		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/personal_chef_resource_#{remove_resource.value}.txt') \}\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/bash_script/personal_chef_resource_#{remove_resource.id}.txt') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 
@@ -878,18 +873,12 @@ module UserResourceGenerator
 	end
 
 	def self.remove_execute_command_file(remove_resource)
-
-		require 'digest'
-		md5 = Digest::MD5.new
-		md5.update(remove_resource.value)
-
 		str_code = ""
-		str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt' do\n"
+		str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{remove_resource.id}.txt' do\n"
 		str_code += "  action :delete\n"
-		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/#{md5.hexdigest}.txt') \}\n"
+		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{remove_resource.id}.txt') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
-
 		return str_code
 	end
 

@@ -23,6 +23,8 @@ class PersonalProgramsController < ApplicationController
   # GET /personal_programs/1/edit
   def edit
     @ku_user = current_user
+    @personal_chef_resources = @personal_program.personal_chef_resources.where(status: "install")
+    @removes = @ku_user.personal_chef_resources
     check_config_file
     #@personal_program = PersonalProgram.find(params[:id])
   end
@@ -118,7 +120,10 @@ class PersonalProgramsController < ApplicationController
       end
       if !error
         #IO.copy_stream(download, file_full_path)
-        personal_chef_resource.create_chef_file(content: download.read)
+        #personal_chef_resource.create_chef_file(content: download.read)
+        chef_file = ChefFile.new(content: download.read)
+        chef_file.save
+        personal_chef_resource.update_attribute(:chef_file, chef_file)
       end
     end
 

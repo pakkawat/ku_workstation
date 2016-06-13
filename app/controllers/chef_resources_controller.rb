@@ -180,7 +180,8 @@ class ChefResourcesController < ApplicationController
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
               diff_program_name = find_diff_program_name(chef_property.value, value[:value])
-              add_remove_resource(diff_program_name, "program")
+              #add_remove_resource(diff_program_name, "program")
+              create_remove_resource_for_repo(diff_program_name)
             end
           end
         end
@@ -190,8 +191,9 @@ class ChefResourcesController < ApplicationController
             if value[:value_type] == "source_file"
               chef_property = ChefProperty.find(value[:id])
               if chef_property.value != value[:value]
-                value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
-                add_remove_resource(value, "program")
+                #value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
+                #add_remove_resource(value, "program")
+                create_remove_resource
               end
             end
           end
@@ -202,8 +204,9 @@ class ChefResourcesController < ApplicationController
             if value[:value_type] == "source_file"
               chef_property = ChefProperty.find(value[:id])
               if chef_property.value != value[:value]
-                value = chef_property.value
-                add_remove_resource(value, "program")
+                #value = chef_property.value
+                #add_remove_resource(value, "program")
+                create_remove_resource
               end
             end
           end
@@ -213,8 +216,9 @@ class ChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
-              add_remove_resource(value, "file")
+              #value = @chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
+              #add_remove_resource(value, "file")
+              create_remove_resource
             end
           end
         end
@@ -223,8 +227,9 @@ class ChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
-              add_remove_resource(value, "folder")
+              #value = @chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
+              #add_remove_resource(value, "folder")
+              create_remove_resource
             end
           end
         end
@@ -234,7 +239,8 @@ class ChefResourcesController < ApplicationController
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
               #value = @chef_resource.chef_properties.where(:value_type => "config_file").pluck(:value).first
-              add_remove_resource(chef_property.value, "file")
+              #add_remove_resource(chef_property.value, "file")
+              create_remove_resource
             else
               save_config_file(params[:config_file_value])
             end
@@ -256,7 +262,8 @@ class ChefResourcesController < ApplicationController
           if !value[:id].nil? # old_value
             chef_property = ChefProperty.find(value[:id])
             if chef_property.value != value[:value]
-              add_remove_resource(chef_property.value, "file") # delete old file
+              create_remove_resource
+              #add_remove_resource(chef_property.value, "file") # delete old file
               create_file(params[:created_file_content], value[:value]) # create new file
             else
               create_file(params[:created_file_content], chef_property.value) # old file then update content
@@ -311,7 +318,7 @@ class ChefResourcesController < ApplicationController
 
     end
 
-    def add_remove_resource(value, value_type)
+    def add_remove_resource(value, value_type) # mark not use
       if @chef_resource.resource_type == "Repository" # repo not check chef_resource_id because install from repo will have one or more program
         @chef_resource.programs.each do |program|
           remove_resource = RemoveResource.new(program_id: program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: value_type)
@@ -398,4 +405,26 @@ class ChefResourcesController < ApplicationController
       end
     end
 
+    def create_remove_resource
+      if !@program.nil?
+        remove_resource = ChefResource.new(resource_type: @chef_resource.resource_type, status: "diff")
+        remove_resource.save
+        @chef_resource.chef_properties.each do |chef_property|
+          remove_resource.chef_properties.new(value: chef_property.value, value_type: chef_property.value_type)
+        end
+        remove_resource.save
+        @program.program_chefs.create(chef_resource: remove_resource)
+      end
+    end
+
+    def create_remove_resource_for_repo(diff_program_name)
+      if !@program.nil?
+        remove_resource = ChefResource.new(resource_type: @chef_resource.resource_type, status: "diff")
+        remove_resource.save
+        @chef_resource.chef_properties.each do |chef_property|
+          remove_resource.chef_properties.new(value: diff_program_name, value_type: chef_property.value_type)
+        end
+        remove_resource.save
+      end
+    end
 end

@@ -62,6 +62,7 @@
 
   <ul class="nav nav-tabs">
     <li class="active"><a data-toggle="tab" href="#action">Action</a></li>
+    <li><a data-toggle="tab" href="#remove">Remove file and program</a></li>
     <li><a data-toggle="tab" href="#related_users">Related users</a></li>
   </ul>
 
@@ -116,18 +117,22 @@
       </div>
       <% if @personal_program.owner == current_user.id %>
         <div class="sortable">
-          <% if @personal_program.personal_chef_resources.any? %>
-            <%= render partial: "personal_chef_resources", collection: @personal_program.personal_chef_resources, as: :chef %>
+          <% if @personal_chef_resources.any? %>
+            <%= render partial: "personal_chef_resources", collection: @personal_chef_resources, as: :chef %>
           <% end %>
         </div>
       <% else %>
         <div>
-          <% if @personal_program.personal_chef_resources.any? %>
-            <%= render partial: "personal_chef_resources", collection: @personal_program.personal_chef_resources, as: :chef %>
+          <% if @personal_chef_resources.any? %>
+            <%= render partial: "personal_chef_resources", collection: @personal_chef_resources, as: :chef %>
           <% end %>
         </div>
       <% end %>
     </div><!-- id=action class=tab-pane fade in active-->
+
+    <div id="remove" class="tab-pane fade">
+      <%= render partial: "remove_resources", collection: @removes, as: :chef %>
+    </div><!-- div id="remove" class="tab-pane fade"-->
 
     <div id="related_users" class="tab-pane fade">
       <br>

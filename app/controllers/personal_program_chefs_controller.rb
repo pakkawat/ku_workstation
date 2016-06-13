@@ -1,5 +1,5 @@
 class PersonalProgramChefsController < ApplicationController
-  before_action :set_personal_program_chef, only: [:show, :edit, :update, :destroy]
+  #before_action :set_personal_program_chef, only: [:show, :edit, :update, :destroy]
 
   # GET /personal_program_chefs
   # GET /personal_program_chefs.json
@@ -43,29 +43,52 @@ class PersonalProgramChefsController < ApplicationController
   # PATCH/PUT /personal_program_chefs/1
   # PATCH/PUT /personal_program_chefs/1.json
   def update
-    respond_to do |format|
-      if @personal_program_chef.update(personal_program_chef_params)
-        format.html { redirect_to @personal_program_chef, notice: 'Personal program chef was successfully updated.' }
-        format.json { render :show, status: :ok, location: @personal_program_chef }
-      else
-        format.html { render :edit }
-        format.json { render json: @personal_program_chef.errors, status: :unprocessable_entity }
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
+    @personal_chef_resource = PersonalChefResource.find(params[:personal_chef_resource_id])
+    UserPersonalProgram.where(:personal_program_id => @personal_program.id).update_all(:was_updated => true)
+    UserPersonalProgram.where(:personal_program_id => @personal_program.id, :state => "none").update_all(:state => "update")
+    if params[:condition] == "delete"
+      respond_to do |format|
+        if @personal_chef_resource.update_attribute(:status, "delete")
+          create_user_remove_resources
+          @personal_program.personal_program_chefs.where(personal_chef_resource_id: @personal_chef_resource.id).destroy
+          format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully changed to delete." } }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :danger => "Action was error when change to delete." } }
+          format.json { head :no_content }
+        end
       end
-    end
+    else
+      respond_to do |format|
+        if @personal_chef_resource.update_attribute(:status, "install")
+          delete_user_remove_resources
+          @personal_program.personal_program_chefs.create(personal_chef_resource_id: @personal_chef_resource.id)
+          format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully changed to install." } }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :danger => "Action was error when change to install." } }
+          format.json { head :no_content }
+        end
+      end
+    end # if params[:chef_id] == "remove"
   end
 
   # DELETE /personal_program_chefs/1
   # DELETE /personal_program_chefs/1.json
   def destroy
     @personal_program = PersonalProgram.find(params[:personal_program_id])
-    @personal_chef_resource = PersonalChefResource.find(@personal_program_chef.personal_chef_resource_id)
-    add_remove_resource
-    @personal_program_chef.destroy
+    @personal_chef_resource = PersonalChefResource.find(params[:personal_chef_resource_id])
     respond_to do |format|
-      UserPersonalProgram.where(:personal_program_id => @personal_program.id).update_all(:was_updated => true)
-      UserPersonalProgram.where(:personal_program_id => @personal_program.id, :state => "none").update_all(:state => "update")
-      format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully destroyed." } }
-      format.json { head :no_content }
+      if @personal_chef_resource.destroy
+        UserPersonalProgram.where(:personal_program_id => @personal_program.id).update_all(:was_updated => true)
+        UserPersonalProgram.where(:personal_program_id => @personal_program.id, :state => "none").update_all(:state => "update")
+        format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully destroy." } }
+        format.json { head :no_content }
+      else
+        format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :danger => "Action was error when destroy." } }
+        format.json { head :no_content }
+      end
     end
   end
 
@@ -80,8 +103,17 @@ class PersonalProgramChefsController < ApplicationController
       params.require(:personal_program_chef).permit(:personal_chef_resource_id, :personal_program_id)
     end
 
+    def create_user_remove_resources
+      @personal_program.ku_users.each do |user|
+        user.user_remove_resources.create(personal_chef_resource_id: @personal_chef_resource.id)
+      end
+    end
 
-    def add_remove_resource
+    def delete_user_remove_resources
+      UserRemoveResource.where(personal_chef_resource_id: @personal_chef_resource.id, ku_user: @personal_program.ku_users).destroy_all
+    end
+
+    def add_remove_resource# mark not use
       @ku_user = current_user
       if @personal_chef_resource.resource_type == "Repository" # repo not check chef_resource_id because install from repo will have one or more program
         value = @personal_chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first

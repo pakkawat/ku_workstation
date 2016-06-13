@@ -1,4 +1,3 @@
 class ChefFile < ActiveRecord::Base
-  belongs_to :personal_chef_resource
-  belongs_to :chef_resource
+  has_many :personal_chef_resources, dependent: :destroy
 end

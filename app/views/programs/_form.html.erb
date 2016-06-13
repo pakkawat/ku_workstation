@@ -108,14 +108,14 @@
       <div style="margin-top: 10px">
       </div>
       <div class="sortable">
-        <% if @program.chef_resources.any? %>
-          <%= render partial: "chefresources", collection: @program.chef_resources, as: :chef %>
+        <% if @chef_resources.any? %>
+          <%= render partial: "chefresources", collection: @chef_resources, as: :chef %>
         <% end %>
       </div>
     </div> <!-- div id="action" class="tab-pane fade in active" -->
 
     <div id="remove" class="tab-pane fade">
-      <%= render partial: "remove_resources", collection: @removes, as: :remove_resource %>
+      <%= render partial: "remove_resources", collection: @removes, as: :chef %>
     </div><!-- div id="remove" class="tab-pane fade"-->
 
   </div> <!-- <div class="tab-content"> -->

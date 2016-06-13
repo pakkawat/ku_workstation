@@ -23,9 +23,10 @@
               <%= link_to "Edit", edit_program_chef_resource_path(program_id: @program.id, id: chef.id), :class => "btn btn-success" %>
             </div>
             <div class="col-md-4 text-center">
-              <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs/"+chef.id.to_s, :method => :delete) do %>
+              <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs/"+chef.id.to_s, :method => :patch) do %>
                       <%= hidden_field_tag 'program_id', @program.id  %>
                       <%= hidden_field_tag 'chef_id', chef.id  %>
+                      <%= hidden_field_tag 'condition', "delete"  %>
                       <%= submit_tag "Delete", class: "btn btn-default pull-right" %>
               <% end %>
             </div>

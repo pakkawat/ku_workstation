@@ -44,15 +44,33 @@ class ProgramChefsController < ApplicationController
   # PATCH/PUT /program_chefs/1
   # PATCH/PUT /program_chefs/1.json
   def update
-    #respond_to do |format|
-      #if @program_chef.update(program_chef_params)
-        #format.html { redirect_to @program_chef, notice: 'Program chef was successfully updated.' }
-        #format.json { render :show, status: :ok, location: @program_chef }
-      #else
-        #format.html { render :edit }
-        #format.json { render json: @program_chef.errors, status: :unprocessable_entity }
-      #end
-    #end
+    @program = Program.find(params[:program_id])
+    @chef_resource = ChefResource.find(params[:chef_id])
+    if params[:condition] == "delete"
+      respond_to do |format|
+        if @chef_resource.update_attribute(:status, "delete")
+          ProgramsSubject.where(:program_id => @program.id).update_all(:was_updated => true)
+          ProgramsSubject.where(:program_id => @program.id, :state => "none").update_all(:state => "update")
+          format.html { redirect_to edit_program_path(@program), :flash => { :success => "Action was successfully changed to delete." } }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to edit_program_path(@program), :flash => { :danger => "Action was error when change to delete." } }
+          format.json { head :no_content }
+        end
+      end
+    else
+      respond_to do |format|
+        if @chef_resource.update_attribute(:status, "install")
+          ProgramsSubject.where(:program_id => @program.id).update_all(:was_updated => true)
+          ProgramsSubject.where(:program_id => @program.id, :state => "none").update_all(:state => "update")
+          format.html { redirect_to edit_program_path(@program), :flash => { :success => "Action was successfully changed to install." } }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to edit_program_path(@program), :flash => { :danger => "Action was error when change to install." } }
+          format.json { head :no_content }
+        end
+      end
+    end # if params[:chef_id] == "remove"
   end
 
   # DELETE /program_chefs/1
@@ -60,14 +78,19 @@ class ProgramChefsController < ApplicationController
   def destroy
     @program = Program.find(params[:program_id])
     @chef_resource = ChefResource.find(params[:chef_id])
-    add_remove_resource
-    @program.program_chefs.find_by(chef_resource_id: @chef_resource.id).destroy
+    #add_remove_resource
+    #@program.program_chefs.find_by(chef_resource_id: @chef_resource.id).destroy
     #@program_chef.destroy
-    ProgramsSubject.where(:program_id => @program.id).update_all(:was_updated => true)
-    ProgramsSubject.where(:program_id => @program.id, :state => "none").update_all(:state => "update")
     respond_to do |format|
-      format.html { redirect_to edit_program_path(@program), :flash => { :success => "Action was successfully destroyed." } }
-      format.json { head :no_content }
+      if @chef_resource.destroy
+        ProgramsSubject.where(:program_id => @program.id).update_all(:was_updated => true)
+        ProgramsSubject.where(:program_id => @program.id, :state => "none").update_all(:state => "update")
+        format.html { redirect_to edit_program_path(@program), :flash => { :success => "Action was successfully destroy." } }
+        format.json { head :no_content }
+      else
+        format.html { redirect_to edit_program_path(@program), :flash => { :danger => "Action was error when destroy." } }
+        format.json { head :no_content }
+      end
     end
   end
 
@@ -82,7 +105,7 @@ class ProgramChefsController < ApplicationController
     #params[:program_chef]
   #end
 
-  def add_remove_resource
+  def add_remove_resource # mark not use
     if @chef_resource.resource_type == "Repository" # repo not check chef_resource_id because install from repo will have one or more program
       value = @chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
       remove_resource = RemoveResource.new(program_id: @program.id, chef_resource_id: @chef_resource.id, resource_type: @chef_resource.resource_type, value: value, value_type: "program")

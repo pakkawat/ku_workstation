@@ -148,22 +148,22 @@ class ProgramJob < ProgressJob::Base
 
   def generate_chef_resource
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/install_programs.rb", 'w') do |f|
-      @program.chef_resources.each do |chef_resource|
+      @program.chef_resources.where(status: "install").each do |chef_resource|
         f.write(ResourceGenerator.resource(chef_resource, @program))
       end
     end
 
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/uninstall_programs.rb", 'w') do |f|
-      @program.chef_resources.where(resource_type: "Source").each do |chef_resource|
+      @program.chef_resources.where(resource_type: "Source", status: "install").each do |chef_resource|
         f.write(ResourceGenerator.uninstall_resource(chef_resource, @program))
       end
 
-      @program.chef_resources.where.not(resource_type: "Source").each do |chef_resource|
+      @program.chef_resources.where(status: "install").where.not(resource_type: "Source").each do |chef_resource|
         f.write(ResourceGenerator.uninstall_resource(chef_resource, @program))
       end
     end
 
-    remove_resources = RemoveResource.where(program_id: @program.id)
+    remove_resources = @program.chef_resources.where.not(status: "install")
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @program.program_name + "/recipes/remove_disuse_resources.rb", 'w') do |f|
       remove_resources.where(resource_type: "Source").each do |remove_resource|
         f.write(ResourceGenerator.remove_disuse_resource(remove_resource, @program))
