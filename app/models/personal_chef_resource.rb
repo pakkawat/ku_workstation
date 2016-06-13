@@ -1,4 +1,6 @@
 class PersonalChefResource < ActiveRecord::Base
+  has_many :user_remove_resources, dependent: :destroy
+  has_many :ku_users, through: :user_remove_resources
   has_many :personal_program_chefs, dependent: :destroy
   has_many :personal_programs, through: :personal_program_chefs
   has_many :chef_properties, dependent: :destroy
