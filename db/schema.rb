@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160608090635) do
+ActiveRecord::Schema.define(version: 20160613082644) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -33,15 +33,10 @@ ActiveRecord::Schema.define(version: 20160608090635) do
   add_index "chef_attributes", ["chef_resource_id"], name: "index_chef_attributes_on_chef_resource_id", using: :btree
 
   create_table "chef_files", force: :cascade do |t|
-    t.integer  "chef_resource_id"
-    t.integer  "personal_chef_resource_id"
     t.text     "content"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
-
-  add_index "chef_files", ["chef_resource_id"], name: "index_chef_files_on_chef_resource_id", using: :btree
-  add_index "chef_files", ["personal_chef_resource_id"], name: "index_chef_files_on_personal_chef_resource_id", using: :btree
 
   create_table "chef_properties", force: :cascade do |t|
     t.string   "value"
@@ -143,7 +138,11 @@ ActiveRecord::Schema.define(version: 20160608090635) do
     t.integer  "priority"
     t.datetime "created_at",    null: false
     t.datetime "updated_at",    null: false
+    t.integer  "chef_file_id"
+    t.string   "status"
   end
+
+  add_index "personal_chef_resources", ["chef_file_id"], name: "index_personal_chef_resources_on_chef_file_id", using: :btree
 
   create_table "personal_program_chefs", force: :cascade do |t|
     t.integer  "personal_chef_resource_id"
@@ -241,14 +240,11 @@ ActiveRecord::Schema.define(version: 20160608090635) do
 
   create_table "user_remove_resources", force: :cascade do |t|
     t.integer "ku_user_id"
-    t.integer "personal_program_id"
     t.integer "personal_chef_resource_id"
-    t.string  "resource_type"
-    t.string  "value"
-    t.string  "value_type"
   end
 
   add_index "user_remove_resources", ["ku_user_id"], name: "index_user_remove_resources_on_ku_user_id", using: :btree
+  add_index "user_remove_resources", ["personal_chef_resource_id"], name: "index_user_remove_resources_on_personal_chef_resource_id", using: :btree
 
   create_table "user_subjects", force: :cascade do |t|
     t.integer "ku_user_id"
