@@ -1,4 +1,4 @@
-<div class="row chef-resource">
+<div>
     <div class="well well-sm" style="background: #D8D8D8;">
       <div class="row">
         <div class="col-md-12">
@@ -7,11 +7,7 @@
               Action: Remove
             </label>
             <%= action_remove_personal_resource_name(chef.resource_type) %>
-            <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs/"+chef.id.to_s, :method => :delete) do %>
-                    <%= hidden_field_tag 'personal_program_id', @program.id  %>
-                    <%= hidden_field_tag 'personal_chef_resource_id', chef.id  %>
-                    <%= submit_tag "Destroy", class: "btn btn-default pull-right" %>
-            <% end %>
+            <%= link_to("Destroy", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id), method: :delete, class: "btn btn-default pull-right") %>
           </div>
 
 
@@ -28,12 +24,7 @@
               <%= link_to "Edit", edit_personal_program_personal_chef_resource_path(program_id: @personal_program.id, id: chef.id), :class => "btn btn-success" %>
             </div>
             <div class="col-md-4 text-center">
-              <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs/"+chef.id.to_s, :method => :patch) do %>
-                      <%= hidden_field_tag 'personal_program_id', @program.id  %>
-                      <%= hidden_field_tag 'personal_chef_resource_id', chef.id  %>
-                      <%= hidden_field_tag 'condition', "add"  %>
-                      <%= submit_tag "Add", class: "btn btn-default pull-right" %>
-              <% end %>
+              <%= link_to("Add", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id, condition: "add"), method: :patch, class: "btn btn-default pull-right") %>
             </div>
           </div>
         </div>

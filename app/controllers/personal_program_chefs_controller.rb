@@ -25,7 +25,7 @@ class PersonalProgramChefsController < ApplicationController
   # POST /personal_program_chefs.json
   def create
     @personal_program = PersonalProgram.find(params[:personal_program_id])
-    @personal_chef_resource = PersonalChefResource.new(resource_type: params[:chef_resource_type])
+    @personal_chef_resource = PersonalChefResource.new(resource_type: params[:chef_resource_type], priority: @personal_program.personal_chef_resources.where(status: "install").count + 1)
 
     respond_to do |format|
       if @personal_program.personal_program_chefs.create(personal_chef_resource: @personal_chef_resource)
@@ -49,7 +49,7 @@ class PersonalProgramChefsController < ApplicationController
     UserPersonalProgram.where(:personal_program_id => @personal_program.id, :state => "none").update_all(:state => "update")
     if params[:condition] == "delete"
       respond_to do |format|
-        if @personal_chef_resource.update_attribute(:status, "delete")
+        if @personal_chef_resource.update_attributes(:status => "delete", :priority => nil)
           create_user_remove_resources
           @personal_program.personal_program_chefs.where(personal_chef_resource_id: @personal_chef_resource.id).destroy
           format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully changed to delete." } }
@@ -61,7 +61,7 @@ class PersonalProgramChefsController < ApplicationController
       end
     else
       respond_to do |format|
-        if @personal_chef_resource.update_attribute(:status, "install")
+        if @personal_chef_resource.update_attributes(:status => "install", :priority => @personal_program.personal_chef_resources.where(status: "install").count + 1)
           delete_user_remove_resources
           @personal_program.personal_program_chefs.create(personal_chef_resource_id: @personal_chef_resource.id)
           format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully changed to install." } }

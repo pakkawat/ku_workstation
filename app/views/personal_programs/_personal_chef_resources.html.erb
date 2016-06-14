@@ -26,12 +26,7 @@
 
             <% if @personal_program.owner == current_user.id %>
               <div class="col-md-4 text-center">
-                <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs/"+chef.id.to_s, :method => :patch) do %>
-                        <%= hidden_field_tag 'personal_program_id', @program.id  %>
-                        <%= hidden_field_tag 'personal_chef_resource_id', chef.id  %>
-                        <%= hidden_field_tag 'condition', "delete"  %>
-                        <%= submit_tag "Delete", class: "btn btn-default pull-right" %>
-                <% end %>
+                <%= link_to("Delete", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id, condition: "delete"), method: :patch, class: "btn btn-default pull-right") %>
               </div>
             <% end %>
           </div>
