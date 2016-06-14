@@ -6,6 +6,7 @@ Rails.application.routes.draw do
 
   #resources :user_personal_programs
 
+  match 'personal_programs/:personal_program_id/personal_program_chefs/delete_user_remove_resources', to: 'personal_program_chefs#delete_user_remove_resources_for_not_owner', as: 'delete_user_remove_resources_for_not_owner', :via => "patch"
   resources :personal_programs do
     resources :personal_chef_resources # = Chef_resources
     resources :personal_program_chefs

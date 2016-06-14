@@ -26,7 +26,7 @@ class ProgramChefsController < ApplicationController
   def create
     #@program_chef = ProgramChef.new(program_chef_params)
     @program = Program.find(params[:program_id])
-    @chef_resource = ChefResource.new(resource_type: params[:chef_resource_type], priority: @program.chef_resources.where(status: "install").count + 1)
+    @chef_resource = ChefResource.new(resource_type: params[:chef_resource_type], priority: @program.chef_resources.where(status: "install").last.priority + 1)
 
     respond_to do |format|
       if @program.program_chefs.create(chef_resource: @chef_resource)
@@ -60,7 +60,7 @@ class ProgramChefsController < ApplicationController
       end
     else
       respond_to do |format|
-        if @chef_resource.update_attributes(:status => "install", :priority => @program.chef_resources.where(status: "install").count + 1)
+        if @chef_resource.update_attributes(:status => "install", :priority => @program.chef_resources.where(status: "install").last.priority + 1)
           ProgramsSubject.where(:program_id => @program.id).update_all(:was_updated => true)
           ProgramsSubject.where(:program_id => @program.id, :state => "none").update_all(:state => "update")
           format.html { redirect_to edit_program_path(@program), :flash => { :success => "Action was successfully changed to install." } }

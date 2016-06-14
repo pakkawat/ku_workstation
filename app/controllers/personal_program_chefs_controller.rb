@@ -25,7 +25,7 @@ class PersonalProgramChefsController < ApplicationController
   # POST /personal_program_chefs.json
   def create
     @personal_program = PersonalProgram.find(params[:personal_program_id])
-    @personal_chef_resource = PersonalChefResource.new(resource_type: params[:chef_resource_type], priority: @personal_program.personal_chef_resources.where(status: "install").count + 1)
+    @personal_chef_resource = PersonalChefResource.new(resource_type: params[:chef_resource_type], priority: @personal_program.personal_chef_resources.where(status: "install").last.priority + 1)
 
     respond_to do |format|
       if @personal_program.personal_program_chefs.create(personal_chef_resource: @personal_chef_resource)
@@ -61,7 +61,7 @@ class PersonalProgramChefsController < ApplicationController
       end
     else
       respond_to do |format|
-        if @personal_chef_resource.update_attributes(:status => "install", :priority => @personal_program.personal_chef_resources.where(status: "install").count + 1)
+        if @personal_chef_resource.update_attributes(:status => "install", :priority => @personal_program.personal_chef_resources.where(status: "install").last.priority + 1)
           delete_user_remove_resources
           @personal_program.personal_program_chefs.create(personal_chef_resource_id: @personal_chef_resource.id)
           format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully changed to install." } }
@@ -111,6 +111,20 @@ class PersonalProgramChefsController < ApplicationController
 
     def delete_user_remove_resources
       UserRemoveResource.where(personal_chef_resource_id: @personal_chef_resource.id, ku_user: @personal_program.ku_users).destroy_all
+    end
+
+    def delete_user_remove_resources_for_not_owner
+      @personal_program = PersonalProgram.find(params[:personal_program_id])
+      
+      respond_to do |format|
+        if current_user.user_remove_resources.where(personal_chef_resource_id: params[:personal_chef_resource_id]).destroy
+          format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully destroy." } }
+          format.json { head :no_content }
+        else
+          format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :danger => "Action was error when destroy." } }
+          format.json { head :no_content }
+        end
+      end
     end
 
     def add_remove_resource# mark not use
