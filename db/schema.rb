@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160613082644) do
+ActiveRecord::Schema.define(version: 20160614083945) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -136,10 +136,10 @@ ActiveRecord::Schema.define(version: 20160613082644) do
   create_table "personal_chef_resources", force: :cascade do |t|
     t.string   "resource_type"
     t.integer  "priority"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
     t.integer  "chef_file_id"
-    t.string   "status"
+    t.string   "status",        default: "install"
   end
 
   add_index "personal_chef_resources", ["chef_file_id"], name: "index_personal_chef_resources_on_chef_file_id", using: :btree
