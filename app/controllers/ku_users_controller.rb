@@ -24,9 +24,9 @@ class KuUsersController < ApplicationController
 
     if !@node.nil?
       @instance = Aws::EC2::Instance.new(@node.ec2.instance_id)
-      if @instance.status.name == "running"
+      if @instance.state.name == "running"
         @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds + @node.uptime_seconds, @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes)
-      elsif @instance.status.name == "stopped"
+      elsif @instance.state.name == "stopped"
         @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds, @kuuser.instance.network_tx)
       end
     else
