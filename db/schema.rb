@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160614083945) do
+ActiveRecord::Schema.define(version: 20160619065442) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -90,13 +90,10 @@ ActiveRecord::Schema.define(version: 20160614083945) do
 
   create_table "instances", force: :cascade do |t|
     t.integer  "ku_user_id"
-    t.string   "instance_name"
-    t.string   "instance_id2"
-    t.string   "instance_type"
-    t.string   "public_dns"
-    t.string   "public_ip"
-    t.datetime "created_at",    null: false
-    t.datetime "updated_at",    null: false
+    t.datetime "created_at",               null: false
+    t.datetime "updated_at",               null: false
+    t.integer  "uptime_seconds", limit: 8
+    t.integer  "network_tx",     limit: 8
   end
 
   add_index "instances", ["ku_user_id"], name: "index_instances_on_ku_user_id", using: :btree

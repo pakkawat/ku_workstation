@@ -1,5 +1,8 @@
 source 'https://rubygems.org'
 
+gem 'humanize-bytes'
+gem 'aws-sdk'
+
 gem 'awscosts'
 
 gem 'puma'

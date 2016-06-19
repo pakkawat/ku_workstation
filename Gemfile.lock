@@ -50,6 +50,12 @@ GEM
     autoprefixer-rails (5.2.0)
       execjs
       json
+    aws-sdk (2.3.14)
+      aws-sdk-resources (= 2.3.14)
+    aws-sdk-core (2.3.14)
+      jmespath (~> 1.0)
+    aws-sdk-resources (2.3.14)
+      aws-sdk-core (= 2.3.14)
     awscosts (0.0.12)
       httparty (~> 0.11.0)
       oj (~> 2.1)
@@ -231,12 +237,15 @@ GEM
       multi_json (~> 1.0)
       multi_xml (>= 0.5.2)
     httpclient (2.6.0.1)
+    humanize-bytes (2.2.0)
     i18n (0.7.0)
     inflecto (0.0.2)
     ipaddress (0.8.0)
     jbuilder (2.2.11)
       activesupport (>= 3.0.0, < 5)
       multi_json (~> 1.2)
+    jmespath (1.2.4)
+      json_pure (>= 1.8.1)
     jquery-datatables-rails (3.3.0)
       actionpack (>= 3.1)
       jquery-rails
@@ -250,6 +259,7 @@ GEM
       railties (>= 3.1.0)
       turbolinks
     json (1.8.2)
+    json_pure (1.8.3)
     knife-ec2 (0.11.0)
       fog (~> 1.29.0)
       knife-windows (>= 0.8.2)
@@ -429,6 +439,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-session_store!
+  aws-sdk
   awscosts
   bcrypt (= 3.1.7)
   bootstrap-sass (~> 3.3.4)
@@ -438,6 +449,7 @@ DEPENDENCIES
   daemons
   delayed_job_active_record
   faker
+  humanize-bytes
   jbuilder (~> 2.0)
   jquery-datatables-rails (~> 3.3.0)
   jquery-rails
