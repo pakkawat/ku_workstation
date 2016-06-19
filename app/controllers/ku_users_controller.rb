@@ -22,7 +22,16 @@ class KuUsersController < ApplicationController
     nodes = query.search('node', 'name:' + @kuuser.ku_id).first rescue []
     @node = nodes.first
 
-    @ec2_cost = calculate_ec2_cost(@node.uptime) if !@node.nil?
+    if !@node.nil?
+      @instance = Aws::EC2::Instance.new(@node.ec2.instance_id)
+      if @instance.status.name == "running"
+        @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds + @node.uptime_seconds, @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes)
+      elsif @instance.status.name == "stopped"
+        @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds, @kuuser.instance.network_tx)
+      end
+    else
+      @instance = nil
+    end
 
     @was_updated = @kuuser.user_personal_programs.where.not(state: "none").count
 
@@ -49,6 +58,7 @@ class KuUsersController < ApplicationController
       output << ""
       output.close
       @kuuser.create_log(:log_path => "#{Rails.root}/log/knife/#{@kuuser.ku_id}.log", :error => false)
+      @kuuser.create_instance(:uptime_seconds => 0, :network_tx => 0)
       @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"create",ku_user_params[:password])
       str_des = "Create instance:"+@kuuser.ku_id
       @job.update_column(:description, str_des)
@@ -273,6 +283,48 @@ class KuUsersController < ApplicationController
     end
   end
 
+  def start_instance
+    require 'chef'
+    require 'aws-sdk'
+
+    @kuuser = KuUser.find(params[:id])
+
+    Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
+    query = Chef::Search::Query.new
+    nodes = query.search('node', 'name:' + @kuuser.ku_id).first rescue []
+    @node = nodes.first
+
+    ec2 = Aws::EC2::Client.new
+    ec2.start_instances(instance_ids:[@node.ec2.instance_id])
+
+    flash[:success] = @kuuser.ku_id + ' instance was successfully started.'
+    redirect_to @kuuser
+
+  end
+
+  def stop_instance
+    require 'chef'
+    require 'aws-sdk'
+
+    @kuuser = KuUser.find(params[:id])
+
+    Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
+    query = Chef::Search::Query.new
+    nodes = query.search('node', 'name:' + @kuuser.ku_id).first rescue []
+    @node = nodes.first
+
+    respond_to do |format|
+      if @kuuser.instance.update_attributes(:uptime_seconds => @kuuser.instance.uptime_seconds + @node.uptime_seconds,
+                                            :network_tx => @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes)
+        ec2 = Aws::EC2::Client.new
+        ec2.stop_instances(instance_ids:[@node.ec2.instance_id])
+        format.html { redirect_to @kuuser, :flash => { :success => @kuuser.ku_id + ' instance was successfully stopped.' } }
+      else
+        format.html { redirect_to @kuuser, :flash => { :danger => "Error stop instance " + @kuuser.ku_id + "." } }
+      end
+    end
+  end
+
   private
     def ku_user_params
       params.require(:ku_user).permit(:ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :status, :campus, chef_value: [ :id, :chef_attribute_id, :value ])
@@ -300,23 +352,37 @@ class KuUsersController < ApplicationController
       redirect_to(root_url) unless current_user.admin?
     end
 
-    def calculate_ec2_cost(time)
+    def calculate_ec2_cost(uptime_seconds, network_tx_bytes)
+      return instance_running_cost(uptime_seconds) + data_tranfer_calculate_cost(network_tx_bytes)
+    end
+
+    def instance_running_cost(uptime_seconds)
       require 'awscosts'
-      time_to_int = time.scan(/\d+/)
+      time_to_int = uptime_seconds.to_i
       region = AWSCosts.region('ap-southeast-1')
       instance_rate = region.ec2.on_demand(:linux).price('t2.medium')
       ebs_rate = 0.12
       storage = 10
 
-      if time_to_int.count == 3
-        hour = time_to_int[0].to_i
-        min = time_to_int[1].to_i
-      else
-        hour = 0
-        min = time_to_int[0].to_i
-      end
+      hour = time_to_int / (60 * 60)
+      min = (time_to_int / 60) % 60
 
       return (hour*instance_rate + (min*instance_rate)/60 + (ebs_rate*storage*hour)/(24*30)).round(3)
+    end
+
+    def data_tranfer_calculate_cost(network_tx_bytes)
+      data = Humanize::Byte.new(network_tx_bytes)
+      if data.to_t.value > 100
+        return (data.to_g.value * 0.08).round(3)
+      elsif data.to_t.value > 40
+        return (data.to_g.value * 0.082).round(3)
+      elsif data.to_t.value > 10
+        return (data.to_g.value * 0.085).round(3)
+      elsif data.to_g.value > 1
+        return (data.to_g.value * 0.12).round(3)
+      else
+        return 0
+      end
     end
 
 end

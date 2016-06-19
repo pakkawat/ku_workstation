@@ -43,6 +43,8 @@ Rails.application.routes.draw do
   #get 'welcome/index'
   root 'sessions#new'
   #resources :users
+  match 'ku_users/:id/stop_instance', to: 'ku_users#stop_instance', as: 'ku_user_stop_instance', via: :get
+  match 'ku_users/:id/start_instance', to: 'ku_users#start_instance', as: 'ku_user_start_instance', via: :get
   match 'ku_user/:id/personal_program/:personal_program_id/add_personal_program', to: 'ku_users#add_personal_program', as: 'ku_user_add_personal_program', :via => "post"
   match 'ku_user/:id/personal_program/:personal_program_id/delete_personal_program', to: 'ku_users#delete_personal_program', as: 'ku_user_delete_personal_program', :via => "delete"
   match 'ku_user/:id/create_personal_program', to: 'ku_users#create_personal_program', as: 'ku_user_create_personal_program', :via => "post"
