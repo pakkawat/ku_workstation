@@ -67,17 +67,17 @@
               <% else %>
                 <button type="button" class="btn btn-primary" disabled>Apply change</button>
               <% end %>
+
+              <% if @all_pass %>
+                <%= link_to "Stop Instance", ku_user_stop_instance_path(@kuuser), :class => "btn btn-danger" %>
+              <% elsif @instance_state == "stopped" %>
+                <%= link_to "Start Instance", ku_user_start_instance_path(@kuuser), :class => "btn btn-success" %>
+              <% end %>
+
             <% else %>
               <button type="button" class="btn btn-primary" disabled>Apply change</button>
             <% end %>
           </div>
-          <% if !@node.nil? %>
-            <% if @all_pass %>
-              <%= button_to "Stop Instance", ku_user_stop_instance_path(@kuuser), :class => "btn btn-danger", :method => :get %>
-            <% elsif @instance_state == "stopped" %>
-              <%= button_to "Start Instance", ku_user_start_instance_path(@kuuser), :class => "btn btn-success", :method => :get %>
-            <% end %>
-          <% end %>
 
           <hr>
 
