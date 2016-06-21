@@ -418,12 +418,11 @@ class KuUsersController < ApplicationController
     def get_ec2_instance_information
       ec2 = Aws::EC2::Client.new
       instance = ec2.describe_instance_status(instance_ids:[@node.ec2.instance_id])
+      @instance_state = Aws::EC2::Instance.new(@node.ec2.instance_id).state.name
       if !instance.instance_statuses[0].nil?
         @instance_state = instance.instance_statuses[0].instance_state.name
         @public_dns_name = ec2.describe_instances(instance_ids:[instance.instance_statuses[0].instance_id]).reservations[0].instances[0].public_dns_name
         instance_status_check(instance.instance_statuses[0])
-      else # instance ถูกสรั้งขึ้นมาแล้ว @node มีข้อมูลแต่ instance ถูก stop อยู่เลยทำให้เป็น nil
-        @instance_state == "stopped"
       end
       if @instance_state == "running"
         @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds + @node.uptime_seconds, @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes.to_i)
