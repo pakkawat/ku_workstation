@@ -23,14 +23,11 @@ class KuUsersController < ApplicationController
     @node = nodes.first
 
     if !@node.nil?
-      @instance = Aws::EC2::Instance.new(@node.ec2.instance_id)
-      if @instance.state.name == "running"
-        @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds + @node.uptime_seconds, @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes)
-      elsif @instance.state.name == "stopped"
-        @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds, @kuuser.instance.network_tx)
-      end
+      get_ec2_instance_information
     else
-      @instance = nil
+      @ec2_cost = nil
+      @instance_state = nil
+      @public_dns_name = nil
     end
 
     @was_updated = @kuuser.user_personal_programs.where.not(state: "none").count
@@ -315,7 +312,7 @@ class KuUsersController < ApplicationController
 
     respond_to do |format|
       if @kuuser.instance.update_attributes(:uptime_seconds => @kuuser.instance.uptime_seconds + @node.uptime_seconds,
-                                            :network_tx => @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes)
+                                            :network_tx => @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes.to_i)
         ec2 = Aws::EC2::Client.new
         ec2.stop_instances(instance_ids:[@node.ec2.instance_id])
         format.html { redirect_to @kuuser, :flash => { :success => @kuuser.ku_id + ' instance was successfully stopped.' } }
@@ -382,6 +379,52 @@ class KuUsersController < ApplicationController
         return (data.to_g.value * 0.12).round(3)
       else
         return 0
+      end
+    end
+
+    def instance_status_check(instance_statuses)
+      if !instance_statuses.nil?
+        if instance_statuses.system_status.status == "ok" && instance_statuses.instance_status.status == "ok"
+          @all_pass = true
+        else
+          @all_pass = false
+        end
+
+        if instance_statuses.system_status.status == "initializing" || instance_statuses.instance_status.status == "initializing"
+          @status_check_text = '<img src="/assets/initializing.png" alt="Running"> initializing'.html_safe
+        elsif instance_statuses.system_status.status == "ok" && instance_statuses.instance_status.status == "ok"
+          @status_check_text = '<img src="/assets/pass.png" alt="Running"> 2/2 checks passed'.html_safe
+        else
+          @status_check_text = ''
+          if instance_statuses.system_status.status == "ok"
+            @status_check_text += '<img src="/assets/pass.png" alt="Running"> checks passed<br>'
+          else
+            @status_check_text += '<img src="/assets/status_error.png" alt="Running"> ' + instance_statuses.system_status.status + '<br>'
+          end
+          if instance_statuses.instance_status.status == "ok"
+            @status_check_text += '<img src="/assets/pass.png" alt="Running"> checks passed'
+          else
+            @status_check_text += '<img src="/assets/status_error.png" alt="Running"> ' + instance_statuses.instance_status.status
+          end
+          @status_check_text = @status_check_text.html_safe
+        end
+
+      else
+        @all_pass = false
+        @status_check_text = ""
+      end
+    end
+
+    def get_ec2_instance_information
+      ec2 = Aws::EC2::Client.new
+      instance = ec2.describe_instance_status(instance_ids:[@node.ec2.instance_id])
+      @instance_state = instance.instance_statuses[0].instance_state.name
+      @public_dns_name = ec2.describe_instances(instance_ids:[instance.instance_statuses[0].instance_id]).reservations[0].instances[0].public_dns_name
+      instance_status_check(instance.instance_statuses[0])
+      if @instance_state == "running"
+        @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds + @node.uptime_seconds, @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes.to_i)
+      elsif @instance_state == "stopped"
+        @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds, @kuuser.instance.network_tx)
       end
     end
 

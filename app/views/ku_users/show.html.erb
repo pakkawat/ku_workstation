@@ -16,8 +16,8 @@
                   <thead>
                     <tr>
                       <th>Remote</th>
-                      <th>Instance name</th>
                       <th>Uptime</th>
+                      <th>State</th>
                       <th>Status</th>
                       <th>Cost</th>
                     </tr>
@@ -25,26 +25,26 @@
                   <tbody>
                     <tr>
                       <th>
-                        <% if @instance.state.name == "running" %>
-                          <a class="btn btn-primary" href='<%= "http://" + @instance.public_dns_name + ":8080/guacamole" %>'>RDP</a>
+                        <% if @all_pass %>
+                          <a class="btn btn-primary" href='<%= "http://" + @public_dns_name + ":8080/guacamole" %>'>RDP</a>
                         <% else %>
                           <button type="button" class="btn btn-primary" disabled>RDP</button>
                         <% end %>
                       </th>
-                      <th><%= @node.name %></th>
                       <th><%= @node.uptime.split(" ")[0..1].join(" ") %></th>
                       <% date = DateTime.parse(Time.at(@node[:ohai_time]).to_s) %>
                       <% if date < 1.hour.ago %>
                         <th><%= image_tag "error.png" %> error</th>
                       <% else %>
-                        <% if @instance.state.name == "running" %>
+                        <% if @instance_state == "running" %>
                           <th><%= image_tag "running.png" %> running</th>
-                        <% elsif @instance.state.name == "stopped" %>
+                        <% elsif @instance_state == "stopped" %>
                           <th><%= image_tag "error.png" %> stopped</th>
                         <% else %>
-                          <th><%= image_tag "pendding.png" %> <%= @instance.state.name %></th>
+                          <th><%= image_tag "pendding.png" %> <%= @instance_state %></th>
                         <% end %>
                       <% end %>
+                      <th><%= @status_check_text %></th>
                       <th><%= @ec2_cost %> $</th>
                     </tr>
                   </tbody>
@@ -57,7 +57,7 @@
 
           <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
             <% if !@node.nil? %>
-              <% if @instance.state.name == "running" %>
+              <% if @all_pass %>
                 <%= button_to [:apply_change, @kuuser], :class => "btn btn-primary", :method => :get, :disabled => @result.any? ? true : false do %>
                   Apply change
                   <% if @was_updated != 0 %>
@@ -72,9 +72,9 @@
             <% end %>
           </div>
           <% if !@node.nil? %>
-            <% if @instance.state.name == "running" %>
+            <% if @all_pass %>
               <%= button_to "Stop Instance", ku_user_stop_instance_path(@kuuser), :class => "btn btn-danger", :method => :get %>
-            <% elsif @instance.state.name == "stopped" %>
+            <% elsif @instance_state == "stopped" %>
               <%= button_to "Start Instance", ku_user_start_instance_path(@kuuser), :class => "btn btn-success", :method => :get %>
             <% end %>
           <% end %>
