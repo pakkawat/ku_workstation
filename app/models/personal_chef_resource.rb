@@ -7,4 +7,6 @@ class PersonalChefResource < ActiveRecord::Base
   belongs_to :chef_file
   accepts_nested_attributes_for :chef_properties
   default_scope { order("priority ASC") }
+  has_many :user_errors, dependent: :destroy
+  has_many :ku_users, through: :user_errors
 end
