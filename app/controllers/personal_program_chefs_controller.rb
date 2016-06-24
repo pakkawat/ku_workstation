@@ -25,7 +25,11 @@ class PersonalProgramChefsController < ApplicationController
   # POST /personal_program_chefs.json
   def create
     @personal_program = PersonalProgram.find(params[:personal_program_id])
-    @personal_chef_resource = PersonalChefResource.new(resource_type: params[:chef_resource_type], priority: @personal_program.personal_chef_resources.where(status: "install").last.priority + 1)
+    priority = 0
+    if !@personal_program.personal_chef_resources.where(status: "install").last.nil?
+      priority = @personal_program.personal_chef_resources.where(status: "install").last.priority
+    end
+    @personal_chef_resource = PersonalChefResource.new(resource_type: params[:chef_resource_type], priority: priority + 1)
 
     respond_to do |format|
       if @personal_program.personal_program_chefs.create(personal_chef_resource: @personal_chef_resource)
@@ -61,7 +65,11 @@ class PersonalProgramChefsController < ApplicationController
       end
     else
       respond_to do |format|
-        if @personal_chef_resource.update_attributes(:status => "install", :priority => @personal_program.personal_chef_resources.where(status: "install").last.priority + 1)
+        priority = 0
+        if !@personal_program.personal_chef_resources.where(status: "install").last.nil?
+          priority = @personal_program.personal_chef_resources.where(status: "install").last.priority
+        end
+        if @personal_chef_resource.update_attributes(:status => "install", :priority => priority + 1)
           delete_user_remove_resources
           @personal_program.personal_program_chefs.create(personal_chef_resource_id: @personal_chef_resource.id)
           format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully changed to install." } }
@@ -115,7 +123,7 @@ class PersonalProgramChefsController < ApplicationController
 
     def delete_user_remove_resources_for_not_owner
       @personal_program = PersonalProgram.find(params[:personal_program_id])
-      
+
       respond_to do |format|
         if current_user.user_remove_resources.where(personal_chef_resource_id: params[:personal_chef_resource_id]).destroy
           format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully destroy." } }
