@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160624103501) do
+ActiveRecord::Schema.define(version: 20160624114708) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -226,17 +226,17 @@ ActiveRecord::Schema.define(version: 20160624103501) do
 
   create_table "user_errors", force: :cascade do |t|
     t.integer  "ku_user_id"
-    t.integer  "chef_resource_id_id"
-    t.integer  "personal_chef_resource_id_id"
+    t.integer  "chef_resource_id"
+    t.integer  "personal_chef_resource_id"
     t.integer  "line_number"
     t.string   "log_path"
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
   end
 
-  add_index "user_errors", ["chef_resource_id_id"], name: "index_user_errors_on_chef_resource_id_id", using: :btree
+  add_index "user_errors", ["chef_resource_id"], name: "index_user_errors_on_chef_resource_id", using: :btree
   add_index "user_errors", ["ku_user_id"], name: "index_user_errors_on_ku_user_id", using: :btree
-  add_index "user_errors", ["personal_chef_resource_id_id"], name: "index_user_errors_on_personal_chef_resource_id_id", using: :btree
+  add_index "user_errors", ["personal_chef_resource_id"], name: "index_user_errors_on_personal_chef_resource_id", using: :btree
 
   create_table "user_personal_programs", force: :cascade do |t|
     t.integer  "ku_user_id"
