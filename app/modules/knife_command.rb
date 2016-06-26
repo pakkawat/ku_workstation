@@ -59,15 +59,18 @@ module KnifeCommand
 		text = File.read(log_path)
 		str_temp = ""
 
-		text.lines.grep(/(personal_)?chef_resource=[0-9]*/){|x| line_number = text.lines.find_index(x)+1;  str_temp = x; }
+		text.lines.grep(/(personal_)?chef_resource=[0-9]*/){|x| line_number = text.lines.find_index(x)+1; str_temp = x;}
 		str_temp = str_temp[/(personal_)?chef_resource=[0-9]*/]
 		id = str_temp[/\d+/]
 		chef = str_temp[/\D+/]
+                line_number = text.lines.count - line_number
 
 		if chef == "chef_resource="
-			user.user_errors.create(chef_resource: id, line_number: line_number, log_path: log_path)
+                        chef_resource = ChefResource.find(id)
+			user.user_errors.create(chef_resource: chef_resource, line_number: line_number, log_path: log_path)
 		else # "personal_chef_resource="
-			user.user_errors.create(personal_chef_resource: id, line_number: line_number, log_path: log_path)
+                        personal_chef_resource = PersonalChefResource.find(id)
+			user.user_errors.create(personal_chef_resource: personal_chef_resource, line_number: line_number, log_path: log_path)
 		end
 	end
 

@@ -23,7 +23,7 @@
               <button type="button" class="btn btn-info">Expand</button>
             </div>
             <div class="col-md-4 text-center">
-              <%= link_to "Edit", edit_personal_program_personal_chef_resource_path(program_id: @personal_program.id, id: chef.id), :class => "btn btn-success" %>
+              <%= link_to "Edit", edit_personal_program_personal_chef_resource_path(@personal_program,chef), :class => "btn btn-success" %>
             </div>
             <div class="col-md-4 text-center">
               <% if @personal_program.owner == current_user.id %>

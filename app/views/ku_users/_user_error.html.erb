@@ -13,7 +13,7 @@
   resource_type: <%= chef_resource.resource_type %><br>
   status: <%= chef_resource.status %><br>
 <% end %>
-
+line: <%= user_error.line_number %><br>
 <% log = `tail -n #{user_error.line_number} #{user_error.log_path}` %>
 
 <!-- Button trigger modal -->
@@ -22,7 +22,7 @@
 </button>
 <!-- Modal -->
 <div class="modal fade" id="user_error_log_Modal" tabindex="-1" role="dialog" aria-labelledby="user_error_log_Modal_Label" aria-hidden="true">
-  <div class="modal-dialog">
+  <div class="modal-dialog" style="width: 80%">
     <div class="modal-content">
 
         <div class="modal-header">
@@ -30,7 +30,7 @@
           <h4 class="modal-title">Log</h4>
         </div>
         <div class="modal-body">
-                <%= text_area_tag :note, log, :class => "form-control" %>
+                <%= text_area_tag(:log, log, :size => "120x20", class: 'form-control') %>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>

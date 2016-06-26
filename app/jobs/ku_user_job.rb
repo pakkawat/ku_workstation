@@ -255,11 +255,11 @@ class KuUserJob < ProgressJob::Base
     end
 
     File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
-      @user.user_remove_resources.where(resource_type: "Source").each do |remove_resource|
+      PersonalChefResource.where(id: @user.user_remove_resources.pluck(:personal_chef_resource_id)).where(resource_type: "Source").each do |remove_resource|
         f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, @user))
       end
 
-      @user.user_remove_resources.where.not(resource_type: "Source").each do |remove_resource|
+      PersonalChefResource.where(id: @user.user_remove_resources.pluck(:personal_chef_resource_id)).where.not(resource_type: "Source").each do |remove_resource|
         f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, @user))
       end
     end

@@ -55,7 +55,7 @@ class PersonalProgramChefsController < ApplicationController
       respond_to do |format|
         if @personal_chef_resource.update_attributes(:status => "delete", :priority => nil)
           create_user_remove_resources
-          @personal_program.personal_program_chefs.where(personal_chef_resource_id: @personal_chef_resource.id).destroy
+          @personal_program.personal_program_chefs.where(personal_chef_resource_id: @personal_chef_resource.id).first.destroy
           format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully changed to delete." } }
           format.json { head :no_content }
         else
