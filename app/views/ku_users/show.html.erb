@@ -85,13 +85,12 @@
             <% end %>
           </div>
 
-          <hr>
-
           <% if @result.any? %>
             <% progress=0 %>
             <% if @user_job.progress_max != 0 %>
             	<% progress = ((@user_job.progress_current.to_f / @user_job.progress_max) * 100).round %>
             <% end %>
+            <hr>
             <div class="thumbnail" style="padding: 0">
               <div class="caption">
                 <div class="row">
@@ -127,6 +126,10 @@
 
 
             </div>
+          <% end %>
+
+          <% if @user_error.any? %>
+            <%= render partial: "user_error", collection: @user_error, as: :user_error %>
           <% end %>
 
         </div><!-- col-sm-6 -->

@@ -148,6 +148,7 @@ class SubjectJob < ProgressJob::Base
 
     @users.each do |user|
       ku_id = user.ku_id
+      user.user_errors.destroy_all
       if KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         if user.user_subjects.where(:subject_id => @subject.id).pluck(:user_enabled).first
           program_enable_true = create_run_list(@subject.programs.where("programs_subjects.program_enabled = true").pluck(:program_name))

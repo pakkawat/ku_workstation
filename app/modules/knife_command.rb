@@ -26,7 +26,7 @@ module KnifeCommand
 			"#{msg}\n"
 		end
 		log.info("-------------------- Start  #{Time.now.strftime('%c')}  --------------------\n")
-                log.info(command+"\n")
+    log.info(command+"\n")
 		Open3.popen2e(command) do |stdin, stdout_err, wait_thr|
 			while line=stdout_err.gets do
 				log.info(line)
@@ -42,12 +42,32 @@ module KnifeCommand
 		end
 		log.info("------------------------------------ End ---------------------------------------\n\n")
 		log.close
+		if check_error == false && !user.nil?
+			create_user_errors(user, log_path)
+		end
 		return check_error
 	end
 
 	def KnifeCommand.create_empty_log(users)
 		users.each do |user|
 			File.open("#{Rails.root}/log/knife/#{user.ku_id}.log", "w") {}
+		end
+	end
+
+	def create_user_errors(user, log_path)
+		line_number = 0
+		text = File.read(log_path)
+		str_temp = ""
+
+		text.lines.grep(/(personal_)?chef_resource=[0-9]*/){|x| line_number = text.lines.find_index(x)+1;  str_temp = x; }
+		str_temp = str_temp[/(personal_)?chef_resource=[0-9]*/]
+		id = str_temp[/\d+/]
+		chef = str_temp[/\D+/]
+
+		if chef == "chef_resource="
+			user.user_errors.create(chef_resource: id, line_number: line_number, log_path: log_path)
+		else # "personal_chef_resource="
+			user.user_errors.create(personal_chef_resource: id, line_number: line_number, log_path: log_path)
 		end
 	end
 

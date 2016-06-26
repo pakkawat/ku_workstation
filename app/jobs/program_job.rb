@@ -85,6 +85,7 @@ class ProgramJob < ProgressJob::Base
   def remove_program_from_users
     #str_temp = ""
     @users.each do |user|
+      user.user_errors.destroy_all
       if KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         if !KnifeCommand.run("knife node run_list remove " + user.ku_id + " 'recipe[" + @program.program_name + "]' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
           arr_error.push("#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}, ")
@@ -116,6 +117,7 @@ class ProgramJob < ProgressJob::Base
   def apply_change
     @users.each do |user|
       ku_id = user.ku_id
+      user.user_errors.destroy_all
       if !KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
         @arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/logs/'+user.log.id.to_s}, ")
       end

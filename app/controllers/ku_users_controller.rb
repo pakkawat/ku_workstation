@@ -36,6 +36,8 @@ class KuUsersController < ApplicationController
     @all_personal_programs = PersonalProgram.where.not(id: @kuuser.personal_programs)
 
     @user_programs = Program.where(id: ProgramsSubject.where(subject_id: @kuuser.subjects.where("user_subjects.user_enabled = true").pluck(:id), program_enabled: true).pluck(:program_id))
+
+    @user_error = @kuuser.user_errors.first
   end
 
   def new
