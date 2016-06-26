@@ -54,7 +54,7 @@ module KnifeCommand
 		end
 	end
 
-	def create_user_errors(user, log_path)
+	def self.create_user_errors(user, log_path)
 		line_number = 0
 		text = File.read(log_path)
 		str_temp = ""

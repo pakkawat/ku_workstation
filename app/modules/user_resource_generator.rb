@@ -57,6 +57,7 @@ module UserResourceGenerator
 	def UserResourceGenerator.install_from_repository(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "\%w\{#{value}\}.each do \|pkg\|\n"
 		str_code += "  package pkg do\n"
 		str_code += "    action :install\n"
@@ -69,6 +70,7 @@ module UserResourceGenerator
 	def UserResourceGenerator.uninstall_from_repository(chef_resource)
 		value = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "\%w\{#{value}\}.each do \|pkg\|\n"
 		str_code += "  package pkg do\n"
 		str_code += "    action :remove\n"
@@ -100,6 +102,7 @@ module UserResourceGenerator
 		#src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "dpkg_package \"#{program_name}\" do\n"
 		str_code += "  source '#{source_file}'\n"
 		str_code += "  action :install\n"
@@ -118,6 +121,7 @@ module UserResourceGenerator
 	def UserResourceGenerator.uninstall_from_deb(chef_resource)
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "dpkg_package '#{program_name}' do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
@@ -131,6 +135,7 @@ module UserResourceGenerator
 		configure_optional = chef_resource.chef_properties.where(:value_type => "configure_optional").pluck(:value).first
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "bash 'install_#{program_name}_from_source' do\n"
 		str_code += "  user 'root'\n"
 		str_code += "  cwd '#{source_file}'\n"
@@ -156,6 +161,7 @@ module UserResourceGenerator
 		program_name = chef_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		source_file = chef_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "bash 'uninstall_#{program_name}_from_source' do\n"
 		str_code += "  user 'root'\n"
 		str_code += "  cwd '#{source_file}'\n"
@@ -184,6 +190,7 @@ module UserResourceGenerator
 		src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "%w[ #{src_paths} ].each do |path|\n"
 		str_code += "  directory path do\n"
 		str_code += "    owner 'root'\n"
@@ -211,6 +218,7 @@ module UserResourceGenerator
 		#src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "file '#{source_file}' do\n"
 		str_code += "  action :delete\n"
 		str_code += "end\n"
@@ -231,6 +239,7 @@ module UserResourceGenerator
 		des_paths, des_last_path = get_path(extract_to)
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "%w[ #{des_paths} ].each do |path|\n"
 		str_code += "  directory path do\n"
 		str_code += "    owner 'root'\n"
@@ -256,6 +265,7 @@ module UserResourceGenerator
 		extract_to = chef_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "directory '#{extract_to}' do\n"
 		str_code += "  recursive true\n"
 		str_code += "  action :delete\n"
@@ -272,6 +282,7 @@ module UserResourceGenerator
 		#src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		#if File.exists?("/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb")
 		if !chef_resource.chef_file.nil?
 			file_full_path = "/home/ubuntu/chef-repo/cookbooks/" + @kuuser.ku_id + "/templates/" + src_file_name + ".erb"
@@ -302,6 +313,7 @@ module UserResourceGenerator
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "file '/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}' do\n"
 		str_code += "  action :delete\n"
 		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}') \}\n"
@@ -438,6 +450,7 @@ module UserResourceGenerator
 		end
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "%w[ #{src_paths} ].each do |path|\n"
 		str_code += "  directory path do\n"
 		str_code += "    owner 'root'\n"
@@ -467,6 +480,7 @@ module UserResourceGenerator
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "file '#{src_last_path}\/#{src_file_name}' do\n"
 		str_code += "  action :delete\n"
 		str_code += "  only_if \{ ::File.exists?('#{src_last_path}\/#{src_file_name}') \}\n"
@@ -546,6 +560,7 @@ module UserResourceGenerator
 		value = chef_resource.chef_properties.where(:value_type => "execute_command").pluck(:value).first
 		condition = chef_resource.chef_properties.where(:value_type => "condition").pluck(:value).first
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		if condition == "alway"
 			str_code += "execute 'execute_command' do\n"
 			str_code += "  user 'root'\n"
@@ -569,6 +584,7 @@ module UserResourceGenerator
 
 	def UserResourceGenerator.delete_execute_command_file(chef_resource)
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{chef_resource.id}.txt' do\n"
 		str_code += "  action :delete\n"
 		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{chef_resource.id}.txt') \}\n"
@@ -589,6 +605,7 @@ module UserResourceGenerator
 		end
 
 		str_code = ""
+		str_code += print_log(chef_resource.id)
 		str_code += "template '/tmp/#{value}.sh' do\n"
 		str_code += "  source '#{value}.sh.erb'\n"
 		str_code += "  owner 'root'\n"
@@ -641,6 +658,7 @@ module UserResourceGenerator
 		value = @kuuser.ku_id + value
 
 	  str_code = ""
+		str_code += print_log(chef_resource.id)
 	  str_code += "file '/tmp/#{value}.sh' do\n"
 	  str_code += "  action :delete\n"
 	  str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
@@ -689,6 +707,7 @@ module UserResourceGenerator
 	def self.remove_repository(remove_resource)
 		program_name = remove_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
+		str_code += print_log(remove_resource.id)
 		str_code += "\%w\{#{program_name}\}.each do \|pkg\|\n"
 		str_code += "  package pkg do\n"
 		str_code += "    action :remove\n"
@@ -701,6 +720,7 @@ module UserResourceGenerator
 	def self.remove_deb(remove_resource)
 		program_name = remove_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
+		str_code += print_log(remove_resource.id)
 		str_code += "dpkg_package '#{program_name}' do\n"
 		str_code += "  action :remove\n"
 		str_code += "end\n"
@@ -712,6 +732,7 @@ module UserResourceGenerator
 		source_file = remove_resource.chef_properties.where(:value_type => "source_file").pluck(:value).first
 		program_name = remove_resource.chef_properties.where(:value_type => "program_name").pluck(:value).first
 		str_code = ""
+		str_code += print_log(remove_resource.id)
 		str_code += "bash 'uninstall_#{program_name}_from_source' do\n"
 		str_code += "  user 'root'\n"
 		str_code += "  cwd '#{source_file}'\n"
@@ -738,6 +759,7 @@ module UserResourceGenerator
 		src_paths, src_last_path = get_path(src_path)
 
 		str_code = ""
+		str_code += print_log(remove_resource.id)
 		str_code += "file '#{src_last_path}\/#{src_file_name}' do\n"
 		str_code += "  action :delete\n"
 		str_code += "  only_if \{ ::File.exists?('#{src_last_path}\/#{src_file_name}') \}\n"
@@ -750,6 +772,7 @@ module UserResourceGenerator
 	def self.remove_extract_file(remove_resource)
 		extract_to = remove_resource.chef_properties.where(:value_type => "extract_to").pluck(:value).first
 		str_code = ""
+		str_code += print_log(remove_resource.id)
 		str_code += "directory '#{extract_to}' do\n"
 		str_code += "  recursive true\n"
 		str_code += "  action :delete\n"
@@ -767,6 +790,7 @@ module UserResourceGenerator
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
+		str_code += print_log(remove_resource.id)
 		str_code += "file '/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}' do\n"
 		str_code += "  action :delete\n"
 		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/sharedfile/#{file_name}') \}\n"
@@ -811,6 +835,7 @@ module UserResourceGenerator
 		File.delete(path_to_file) if File.exist?(path_to_file)
 
 		str_code = ""
+		str_code += print_log(remove_resource.id)
 		str_code += "file '#{src_last_path}\/#{src_file_name}' do\n"
 		str_code += "  action :delete\n"
 		str_code += "  only_if \{ ::File.exists?('#{src_last_path}\/#{src_file_name}') \}\n"
@@ -855,6 +880,7 @@ module UserResourceGenerator
 		#personal_chef_resource.chef_file.destroy
 
 		str_code = ""
+		str_code += print_log(remove_resource.id)
 		str_code += "file '/tmp/#{value}.sh' do\n"
 		str_code += "  action :delete\n"
 		str_code += "  only_if \{ ::File.exists?('/tmp/#{value}.sh') \}\n"
@@ -874,9 +900,19 @@ module UserResourceGenerator
 
 	def self.remove_execute_command_file(remove_resource)
 		str_code = ""
+		str_code += print_log(remove_resource.id)
 		str_code += "file '/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{remove_resource.id}.txt' do\n"
 		str_code += "  action :delete\n"
 		str_code += "  only_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/execute_command/personal_chef_resource_#{remove_resource.id}.txt') \}\n"
+		str_code += "end\n"
+		str_code += "\n"
+		return str_code
+	end
+
+	def self.print_log(id)
+		str_code = ""
+		str_code += "log 'personal_chef_resource=#{id}' do\n"
+		str_code += "  action :nothing\n"
 		str_code += "end\n"
 		str_code += "\n"
 		return str_code
