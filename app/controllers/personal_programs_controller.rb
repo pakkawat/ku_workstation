@@ -24,7 +24,7 @@ class PersonalProgramsController < ApplicationController
   def edit
     @ku_user = current_user
     @personal_chef_resources = @personal_program.personal_chef_resources.where(status: "install")
-    @removes = PersonalChefResource.where(id: @ku_user.user_remove_resources.pluck(:personal_chef_resource_id))
+    @removes = PersonalChefResource.where(id: @ku_user.user_remove_resources.where(personal_program_id: @personal_program.id).pluck(:personal_chef_resource_id))
     check_config_file
     #@personal_program = PersonalProgram.find(params[:id])
   end

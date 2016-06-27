@@ -336,7 +336,7 @@ class PersonalChefResourcesController < ApplicationController
       #remove_resource.save
       @personal_chef_resource.personal_programs.each do |personal_program|
         personal_program.ku_users.each do |user|
-          user.user_remove_resources.create(personal_chef_resource_id: remove_resource.id)
+          user.user_remove_resources.create(personal_chef_resource_id: remove_resource.id, personal_program_id: personal_program.id)
         end
       end
 
@@ -352,7 +352,7 @@ class PersonalChefResourcesController < ApplicationController
       #remove_resource.save
       @personal_chef_resource.personal_programs.each do |personal_program|
         personal_program.ku_users.each do |user|
-          user.user_remove_resources.create(personal_chef_resource_id: remove_resource.id)
+          user.user_remove_resources.create(personal_chef_resource_id: remove_resource.id, personal_program_id: personal_program.id)
         end
       end
     end

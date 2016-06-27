@@ -1,0 +1,32 @@
+<div>
+  <% if @kuuser.user_errors.first.chef_resource_id == chef.id %>
+    <div class="well well-sm" style="background: red;">
+  <% else %>
+    <div class="well well-sm" style="background: #D8D8D8;">
+  <% end %>
+      <div class="row">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="subject">
+              Action: Remove
+            </label>
+            <%= action_remove_resource_name(chef.resource_type) %>
+          </div>
+
+
+          <div style="display: none;">
+            <%= expand_collapse_for(chef, @program) %>
+          </div>
+
+
+          <div class="row">
+            <div class="col-md-4 text-center">
+              <button type="button" class="btn btn-info">Expand</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+</div>

@@ -113,19 +113,19 @@ class PersonalProgramChefsController < ApplicationController
 
     def create_user_remove_resources
       @personal_program.ku_users.each do |user|
-        user.user_remove_resources.create(personal_chef_resource_id: @personal_chef_resource.id)
+        user.user_remove_resources.create(personal_chef_resource_id: @personal_chef_resource.id, personal_program_id: @personal_program.id)
       end
     end
 
     def delete_user_remove_resources
-      UserRemoveResource.where(personal_chef_resource_id: @personal_chef_resource.id, ku_user: @personal_program.ku_users).destroy_all
+      UserRemoveResource.where(personal_chef_resource_id: @personal_chef_resource.id, ku_user: @personal_program.ku_users, personal_program_id: @personal_program.id).destroy_all
     end
 
     def delete_user_remove_resources_for_not_owner
       @personal_program = PersonalProgram.find(params[:personal_program_id])
 
       respond_to do |format|
-        if current_user.user_remove_resources.where(personal_chef_resource_id: params[:personal_chef_resource_id]).destroy
+        if current_user.user_remove_resources.where(personal_chef_resource_id: params[:personal_chef_resource_id], personal_program_id: @personal_program.id).destroy
           format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully destroy." } }
           format.json { head :no_content }
         else

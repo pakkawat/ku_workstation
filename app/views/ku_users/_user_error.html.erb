@@ -1,19 +1,23 @@
 <hr>
 <div class="row">
 <% if user_error.chef_resource_id.nil? %>
-  <% personal_chef_resource = PersonalChefResource.find(user_error.personal_chef_resource_id) %>
-  <% personal_program = personal_chef_resource.personal_programs.first %>
-  Error at personal program: <%= personal_program.program_name %><br>
-  resource_type: <%= personal_chef_resource.resource_type %><br>
-  status: <%= personal_chef_resource.status %><br>
+  <% pcr = PersonalChefResource.find(user_error.personal_chef_resource_id) %>
+  <% @personal_program = pcr.personal_programs.first %>
+  <% @personal_chef_resources = @personal_program.personal_chef_resources.where(status: "install") %>
+  <% @removes = PersonalChefResource.where(id: @kuuser.user_remove_resources.where(personal_program_id: @personal_program.id).pluck(:personal_chef_resource_id)) %>
+  Error at personal program: <%= @personal_program.program_name %><br>
+  <%= render partial: "ku_users/personal_program/personal_program" %>
 <% else %>
-  <% chef_resource = ChefResource.find(user_error.chef_resource_id) %>
-  <% program = chef_resource.programs.first %>
-  Error at program: <%= program.program_name %><br>
-  resource_type: <%= chef_resource.resource_type %><br>
-  status: <%= chef_resource.status %><br>
+  <% cr = ChefResource.find(user_error.chef_resource_id) %>
+  <% @program = cr.programs.first %>
+  <% @chef_resources = @program.chef_resources.where(status: "install") %>
+  <% @removes = @program.chef_resources.where.not(status: "install") %>
+  Error at program: <%= @program.program_name %><br>
+  <%= render partial: "ku_users/program/program" %>
 <% end %>
 line: <%= user_error.line_number %><br>
+
+
 <% log = `tail -n #{user_error.line_number} #{user_error.log_path}` %>
 
 <!-- Button trigger modal -->
@@ -41,3 +45,4 @@ line: <%= user_error.line_number %><br>
 </div><!-- /.modal -->
 
 </div>
+<%= javascript_include_tag "programs/btn_expand_collapse.js"%>

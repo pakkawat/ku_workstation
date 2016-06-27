@@ -1,0 +1,41 @@
+<!-- Button trigger modal -->
+<button class="btn btn-primary" data-toggle="modal" data-target="#show_program_error_Modal">
+  Detail
+</button>
+<!-- Modal -->
+<div class="modal fade" id="show_program_error_Modal" tabindex="-1" role="dialog" aria-labelledby="show_program_error_Modal_Label" aria-hidden="true">
+  <div class="modal-dialog" style="width: 80%">
+    <div class="modal-content">
+
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+          <h4 class="modal-title"><%= @program.program_name %></h4>
+        </div>
+        <div class="modal-body">
+
+          <ul class="nav nav-tabs">
+            <li class="active"><a data-toggle="tab" href="#action">Action</a></li>
+            <li><a data-toggle="tab" href="#remove">Remove file and program</a></li>
+          </ul>
+
+          <div class="tab-content">
+            <div id="action" class="tab-pane fade in active">
+              <br>
+              <%= render partial: "ku_users/program/chef_resources", collection: @chef_resources, as: :chef %>
+            </div> <!-- div id="action" class="tab-pane fade in active" -->
+
+            <div id="remove" class="tab-pane fade">
+              <br>
+              <%= render partial: "ku_users/program/remove_resources", collection: @removes, as: :chef %>
+            </div><!-- div id="remove" class="tab-pane fade"-->
+
+          </div> <!-- <div class="tab-content"> -->
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+        </div>
+
+    </div><!-- /.modal-content -->
+  </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->
