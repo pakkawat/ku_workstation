@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160624114708) do
+ActiveRecord::Schema.define(version: 20160627063054) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -252,6 +252,7 @@ ActiveRecord::Schema.define(version: 20160624114708) do
   create_table "user_remove_resources", force: :cascade do |t|
     t.integer "ku_user_id"
     t.integer "personal_chef_resource_id"
+    t.integer "personal_program_id"
   end
 
   add_index "user_remove_resources", ["ku_user_id"], name: "index_user_remove_resources_on_ku_user_id", using: :btree
