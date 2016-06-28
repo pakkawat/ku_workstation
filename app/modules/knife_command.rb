@@ -66,9 +66,9 @@ module KnifeCommand
     line_number = text.lines.count - line_number
 
 		if chef == "chef_resource="
-			user.create_log(:chef_resource_id => id, :line_number => line_number, :log_path => log_path)
+			user.create_user_error(:chef_resource_id => id, :line_number => line_number, :log_path => log_path)
 		else # "personal_chef_resource="
-			user.create_log(:personal_chef_resource_id => id, :line_number => line_number, :log_path => log_path)
+			user.create_user_error(:personal_chef_resource_id => id, :line_number => line_number, :log_path => log_path)
 		end
 	end
 
