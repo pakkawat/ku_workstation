@@ -134,7 +134,7 @@ class KuUserJob < ProgressJob::Base
     if KnifeCommand.run("knife ssh 'name:" + @user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", @user)
       update_progress
     else
-      raise "#{ActionController::Base.helpers.link_to @user.ku_id, '/logs/'+@user.log.id.to_s}, "
+      raise "#{ActionController::Base.helpers.link_to @user.ku_id, '/ku_users/'+@user.id.to_s}, "
     end
   end
 

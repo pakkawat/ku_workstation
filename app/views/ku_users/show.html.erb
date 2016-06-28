@@ -105,7 +105,7 @@
                       <% end %>
                     <% end %>
                     <br><small>Status</small></div>
-                  <div class="col-md-4"  style="text-align:center"><%= button_to 'Log', log_path(@kuuser.log), :class => "btn btn-default", :method => :get, :disabled =>  @job_error ? false : true  %></div>
+                  <div class="col-md-4"  style="text-align:center"><%= button_to 'Full log', log_path(@kuuser.log), :class => "btn btn-default", :method => :get, :disabled =>  @job_error ? false : true  %></div>
                   <div class="col-md-4"  style="text-align:center"><%= button_to 'Delete', delete_user_job_path(id: @kuuser.id, job_id: @user_job.id), :class => "btn btn-default pull-right", :method => :delete, :disabled =>  @job_error ? false : true  %></div>
                 </div>
               </div>
@@ -155,7 +155,7 @@
                         <th>Note</th>
                         <th>Edit</th>
                         <th>Delete</th>
-                        <th>State</th>
+                        <th>Change</th>
                       </tr>
                     </thead>
                     <tbody>

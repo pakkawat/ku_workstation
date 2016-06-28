@@ -169,7 +169,7 @@ class SubjectJob < ProgressJob::Base
           end
         end
       else
-        @arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/logs/'+user.log.id.to_s}, ")
+        @arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/ku_users/'+user.id.to_s}, ")
       end
 
       update_progress
@@ -184,7 +184,7 @@ class SubjectJob < ProgressJob::Base
     @users.each do |user|
       ku_id = user.ku_id
       if !KnifeCommand.run("knife ssh 'name:" + ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
-        @arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/logs/'+user.log.id.to_s}, ")
+        @arr_error.push("#{ActionController::Base.helpers.link_to ku_id, '/ku_users/'+user.id.to_s}, ")
       end
 
       update_progress

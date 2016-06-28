@@ -1,5 +1,5 @@
 <hr>
-<div class="row">
+<div class="panel panel-danger">
 <% if @kuuser.user_error.chef_resource_id.nil? %>
   <% pcr = PersonalChefResource.find(@kuuser.user_error.personal_chef_resource_id) %>
   <% @personal_program = pcr.personal_programs.first %>
@@ -9,44 +9,57 @@
   <% end %>
   <% @personal_chef_resources = @personal_program.personal_chef_resources.where(status: "install") %>
   <% @removes = @kuuser.personal_chef_resources.where("user_remove_resources.personal_program_id = #{@personal_program.id}") %>
-  Error at personal program: <%= @personal_program.program_name %><br>
-  <%= render partial: "ku_users/personal_program/personal_program" %>
+  <div class="panel-heading">
+    <h4><%= @personal_program.program_name %> error!</h4>
+  </div>
+
+  <div class="panel-body">
+    <div class="col-md-4">
+      <%= render partial: "ku_users/personal_program/personal_program" %>
+    </div>
 <% else %>
   <% cr = ChefResource.find(@kuuser.user_error.chef_resource_id) %>
   <% @program = cr.programs.first %>
   <% @chef_resources = @program.chef_resources.where(status: "install") %>
   <% @removes = @program.chef_resources.where.not(status: "install") %>
-  Error at program: <%= @program.program_name %><br>
-  <%= render partial: "ku_users/program/program" %>
-<% end %>
-line: <%= @kuuser.user_error.line_number %><br>
+  <div class="panel-heading">
+    <h4><%= @program.program_name %> error!</h4>
+  </div>
 
+  <div class="panel-body">
+    <div class="col-md-4">
+      <%= render partial: "ku_users/program/program" %>
+    </div>
+<% end %>
 
 <% log = `tail -n #{@kuuser.user_error.line_number} #{@kuuser.user_error.log_path}` %>
 
-<!-- Button trigger modal -->
-<button class="btn btn-primary" data-toggle="modal" data-target="#user_error_log_Modal">
-  Log
-</button>
-<!-- Modal -->
-<div class="modal fade" id="user_error_log_Modal" tabindex="-1" role="dialog" aria-labelledby="user_error_log_Modal_Label" aria-hidden="true">
-  <div class="modal-dialog" style="width: 80%">
-    <div class="modal-content">
+<div class="col-md-4">
+  <!-- Button trigger modal -->
+  <button class="btn btn-danger" data-toggle="modal" data-target="#user_error_log_Modal" style="width:110px;">
+    Log
+  </button>
+  <!-- Modal -->
+  <div class="modal fade" id="user_error_log_Modal" tabindex="-1" role="dialog" aria-labelledby="user_error_log_Modal_Label" aria-hidden="true">
+    <div class="modal-dialog" style="width: 80%">
+      <div class="modal-content">
 
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-          <h4 class="modal-title">Log</h4>
-        </div>
-        <div class="modal-body">
-                <%= text_area_tag(:log, log, :size => "120x20", class: 'form-control') %>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-        </div>
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <h4 class="modal-title">Log</h4>
+          </div>
+          <div class="modal-body">
+                  <%= text_area_tag(:log, log, :size => "120x20", class: 'form-control') %>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+          </div>
 
-    </div><!-- /.modal-content -->
-  </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
+      </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+  </div><!-- /.modal -->
 </div>
+
+</div> <!--  <div class="panel-body">  -->
+</div> <!-- <div class="panel panel-danger"> -->
 <%= javascript_include_tag "programs/btn_expand_collapse.js"%>
