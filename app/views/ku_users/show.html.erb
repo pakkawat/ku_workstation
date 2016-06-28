@@ -127,8 +127,9 @@
 
             </div>
           <% end %>
-
-          <%= render partial: "user_error", collection: @user_error, as: :user_error %>
+          <% if !@kuuser.user_error.nil? %>
+            <%= render partial: "user_error" %>
+          <% end %>
 
         </div><!-- col-sm-6 -->
 

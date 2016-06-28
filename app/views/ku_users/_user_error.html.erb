@@ -1,24 +1,24 @@
 <hr>
 <div class="row">
-<% if user_error.chef_resource_id.nil? %>
-  <% pcr = PersonalChefResource.find(user_error.personal_chef_resource_id) %>
+<% if @kuuser.user_error.chef_resource_id.nil? %>
+  <% pcr = PersonalChefResource.find(@kuuser.user_error.personal_chef_resource_id) %>
   <% @personal_program = pcr.personal_programs.first %>
   <% @personal_chef_resources = @personal_program.personal_chef_resources.where(status: "install") %>
-  <% @removes = PersonalChefResource.where(id: @kuuser.user_remove_resources.where(personal_program_id: @personal_program.id).pluck(:personal_chef_resource_id)) %>
+  <% @removes = @kuuser.personal_chef_resources.where("user_remove_resources.personal_program_id = #{@personal_program.id}") %>
   Error at personal program: <%= @personal_program.program_name %><br>
   <%= render partial: "ku_users/personal_program/personal_program" %>
 <% else %>
-  <% cr = ChefResource.find(user_error.chef_resource_id) %>
+  <% cr = ChefResource.find(@kuuser.user_error.chef_resource_id) %>
   <% @program = cr.programs.first %>
   <% @chef_resources = @program.chef_resources.where(status: "install") %>
   <% @removes = @program.chef_resources.where.not(status: "install") %>
   Error at program: <%= @program.program_name %><br>
   <%= render partial: "ku_users/program/program" %>
 <% end %>
-line: <%= user_error.line_number %><br>
+line: <%= @kuuser.user_error.line_number %><br>
 
 
-<% log = `tail -n #{user_error.line_number} #{user_error.log_path}` %>
+<% log = `tail -n #{@kuuser.user_error.line_number} #{@kuuser.user_error.log_path}` %>
 
 <!-- Button trigger modal -->
 <button class="btn btn-primary" data-toggle="modal" data-target="#user_error_log_Modal">

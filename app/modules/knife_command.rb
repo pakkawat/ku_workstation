@@ -63,14 +63,12 @@ module KnifeCommand
 		str_temp = str_temp[/(personal_)?chef_resource=[0-9]*/]
 		id = str_temp[/\d+/]
 		chef = str_temp[/\D+/]
-                line_number = text.lines.count - line_number
+    line_number = text.lines.count - line_number
 
 		if chef == "chef_resource="
-                        chef_resource = ChefResource.find(id)
-			user.user_errors.create(chef_resource: chef_resource, line_number: line_number, log_path: log_path)
+			user.create_log(:chef_resource_id => id, :line_number => line_number, :log_path => log_path)
 		else # "personal_chef_resource="
-                        personal_chef_resource = PersonalChefResource.find(id)
-			user.user_errors.create(personal_chef_resource: personal_chef_resource, line_number: line_number, log_path: log_path)
+			user.create_log(:personal_chef_resource_id => id, :line_number => line_number, :log_path => log_path)
 		end
 	end
 

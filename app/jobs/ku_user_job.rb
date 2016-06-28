@@ -120,7 +120,7 @@ class KuUserJob < ProgressJob::Base
   def user_apply_change
     update_progress_max(3)
 
-    @user.user_errors.destroy_all
+    @user.user_error.destroy
     prepare_user_config
     update_progress
 
