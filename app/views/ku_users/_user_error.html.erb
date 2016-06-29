@@ -5,7 +5,7 @@
   <% @personal_program = pcr.personal_programs.first %>
 <!-- เกิดจากที่ว่า personal_chef_resources ที่ error นั้นถูกเปลี่ยนสถานะจาก install เป็น delete ซึ่งทำให้ความสัมพันธ์ระหว่าง personal_program กับ personal_chef_resources ถูก destroy จึงทำให้ personal_program เป็น nil -->
   <% if @personal_program.nil? %>
-    <% @personal_program = PersonalProgram.find(@kuuser.user_remove_resources.where(personal_chef_resource_id: pcr.id).pluck(:personal_program_id)) %>
+    <% @personal_program = PersonalProgram.find(@kuuser.user_remove_resources.where(personal_chef_resource_id: pcr.id).pluck(:personal_program_id).first) %>
   <% end %>
   <% @personal_chef_resources = @personal_program.personal_chef_resources.where(status: "install") %>
   <% @removes = @kuuser.personal_chef_resources.where("user_remove_resources.personal_program_id = #{@personal_program.id}") %>
