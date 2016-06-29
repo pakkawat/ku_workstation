@@ -292,11 +292,17 @@ class KuUsersController < ApplicationController
     nodes = query.search('node', 'name:' + @kuuser.ku_id).first rescue []
     @node = nodes.first
 
-    ec2 = Aws::EC2::Client.new
-    ec2.start_instances(instance_ids:[@node.ec2.instance_id])
+    stoptime_seconds = get_stop_instance_time + @kuuser.instance.stoptime_seconds # ค่าใหม่ + ค่าเก่า
 
-    flash[:success] = @kuuser.ku_id + ' instance was successfully started.'
-    redirect_to @kuuser
+    respond_to do |format|
+      if @kuuser.instance.update_attribute(:stoptime_seconds, stoptime_seconds)
+        ec2 = Aws::EC2::Client.new
+        ec2.start_instances(instance_ids:[@node.ec2.instance_id])
+        format.html { redirect_to @kuuser, :flash => { :success => @kuuser.ku_id + ' instance was successfully started.' } }
+      else
+        format.html { redirect_to @kuuser, :flash => { :danger => "Error start instance " + @kuuser.ku_id + "." } }
+      end
+    end
 
   end
 
@@ -351,7 +357,7 @@ class KuUsersController < ApplicationController
     end
 
     def calculate_ec2_cost(uptime_seconds, network_tx_bytes)
-      return instance_running_cost(uptime_seconds) + data_tranfer_calculate_cost(network_tx_bytes)
+      return instance_running_cost(uptime_seconds) + data_tranfer_calculate_cost(network_tx_bytes) + instance_stopped_cost
     end
 
     def instance_running_cost(uptime_seconds)
@@ -430,6 +436,20 @@ class KuUsersController < ApplicationController
       elsif @instance_state == "stopped"
         @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds, @kuuser.instance.network_tx)
       end
+    end
+
+    def get_stop_instance_time
+      today_time = Time.now.utc
+      instance_stop_date = @kuuser.instance.updated_at
+      return (today_time - instance_stop_date).to_i
+    end
+
+    def instance_stopped_cost
+      ebs_rate = 0.12
+      storage = 10
+
+      hour = @kuuser.instance.stoptime_seconds / (60 * 60)
+      return ((ebs_rate*storage*hour)/(24*30)).round(3)
     end
 
 end
