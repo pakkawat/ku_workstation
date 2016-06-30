@@ -1,17 +1,23 @@
 <div>
-  <% if @kuuser.user_error.personal_chef_resource_id == chef.id %>
-    <div class="well well-sm" style="background: red;">
-  <% else %>
-    <div class="well well-sm" style="background: #D8D8D8;">
-  <% end %>
+  <div class="well well-sm" style="background: #D8D8D8;">
+
       <div class="row">
         <div class="col-md-12">
-          <div class="form-group">
-            <label for="subject">
-              Action: Remove
-            </label>
-            <%= action_remove_personal_resource_name(chef.resource_type) %>
-          </div>
+          <% if @kuuser.user_error.personal_chef_resource_id == chef.id %>
+            <div class="form-group text-danger bg-danger">
+              <label for="subject">
+                Action:
+              </label>
+              An error occurred while trying to remove <%= action_remove_personal_resource_name(chef.resource_type) %>
+            </div>
+          <% else %>
+            <div class="form-group">
+              <label for="subject">
+                Action: Remove
+              </label>
+              <%= action_remove_personal_resource_name(chef.resource_type) %>
+            </div>
+          <% end %>
 
 
           <div style="display: none;">
