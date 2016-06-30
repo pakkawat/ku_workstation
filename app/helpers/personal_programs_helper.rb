@@ -525,7 +525,7 @@ module PersonalProgramsHelper
     when "Execute_command"
       return "Execute command"
     when "Bash_script"
-      return "Bash script"
+      return "Run bash script"
     end
   end
 
