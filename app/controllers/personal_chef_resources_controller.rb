@@ -333,7 +333,7 @@ class PersonalChefResourcesController < ApplicationController
       @personal_chef_resource.chef_properties.each do |chef_property|
         remove_resource.chef_properties.new(value: chef_property.value, value_type: chef_property.value_type)
       end
-      #remove_resource.save
+      remove_resource.save
       @personal_chef_resource.personal_programs.each do |personal_program|
         personal_program.ku_users.each do |user|
           user.user_remove_resources.create(personal_chef_resource_id: remove_resource.id, personal_program_id: personal_program.id)
@@ -349,7 +349,7 @@ class PersonalChefResourcesController < ApplicationController
       @personal_chef_resource.chef_properties.each do |chef_property|
         remove_resource.chef_properties.new(value: diff_program_name, value_type: chef_property.value_type)
       end
-      #remove_resource.save
+      remove_resource.save
       @personal_chef_resource.personal_programs.each do |personal_program|
         personal_program.ku_users.each do |user|
           user.user_remove_resources.create(personal_chef_resource_id: remove_resource.id, personal_program_id: personal_program.id)

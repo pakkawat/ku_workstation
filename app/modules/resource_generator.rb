@@ -106,15 +106,15 @@ module ResourceGenerator
 		str_code += "dpkg_package \"#{program_name}\" do\n"
 		str_code += "  source '#{source_file}'\n"
 		str_code += "  action :install\n"
-		str_code += "  ignore_failure true\n"
-		str_code += "  notifies :run, 'execute[apt-get-install-f]', :immediately\n"
+		#str_code += "  ignore_failure true\n" # เพื่อให้แสดง error ที่แท้จริง
+		#str_code += "  notifies :run, 'execute[apt-get-install-f]', :immediately\n"
 		str_code += "end\n"
 		str_code += "\n"
-		str_code += "execute 'apt-get-install-f' do\n"
-		str_code += "  command 'sudo apt-get -f install -y'\n"
-		str_code += "  action :run\n"
-		str_code += "end\n"
-		str_code += "\n"
+		#str_code += "execute 'apt-get-install-f' do\n"
+		#str_code += "  command 'sudo apt-get -f install -y'\n"
+		#str_code += "  action :run\n"
+		#str_code += "end\n"
+		#str_code += "\n"
 		return str_code
 	end
 
@@ -144,7 +144,8 @@ module ResourceGenerator
 		str_code += "  make\n"
 		str_code += "  sudo make install\n"
 		str_code += "  EOH\n"
-		str_code += "  not_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/chef_resource_#{chef_resource.id}.txt') || Dir.entries('#{source_file}').size == 2 \}\n"
+		str_code += "  not_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/chef_resource_#{chef_resource.id}.txt') \}\n" # เพื่อให้แสดง error ที่แท้จริงดังนั้นไม่ต้องตรวจสอบว่า folder ว่างหรือไม่
+		#str_code += "  not_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/chef_resource_#{chef_resource.id}.txt') || Dir.entries('#{source_file}').size == 2 \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 

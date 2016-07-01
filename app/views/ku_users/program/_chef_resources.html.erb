@@ -5,9 +5,12 @@
           <% if @kuuser.user_error.chef_resource_id == chef.id %>
             <div class="form-group text-danger bg-danger">
               <label for="subject">
-                Action:
+                <% if @kuuser.user_error.error_message.nil? %>
+                  An error occurred while trying to <%= resource_type_full_name(chef.resource_type) %> please see log
+                <% else %>
+                  <%= @kuuser.user_error.error_message %>
+                <% end %>
               </label>
-              An error occurred while trying to <%= resource_type_full_name(chef.resource_type) %>
             </div>
           <% else %>
             <div class="form-group">

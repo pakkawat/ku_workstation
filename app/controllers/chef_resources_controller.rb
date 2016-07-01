@@ -412,7 +412,7 @@ class ChefResourcesController < ApplicationController
         @chef_resource.chef_properties.each do |chef_property|
           remove_resource.chef_properties.new(value: chef_property.value, value_type: chef_property.value_type)
         end
-        #remove_resource.save
+        remove_resource.save
         @program.program_chefs.create(chef_resource: remove_resource)
       end
     end
@@ -424,7 +424,7 @@ class ChefResourcesController < ApplicationController
         @chef_resource.chef_properties.each do |chef_property|
           remove_resource.chef_properties.new(value: diff_program_name, value_type: chef_property.value_type)
         end
-        #remove_resource.save
+        remove_resource.save
       end
     end
 end

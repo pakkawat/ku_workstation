@@ -106,15 +106,15 @@ module UserResourceGenerator
 		str_code += "dpkg_package \"#{program_name}\" do\n"
 		str_code += "  source '#{source_file}'\n"
 		str_code += "  action :install\n"
-		str_code += "  ignore_failure true\n"
-		str_code += "  notifies :run, 'execute[apt-get-install-f]', :immediately\n"
+		#str_code += "  ignore_failure true\n"
+		#str_code += "  notifies :run, 'execute[apt-get-install-f]', :immediately\n"
 		str_code += "end\n"
 		str_code += "\n"
-		str_code += "execute 'apt-get-install-f' do\n"
-		str_code += "  command 'sudo apt-get -f install -y'\n"
-		str_code += "  action :run\n"
-		str_code += "end\n"
-		str_code += "\n"
+		#str_code += "execute 'apt-get-install-f' do\n"
+		#str_code += "  command 'sudo apt-get -f install -y'\n"
+		#str_code += "  action :run\n"
+		#str_code += "end\n"
+		#str_code += "\n"
 		return str_code
 	end
 
@@ -144,7 +144,8 @@ module UserResourceGenerator
 		str_code += "  make\n"
 		str_code += "  sudo make install\n"
 		str_code += "  EOH\n"
-		str_code += "  not_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/personal_chef_resource_#{chef_resource.id}.txt') || Dir.entries('#{source_file}').size == 2 \}\n"
+		str_code += "  not_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/personal_chef_resource_#{chef_resource.id}.txt') \}\n"
+		#str_code += "  not_if \{ ::File.exists?('/var/lib/tomcat7/webapps/ROOT/install_from_source/personal_chef_resource_#{chef_resource.id}.txt') || Dir.entries('#{source_file}').size == 2 \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 
