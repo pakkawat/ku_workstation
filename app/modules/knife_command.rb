@@ -98,7 +98,7 @@ module KnifeCommand
 	end
 
 	def self.get_error_msg_repository(text)
-		return text[2]
+		return text[3].split(' ', 2).last
 	end
 
 	def self.get_error_msg_deb(text)
