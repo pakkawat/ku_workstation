@@ -98,7 +98,17 @@ module KnifeCommand
 	end
 
 	def self.get_error_msg_repository(text)
-		return text[3].split(' ', 2).last
+		array_msg = text.grep(/No candidate version available for/)
+		if array_msg.any?
+			return array_msg.first.split(' ', 2).last
+		else
+			array_msg = text.grep(/Unmet dependencies\. Try \'apt\-get \-f install\' with no packages/)
+			if array_msg.any?
+				return array_msg.first.split(' ', 2).last
+			else
+				return nil
+			end
+		end
 	end
 
 	def self.get_error_msg_deb(text)
