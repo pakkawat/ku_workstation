@@ -131,7 +131,7 @@ module KnifeCommand
 	end
 
 	def self.get_error_msg_source(text)
-		array_msg = text.grep(/No such file or directory \@ dir_initialize/)
+		array_msg = text.grep(/No such file or directory/)
 		if array_msg.any?
 			return array_msg.first.split(' ', 2).last
 		else
@@ -147,7 +147,12 @@ module KnifeCommand
 				end
 				return temp
 			else
-				return nil
+				array_msg = text.grep(/Not a directory/)
+				if array_msg.any?
+					return array_msg.first.split(' ', 2).last
+				else
+					return nil
+				end
 			end
 		end
 	end
