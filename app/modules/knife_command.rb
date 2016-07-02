@@ -135,7 +135,7 @@ module KnifeCommand
 		if array_msg.any?
 			return array_msg.first.split(' ', 2).last
 		else
-			array_msg = text.grep(/\.\/configure: No such file or directory|make: \*\*\* No targets specified and no makefile found|make: \*\*\* No rule to make target \`install\'/)
+			array_msg = text.grep(/\.\/configure: No such file or directory|make: \*\*\* No targets specified and no makefile found|make: \*\*\* No rule to make target \`install\'|No rule to make target \`uninstall\'/)
 			if array_msg.any?
 				new_array = Array.new
 				array_msg.each do |msg|
@@ -166,7 +166,12 @@ module KnifeCommand
 			if array_msg.any?
 				return array_msg.first.split(' ', 2).last
 			else
-				return nil
+				array_msg = text.grep(/Cannot read\: Is a directory/)
+				if array_msg.any?
+					return array_msg.first.split(' ', 2).last
+				else
+					return nil
+				end
 			end
 		end
 	end
