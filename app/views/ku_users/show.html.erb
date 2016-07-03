@@ -131,6 +131,10 @@
             <%= render partial: "user_error" %>
           <% end %>
 
+        </div><!-- col-sm-6 -->
+
+        <div class="col-md-6">
+
           <div class="panel panel-primary">
             <!-- Default panel contents -->
             <div class="panel-heading">Programs</div>
@@ -149,214 +153,73 @@
             </table>
           </div>
 
-        </div><!-- col-sm-6 -->
+          <!-- Button trigger modal -->
+          <button class="btn btn-primary" data-toggle="modal" data-target="#personal_program_Modal">
+            Add program
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="personal_program_Modal" tabindex="-1" role="dialog" aria-labelledby="personal_program_Modal_Label" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                  <h4 class="modal-title">Add program</h4>
+                </div>
+                <div class="modal-body">
+                  <ul class="nav nav-tabs">
+                    <li class="active"><a data-toggle="tab" href="#all_programs">All programs</a></li>
+                    <li><a data-toggle="tab" href="#create_new_programs">Create new programs</a></li>
+                  </ul>
+                  <div class="tab-content">
 
-        <div class="col-md-6">
-          <ul class="nav nav-tabs">
-            <li class="active"><a data-toggle="tab" href="#personal_programs">Personal programs</a></li>
-            <li><a data-toggle="tab" href="#all_personal_programs">All personal programs</a></li>
-            <li><a data-toggle="tab" href="#subjects">Subjects</a></li>
-            <li><a data-toggle="tab" href="#programs">Programs</a></li>
-          </ul>
-
-          <div class="tab-content">
-
-            <div id="personal_programs" class="tab-pane fade in active">
-              <br>
-              <div class="panel panel-primary">
-                <!-- Default panel contents -->
-                <div class="panel-heading">Personal programs</div>
-                  <table class="datatable_display table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Program name</th>
-                        <th>Note</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-                        <th>Change</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% @kuuser.personal_programs.each do |program| %>
-                      <% state = @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("state").first %>
-                        <tr>
-                          <th scope="row"><%= program.program_name %></th>
-                          <td><%= program.note %></td>
-                          <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
-                          <td>
-                            <% if state == "uninstall" %>
-                              <%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-success", :method => :post %>
-                            <% else %>
-                              <%= button_to 'Delete', ku_user_delete_personal_program_path(@kuuser, program), :class => "btn btn-default", :method => :delete %>
-                            <% end %>
-                          </td>
-                          <td>
-                            <% if state != "none" %>
-                              <% if state == "uninstall" %>
-                                <span class="label label-danger">uninstall</span>
-                              <% else %>
-                                <span class="label label-success"><%= state %></span>
+                    <div id="all_programs" class="tab-pane fade in active">
+                      <br>
+                      <div class="panel panel-primary">
+                        <!-- Default panel contents -->
+                        <div class="panel-heading">All programs</div>
+                          <table class="datatable_display table table-striped">
+                            <thead>
+                              <tr>
+                                <th>Program name</th>
+                                <th>Edit</th>
+                                <th>Delete</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% @all_personal_programs.each do |program| %>
+                                <tr>
+                                  <td><%= program.program_name %></td>
+                                  <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
+                                  <td><%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-success", :method => :post %></td>
+                                </tr>
                               <% end %>
-                            <% end %>
-                          </td>
-                        </tr>
-                      <% end %>
-                    </tbody>
-                </table>
-              </div>
-
-              <!-- Button trigger modal -->
-              <button class="btn btn-primary" data-toggle="modal" data-target="#personal_program_Modal">
-                Create program
-              </button>
-              <!-- Modal -->
-              <div class="modal fade" id="personal_program_Modal" tabindex="-1" role="dialog" aria-labelledby="personal_program_Modal_Label" aria-hidden="true">
-                <div class="modal-dialog">
-                  <div class="modal-content">
-                    <%= form_tag ku_user_create_personal_program_path, method: :post, :class => "form-horizontal" do %>
-                      <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                        <h4 class="modal-title">Personal Program</h4>
+                            </tbody>
+                        </table>
                       </div>
-                      <div class="modal-body">
-                              <%= label_tag 'name', 'Program name', :class => 'control-label' %>
-                              <%= text_field_tag :program_name, params[:program_name], :class => "form-control" %>
-                              <br>
-                              <%= label_tag 'note', 'Program note', :class => 'control-label' %>
-                              <%= text_area_tag :note, params[:note], :class => "form-control" %>
-                      </div>
-                      <div class="modal-footer">
-                        <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                           <%= submit_tag "Create program", name: nil, class: "btn btn-success" %>
-                      </div>
-                    <% end %>
-                  </div><!-- /.modal-content -->
-                </div><!-- /.modal-dialog -->
-              </div><!-- /.modal -->
+                    </div>
 
-            </div>
-
-
-            <div id="all_personal_programs" class="tab-pane fade">
-              <br>
-              <div class="panel panel-primary">
-                <!-- Default panel contents -->
-                <div class="panel-heading">All personal programs</div>
-                  <table class="datatable_display table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Program ID</th>
-                        <th>Program name</th>
-                        <th>Note</th>
-                        <th>Edit</th>
-                        <th>Delete</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% @all_personal_programs.each do |program| %>
-                        <tr>
-                          <th scope="row"><%= program.id %></th>
-                          <td><%= program.program_name %></td>
-                          <td><%= program.note %></td>
-                          <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
-                          <td><%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-success", :method => :post %></td>
-                        </tr>
+                    <div id="create_new_programs" class="tab-pane fade">
+                      <br>
+                      <%= form_tag ku_user_create_personal_program_path, method: :post, :class => "form-horizontal" do %>
+                                <%= label_tag 'name', 'Program name', :class => 'control-label' %>
+                                <%= text_field_tag :program_name, params[:program_name], :class => "form-control" %>
+                                <br>
+                                <%= label_tag 'note', 'Program note', :class => 'control-label' %>
+                                <%= text_area_tag :note, params[:note], :class => "form-control" %>
+                                <%= submit_tag "Create program", name: nil, class: "btn btn-success" %>
                       <% end %>
-                    </tbody>
-                </table>
-              </div>
-            </div>
+                    </div>
 
+                  </div><!-- tab-content -->
+                </div><!-- modal-body -->
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                </div>
 
-            <div id="subjects" class="tab-pane fade">
-              <br>
-              <div class="panel panel-info">
-                <!-- Default panel contents -->
-                <div class="panel-heading">Subjects</div>
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-                        <th>Subject ID</th>
-                        <th>Subject name</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% @kuuser.subjects.where("user_subjects.user_enabled = true").each do |subject| %>
-                        <tr>
-                          <th scope="row"><%= subject.subject_id %></th>
-                          <td><%= link_to subject.subject_name, subject %></td>
-                        </tr>
-                      <% end %>
-                    </tbody>
-                </table>
-              </div>
-            </div>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
 
-            <div id="programs" class="tab-pane fade">
-              <br>
-              <div class="panel panel-warning">
-                <!-- Default panel contents -->
-                <div class="panel-heading">Programs</div>
-                  <table class="table table-striped">
-                    <thead>
-                      <tr>
-
-                        <th>Program name</th>
-
-                        <th>Configure</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <% @user_programs.each do |program| %>
-                        <tr>
-                          <th scope="row"><%= link_to program.program_name, program %></th>
-                          <td>
-                            <% chef_attributes = ChefAttribute.where(chef_resource_id: program.chef_resources.select("id")) %>
-                            <% @chef_values = ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: @kuuser) %>
-
-                            <% if !@chef_values.empty? %>
-                            <!-- Button trigger modal -->
-                            <button class="btn btn-primary" data-toggle="modal" data-target="#program_<%= program.id %>_attributes_Modal">
-                              Edit
-                            </button>
-                            <!-- Modal -->
-                            <div class="modal fade" id="program_<%= program.id %>_attributes_Modal" tabindex="-1" role="dialog" aria-labelledby="program_<%= program.id %>_attributes_Modal_Label" aria-hidden="true">
-                              <div class="modal-dialog">
-                                <div class="modal-content">
-                                  <%= form_for(@kuuser, :url => update_ku_user_attribute_path, :method => :patch) do |user_form| %>
-                                    <div class="modal-header">
-                                      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                                      <h4 class="modal-title"><%= program.program_name %></h4>
-                                    </div>
-                                    <div class="modal-body">
-                                        <% @chef_values.each do |chef_value| %>
-                                          <%= user_form.fields_for chef_value, index: chef_value.id do |c| %>
-                                            <%= label_tag 'name', ChefAttribute.find(c.object.chef_attribute_id).name, :class => 'control-label' %>
-                                            <%= c.text_field :value, :class => "form-control" %>
-                                            <br>
-                                          <% end %>
-                                        <% end %>
-                                    </div>
-                                    <div class="modal-footer">
-                                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                                      <%= submit_tag "Update", class: "btn btn-success" %>
-                                    </div>
-                                  <% end %>
-                                </div><!-- /.modal-content -->
-                              </div><!-- /.modal-dialog -->
-                            </div><!-- /.modal -->
-                            <% end %>
-
-                          </td>
-                        </tr>
-                      <% end %>
-                    </tbody>
-                </table>
-              </div>
-            </div>
-
-
-          </div><!--tab-content-->
         </div><!-- col-sm-6 -->
 
       </div><!-- row -->

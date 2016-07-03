@@ -3,12 +3,16 @@
 	<td><%= program.subject_name %></td>
 	<td>
 		<% if !program.personal_program_id.nil? %>
-			<%= button_to "Edit", edit_personal_program_path(program.personal_program_id), :class => "btn btn-primary", :method => :get %>
-			<% if program.state == "uninstall" %>
-				<%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program.personal_program_id), :class => "btn btn-success", :method => :post %>
-			<% else %>
-				<%= button_to 'Delete', ku_user_delete_personal_program_path(@kuuser, program.personal_program_id), :class => "btn btn-default", :method => :delete %>
-			<% end %>
+			<div style="display:inline-block;">
+				<%= button_to "Edit", edit_personal_program_path(program.personal_program_id), :class => "btn btn-primary", :method => :get %>
+			</div>
+			<div style="display:inline-block;">
+				<% if program.state == "uninstall" %>
+					<%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program.personal_program_id), :class => "btn btn-success", :method => :post %>
+				<% else %>
+					<%= button_to 'Delete', ku_user_delete_personal_program_path(@kuuser, program.personal_program_id), :class => "btn btn-default", :method => :delete %>
+				<% end %>
+			</div>
 		<% else %>
 			<% program_temp = Program.find(program.program_id) %>
 			<% chef_attributes = ChefAttribute.where(chef_resource_id: program_temp.chef_resources.select("id")) %>
