@@ -15,7 +15,7 @@
                 <table class="table table-striped">
                   <thead>
                     <tr>
-                      <th>Remote</th>
+                      <th></th>
                       <th>Uptime</th>
                       <th>State</th>
                       <th>Status</th>
@@ -25,11 +25,36 @@
                   <tbody>
                     <tr>
                       <th>
-                        <% if @all_pass %>
-                          <a class="btn btn-primary" href='<%= "http://" + @public_dns_name + ":8080/guacamole" %>'>RDP</a>
-                        <% else %>
-                          <button type="button" class="btn btn-primary" disabled>RDP</button>
-                        <% end %>
+                        <!-- Single button -->
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Actions <span class="caret"></span>
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li>
+                              <% if @all_pass %>
+                                <a class="btn btn-primary" href='<%= "http://" + @public_dns_name + ":8080/guacamole" %>'>Connect</a>
+                              <% else %>
+                                <button type="button" class="btn btn-primary" disabled>Connect</button>
+                              <% end %>
+                            </li>
+
+                            <% if @all_pass %>
+                              <li>
+                                <%= button_to [:apply_change, @kuuser], :class => "btn btn-primary", :method => :get, :disabled => @result.any? ? true : false, data: { confirm: 'It will take a long time to process, Are you sure?' } do %>
+                                  Apply change
+                                  <% if @was_updated != 0 %>
+                                    <%= content_tag :span, @was_updated, class: 'badge' %>
+                                  <% end %>
+                                <% end %>
+                              </li>
+                              <li><%= link_to "Stop Instance", ku_user_stop_instance_path(@kuuser), :class => "btn btn-danger", data: { confirm: "Are you sure you want to stop instance?" } %></li>
+                            <% elsif @instance_state == "stopped" %>
+                              <li><%= link_to "Start Instance", ku_user_start_instance_path(@kuuser), :class => "btn btn-success", data: { confirm: "Are you sure you want to start instance?" } %></li>
+                            <% end %><!-- if @all_pass -->
+                          </ul>
+                        </div>
+
                       </th>
                       <th><%= @node.uptime.split(" ")[0..1].join(" ") %></th>
                       <% date = DateTime.parse(Time.at(@node[:ohai_time]).to_s) %>
@@ -54,36 +79,6 @@
           <% end %>
 
           <hr>
-
-          <div class="row">
-            <% if !@node.nil? %>
-              <div class="col-sm-4">
-                <% if @all_pass %>
-                  <%= button_to [:apply_change, @kuuser], :class => "btn btn-primary", :method => :get, :disabled => @result.any? ? true : false do %>
-                    Apply change
-                    <% if @was_updated != 0 %>
-                      <%= content_tag :span, @was_updated, class: 'badge' %>
-                    <% end %>
-                  <% end %>
-                <% else %>
-                  <button type="button" class="btn btn-primary" disabled>Apply change</button>
-                <% end %>
-              </div>
-
-              <div class="col-sm-4">
-                <% if @all_pass %>
-                  <%= link_to "Stop Instance", ku_user_stop_instance_path(@kuuser), :class => "btn btn-danger" %>
-                <% elsif @instance_state == "stopped" %>
-                  <%= link_to "Start Instance", ku_user_start_instance_path(@kuuser), :class => "btn btn-success" %>
-                <% end %>
-              </div>
-
-            <% else %>
-              <div class="col-sm-4">
-                <button type="button" class="btn btn-primary" disabled>Apply change</button>
-              </div>
-            <% end %>
-          </div>
 
           <% if @result.any? %>
             <% progress=0 %>
@@ -206,6 +201,7 @@
                                 <br>
                                 <%= label_tag 'note', 'Program note', :class => 'control-label' %>
                                 <%= text_area_tag :note, params[:note], :class => "form-control" %>
+                                <br>
                                 <%= submit_tag "Create program", name: nil, class: "btn btn-success" %>
                       <% end %>
                     </div>
