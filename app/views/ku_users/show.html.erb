@@ -35,16 +35,20 @@
                               <% if @all_pass %>
                                 <a href='<%= "http://" + @public_dns_name + ":8080/guacamole" %>'>Connect</a>
                               <% else %>
-                                <button type="button" disabled>Connect</button>
+                                <a href='#'>Connect</a>
                               <% end %>
                             </li>
 
                             <% if @all_pass %>
                               <li>
-                                <%= button_to [:apply_change, @kuuser], :method => :get, :disabled => @result.any? ? true : false, data: { confirm: 'It will take a long time to process, Are you sure?' } do %>
-                                  Apply change
-                                  <% if @was_updated != 0 %>
-                                    <%= content_tag :span, @was_updated, class: 'badge' %>
+                                <% if @result.any? %>
+                                  <a href='#'>Apply change</a>
+                                <% else %>
+                                  <%= link_to apply_change_ku_user_path(@kuuser), data: { confirm: 'It will take a long time to process, Are you sure?' } do %>
+                                    Apply change
+                                    <% if @was_updated != 0 %>
+                                      <%= content_tag :span, @was_updated, class: 'badge' %>
+                                    <% end %>
                                   <% end %>
                                 <% end %>
                               </li>
