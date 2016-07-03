@@ -360,16 +360,16 @@ class KuUsersController < ApplicationController
 
     def create_user_programs_list
       @user_programs_list = Array.new
-      ProgramStruct = Struct.new(:program_id, :personal_program_id, :program_name, :subject_name, :state)
+      program_struct = Struct.new(:program_id, :personal_program_id, :program_name, :subject_name, :state)
       @kuuser.personal_programs.each do |program|
         state = @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("state").first
-        program_temp = ProgramStruct.new(nil, program.id, program.program_name, nil, state)
+        program_temp = program_struct.new(nil, program.id, program.program_name, nil, state)
         @user_programs_list.push(program_temp)
       end
 
       @kuuser.subjects.where("user_subjects.user_enabled = true").each do |subject|
-        subject.programs.where("program_subjects.program_enabled = true").each do |program|
-          program_temp = ProgramStruct.new(program.id, nil, program.program_name, subject.subject_name, nil)
+        subject.programs.where("programs_subjects.program_enabled = true").each do |program|
+          program_temp = program_struct.new(program.id, nil, program.program_name, subject.subject_name, nil)
           @user_programs_list.push(program_temp)
         end
       end
