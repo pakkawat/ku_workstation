@@ -37,6 +37,8 @@ class KuUsersController < ApplicationController
 
     @user_programs = Program.where(id: ProgramsSubject.where(subject_id: @kuuser.subjects.where("user_subjects.user_enabled = true").pluck(:id), program_enabled: true).pluck(:program_id))
 
+    create_user_programs_list
+
   end
 
   def new
@@ -354,6 +356,23 @@ class KuUsersController < ApplicationController
     # Confirms an admin user.
     def admin_user
       redirect_to(root_url) unless current_user.admin?
+    end
+
+    def create_user_programs_list
+      @user_programs_list = Array.new
+      ProgramStruct = Struct.new(:program_id, :personal_program_id, :program_name, :subject_name, :state)
+      @kuuser.personal_programs.each do |program|
+        state = @kuuser.user_personal_programs.where(personal_program_id: program.id).pluck("state").first
+        program_temp = ProgramStruct.new(nil, program.id, program.program_name, nil, state)
+        @user_programs_list.push(program_temp)
+      end
+
+      @kuuser.subjects.where("user_subjects.user_enabled = true").each do |subject|
+        subject.programs.where("program_subjects.program_enabled = true").each do |program|
+          program_temp = ProgramStruct.new(program.id, nil, program.program_name, subject.subject_name, nil)
+          @user_programs_list.push(program_temp)
+        end
+      end
     end
 
     def calculate_ec2_cost(uptime_seconds, network_tx_bytes)

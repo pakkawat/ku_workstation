@@ -131,6 +131,24 @@
             <%= render partial: "user_error" %>
           <% end %>
 
+          <div class="panel panel-primary">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Programs</div>
+              <table class="datatable_display table table-striped">
+                <thead>
+                  <tr>
+                    <th>Program</th>
+                    <th>Subject</th>
+                    <th>Action</th>
+                    <th>Change</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%= render partial: "user_program", collection: @user_programs_list, as: :program %>
+                </tbody>
+            </table>
+          </div>
+
         </div><!-- col-sm-6 -->
 
         <div class="col-md-6">
