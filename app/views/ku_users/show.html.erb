@@ -33,24 +33,24 @@
                           <ul class="dropdown-menu">
                             <li>
                               <% if @all_pass %>
-                                <a class="btn btn-primary" href='<%= "http://" + @public_dns_name + ":8080/guacamole" %>'>Connect</a>
+                                <a href='<%= "http://" + @public_dns_name + ":8080/guacamole" %>'>Connect</a>
                               <% else %>
-                                <button type="button" class="btn btn-primary" disabled>Connect</button>
+                                <button type="button" disabled>Connect</button>
                               <% end %>
                             </li>
 
                             <% if @all_pass %>
                               <li>
-                                <%= button_to [:apply_change, @kuuser], :class => "btn btn-primary", :method => :get, :disabled => @result.any? ? true : false, data: { confirm: 'It will take a long time to process, Are you sure?' } do %>
+                                <%= button_to [:apply_change, @kuuser], :method => :get, :disabled => @result.any? ? true : false, data: { confirm: 'It will take a long time to process, Are you sure?' } do %>
                                   Apply change
                                   <% if @was_updated != 0 %>
                                     <%= content_tag :span, @was_updated, class: 'badge' %>
                                   <% end %>
                                 <% end %>
                               </li>
-                              <li><%= link_to "Stop Instance", ku_user_stop_instance_path(@kuuser), :class => "btn btn-danger", data: { confirm: "Are you sure you want to stop instance?" } %></li>
+                              <li><%= link_to "Stop Instance", ku_user_stop_instance_path(@kuuser), data: { confirm: "Are you sure you want to stop instance?" } %></li>
                             <% elsif @instance_state == "stopped" %>
-                              <li><%= link_to "Start Instance", ku_user_start_instance_path(@kuuser), :class => "btn btn-success", data: { confirm: "Are you sure you want to start instance?" } %></li>
+                              <li><%= link_to "Start Instance", ku_user_start_instance_path(@kuuser), data: { confirm: "Are you sure you want to start instance?" } %></li>
                             <% end %><!-- if @all_pass -->
                           </ul>
                         </div>
