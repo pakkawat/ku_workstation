@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'data-confirm-modal'
+
 gem 'humanize-bytes'
 gem 'aws-sdk'
 

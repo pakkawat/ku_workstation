@@ -19,6 +19,7 @@
 //= require_directory .
 //= require bootstrap-sprockets
 //= require bootstrap/collapse
+//= require data-confirm-modal
 
 $(document).ready(function() 
     { 
@@ -26,4 +27,9 @@ $(document).ready(function()
             sPaginationType: "full_numbers"
         });
     } 
-); 
+);
+
+dataConfirmModal.setDefaults({
+  commitClass: 'btn-success',
+  cancelClass: 'btn-danger'
+}); 
