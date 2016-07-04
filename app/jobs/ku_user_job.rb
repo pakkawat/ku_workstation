@@ -15,9 +15,11 @@ class KuUserJob < ProgressJob::Base
       create_user_and_instance
     elsif @type == "delete"
       delete_user_and_instance
+    elsif @type == "destroy_personal_program"
+      destroy_personal_program
     else # apply_change
-      user_apply_change
       KnifeCommand.create_empty_log(KuUser.where(id: @user.id))
+      user_apply_change
     end
 
   end
@@ -38,6 +40,8 @@ class KuUserJob < ProgressJob::Base
       if !KnifeCommand.run("knife node run_list remove " + @user.ku_id + " 'recipe[base-client]' -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'} "
       end
+    elsif @type == "destroy_personal_program"
+      @personal_program.destroy
     end
   end
 
@@ -124,7 +128,7 @@ class KuUserJob < ProgressJob::Base
     prepare_user_config
     update_progress
 
-    generate_chef_resource_for_personal_program
+    generate_chef_resource_for_personal_program(@user)
     update_progress
 
     if !KnifeCommand.run("knife cookbook upload " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
@@ -227,41 +231,72 @@ class KuUserJob < ProgressJob::Base
     return str_temp
   end
 
-  def generate_chef_resource_for_personal_program
-    File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_personal_program_list.rb", 'w') do |f|
-      @user.personal_programs.each do |personal_program|
-        f.write("include_recipe '#{@user.ku_id}::#{personal_program.program_name}'\n")
+  def generate_chef_resource_for_personal_program(user)
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/user_personal_program_list.rb", 'w') do |f|
+      user.personal_programs.each do |personal_program|
+        f.write("include_recipe '#{user.ku_id}::#{personal_program.program_name}'\n")
       end
     end
 
-    @user.personal_programs.where("user_personal_programs.status = 'install'").each do |personal_program|
-      File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
+    user.personal_programs.where("user_personal_programs.status = 'install'").each do |personal_program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
         personal_program.personal_chef_resources.where(status: "install").each do |personal_chef_resource|
-          f.write(UserResourceGenerator.install_resource(personal_chef_resource, @user))
+          f.write(UserResourceGenerator.install_resource(personal_chef_resource, user))
         end
       end
     end
 
-    @user.personal_programs.where("user_personal_programs.status = 'uninstall'").each do |personal_program|
-      File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
+    user.personal_programs.where("user_personal_programs.status = 'uninstall'").each do |personal_program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
         personal_program.personal_chef_resources.where(resource_type: "Source", status: "install").each do |personal_chef_resource|
-          f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, @user))
+          f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, user))
         end
 
         personal_program.personal_chef_resources.where(status: "install").where.not(resource_type: "Source").each do |personal_chef_resource|
-          f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, @user))
+          f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, user))
         end
       end
     end
 
-    File.open("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
-      @user.personal_chef_resources.where("personal_chef_resources.resource_type = 'Source'").each do |remove_resource|
-        f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, @user))
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
+      user.personal_chef_resources.where("personal_chef_resources.resource_type = 'Source'").each do |remove_resource|
+        f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, user))
       end
 
-      @user.personal_chef_resources.where.not("personal_chef_resources.resource_type = 'Source'").each do |remove_resource|
-        f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, @user))
+      user.personal_chef_resources.where.not("personal_chef_resources.resource_type = 'Source'").each do |remove_resource|
+        f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, user))
       end
+    end
+  end
+
+  def destroy_personal_program
+    @personal_program = PersonalProgram.find(@password)
+    UserPersonalProgram.where(:personal_program_id => @personal_program.id, :ku_user_id => @personal_program.ku_users).update_all(:status => "uninstall")
+    users = @personal_program.ku_users
+    update_progress_max(users.count)
+    KnifeCommand.create_empty_log(users)
+    arr_error = Array.new
+
+    users.each do |user|
+      user.user_error.destroy if !user.user_error.nil?
+      generate_chef_resource_for_personal_program(user)
+
+      if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        arr_error.push("System error please contact admin, ")
+      end
+
+      if !KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+        arr_error.push("#{ActionController::Base.helpers.link_to user.ku_id, '/ku_users/'+user.id.to_s}, ")
+      end
+      update_progress
+    end
+
+    if arr_error.length > 0
+      str_error = ""
+      arr_error.each do |error|
+        str_error += error
+      end
+      raise str_error
     end
   end
 

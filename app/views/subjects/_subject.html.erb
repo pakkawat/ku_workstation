@@ -16,7 +16,7 @@
 			<%= button_to 'Edit', edit_subject_path(subject), :class => "btn btn-primary", :method => :get  %>
 		</div>
 		<div style="display:inline-block;">
-			<%= button_to 'Delete', subject_path(subject), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete %>
+			<%= button_to 'Delete', subject_path(subject), data: {title: "Delete  Subject:#{subject.subject_name}", confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete %>
 		</div>
 	</th>
 </tr>

@@ -1,6 +1,6 @@
 class PersonalProgramsController < ApplicationController
   before_action :set_personal_program, only: [:show, :edit, :update, :destroy]
-  before_action :owner_program, only: [:update, :destroy]
+  before_action :owner_program_or_admin, only: [:update, :destroy]
 
   # GET /personal_programs
   # GET /personal_programs.json
@@ -127,8 +127,8 @@ class PersonalProgramsController < ApplicationController
       end
     end
 
-    def owner_program
-      redirect_to(current_user) unless @personal_program.owner == current_user.id
+    def owner_program_or_admin
+      redirect_to(current_user) unless @personal_program.owner == current_user.id || current_user.admin?
     end
 
 end

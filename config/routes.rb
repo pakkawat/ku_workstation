@@ -47,6 +47,7 @@ Rails.application.routes.draw do
   match 'ku_users/:id/start_instance', to: 'ku_users#start_instance', as: 'ku_user_start_instance', via: :get
   match 'ku_user/:id/personal_program/:personal_program_id/add_personal_program', to: 'ku_users#add_personal_program', as: 'ku_user_add_personal_program', :via => "post"
   match 'ku_user/:id/personal_program/:personal_program_id/delete_personal_program', to: 'ku_users#delete_personal_program', as: 'ku_user_delete_personal_program', :via => "delete"
+  match 'ku_user/:id/personal_program/:personal_program_id/destroy_personal_program', to: 'ku_users#destroy_personal_program', as: 'ku_user_destroy_personal_program', :via => "delete"
   match 'ku_user/:id/create_personal_program', to: 'ku_users#create_personal_program', as: 'ku_user_create_personal_program', :via => "post"
   match 'ku_user/:id/command_job/:job_id', to: 'ku_users#delete_user_job', as: 'delete_user_job', :via => "delete"
   #match 'ku_user/:id/user_personal_program/:user_personal_program_id', to: 'ku_users#delete_personal_program_from_user', as: 'delete_personal_program_from_user', :via => "delete"

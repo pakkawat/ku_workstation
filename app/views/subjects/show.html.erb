@@ -4,7 +4,7 @@
     <span class="pull-right">
       <h1>
         <div style="display:inline-block;">
-          <%= button_to [:apply_change, @subject], :class => "btn btn-primary", :method => :get, :disabled => @was_updated == 0 ? true : false do %>
+          <%= button_to [:apply_change, @subject], :class => "btn btn-primary", :method => :get, :disabled => @was_updated == 0 ? true : false, data: {title: "Apply change", confirm: 'It will take a long time to process, Are you sure?'} do %>
             Apply change
             <% if @was_updated != 0 %>
               <%= content_tag :span, @was_updated, class: 'badge' %>

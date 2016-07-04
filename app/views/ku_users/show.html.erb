@@ -44,7 +44,7 @@
                                 <% if @result.any? %>
                                   <a href='#'>Apply change</a>
                                 <% else %>
-                                  <%= link_to apply_change_ku_user_path(@kuuser), data: { confirm: 'It will take a long time to process, Are you sure?' } do %>
+                                  <%= link_to apply_change_ku_user_path(@kuuser), data: {title: "Apply change", confirm: 'It will take a long time to process, Are you sure?'} do %>
                                     Apply change
                                     <% if @was_updated != 0 %>
                                       <%= content_tag :span, @was_updated, class: 'badge' %>
@@ -52,9 +52,9 @@
                                   <% end %>
                                 <% end %>
                               </li>
-                              <li><%= link_to "Stop Instance", ku_user_stop_instance_path(@kuuser), data: { confirm: "Are you sure you want to stop instance?" } %></li>
+                              <li><%= link_to "Stop Instance", ku_user_stop_instance_path(@kuuser), data: {title: "Stop Instance", confirm: "Are you sure you want to stop instance?" } %></li>
                             <% elsif @instance_state == "stopped" %>
-                              <li><%= link_to "Start Instance", ku_user_start_instance_path(@kuuser), data: { confirm: "Are you sure you want to start instance?" } %></li>
+                              <li><%= link_to "Start Instance", ku_user_start_instance_path(@kuuser), data: {title: "Start Instance", confirm: "Are you sure you want to start instance?" } %></li>
                             <% end %><!-- if @all_pass -->
                           </ul>
                         </div>
@@ -104,7 +104,15 @@
                       <% end %>
                     <% end %>
                     <br><small>Status</small></div>
-                  <div class="col-md-4"  style="text-align:center"><%= button_to 'Full log', log_path(@kuuser.log), :class => "btn btn-default", :method => :get, :disabled =>  @job_error ? false : true  %></div>
+                  <div class="col-md-4"  style="text-align:center">
+                    <% if @job_error %>
+                      <% if @user_job.description.include?("Destroy personal program") %>
+                        <%= job.last_error.html_safe %>
+                      <% else %>
+                        <%= button_to 'Full log', log_path(@kuuser.log), :class => "btn btn-default", :method => :get %>
+                      <% end %>
+                    <% end %>
+                  </div>
                   <div class="col-md-4"  style="text-align:center"><%= button_to 'Delete', delete_user_job_path(id: @kuuser.id, job_id: @user_job.id), :class => "btn btn-default pull-right", :method => :delete, :disabled =>  @job_error ? false : true  %></div>
                 </div>
               </div>
@@ -181,7 +189,8 @@
                               <tr>
                                 <th>Program name</th>
                                 <th>Edit</th>
-                                <th>Delete</th>
+                                <th>Add</th>
+                                <th>Destroy</th>
                               </tr>
                             </thead>
                             <tbody>
@@ -190,6 +199,16 @@
                                   <td><%= program.program_name %></td>
                                   <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
                                   <td><%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-success", :method => :post %></td>
+                                  <td>
+                                    <% if current_user?(@kuuser) || current_user.admin? %>
+                                      <% user_count = program.ku_users.count %>
+                                      <% if user_count == 0 %>
+                                        <%= button_to 'Destroy', ku_user_destroy_personal_program_path(@kuuser, program), :class => "btn btn-danger", :method => :delete, data: {title: "Destroy #{program.program_name}", confirm: "Are you sure?" } %>
+                                      <% else %>
+                                        <%= button_to 'Destroy', ku_user_destroy_personal_program_path(@kuuser, program), :class => "btn btn-danger", :method => :delete, data: {title: "Destroy #{program.program_name}", confirm: "There are #{user_count} users use #{program.program_name}, Are you sure?" } %>
+                                      <% end %>
+                                    <% end %>
+                                  </td>
                                 </tr>
                               <% end %>
                             </tbody>

@@ -1,7 +1,7 @@
 class KuUsersController < ApplicationController
   include UserResourceGenerator
   before_action :logged_in_user, only: [:index, :edit, :update, :destroy]
-  before_action :correct_user_or_admin,   only: [:show, :edit, :update, :create_personal_program, :delete_personal_program, :add_personal_program, :apply_change, :delete_user_job]
+  before_action :correct_user_or_admin,   only: [:show, :edit, :update, :create_personal_program, :delete_personal_program, :add_personal_program, :apply_change, :delete_user_job, :destroy_personal_program]
   before_action :admin_user,     only: :destroy
   def index
     @kuusers = KuUser.all
@@ -215,6 +215,20 @@ class KuUsersController < ApplicationController
       flash[:danger] = "Program name cannot be null or empty."
       redirect_to @kuuser
     end
+  end
+
+  def destroy_personal_program
+    @kuuser = KuUser.find(params[:id])
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
+
+    @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"destroy_personal_program",@personal_program.id)
+
+    str_des = "Destroy personal program:"+@personal_program.program_name
+    @job.update_column(:description, str_des)
+    @job.update_column(:owner, @kuuser.id)
+    flash[:success] = str_des+" with Job ID:"+@job.id.to_s
+
+    redirect_to @kuuser
   end
 
   def delete_personal_program
