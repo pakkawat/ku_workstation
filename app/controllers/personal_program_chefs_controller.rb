@@ -106,7 +106,7 @@ class PersonalProgramChefsController < ApplicationController
     @personal_program = PersonalProgram.find(params[:personal_program_id])
 
     if !current_user.user_error.nil?
-      if current_user.user_error.personal_chef_resource_id == params[:personal_chef_resource_id]
+      if current_user.user_error.personal_chef_resource_id.to_s == params[:personal_chef_resource_id]
         current_user.user_error.destroy
       end
     end
