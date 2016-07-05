@@ -107,7 +107,8 @@
                   <div class="col-md-4"  style="text-align:center">
                     <% if @job_error %>
                       <% if @user_job.description.include?("Destroy personal program") %>
-                        <%= job.last_error.html_safe %>
+                        <% new_line = @user_job.last_error.index("\n") %>
+                        <%= @user_job.last_error[0,new_line].html_safe %>
                       <% else %>
                         <%= button_to 'Full log', log_path(@kuuser.log), :class => "btn btn-default", :method => :get %>
                       <% end %>
