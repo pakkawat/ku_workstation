@@ -171,7 +171,7 @@ module ResourceGenerator
 		str_code += "  code <<-EOH\n"
 		str_code += "  sudo make uninstall\n"
 		str_code += "  EOH\n"
-		str_code += "  only_if \{ Dir.exists?('#{source_file}') \}\n"
+		#str_code += "  only_if \{ Dir.exists?('#{source_file}') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 
@@ -721,7 +721,7 @@ module ResourceGenerator
 		str_code += "  code <<-EOH\n"
 		str_code += "  sudo make uninstall\n"
 		str_code += "  EOH\n"
-		str_code += "  only_if \{ Dir.exists?('#{source_file}') \}\n"
+		#str_code += "  only_if \{ Dir.exists?('#{source_file}') \}\n"
 		str_code += "end\n"
 		str_code += "\n"
 

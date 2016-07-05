@@ -162,7 +162,7 @@
 
           <!-- Button trigger modal -->
           <button class="btn btn-primary" data-toggle="modal" data-target="#personal_program_Modal">
-            Add program
+            Add personal program
           </button>
           <!-- Modal -->
           <div class="modal fade" id="personal_program_Modal" tabindex="-1" role="dialog" aria-labelledby="personal_program_Modal_Label" aria-hidden="true">
@@ -170,12 +170,12 @@
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                  <h4 class="modal-title">Add program</h4>
+                  <h4 class="modal-title">Add personal program</h4>
                 </div>
                 <div class="modal-body">
                   <ul class="nav nav-tabs">
-                    <li class="active"><a data-toggle="tab" href="#all_programs">All programs</a></li>
-                    <li><a data-toggle="tab" href="#create_new_programs">Create new programs</a></li>
+                    <li class="active"><a data-toggle="tab" href="#all_programs">All personal programs</a></li>
+                    <li><a data-toggle="tab" href="#create_new_programs">Create new personal programs</a></li>
                   </ul>
                   <div class="tab-content">
 
@@ -183,7 +183,7 @@
                       <br>
                       <div class="panel panel-primary">
                         <!-- Default panel contents -->
-                        <div class="panel-heading">All programs</div>
+                        <div class="panel-heading">All personal programs</div>
                           <table class="datatable_display table table-striped">
                             <thead>
                               <tr>
@@ -200,7 +200,7 @@
                                   <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
                                   <td><%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-success", :method => :post %></td>
                                   <td>
-                                    <% if current_user?(@kuuser) || current_user.admin? %>
+                                    <% if program.owner == current_user.id || current_user.admin? %>
                                       <% user_count = program.ku_users.count %>
                                       <% if user_count == 0 %>
                                         <%= button_to 'Destroy', ku_user_destroy_personal_program_path(@kuuser, program), :class => "btn btn-danger", :method => :delete, data: {title: "Destroy #{program.program_name}", confirm: "Are you sure?" } %>

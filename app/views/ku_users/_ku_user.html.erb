@@ -7,8 +7,7 @@
 			<%= button_to 'Edit', edit_ku_user_path(ku_user), :class => "btn btn-primary", :method => :get  %>
 		</div>
 		<div style="display:inline-block;">
-			<%= button_to 'Delete', ku_user_path(ku_user), data: { confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete %>
+			<%= button_to 'Delete', ku_user_path(ku_user), data: {title: "Delete user #{ku_user.ku_id}" confirm: "Are you sure?" }, :class => "btn btn-default", :method => :delete %>
 		</div>
 	</th>
 </tr>
-
