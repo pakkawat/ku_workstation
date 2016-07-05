@@ -89,6 +89,7 @@ class ProgramChefsController < ApplicationController
     #add_remove_resource
     #@program.program_chefs.find_by(chef_resource_id: @chef_resource.id).destroy
     #@program_chef.destroy
+    UserError.where(:chef_resource_id => @chef_resource.id).destroy_all
     respond_to do |format|
       if @chef_resource.destroy
         ProgramsSubject.where(:program_id => @program.id).update_all(:was_updated => true)

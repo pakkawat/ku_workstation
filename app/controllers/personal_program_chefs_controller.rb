@@ -87,6 +87,7 @@ class PersonalProgramChefsController < ApplicationController
   def destroy
     @personal_program = PersonalProgram.find(params[:personal_program_id])
     @personal_chef_resource = PersonalChefResource.find(params[:personal_chef_resource_id])
+    UserError.where(:personal_chef_resource_id => @personal_chef_resource.id).destroy_all
     respond_to do |format|
       if @personal_chef_resource.destroy
         UserPersonalProgram.where(:personal_program_id => @personal_program.id).update_all(:was_updated => true)
@@ -100,19 +101,19 @@ class PersonalProgramChefsController < ApplicationController
     end
   end
 
-    def delete_user_remove_resources_for_not_owner
-      @personal_program = PersonalProgram.find(params[:personal_program_id])
+  def delete_user_remove_resources_for_not_owner
+    @personal_program = PersonalProgram.find(params[:personal_program_id])
 
-      respond_to do |format|
-        if current_user.user_remove_resources.where(personal_chef_resource_id: params[:personal_chef_resource_id], personal_program_id: @personal_program.id).first.destroy
-          format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully destroy." } }
-          format.json { head :no_content }
-        else
-          format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :danger => "Action was error when destroy." } }
-          format.json { head :no_content }
-        end
+    respond_to do |format|
+      if current_user.user_remove_resources.where(personal_chef_resource_id: params[:personal_chef_resource_id], personal_program_id: @personal_program.id).first.destroy
+        format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => "Action was successfully destroy." } }
+        format.json { head :no_content }
+      else
+        format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :danger => "Action was error when destroy." } }
+        format.json { head :no_content }
       end
     end
+  end
 
   private
     # Use callbacks to share common setup or constraints between actions.
