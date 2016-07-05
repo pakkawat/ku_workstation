@@ -88,6 +88,7 @@ class PersonalProgramChefsController < ApplicationController
     @personal_program = PersonalProgram.find(params[:personal_program_id])
     @personal_chef_resource = PersonalChefResource.find(params[:personal_chef_resource_id])
     UserError.where(:personal_chef_resource_id => @personal_chef_resource.id).destroy_all
+    UserRemoveResource.where(:personal_chef_resource_id => @personal_chef_resource.id, :personal_program_id => @personal_program.id).destroy_all
     respond_to do |format|
       if @personal_chef_resource.destroy
         UserPersonalProgram.where(:personal_program_id => @personal_program.id).update_all(:was_updated => true)
@@ -103,6 +104,12 @@ class PersonalProgramChefsController < ApplicationController
 
   def delete_user_remove_resources_for_not_owner
     @personal_program = PersonalProgram.find(params[:personal_program_id])
+
+    if !current_user.user_error.nil?
+      if current_user.user_error.personal_chef_resource_id == params[:personal_chef_resource_id]
+        current_user.user_error.destroy
+      end
+    end
 
     respond_to do |format|
       if current_user.user_remove_resources.where(personal_chef_resource_id: params[:personal_chef_resource_id], personal_program_id: @personal_program.id).first.destroy
