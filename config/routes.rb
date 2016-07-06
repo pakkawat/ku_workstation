@@ -1,5 +1,7 @@
 Rails.application.routes.draw do
 
+  get 'dashboard/index'
+
   #resources :personal_program_chefs
 
   #resources :personal_chef_resources # = Chef_resources
