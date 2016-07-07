@@ -1,0 +1,7 @@
+<% if !user.user_error.nil? %>
+  <tr>
+    <td><%= user.ku_id %></td>
+    <td><%= button_to 'Detail', user, :class => "btn btn-primary", :method => :get %></td>
+    <td class="text-danger bg-danger"><%= user.user_error.error_message %></td>
+  </tr>
+<% end %>

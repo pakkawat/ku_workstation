@@ -1,0 +1,63 @@
+<% if job.progress_max != 0 %>
+	<% progress = ((job.progress_current.to_f / job.progress_max) * 100).round %>
+<% end %>
+<tr>
+	<td><%= job.id %></td>
+  <td><%= job.description %></td>
+  <td>
+    <div class="progress">
+        <% if !job.last_error.nil? %>
+          <%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar progress-bar-danger") %>
+        <% else %>
+          <%= content_tag(:div, progress.to_s + "%", :style => "width:"+progress.to_s+"%;", :class => "progress-bar") %>
+        <% end %>
+    </div>
+  </td>
+	<td>
+		<div style="display:inline-block;">
+      <%= button_to 'Delete', command_job_path(job), :class => "btn btn-default", :method => :delete %>
+		</div>
+		<div style="display:inline-block;">
+			<% if !job.last_error.nil? %>
+
+	      <!-- Button trigger modal -->
+	      <button class="btn btn-danger" data-toggle="modal" data-target="#job_error_#{job.id}_log_Modal" style="width:110px;">
+	        Error
+	      </button>
+	      <!-- Modal -->
+	      <div class="modal fade" id="job_error_#{job.id}_log_Modal" tabindex="-1" role="dialog" aria-labelledby="user_error_log_Modal_Label" aria-hidden="true">
+	        <div class="modal-dialog" style="width: 80%">
+	          <div class="modal-content">
+
+	              <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+	                <h4 class="modal-title">Detail</h4>
+	              </div>
+	              <div class="modal-body">
+	                <table class="table">
+										<tbody>
+											<% if !job.subject_id.nil? %>
+												<% subject = Subject.find(job.subject_id) %>
+												<%= render partial: "dashboard/job/user_error_list", collection: subject.ku_users, as: :user %>
+											<% elsif !job.program_id.nil? %>
+												<% users = KuUser.where(id: UsersProgram.where(:program_id => job.program_id).uniq.pluck(:ku_user_id)) %>
+												<%= render partial: "dashboard/job/user_error_list", collection: users, as: :user %>
+											<% else %>
+												<% user = KuUser.find(job.owner) %>
+												<%= render partial: "dashboard/job/user_error_list", user: user %>
+											<% end %>
+										</tbody>
+									</table>
+	              </div>
+	              <div class="modal-footer">
+	                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+	              </div>
+
+	          </div><!-- /.modal-content -->
+	        </div><!-- /.modal-dialog -->
+	      </div><!-- /.modal -->
+
+      <% end %>
+		</div>
+	</td>
+</tr>

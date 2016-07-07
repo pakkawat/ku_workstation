@@ -31,7 +31,7 @@ class ProgramsController < ApplicationController
         if create_file(program)
           #check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
           #if check_error
-            flash[:success] = "Program was saved"
+            flash[:success] = "Program was created"
             #redirect_to programs_path
           #else
             #flash[:danger] = "Error can not upload cookbook to server"
@@ -46,7 +46,7 @@ class ProgramsController < ApplicationController
     else
       flash[:danger] = "Program name cannot be null or empty."
     end
-    redirect_to programs_path
+    redirect_to dashboard_index_path
   end
 
   def create_old
@@ -105,8 +105,7 @@ class ProgramsController < ApplicationController
     #if check_error
       #@job = Delayed::Job.enqueue ProgramJob.new(@program,"delete")
       #str_des = "Delete Program:"+@program.program_name
-      #@job.update_column(:description, str_des)
-      #@job.update_column(:owner, 0)
+      #@job.update_attributes(:program_id => @program.id, :description => str_des, :owner => current_user.id)
       #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
       #redirect_to programs_path
     #else
@@ -190,8 +189,7 @@ class ProgramsController < ApplicationController
     @program = Program.find(params[:program_id])
     @job = Delayed::Job.enqueue ProgramJob.new(@program,"apply_change")
     str_des = "Apply change on Program:"+@program.program_name
-    @job.update_column(:description, str_des)
-    @job.update_column(:owner, 0)
+    @job.update_attributes(:program_id => @program.id, :description => str_des, :owner => current_user.id)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     redirect_to programs_path
   end

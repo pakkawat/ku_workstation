@@ -1,2 +1,146 @@
-<h1>Dashboard#index</h1>
-<p>Find me in app/views/dashboard/index.html.erb</p>
+<div class="container-fluid">
+  <div class="row">
+    <div class="col-sm-12">
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Subjects</div>
+              <table class="datatable_display table table-striped">
+                <thead>
+                  <tr>
+                    <th>Subject ID</th>
+                    <th>Subject Name</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%= render partial: "dashboard/subject/subjects", collection: @subjects, as: :subject %>
+                </tbody>
+            </table>
+          </div>
+          <br>
+
+          <!-- Button trigger modal -->
+          <button class="btn btn-primary" data-toggle="modal" data-target="#program_Modal">
+            Add new subject
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="program_Modal" tabindex="-1" role="dialog" aria-labelledby="program_Modal_Label" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <%= form_tag subjects_path, method: :post, :class => "form-horizontal" do %>
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Subject</h4>
+                  </div>
+                  <div class="modal-body">
+                    <%= label_tag 'subject_id', 'Subject ID', :class => 'control-label' %>
+                    <%= text_field_tag :subject_id, params[:subject_id], :class => "form-control" %>
+                    <br>
+                    <%= label_tag 'name', 'Subject name', :class => 'control-label' %>
+                    <%= text_field_tag :subject_name, params[:subject_name], :class => "form-control" %>
+                    <br>
+                    <%= label_tag 'term', 'Term', :class => 'control-label' %>
+                    <%= select_tag :term, options_for_select([['First','1'],['Second','2'],['Summer','3']]), class: "form-control input-lg" %>
+                    <br>
+                    <%= label_tag 'year', 'Year', :class => 'control-label' %>
+                    <%= text_field_tag :year, params[:year], :class => "form-control" %>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                       <%= submit_tag "Create program", name: nil, class: "btn btn-success" %>
+                  </div>
+                <% end %>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
+
+        </div><!-- col-md-6 -->
+      </div><!-- row -->
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Programs</div>
+              <table class="datatable_display table table-striped">
+                <thead>
+                  <tr>
+                    <th>Program Name</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%= render partial: "dashboard/program/programs", collection: @programs, as: :program %>
+                </tbody>
+            </table>
+          </div>
+          <br>
+
+          <!-- Button trigger modal -->
+          <button class="btn btn-primary" data-toggle="modal" data-target="#program_Modal">
+            Add new program
+          </button>
+          <!-- Modal -->
+          <div class="modal fade" id="program_Modal" tabindex="-1" role="dialog" aria-labelledby="program_Modal_Label" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <%= form_tag programs_path, method: :post, :class => "form-horizontal" do %>
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                    <h4 class="modal-title">Program</h4>
+                  </div>
+                  <div class="modal-body">
+                          <%= label_tag 'name', 'Program name', :class => 'control-label' %>
+                          <%= text_field_tag :program_name, params[:program_name], :class => "form-control" %>
+                          <br>
+                          <%= label_tag 'note', 'Program note', :class => 'control-label' %>
+                          <%= text_area_tag :note, params[:note], :class => "form-control" %>
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                       <%= submit_tag "Create program", name: nil, class: "btn btn-success" %>
+                  </div>
+                <% end %>
+              </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+          </div><!-- /.modal -->
+
+        </div><!-- col-md-6 -->
+      </div><!-- row -->
+
+    </div><!-- col-sm-12 -->
+  </div><!-- row -->
+
+
+  <div class="row">
+    <div class="col-sm-12">
+
+      <div class="row">
+        <div class="col-md-6">
+          <div class="panel panel-default">
+            <!-- Default panel contents -->
+            <div class="panel-heading">Jobs</div>
+              <table class="datatable_display table table-striped">
+                <thead>
+                  <tr>
+                    <th>Job ID</th>
+                    <th>Description</th>
+                    <th>Progress</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <%= render partial: "dashboard/job/jobs", collection: @jobs, as: :job %>
+                </tbody>
+            </table>
+          </div>
+        </div><!-- col-md-6 -->
+      </div><!-- row -->
+
+    </div><!-- col-sm-12 -->
+  </div><!-- row -->
+
+</div>

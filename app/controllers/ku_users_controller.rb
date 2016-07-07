@@ -59,8 +59,7 @@ class KuUsersController < ApplicationController
       @kuuser.create_instance(:uptime_seconds => 0, :network_tx => 0)
       @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"create",ku_user_params[:password])
       str_des = "Create instance:"+@kuuser.ku_id
-      @job.update_column(:description, str_des)
-      @job.update_column(:owner, 0)
+      @job.update_attributes(:description => str_des, :owner => current_user.id)
       flash[:success] = str_des+" with Job ID:"+@job.id.to_s
 
       redirect_to ku_users_path
@@ -91,8 +90,7 @@ class KuUsersController < ApplicationController
     @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"delete","")
 
     str_des = "Delete instance:"+@kuuser.ku_id
-    @job.update_column(:description, str_des)
-    @job.update_column(:owner, 0)
+    @job.update_attributes(:description => str_des, :owner => current_user.id)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
 
     #@kuuser.find(params[:id]).destroy
@@ -120,8 +118,7 @@ class KuUsersController < ApplicationController
     @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"apply_change","")
 
     str_des = "Apply change on:"+@kuuser.ku_id
-    @job.update_column(:description, str_des)
-    @job.update_column(:owner, @kuuser.id)
+    @job.update_attributes(:description => str_des, :owner => @kuuser.id)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
 
     redirect_to @kuuser
@@ -224,8 +221,7 @@ class KuUsersController < ApplicationController
     @job = Delayed::Job.enqueue KuUserJob.new(@kuuser.id,"destroy_personal_program",@personal_program.id)
 
     str_des = "Destroy personal program:"+@personal_program.program_name
-    @job.update_column(:description, str_des)
-    @job.update_column(:owner, @kuuser.id)
+    @job.update_attributes(:description => str_des, :owner => @kuuser.id)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
 
     redirect_to @kuuser

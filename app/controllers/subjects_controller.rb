@@ -13,6 +13,20 @@ class SubjectsController < ApplicationController
   end
 
   def create
+    if params[:subject_name] != "" && params[:subject_id] != ""
+      subject = Subject.new(subject_id: params[:subject_id], subject_name: params[:subject_name], term: params[:term], year: params[:year])
+      if subject.save
+        flash[:success] = "Subject was created"
+      else
+        flash[:danger] = "Create subject error."
+      end
+    else
+      flash[:danger] = "Subject name and Subject id cannot be null or empty."
+    end
+    redirect_to dashboard_index_path
+  end
+
+  def create2
     @subject = Subject.new(subject_params)
     #render plain: ku_user_params.inspect
     #@KuUser.save
@@ -43,8 +57,7 @@ class SubjectsController < ApplicationController
     @subject = Subject.find(params[:id])
     @job = Delayed::Job.enqueue SubjectJob.new(@subject.id,"delete")
     str_des = "Delete Subject:"+@subject.subject_name
-    @job.update_column(:description, str_des)
-    @job.update_column(:owner, 0)
+    @job.update_attributes(:subject_id => @subject.id, :description => str_des, :owner => current_user.id)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     redirect_to subjects_path
   end
@@ -53,8 +66,7 @@ class SubjectsController < ApplicationController
     @subject = Subject.find(params[:subject_id])
     @job = Delayed::Job.enqueue SubjectJob.new(@subject.id,"apply_change")
     str_des = "Apply change on Subject:"+@subject.subject_name
-    @job.update_column(:description, str_des)
-    @job.update_column(:owner, 0)
+    @job.update_attributes(:subject_id => @subject.id, :description => str_des, :owner => current_user.id)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     redirect_to @subject
   end
