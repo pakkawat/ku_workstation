@@ -32,16 +32,6 @@
 
               <li><%= link_to "Dashboard", dashboard_index_path %></li>
 
-              <li><%= link_to "Program List", programs_path %></li>
-
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Subject<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><%= link_to "Add Subject", new_subject_path %></li>
-                  <li><%= link_to "Subject List", subjects_path %></li>
-                </ul>
-              </li>
-
               <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">User<span class="caret"></span></a>
                 <ul class="dropdown-menu" role="menu">
@@ -52,17 +42,9 @@
                 </ul>
               </li>
 
-              <li class="dropdown">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Instance<span class="caret"></span></a>
-                <ul class="dropdown-menu" role="menu">
-                  <li><a href="#">Teacher Instance</a></li>
-                  <li><a href="#">Student Instance</a></li>
-                  <li><%= link_to "All Instances", instances_path %></li>
-                </ul>
-              </li>
-              <li><%= link_to "Job List", command_jobs_index_path %></li>
+              <li><%= link_to "Instances", instances_path %></li>
+
               <li><%= link_to "Logs", logs_path %></li>
-              <li><a href="#">Contact</a></li>
 
           <% else %>
 

@@ -38,7 +38,23 @@
       </li>
       <li class="list-group-item text-right"><span class="pull-left"><strong>Year</strong></span><%= @subject.year %></li>
     </ul>
-  </div><!--/col-5-->
+
+    <div class="center">
+      <!-- Button trigger modal -->
+      <button class="btn btn-success" data-toggle="modal" data-target="#program_Modal">
+        Edit information
+      </button>
+      <!-- Modal -->
+      <div class="modal fade" id="program_Modal" tabindex="-1" role="dialog" aria-labelledby="program_Modal_Label" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <%= render 'form' %>
+          </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+      </div><!-- /.modal -->
+    </div>
+
+  </div><!--/col-3-->
   <div class="col-sm-9">
 
     <div class="panel panel-info">

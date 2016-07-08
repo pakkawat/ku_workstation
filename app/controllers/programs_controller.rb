@@ -115,7 +115,7 @@ class ProgramsController < ApplicationController
     #-------- Testttttttttttttttttttttttt
     FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
     @program.destroy
-    redirect_to programs_path
+    redirect_to dashboard_index_path
   end
 
   def create_file(program)

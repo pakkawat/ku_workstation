@@ -1,23 +1,34 @@
 <% was_updated = subject.ku_users.where("user_subjects.state != 'none'").count + subject.programs.where("programs_subjects.state != 'none'").count %>
 <tr>
 	<td scope="row"><%= subject.subject_id %></td>
-	<td><%= link_to subject.subject_name, subject %></td>
+	<td><%= subject.subject_name %></td>
 	<td>
-
-    <div style="display:inline-block;">
-      <%= button_to [:apply_change, subject], :class => "btn btn-primary", :method => :get, :disabled => was_updated == 0 ? true : false, data: {title: "Apply change", confirm: 'It will take a long time to process, Are you sure?'} do %>
-        Apply change
-        <% if was_updated != 0 %>
-          <%= content_tag :span, was_updated, class: 'badge' %>
-        <% end %>
-      <% end %>
-    </div>
-
-		<div style="display:inline-block;">
-			<%= button_to 'Programs', subject_programs_subjects_path(subject), :class => "btn btn-info", :method => :get %>
+		<!-- Single button -->
+		<div class="btn-group">
+			<button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+				Actions <span class="caret"></span>
+			</button>
+			<ul class="dropdown-menu">
+				<li>
+					<% if was_updated == 0 %>
+						<a href='#'>Apply change</a>
+					<% else %>
+						<%= link_to apply_change_subject_path(subject), data: {title: "Apply change on #{subject.subject_name}", confirm: 'It will take a long time to process, Are you sure?'} do %>
+							Apply change
+							<% if was_updated != 0 %>
+								<%= content_tag :span, was_updated, class: 'badge' %>
+							<% end %>
+						<% end %>
+					<% end %>
+				</li>
+				<li><%= link_to "Edit", subject %></li>
+				<li><%= link_to "Delete", subject, data: {title: "Delete #{subject.subject_name}", confirm: 'It will take a long time to process, Are you sure?'} %></li>
+			</ul>
 		</div>
-		<div style="display:inline-block;">
-      <%= button_to 'Users', subject_user_subjects_path(subject), :class => "btn btn-warning", :method => :get %>
-		</div>
+	</td>
+	<td>
+		<% if was_updated != 0 %>
+			<span class="label label-success">Update</span>
+		<% end %>
 	</td>
 </tr>

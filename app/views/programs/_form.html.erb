@@ -12,118 +12,76 @@
   </div>
 </div>
 <br><br>
-<%= form_for @program do |f| %>
-<%= render 'shared/error_messages', object: f.object %>
+
 
 <div class="row">
-  <div class="col-sm-4"><!--left col-->
-    <ul class="list-group">
+  <div class="col-sm-12">
 
-      <li class="list-group-item text-muted">Information</li>
-      <li class="list-group-item text-right">
-        <span class="pull-left">
-            <strong>
-                <%= f.label :program_name,'Program name', class: "control-label" %>
-            </strong>
-        </span>
-        <%= f.text_field :program_name, class: "form-control" %>
-      </li>
+    <div class="col-sm-6"><!--left col-->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Actions</h3>
+        </div>
+        <div class="panel-body">
 
-      <li class="list-group-item text-right">
-        <span class="pull-left">
-            <strong>
-                <%= f.label :note,'Program note', class: "control-label" %>
-            </strong>
-        </span>
-        <%= f.text_area(:note, rows: 10, class: 'form-control') %>
-      </li>
+          <div class="btn-group btn-group-justified" role="group">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Install action
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><%= link_to "Install from repository", program_program_chefs_path(:program_id => @program.id, :chef_resource_type => "Repository"), method: :post %></li>
+                <li><%= link_to "Install from deb file", program_program_chefs_path(:program_id => @program.id, :chef_resource_type => "Deb"), method: :post %></li>
+                <li><%= link_to "Install from source", program_program_chefs_path(:program_id => @program.id, :chef_resource_type => "Source"), method: :post %></li>
+              </ul>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                File action
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><%= link_to "Download file", program_program_chefs_path(:program_id => @program.id, :chef_resource_type => "Download"), method: :post %></li>
+                <li><%= link_to "Extract file", program_program_chefs_path(:program_id => @program.id, :chef_resource_type => "Extract"), method: :post %></li>
+                <li><%= link_to "Edit file", program_program_chefs_path(:program_id => @program.id, :chef_resource_type => "Config_file"), method: :post %></li>
+                <li><%= link_to "Create file", program_program_chefs_path(:program_id => @program.id, :chef_resource_type => "Create_file"), method: :post %></li>
+              </ul>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Command action
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><%= link_to "Execute command", program_program_chefs_path(:program_id => @program.id, :chef_resource_type => "Execute_command"), method: :post %></li>
+                <li><%= link_to "Bash script", program_program_chefs_path(:program_id => @program.id, :chef_resource_type => "Bash_script"), method: :post %></li>
+              </ul>
+            </div>
+          </div>
 
-      <li class="list-group-item text-center">
-        <% if @program.persisted? %>
-            <%= f.submit "Update program", class: "btn btn-primary" %>
-        <% else %>
-            <%= f.submit "Add program", class: "btn btn-success" %>
-        <% end %>
-      </li>
+          <div class="sortable">
+            <%= render partial: "chefresources", collection: @chef_resources, as: :chef %>
+          </div>
 
-    </ul>
-  </div><!--/col-4-->
-
-
-<%= hidden_field_tag :program_id, @program.id %>
-
-<% end %>
-
-<% if @program.persisted? %>
-<div class="col-sm-6">
-
-  <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#action">Action</a></li>
-    <li><a data-toggle="tab" href="#remove">Remove file and program</a></li>
-  </ul>
-
-  <div class="tab-content">
-    <div id="action" class="tab-pane fade in active">
-      <br>
-      <div class="row">
-        <div class="col-md-12">
-          <table>
-            <tr>
-              <td class="col-md-6">
-                <div>
-                  <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
-                              <%= hidden_field_tag 'program_id', @program.id  %>
-                              <%= select_tag :chef_resource_type, options_for_select([["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"]]), class: "form-control" %>
-                              <div style="margin-top: 10px"></div>
-                              <%= submit_tag "Install action", class: "btn btn-primary" %>
-                      <% end %>
-                </div>
-              </td>
-              <td class="col-md-6">
-                <div>
-                  <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
-                              <%= hidden_field_tag 'program_id', @program.id  %>
-                              <%= select_tag :chef_resource_type, options_for_select([["Download file", "Download"], ["Extract file", "Extract"], ["Edit file", "Config_file"], ["Create file", "Create_file"]]), class: "form-control" %>
-                              <div style="margin-top: 10px"></div>
-                              <%= submit_tag "File action", class: "btn btn-primary" %>
-                      <% end %>
-                </div>
-              </td>
-          </tr>
-          <tr><td>&nbsp;</td></tr>
-          <tr>
-            <td class="col-md-6">
-              <div>
-                <%= form_for(@program, :url => "/programs/"+@program.id.to_s+"/program_chefs", :method => :post) do %>
-                            <%= hidden_field_tag 'program_id', @program.id  %>
-                            <%= select_tag :chef_resource_type, options_for_select([["Execute command", "Execute_command"], ["Bash script", "Bash_script"]]), class: "form-control" %>
-                            <div style="margin-top: 10px"></div>
-                            <%= submit_tag "Command action", class: "btn btn-primary" %>
-                    <% end %>
-              </div>
-            </td>
-          </tr>
-          </table>
         </div>
       </div>
-      <div style="margin-top: 10px">
-      </div>
-      <div class="sortable">
-        <% if @chef_resources.any? %>
-          <%= render partial: "chefresources", collection: @chef_resources, as: :chef %>
-        <% end %>
-      </div>
-    </div> <!-- div id="action" class="tab-pane fade in active" -->
+    </div>
 
-    <div id="remove" class="tab-pane fade">
-      <br>
-      <%= render partial: "remove_resources", collection: @removes, as: :chef %>
-    </div><!-- div id="remove" class="tab-pane fade"-->
+    <div class="col-sm-6"><!--right col-->
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">Remove file and program</h3>
+        </div>
+        <div class="panel-body">
+          <%= render partial: "remove_resources", collection: @removes, as: :chef %>
+        </div>
+      </div>
+    </div>
 
-  </div> <!-- <div class="tab-content"> -->
-</div><!--/col-6-->
-<% end %>
-</div><!--row-->
+  </div>
+</div>
+
 
 <%= javascript_include_tag "programs/btn_expand_collapse.js"%>
 <%= javascript_include_tag "programs/html.sortable.js"%>

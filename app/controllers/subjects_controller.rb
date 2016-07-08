@@ -47,9 +47,10 @@ class SubjectsController < ApplicationController
 
     if @subject.update_attributes(subject_params)
       flash[:success] = "Subject was successfully updated"
-      redirect_to subjects_path
+      redirect_to @subject
     else
-      render "edit"
+      flash[:danger] = "Subject update error"
+      redirect_to @subject
     end
   end
 
@@ -59,7 +60,7 @@ class SubjectsController < ApplicationController
     str_des = "Delete Subject:"+@subject.subject_name
     @job.update_attributes(:subject_id => @subject.id, :description => str_des, :owner => current_user.id)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
-    redirect_to subjects_path
+    redirect_to dashboard_index_path
   end
 
   def apply_change
@@ -68,7 +69,7 @@ class SubjectsController < ApplicationController
     str_des = "Apply change on Subject:"+@subject.subject_name
     @job.update_attributes(:subject_id => @subject.id, :description => str_des, :owner => current_user.id)
     flash[:success] = str_des+" with Job ID:"+@job.id.to_s
-    redirect_to @subject
+    redirect_to dashboard_index_path
   end
 
   private
