@@ -9,6 +9,20 @@
               <%= chef.priority %> :
             </label>
             <%= resource_type_full_name(chef.resource_type) %>
+
+
+            <!-- Single button -->
+            <div class="btn-group pull-right">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Actions <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="#">Expand</a></li>
+                <li><%= link_to "Edit", edit_program_chef_resource_path(program_id: @program.id, id: chef.id) %></li>
+                <li><%= link_to("Delete", program_program_chef_path(program_id: @program.id, chef_id: chef.id, condition: "delete"), method: :patch) %></li>
+              </ul>
+            </div>
+
           </div>
 
 
@@ -16,18 +30,6 @@
             <%= expand_collapse_for(chef, @program) %>
           </div>
 
-
-          <div class="row">
-            <div class="col-md-4 text-center">
-              <button type="button" class="btn btn-info">Expand</button>
-            </div>
-            <div class="col-md-4 text-center">
-              <%= link_to "Edit", edit_program_chef_resource_path(program_id: @program.id, id: chef.id), :class => "btn btn-success" %>
-            </div>
-            <div class="col-md-4 text-center">
-              <%= link_to("Delete", program_program_chef_path(program_id: @program.id, chef_id: chef.id, condition: "delete"), method: :patch, class: "btn btn-default pull-right") %>
-            </div>
-          </div>
         </div>
 
       </div>
