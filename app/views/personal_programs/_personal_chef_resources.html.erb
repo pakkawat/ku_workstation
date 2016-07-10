@@ -1,10 +1,12 @@
 <div class="row chef-resource" data-id="<%= chef.id %>">
-    <div class="well well-sm" style="background: #D8D8D8;">
+  <div class="col-sm-1"></div>
+  <div class="col-sm-10">
+    <div class="well" style="background: #D8D8D8;">
       <div class="row">
         <div class="col-md-12">
           <div class="form-group">
             <label for="subject">
-              Action:
+              <%= chef.priority %> :
             </label>
             <%= resource_type_full_name(chef.resource_type) %>
 
@@ -30,5 +32,6 @@
 
       </div>
     </div>
-
+  </div>
+  <div class="col-sm-1"></div>
 </div>

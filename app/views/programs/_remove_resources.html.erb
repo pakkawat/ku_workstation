@@ -1,3 +1,4 @@
+<% chef_type = action_remove_resource_name(chef.resource_type) %>
 <% chef_property = expand_collapse_for(chef, @program) %>
 <div class="row">
   <div class="col-sm-1"></div>
@@ -9,7 +10,7 @@
             <label for="subject">
               Action: Remove
             </label>
-            <%= action_remove_resource_name(chef.resource_type) %>
+            <%= chef_type %>
 
             <!-- Single button -->
             <div class="btn-group pull-right">
@@ -20,7 +21,7 @@
                 <li><a href="#">Expand</a></li>
                 <li><%= link_to "Edit", edit_program_chef_resource_path(program_id: @program.id, id: chef.id) %></li>
                 <li><%= link_to("Add", program_program_chef_path(program_id: @program.id, chef_id: chef.id, condition: "add"), method: :patch) %></li>
-                <li><%= link_to("Destroy", program_program_chef_path(program_id: @program.id, chef_id: chef.id), method: :delete, data: {title: "Destroy action", confirm: chef_property } ) %></li>
+                <li><%= link_to("Destroy", program_program_chef_path(program_id: @program.id, chef_id: chef.id), method: :delete, data: {title: "Destroy Action: Remove " + chef_type, confirm: chef_property } ) %></li>
               </ul>
             </div>
 

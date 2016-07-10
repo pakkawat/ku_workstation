@@ -31,14 +31,14 @@
 		</div>
 		<div style="display:inline-block;">
 			<% if !job.last_error.nil? %>
-
+        <% modal_id = "job_error_#{job.id}_log_Modal" %>
 	      <!-- Button trigger modal -->
-	      <button class="btn btn-danger" data-toggle="modal" data-target="#job_error_#{job.id}_log_Modal" style="width:110px;">
+	      <button class="btn btn-danger" data-toggle="modal" data-target="#<%= modal_id %>" style="width:110px;">
 	        Error
 	      </button>
 	      <!-- Modal -->
-	      <div class="modal fade" id="job_error_#{job.id}_log_Modal" tabindex="-1" role="dialog" aria-labelledby="user_error_log_Modal_Label" aria-hidden="true">
-	        <div class="modal-dialog" style="width: 80%">
+	      <div class="modal fade" id="<%= modal_id %>" tabindex="-1" role="dialog" aria-labelledby="user_error_log_Modal_Label" aria-hidden="true">
+	        <div class="modal-dialog" style="width: 70%">
 	          <div class="modal-content">
 
 	              <div class="modal-header">
@@ -55,8 +55,8 @@
 												<% users = KuUser.where(id: UsersProgram.where(:program_id => job.program_id).uniq.pluck(:ku_user_id)) %>
 												<%= render partial: "dashboard/job/user_error_list", collection: users, as: :user %>
 											<% else %>
-												<% user = KuUser.find(job.owner) %>
-												<%= render partial: "dashboard/job/user_error_list", user: user %>
+												<% users = KuUser.where(id: job.owner) %>
+												<%= render partial: "dashboard/job/user_error_list", collection: users, as: :user %>
 											<% end %>
 										</tbody>
 									</table>

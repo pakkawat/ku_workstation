@@ -1,12 +1,16 @@
-<div>
-    <div class="well well-sm" style="background: #D8D8D8;">
+<% chef_type = action_remove_personal_resource_name(chef.resource_type) %>
+<% chef_property = personal_program_expand_collapse_for(chef, @ku_user) %>
+<div class="row">
+  <div class="col-sm-1"></div>
+  <div class="col-sm-10">
+    <div class="well" style="background: #D8D8D8;">
       <div class="row">
         <div class="col-md-12">
           <div class="form-group">
             <label for="subject">
               Action: Remove
             </label>
-            <%= action_remove_personal_resource_name(chef.resource_type) %>
+            <%= chef_type %>
 
             <!-- Single button -->
             <div class="btn-group pull-right">
@@ -18,7 +22,7 @@
                 <li><%= link_to "Edit", edit_personal_program_personal_chef_resource_path(@personal_program, chef) %></li>
                 <% if @personal_program.owner == current_user.id %>
                   <li><%= link_to("Add", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id, condition: "add"), method: :patch) %></li>
-                  <li><%= link_to("Destroy", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id), method: :delete) %></li>
+                  <li><%= link_to("Destroy", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id), method: :delete, data: {title: "Destroy Action: Remove " + chef_type, confirm: chef_property }) %></li>
                 <% else %>
                   <li><%= link_to("Delete", delete_user_remove_resources_for_not_owner_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id), method: :patch) %></li>
                 <% end %>
@@ -29,12 +33,13 @@
 
 
           <div style="display: none;">
-            <%= personal_program_expand_collapse_for(chef, @ku_user) %>
+            <%= chef_property %>
           </div>
 
         </div>
 
       </div>
     </div>
-
+  </div>
+  <div class="col-sm-1"></div>
 </div>
