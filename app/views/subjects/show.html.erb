@@ -39,42 +39,42 @@
       <li class="list-group-item text-right"><span class="pull-left"><strong>Year</strong></span><%= @subject.year %></li>
     </ul>
 
-    <div class="center">
-      <!-- Button trigger modal -->
-      <button class="btn btn-success" data-toggle="modal" data-target="#program_Modal">
-        Edit information
-      </button>
-      <!-- Modal -->
-      <div class="modal fade" id="program_Modal" tabindex="-1" role="dialog" aria-labelledby="program_Modal_Label" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <%= form_for @subject do |f| %>
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-                <h4 class="modal-title">Subject</h4>
-              </div>
-              <div class="modal-body">
-                <%= f.label :subject_id,'Subject ID', class: "control-label" %>
-                <%= f.text_field :subject_id, class: "form-control" %>
-                <br>
-                <%= f.label :subject_name,'Subject Name', class: "control-label" %>
-                <%= f.text_field :subject_name, class: "form-control" %>
-                <br>
-                <%= f.label :term,'Term', class: "control-label" %>
-                <%= f.select :term, [['First','1'],['Second','2'],['Summer','3']], {}, {class: "form-control"} %>
-                <br>
-                <%= f.label :year,'Year', class: "control-label" %>
-                <%= f.text_field :year, class: "form-control" %>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-                   <%= f.submit "Update subject", class: "btn btn-success" %>
-              </div>
-            <% end %>
-          </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-      </div><!-- /.modal -->
-    </div>
+
+    <!-- Button trigger modal -->
+    <button class="btn btn-success" data-toggle="modal" data-target="#program_Modal">
+      Edit information
+    </button>
+    <!-- Modal -->
+    <div class="modal fade" id="program_Modal" tabindex="-1" role="dialog" aria-labelledby="program_Modal_Label" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <%= form_for @subject do |f| %>
+            <div class="modal-header">
+              <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+              <h4 class="modal-title">Subject</h4>
+            </div>
+            <div class="modal-body">
+              <%= f.label :subject_id,'Subject ID', class: "control-label" %>
+              <%= f.text_field :subject_id, class: "form-control" %>
+              <br>
+              <%= f.label :subject_name,'Subject Name', class: "control-label" %>
+              <%= f.text_field :subject_name, class: "form-control" %>
+              <br>
+              <%= f.label :term,'Term', class: "control-label" %>
+              <%= f.select :term, [['First','1'],['Second','2'],['Summer','3']], {}, {class: "form-control"} %>
+              <br>
+              <%= f.label :year,'Year', class: "control-label" %>
+              <%= f.text_field :year, class: "form-control" %>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                 <%= f.submit "Update subject", class: "btn btn-success" %>
+            </div>
+          <% end %>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
 
   </div><!--/col-3-->
   <div class="col-sm-9">
