@@ -1,6 +1,7 @@
 Rails.application.routes.draw do
 
   get 'dashboard/index'
+  get "dashboard/index/refresh_jobs" => 'dashboard#refresh_jobs', as: 'refresh_jobs'
 
   #resources :personal_program_chefs
 

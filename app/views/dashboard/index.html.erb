@@ -120,14 +120,20 @@
 
 
       <div class="col-md-6">
-        <div class="panel panel-default">
+        <div id="job_list" class="panel panel-default">
           <!-- Default panel contents -->
-          <div class="panel-heading">Jobs</div>
+          <div class="panel-heading">
+            Jobs
+            <%= link_to refresh_jobs_path, :class => "pull-right", :remote => true do %>
+              <span class="glyphicon glyphicon-refresh"></span>
+            <% end %>
+          </div>
             <table class="datatable_display table table-striped">
               <thead>
                 <tr>
                   <th>Job ID</th>
                   <th>Description</th>
+                  <th>Status</th>
                   <th>Progress</th>
                   <th>Action</th>
                 </tr>

@@ -4,6 +4,17 @@
 <tr>
 	<td><%= job.id %></td>
   <td><%= job.description %></td>
+	<td>
+		<% if job.progress_stage.nil? %>
+			<b>Waitting</b>
+		<% else %>
+			<% if !job.last_error.nil? %>
+				<b>Error</b>
+			<% else %>
+				<b>Working</b>
+			<% end %>
+		<% end %>
+	</td>
   <td>
     <div class="progress">
         <% if !job.last_error.nil? %>
