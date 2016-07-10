@@ -139,7 +139,7 @@
                 </tr>
               </thead>
               <tbody>
-                <%= render partial: "dashboard/job/jobs", collection: @jobs, as: :job %>
+                <%= render partial: "dashboard/job/jobs", locals: { jobs: @jobs} %>
               </tbody>
           </table>
         </div>

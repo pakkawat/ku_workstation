@@ -1,3 +1,4 @@
+<% jobs.each do |job| %>
 <% if job.progress_max != 0 %>
 	<% progress = ((job.progress_current.to_f / job.progress_max) * 100).round %>
 <% end %>
@@ -72,3 +73,4 @@
 		</div>
 	</td>
 </tr>
+<% end %>
