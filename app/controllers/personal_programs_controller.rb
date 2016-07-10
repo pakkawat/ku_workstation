@@ -50,8 +50,8 @@ class PersonalProgramsController < ApplicationController
   # PATCH/PUT /personal_programs/1.json
   def update
     respond_to do |format|
-      if @personal_program.update(personal_program_params)
-        format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => @personal_program.program_name + ' was successfully updated.' } }
+      if @personal_program.update_attribute(:note, params[:personal_program][:note])
+        format.html { redirect_to edit_personal_program_path(@personal_program), :flash => { :success => 'Note was successfully updated.' } }
         format.json { render :show, status: :ok, location: @personal_program }
       else
         format.html { render :edit }

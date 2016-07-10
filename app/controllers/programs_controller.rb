@@ -78,21 +78,34 @@ class ProgramsController < ApplicationController
     check_config_file
   end
 
+  def update2
+    @program = Program.find(params[:id])
+    #render plain: program_params.inspect
+
+    if @program.update_attribute(:note, params[:program][:note])
+      test_generate_chef_resource
+      if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+        flash[:success] = "Program was successfully updated"
+        redirect_to edit_program_path(@program)
+      else
+        flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+        redirect_to edit_program_path(@program)
+      end
+    else
+      flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+      render "edit"
+    end
+  end
+
   def update
     @program = Program.find(params[:id])
     #render plain: program_params.inspect
 
-    if @program.update_attributes(program_params)
-      test_generate_chef_resource
-      if KnifeCommand.run("knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        flash[:success] = "Program was successfully updated"
-        redirect_to program_path(@program)+"/edit"
-      else
-        flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
-        redirect_to program_path(@program)+"/edit"
-      end
+    if @program.update_attribute(:note, params[:program][:note])
+      flash[:success] = "Note was successfully updated"
+      redirect_to edit_program_path(@program)
     else
-      flash[:danger] = "Error can not update program  #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+      flash[:danger] = "Error can not update note"
       render "edit"
     end
   end

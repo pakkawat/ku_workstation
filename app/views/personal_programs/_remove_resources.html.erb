@@ -7,9 +7,24 @@
               Action: Remove
             </label>
             <%= action_remove_personal_resource_name(chef.resource_type) %>
-            <% if @personal_program.owner == current_user.id %>
-              <%= link_to("Destroy", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id), method: :delete, class: "btn btn-default pull-right") %>
-            <% end %>
+
+            <!-- Single button -->
+            <div class="btn-group pull-right">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Actions <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><a href="#">Expand</a></li>
+                <li><%= link_to "Edit", edit_personal_program_personal_chef_resource_path(@personal_program, chef) %></li>
+                <% if @personal_program.owner == current_user.id %>
+                  <li><%= link_to("Add", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id, condition: "add"), method: :patch) %></li>
+                  <li><%= link_to("Destroy", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id), method: :delete) %></li>
+                <% else %>
+                  <li><%= link_to("Delete", delete_user_remove_resources_for_not_owner_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id), method: :patch) %></li>
+                <% end %>
+              </ul>
+            </div>
+
           </div>
 
 
@@ -17,22 +32,6 @@
             <%= personal_program_expand_collapse_for(chef, @ku_user) %>
           </div>
 
-
-          <div class="row">
-            <div class="col-md-4 text-center">
-              <button type="button" class="btn btn-info">Expand</button>
-            </div>
-            <div class="col-md-4 text-center">
-              <%= link_to "Edit", edit_personal_program_personal_chef_resource_path(@personal_program,chef), :class => "btn btn-success" %>
-            </div>
-            <div class="col-md-4 text-center">
-              <% if @personal_program.owner == current_user.id %>
-                <%= link_to("Add", personal_program_personal_program_chef_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id, condition: "add"), method: :patch, class: "btn btn-default pull-right") %>
-              <% else %>
-                <%= link_to("Delete", delete_user_remove_resources_for_not_owner_path(personal_program_id: @personal_program.id, personal_chef_resource_id: chef.id), method: :patch, class: "btn btn-default pull-right") %>
-              <% end %>
-            </div>
-          </div>
         </div>
 
       </div>

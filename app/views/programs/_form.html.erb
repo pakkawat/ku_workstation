@@ -2,12 +2,34 @@
   <div class="col-sm-10">
 
         <div class="wizard">
-          <% if @program.persisted? %>
-            <%= link_to(@program.program_name, edit_program_path(@program), class: "current", method: :get) %>
-          <% else %>
-            <a class="current">Add new program</a>
-          <% end %>
+          <%= link_to(@program.program_name, edit_program_path(@program), class: "current", method: :get) %>
         </div>
+
+        <!-- Button trigger modal -->
+        <button class="btn btn-success pull-right" data-toggle="modal" data-target="#program_Modal">
+          Note
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="program_Modal" tabindex="-1" role="dialog" aria-labelledby="program_Modal_Label" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+              <%= form_for @program do |f| %>
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                  <h4 class="modal-title"><%= @program.program_name %></h4>
+                </div>
+                <div class="modal-body">
+                        <%= f.label :note,'Program note', class: "control-label" %>
+                        <%= f.text_area(:note, rows: 10, class: 'form-control') %>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                     <%= f.submit "Update note", class: "btn btn-success" %>
+                </div>
+              <% end %>
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
   </div>
 </div>
@@ -20,7 +42,7 @@
     <div class="col-sm-6"><!--left col-->
       <div class="panel panel-default">
         <div class="panel-heading">
-          <h3 class="panel-title">Actions</h3>
+          <h3 class="panel-title">Install steps</h3>
         </div>
         <div class="panel-body">
 
@@ -73,7 +95,7 @@
     <div class="col-sm-6"><!--right col-->
       <div class="panel panel-danger">
         <div class="panel-heading">
-          <h3 class="panel-title">Remove file and program</h3>
+          <h3 class="panel-title">Remove steps</h3>
         </div>
         <div class="panel-body">
           <%= render partial: "remove_resources", collection: @removes, as: :chef %>

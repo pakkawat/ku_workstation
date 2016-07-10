@@ -1,171 +1,159 @@
-
 <div class="row">
   <div class="col-sm-10">
 
         <div class="wizard">
-          <% if @personal_program.persisted? %>
-            <%= link_to(@personal_program.program_name, edit_personal_program_path(@personal_program), class: "current", method: :get) %>
-          <% else %>
-            <a class="current">Add new personal program</a>
-          <% end %>
+          <%= link_to(@personal_program.program_name, edit_personal_program_path(@personal_program), class: "current", method: :get) %>
         </div>
+
+        <!-- Button trigger modal -->
+        <button class="btn btn-success pull-right" data-toggle="modal" data-target="#program_Modal">
+          Information
+        </button>
+        <!-- Modal -->
+        <div class="modal fade" id="program_Modal" tabindex="-1" role="dialog" aria-labelledby="program_Modal_Label" aria-hidden="true">
+          <div class="modal-dialog">
+            <div class="modal-content">
+
+              <ul class="nav nav-tabs">
+                <li class="active"><a data-toggle="tab" href="#note">Note</a></li>
+                <li><a data-toggle="tab" href="#related_users">Related users</a></li>
+              </ul>
+              <div class="tab-content">
+
+                <div id="note" class="tab-pane fade in active">
+                  <br>
+                  <%= form_for @personal_program do |f| %>
+                    <div class="modal-header">
+                      <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                      <h4 class="modal-title"><%= @personal_program.program_name %></h4>
+                    </div>
+                    <div class="modal-body">
+                            <%= f.label :note,'Program note', class: "control-label" %>
+                            <%= f.text_area(:note, rows: 10, class: 'form-control') %>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+                        <% if @personal_program.owner == current_user.id %>
+                          <%= f.submit "Update note", class: "btn btn-success" %>
+                        <% end %>
+                    </div>
+                  <% end %>
+                </div>
+
+                <div id="related_users" class="tab-pane fade">
+                  <br>
+                  <div class="panel panel-info">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">Related users</div>
+                      <table class="table table-striped">
+                        <thead>
+                          <tr>
+                            <th>Ku ID</th>
+                            <th>Firstname</th>
+                            <th>Lastname</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <% @personal_program.ku_users.each do |user| %>
+                            <tr>
+                              <th scope="row"><%= user.ku_id %></th>
+                              <td><%= user.firstname %></td>
+                              <td><%= user.lastname %></td>
+                            </tr>
+                          <% end %>
+                        </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div><!-- tab-content -->
+
+            </div><!-- /.modal-content -->
+          </div><!-- /.modal-dialog -->
+        </div><!-- /.modal -->
 
   </div>
 </div>
 <br><br>
-<%= form_for @personal_program do |f| %>
-<%= render 'shared/error_messages', object: f.object %>
+
 
 <div class="row">
-  <div class="col-sm-4"><!--left col-->
-    <ul class="list-group">
+  <div class="col-sm-12">
 
-      <li class="list-group-item text-muted">Information</li>
-      <li class="list-group-item text-right">
-        <span class="pull-left">
-            <strong>
-                <%= f.label :program_name,'Program name', class: "control-label" %>
-            </strong>
-        </span>
-        <%= f.text_field :program_name, class: "form-control" %>
-      </li>
+    <div class="col-sm-6"><!--left col-->
+      <div class="panel panel-default">
+        <div class="panel-heading">
+          <h3 class="panel-title">Install steps</h3>
+        </div>
+        <div class="panel-body">
 
-      <li class="list-group-item text-right">
-        <span class="pull-left">
-            <strong>
-                <%= f.label :note,'Program note', class: "control-label" %>
-            </strong>
-        </span>
-        <%= f.text_area(:note, rows: 10, class: 'form-control') %>
-      </li>
+          <div class="btn-group btn-group-justified" role="group">
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Install action
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><%= link_to "Install from repository", personal_program_personal_program_chefs_path(:personal_program_id => @personal_program.id, :chef_resource_type => "Repository"), method: :post %></li>
+                <li><%= link_to "Install from deb file", personal_program_personal_program_chefs_path(:personal_program_id => @personal_program.id, :chef_resource_type => "Deb"), method: :post %></li>
+                <li><%= link_to "Install from source", personal_program_personal_program_chefs_path(:personal_program_id => @personal_program.id, :chef_resource_type => "Source"), method: :post %></li>
+              </ul>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                File action
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><%= link_to "Download file", personal_program_personal_program_chefs_path(:personal_program_id => @personal_program.id, :chef_resource_type => "Download"), method: :post %></li>
+                <li><%= link_to "Extract file", personal_program_personal_program_chefs_path(:personal_program_id => @personal_program.id, :chef_resource_type => "Extract"), method: :post %></li>
+                <li><%= link_to "Edit file", personal_program_personal_program_chefs_path(:personal_program_id => @personal_program.id, :chef_resource_type => "Config_file"), method: :post %></li>
+                <li><%= link_to "Create file", personal_program_personal_program_chefs_path(:personal_program_id => @personal_program.id, :chef_resource_type => "Create_file"), method: :post %></li>
+              </ul>
+            </div>
+            <div class="btn-group" role="group">
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                Command action
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu">
+                <li><%= link_to "Execute command", personal_program_personal_program_chefs_path(:personal_program_id => @personal_program.id, :chef_resource_type => "Execute_command"), method: :post %></li>
+                <li><%= link_to "Bash script", personal_program_personal_program_chefs_path(:personal_program_id => @personal_program.id, :chef_resource_type => "Bash_script"), method: :post %></li>
+              </ul>
+            </div>
+          </div>
 
-      <li class="list-group-item text-center">
-        <% if @personal_program.persisted? %>
-            <% if @personal_program.owner == current_user.id %>
-              <%= f.submit "Update program", class: "btn btn-primary" %>
-            <% end %>
-        <% else %>
-            <%= f.submit "Add program", class: "btn btn-success" %>
-        <% end %>
-      </li>
+          <br>
 
-    </ul>
-  </div><!--/col-4-->
+          <% if @personal_program.owner == current_user.id %>
+            <div class="sortable">
+              <%= render partial: "personal_chef_resources", collection: @personal_chef_resources, as: :chef %>
+            </div>
+          <% else %>
+            <div>
+              <%= render partial: "personal_chef_resources", collection: @personal_chef_resources, as: :chef %>
+            </div>
+          <% end %>
+
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6"><!--right col-->
+      <div class="panel panel-danger">
+        <div class="panel-heading">
+          <h3 class="panel-title">Remove steps</h3>
+        </div>
+        <div class="panel-body">
+          <%= render partial: "remove_resources", collection: @removes, as: :chef %>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
 
 
 <%= hidden_field_tag :personal_program_id, @personal_program.id %>
-
-<% end %>
-
-<% if @personal_program.persisted? %>
-<div class="col-sm-6">
-
-  <ul class="nav nav-tabs">
-    <li class="active"><a data-toggle="tab" href="#action">Action</a></li>
-    <li><a data-toggle="tab" href="#remove">Remove file and program</a></li>
-    <li><a data-toggle="tab" href="#related_users">Related users</a></li>
-  </ul>
-
-  <div class="tab-content">
-
-    <div id="action" class="tab-pane fade in active">
-      <br>
-      <div class="row">
-        <div class="col-md-12">
-          <% if @personal_program.owner == current_user.id %>
-            <table>
-              <tr>
-                <td class="col-md-6">
-                  <div>
-                    <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs", :method => :post) do %>
-
-                                <%= select_tag :chef_resource_type, options_for_select([["Install from repository", "Repository"], ["Install from deb file", "Deb"], ["Install from source", "Source"]]), class: "form-control" %>
-                                <div style="margin-top: 10px"></div>
-                                <%= submit_tag "Install action", class: "btn btn-primary" %>
-                        <% end %>
-                  </div>
-                </td>
-                <td class="col-md-6">
-                  <div>
-                    <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs", :method => :post) do %>
-
-                                <%= select_tag :chef_resource_type, options_for_select([["Download file", "Download"], ["Extract file", "Extract"], ["Edit file", "Config_file"], ["Create file", "Create_file"]]), class: "form-control" %>
-                                <div style="margin-top: 10px"></div>
-                                <%= submit_tag "File action", class: "btn btn-primary" %>
-                        <% end %>
-                  </div>
-                </td>
-            </tr>
-            <tr><td>&nbsp;</td></tr>
-            <tr>
-              <td class="col-md-6">
-                <div>
-                  <%= form_for(@personal_program, :url => "/personal_programs/"+@personal_program.id.to_s+"/personal_program_chefs", :method => :post) do %>
-
-                              <%= select_tag :chef_resource_type, options_for_select([["Execute command", "Execute_command"], ["Bash script", "Bash_script"]]), class: "form-control" %>
-                              <div style="margin-top: 10px"></div>
-                              <%= submit_tag "Other action", class: "btn btn-primary" %>
-                      <% end %>
-                </div>
-              </td>
-            </tr>
-            </table>
-          <% end %>
-        </div>
-      </div>
-      <div style="margin-top: 10px">
-      </div>
-      <% if @personal_program.owner == current_user.id %>
-        <div class="sortable">
-          <% if @personal_chef_resources.any? %>
-            <%= render partial: "personal_chef_resources", collection: @personal_chef_resources, as: :chef %>
-          <% end %>
-        </div>
-      <% else %>
-        <div>
-          <% if @personal_chef_resources.any? %>
-            <%= render partial: "personal_chef_resources", collection: @personal_chef_resources, as: :chef %>
-          <% end %>
-        </div>
-      <% end %>
-    </div><!-- id=action class=tab-pane fade in active-->
-
-    <div id="remove" class="tab-pane fade">
-      <br>
-      <%= render partial: "remove_resources", collection: @removes, as: :chef %>
-    </div><!-- div id="remove" class="tab-pane fade"-->
-
-    <div id="related_users" class="tab-pane fade">
-      <br>
-      <div class="panel panel-info">
-        <!-- Default panel contents -->
-        <div class="panel-heading">Related users</div>
-          <table class="table table-striped">
-            <thead>
-              <tr>
-                <th>Ku ID</th>
-                <th>Firstname</th>
-                <th>Lastname</th>
-              </tr>
-            </thead>
-            <tbody>
-              <% @personal_program.ku_users.each do |user| %>
-                <tr>
-                  <th scope="row"><%= user.ku_id %></th>
-                  <td><%= user.firstname %></td>
-                  <td><%= user.lastname %></td>
-                </tr>
-              <% end %>
-            </tbody>
-        </table>
-      </div>
-    </div><!-- id=related_users class=tab-pane fade -->
-
-  </div><!--tab-content-->
-</div><!--/col-6-->
-<% end %>
-</div><!--row-->
-
 <%= javascript_include_tag "programs/btn_expand_collapse.js"%>
 <%= javascript_include_tag "programs/html.sortable.js"%>
 <%= javascript_include_tag "personal_programs/sort.js"%>
