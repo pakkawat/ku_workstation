@@ -7,7 +7,7 @@
           <% #link_to "Apply change", subject_path(@subject)+"/program_apply", :class => "btn btn-primary" %>
         </div>-->
         <div style="display:inline-block;">
-          <%= button_to 'Back to #{@subject.subject_name}', subject_path(@subject), :class => "btn btn-default", :method => :get %>
+          <%= button_to "Back to #{@subject.subject_name}", subject_path(@subject), :class => "btn btn-default", :method => :get %>
         </div>
       </h1>
     </span>
