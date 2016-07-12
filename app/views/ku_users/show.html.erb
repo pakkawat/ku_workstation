@@ -224,7 +224,7 @@
                                 <%= text_field_tag :program_name, params[:program_name], :class => "form-control" %>
                                 <br>
                                 <%= label_tag 'note', 'Program note', :class => 'control-label' %>
-                                <%= text_area_tag :note, params[:note], :class => "form-control" %>
+                                <%= text_area_tag :note, params[:note], rows: 10, :class => "form-control" %>
                                 <br>
                                 <%= submit_tag "Create program", name: nil, class: "btn btn-success" %>
                       <% end %>

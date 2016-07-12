@@ -74,7 +74,7 @@ class ChefResourcesController < ApplicationController
         end
       end
     when "Bash_script"
-      @data = "#!/bin/bash"
+      @data = "#!/bin/bash\n"
       @chef_resource.chef_attributes.build
       if !@chef_resource.chef_properties.any?
         @chef_resource.chef_properties.build
@@ -425,6 +425,7 @@ class ChefResourcesController < ApplicationController
           remove_resource.chef_properties.new(value: diff_program_name, value_type: chef_property.value_type)
         end
         remove_resource.save
+        @program.program_chefs.create(chef_resource: remove_resource)
       end
     end
 end

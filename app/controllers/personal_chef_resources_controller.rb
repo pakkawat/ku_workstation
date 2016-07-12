@@ -65,7 +65,7 @@ class PersonalChefResourcesController < ApplicationController
         end
       end
     when "Bash_script"
-      @data = "#!/bin/bash"
+      @data = "#!/bin/bash\n"
       #@personal_chef_resource.chef_attributes.build
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
