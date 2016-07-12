@@ -10,6 +10,7 @@ end
 
 class ChefProperty < ActiveRecord::Base
   belongs_to :chef_resource
+  belongs_to :personal_chef_resource
   validates_with ChefPropertyValidator
   default_scope { order("id ASC") }
 end
