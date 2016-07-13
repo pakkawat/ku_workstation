@@ -36,7 +36,7 @@ class PersonalChefResourcesController < ApplicationController
       end
     when "Config_file"
       @data = nil
-      #@personal_chef_resource.chef_attributes.build
+      @personal_chef_resource.chef_attributes.build
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
       else
@@ -53,7 +53,7 @@ class PersonalChefResourcesController < ApplicationController
       end
     when "Create_file"
       @data = nil
-      #@personal_chef_resource.chef_attributes.build
+      @personal_chef_resource.chef_attributes.build
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
       else
@@ -66,7 +66,7 @@ class PersonalChefResourcesController < ApplicationController
       end
     when "Bash_script"
       @data = "#!/bin/bash\n"
-      #@personal_chef_resource.chef_attributes.build
+      @personal_chef_resource.chef_attributes.build
       if !@personal_chef_resource.chef_properties.any?
         @personal_chef_resource.chef_properties.build
         @personal_chef_resource.chef_properties.build
@@ -134,7 +134,7 @@ class PersonalChefResourcesController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def personal_chef_resource_params
-      params.require(:personal_chef_resource).permit(:resource_type, chef_properties_attributes: [ :id, :value, :value_type ])
+      params.require(:personal_chef_resource).permit(:resource_type, chef_properties_attributes: [ :id, :value, :value_type ], chef_attributes_attributes: [ :id, :name, :value, :_destroy ])
     end
 
     def owner_program

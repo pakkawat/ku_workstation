@@ -3,6 +3,8 @@
 	<td><%= program.subject_name %></td>
 	<td>
 		<% if !program.personal_program_id.nil? %>
+		<% program_temp = PersonalProgram.find(program.personal_program_id) %>
+		<% chef_attributes = ChefAttribute.where(personal_chef_resource_id: program_temp.personal_chef_resources.select("id")) %>
 			<div style="display:inline-block;">
 				<%= button_to "Edit", edit_personal_program_path(program.personal_program_id), :class => "btn btn-primary", :method => :get %>
 			</div>
@@ -16,39 +18,39 @@
 		<% else %>
 			<% program_temp = Program.find(program.program_id) %>
 			<% chef_attributes = ChefAttribute.where(chef_resource_id: program_temp.chef_resources.select("id")) %>
-			<% @chef_values = ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: @kuuser) %>
-			<% if !@chef_values.empty? %>
-				<!-- Button trigger modal -->
-				<button class="btn btn-primary" data-toggle="modal" data-target="#program_temp_<%= program_temp.id %>_attributes_Modal">
-					Configure
-				</button>
-				<!-- Modal -->
-				<div class="modal fade" id="program_temp_<%= program_temp.id %>_attributes_Modal" tabindex="-1" role="dialog" aria-labelledby="program_temp_<%= program_temp.id %>_attributes_Modal_Label" aria-hidden="true">
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<%= form_for(@kuuser, :url => update_ku_user_attribute_path, :method => :patch) do |user_form| %>
-								<div class="modal-header">
-									<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-									<h4 class="modal-title"><%= program.program_name %></h4>
-								</div>
-								<div class="modal-body">
-										<% @chef_values.each do |chef_value| %>
-											<%= user_form.fields_for chef_value, index: chef_value.id do |c| %>
-												<%= label_tag 'name', ChefAttribute.find(c.object.chef_attribute_id).name, :class => 'control-label' %>
-												<%= c.text_field :value, :class => "form-control" %>
-												<br>
-											<% end %>
+		<% end %>
+		<% @chef_values = ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: @kuuser) %>
+		<% if !@chef_values.empty? %>
+			<!-- Button trigger modal -->
+			<button class="btn btn-primary" data-toggle="modal" data-target="#program_temp_<%= program_temp.id %>_attributes_Modal">
+				Configure
+			</button>
+			<!-- Modal -->
+			<div class="modal fade" id="program_temp_<%= program_temp.id %>_attributes_Modal" tabindex="-1" role="dialog" aria-labelledby="program_temp_<%= program_temp.id %>_attributes_Modal_Label" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<%= form_for(@kuuser, :url => update_ku_user_attribute_path, :method => :patch) do |user_form| %>
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+								<h4 class="modal-title"><%= program.program_name %></h4>
+							</div>
+							<div class="modal-body">
+									<% @chef_values.each do |chef_value| %>
+										<%= user_form.fields_for chef_value, index: chef_value.id do |c| %>
+											<%= label_tag 'name', ChefAttribute.find(c.object.chef_attribute_id).name, :class => 'control-label' %>
+											<%= c.text_field :value, :class => "form-control" %>
+											<br>
 										<% end %>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
-									<%= submit_tag "Update", class: "btn btn-success" %>
-								</div>
-							<% end %>
-						</div><!-- /.modal-content -->
-					</div><!-- /.modal-dialog -->
-				</div><!-- /.modal -->
-			<% end %>
+									<% end %>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-danger" data-dismiss="modal">Cancel</button>
+								<%= submit_tag "Update", class: "btn btn-success" %>
+							</div>
+						<% end %>
+					</div><!-- /.modal-content -->
+				</div><!-- /.modal-dialog -->
+			</div><!-- /.modal -->
 		<% end %>
 	</td>
 	<td>
