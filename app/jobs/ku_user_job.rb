@@ -232,7 +232,7 @@ class KuUserJob < ProgressJob::Base
     end
 
     config_names = ""
-    user.personal_programs.where("user_personal_programs.status = 'install'").each do |program|
+    @user.personal_programs.where("user_personal_programs.status = 'install'").each do |program|
       chef_attributes = @user.chef_attributes.where(personal_chef_resource_id: program.personal_chef_resources.pluck("id"))
       chef_values = @user.chef_values.where(chef_attribute_id: chef_attributes)
       chef_values.each do |chef_value|
@@ -397,11 +397,13 @@ class KuUserJob < ProgressJob::Base
   end
 
   def create_user_personal_program_config_by_owner
-    personal_programs = PersonalProgram.where(:owner, @user.id) # เจ้าของโปรแกรมไม่จำเป็นต้องติดตั้งโปรแกรมของตัวเองเสมอไปดังนั้นเวลาแก้ไขเลยไม่ได้ใช้ user.personal_programs
+    personal_programs = PersonalProgram.where(:owner => @user.id) # เจ้าของโปรแกรมไม่จำเป็นต้องติดตั้งโปรแกรมของตัวเองเสมอไปดังนั้นเวลาแก้ไขเลยไม่ได้ใช้ user.personal_programs
     personal_programs.each do |program|
-      chef_attributes = ChefAttribute.where(personal_chef_resource_id: program.chef_resources.pluck("id"))
+      chef_attributes = ChefAttribute.where(personal_chef_resource_id: program.personal_chef_resources.pluck("id"))
       chef_attributes.each do |chef_attribute|
-        ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+        program.ku_users.each do |user|
+          ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+        end
       end
     end
   end
