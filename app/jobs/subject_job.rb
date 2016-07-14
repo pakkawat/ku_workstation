@@ -21,6 +21,7 @@ class SubjectJob < ProgressJob::Base
       @subject.programs_subjects.update_all(program_enabled: false)
     else # apply_change
       updated_programs = @subject.programs.where("programs_subjects.state != 'none'")
+      calculate_user_program_and_user_config
       if updated_programs.count != 0
         update_progress_max(@users.count*2)
         generate_chef_resource(updated_programs)
@@ -29,7 +30,6 @@ class SubjectJob < ProgressJob::Base
         @users = @subject.ku_users.where("user_subjects.state != 'none'")
         update_progress_max(@users.count*2)
       end
-      calculate_user_program_and_user_config
     end
 
     KnifeCommand.create_empty_log(@users)

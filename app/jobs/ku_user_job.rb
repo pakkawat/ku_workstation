@@ -100,6 +100,7 @@ class KuUserJob < ProgressJob::Base
     end
     if KnifeCommand.run("knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
       FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
+      FileUtils.rm("/home/ubuntu/myapp/log/knife/" + @user.ku_id + ".log")
       update_progress
     else
       raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
@@ -116,6 +117,7 @@ class KuUserJob < ProgressJob::Base
     end
     if KnifeCommand.run("knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
       FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
+      FileUtils.rm("/home/ubuntu/myapp/log/knife/" + @user.ku_id + ".log")
     else
       raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
     end
@@ -125,6 +127,7 @@ class KuUserJob < ProgressJob::Base
     update_progress_max(3)
 
     @user.user_error.destroy if !@user.user_error.nil?
+    create_user_personal_program_config_by_owner
     prepare_user_config
     update_progress
 
@@ -228,13 +231,34 @@ class KuUserJob < ProgressJob::Base
       config_names = ""
     end
 
+    config_names = ""
+    user.personal_programs.where("user_personal_programs.status = 'install'").each do |program|
+      chef_attributes = @user.chef_attributes.where(personal_chef_resource_id: program.personal_chef_resources.pluck("id"))
+      chef_values = @user.chef_values.where(chef_attribute_id: chef_attributes)
+      chef_values.each do |chef_value|
+        chef_attribute = ChefAttribute.find(chef_value.chef_attribute_id)
+        config_names += "node['#{chef_attribute.name}'],"
+        str_temp += "default['#{chef_attribute.name}'] = '#{chef_value.value}'\n"
+      end
+      config_names = config_names.gsub(/\,$/, '')
+      str_temp += "default['#{program.program_name}']['user_personal_program_config_list'] = [#{config_names}] \n"
+      config_names = ""
+    end
+
     return str_temp
   end
 
   def generate_chef_resource_for_personal_program(user)
+    personal_programs = user.personal_programs
     File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/user_personal_program_list.rb", 'w') do |f|
-      user.personal_programs.each do |personal_program|
-        f.write("include_recipe '#{user.ku_id}::#{personal_program.program_name}'\n")
+      personal_programs.each do |personal_program|
+        if user.user_personal_programs.find_by(personal_program_id: personal_program.id).status == "install"
+          f.write("if CheckUserPersonalProgramConfig.user_config_#{personal_program.id}(node['#{personal_program.program_name}']['user_personal_program_config_list'])\n")
+          f.write("  include_recipe '#{user.ku_id}::#{personal_program.program_name}'\n")
+          f.write("end\n")
+        else
+          f.write("include_recipe '#{user.ku_id}::#{personal_program.program_name}'\n")
+        end
       end
     end
 
@@ -256,6 +280,7 @@ class KuUserJob < ProgressJob::Base
           f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, user))
         end
       end
+      delete_user_config(user, personal_program)
     end
 
     File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
@@ -267,6 +292,9 @@ class KuUserJob < ProgressJob::Base
         f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, user))
       end
     end
+
+    check_personal_program_config(user, personal_programs)
+
   end
 
   def destroy_personal_program
@@ -279,7 +307,9 @@ class KuUserJob < ProgressJob::Base
 
     users.each do |user|
       user.user_error.destroy if !user.user_error.nil?
-      generate_chef_resource_for_personal_program(user)
+      #generate_chef_resource_for_personal_program(user)
+      only_delete_this_personal_program_from_users(user, personal_program)
+      delete_user_config(user, personal_program)
 
       if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
         arr_error.push("System error please contact admin, ")
@@ -298,6 +328,87 @@ class KuUserJob < ProgressJob::Base
       end
       raise str_error
     end
+  end
+
+  def only_delete_this_personal_program_from_users(user, personal_program)
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/user_personal_program_list.rb", 'w') do |f|
+      f.write("include_recipe '#{user.ku_id}::#{personal_program.program_name}'\n")
+    end
+
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/#{personal_program.program_name}.rb", 'w') do |f|
+      personal_program.personal_chef_resources.where(resource_type: "Source", status: "install").each do |personal_chef_resource|
+        f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, user))
+      end
+
+      personal_program.personal_chef_resources.where(status: "install").where.not(resource_type: "Source").each do |personal_chef_resource|
+        f.write(UserResourceGenerator.uninstall_resource(personal_chef_resource, user))
+      end
+    end
+
+    File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/user_remove_disuse_resources.rb", 'w') do |f|
+      user.personal_chef_resources.where("personal_chef_resources.resource_type = 'Source' AND user_remove_resources.personal_program_id = #{personal_program.id}").each do |remove_resource|
+        f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, user))
+      end
+
+      user.personal_chef_resources.where.not("personal_chef_resources.resource_type = 'Source' AND user_remove_resources.personal_program_id = #{personal_program.id}").each do |remove_resource|
+        f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, user))
+      end
+    end
+
+  end
+
+  def check_personal_program_config(user, personal_programs)
+    personal_programs.each do |program|
+      File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/libraries/check_user_personal_program_config.rb", 'w') do |f|
+        if ChefAttribute.where(personal_chef_resource_id: program.personal_chef_resources.pluck("id")).count != 0
+          f.write(create_function_to_check_user_config(true, program.id))
+        else
+          f.write(create_function_to_check_user_config(false, program.id))
+        end
+      end
+    end
+  end
+
+  def create_function_to_check_user_config(has_config, program_id)
+    str_temp = ""
+    str_temp += "module CheckUserPersonalProgramConfig\n"
+    str_temp += "  def self.user_config_#{program_id}(user_config_list)\n"
+    if has_config
+      str_temp += "    if !user_config_list.nil?\n"
+      str_temp += "      if !user_config_list.empty?\n"
+      str_temp += "        user_config_list.each do |config|\n"
+      str_temp += "          if config == ''\n"
+      str_temp += "            return false\n"
+      str_temp += "          end\n"
+      str_temp += "        end\n"
+      str_temp += "      else\n"
+      str_temp += "        return false\n"
+      str_temp += "      end\n"
+      str_temp += "    else\n"
+      str_temp += "      return false\n"
+      str_temp += "    end\n"
+      str_temp += "    return true\n"
+    else
+      str_temp += "    return true\n"
+    end
+    str_temp += "  end\n"
+    str_temp += "end\n"
+    return str_temp
+  end
+
+  def create_user_personal_program_config_by_owner
+    personal_programs = PersonalProgram.where(:owner, @user.id) # เจ้าของโปรแกรมไม่จำเป็นต้องติดตั้งโปรแกรมของตัวเองเสมอไปดังนั้นเวลาแก้ไขเลยไม่ได้ใช้ user.personal_programs
+    personal_programs.each do |program|
+      chef_attributes = ChefAttribute.where(personal_chef_resource_id: program.chef_resources.pluck("id"))
+      chef_attributes.each do |chef_attribute|
+        ChefValue.where(chef_attribute_id: chef_attribute, ku_user_id: user).first_or_create
+      end
+    end
+  end
+
+  def delete_user_config(user, program)
+    chef_attributes = ChefAttribute.where(personal_chef_resource_id: program.personal_chef_resources.pluck("id"))
+    user.chef_values.where(chef_attribute_id: chef_attributes).destroy_all
   end
 
   #def max_attempts

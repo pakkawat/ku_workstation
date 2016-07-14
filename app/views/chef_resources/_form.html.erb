@@ -284,7 +284,7 @@
                       <%= property.label :file_content %>
                     </label>
                     <div class='input-group'>
-                      <%= text_area_tag(:config_file_value, @data, :size => "63x60", class: 'form-control') %>
+                      <%= text_area_tag(:config_file_value, @data, :size => "80x60", class: 'form-control') %>
                     </div>
                   <% else %>
                     <label for='name'>
@@ -371,7 +371,7 @@
                           <%= property.label :file_content %>
                         </label>
                         <div class='input-group'>
-                          <%= text_area_tag(:created_file_content, @data, :size => "63x60", class: 'form-control') %>
+                          <%= text_area_tag(:created_file_content, @data, :size => "80x60", class: 'form-control') %>
                         </div>
                       <% else %>
                         <label for='name'>
@@ -506,7 +506,7 @@
                         <%= property.label :bash_script %>
                       </label>
                       <div class='input-group'>
-                        <%= text_area_tag(:bash_script_content, @data, :size => "63x60", class: 'form-control') %>
+                        <%= text_area_tag(:bash_script_content, @data, :size => "80x60", class: 'form-control') %>
                       </div>
                   </div>
                 <% end %> <!-- if @property_count == 0 -->
