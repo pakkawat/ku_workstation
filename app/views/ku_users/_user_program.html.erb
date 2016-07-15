@@ -22,7 +22,7 @@
 		<% @chef_values = ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: @kuuser) %>
 		<% if !@chef_values.empty? %>
 			<!-- Button trigger modal -->
-			<button class="btn btn-primary" data-toggle="modal" data-target="#program_temp_<%= program_temp.id %>_attributes_Modal">
+			<button class="btn btn-warning" data-toggle="modal" data-target="#program_temp_<%= program_temp.id %>_attributes_Modal">
 				Configure
 			</button>
 			<!-- Modal -->

@@ -100,7 +100,7 @@ class KuUserJob < ProgressJob::Base
     end
     if KnifeCommand.run("knife cookbook delete " + @user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
       FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/" + @user.ku_id)
-      FileUtils.rm("/home/ubuntu/myapp/log/knife/" + @user.ku_id + ".log")
+      #FileUtils.rm("/home/ubuntu/myapp/log/knife/" + @user.ku_id + ".log")
       update_progress
     else
       raise "#{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
@@ -127,7 +127,7 @@ class KuUserJob < ProgressJob::Base
     update_progress_max(3)
 
     @user.user_error.destroy if !@user.user_error.nil?
-    create_user_personal_program_config_by_owner
+    create_chef_value_for_user
     prepare_user_config
     update_progress
 
@@ -183,8 +183,8 @@ class KuUserJob < ProgressJob::Base
       file.puts "  <config name=\"RDP - Ubuntu " + @user.ku_id + "\" protocol=\"rdp\">"
       file.puts "    <param name=\"hostname\" value=\"<%= node['ec2']['public_hostname'] %>\" />"
       file.puts "    <param name=\"port\" value=\"3389\" />"
-      file.puts "    <param name=\"username\" value=\"" + @user.ku_id + "\" />"
-      file.puts "    <param name=\"password\" value=\"" + @password + "\" />"
+      #file.puts "    <param name=\"username\" value=\"" + @user.ku_id + "\" />"
+      #file.puts "    <param name=\"password\" value=\"" + @password + "\" />"
       file.puts "  </config>"
       file.puts "</configs>"
     end
@@ -396,9 +396,8 @@ class KuUserJob < ProgressJob::Base
     return str_temp
   end
 
-  def create_user_personal_program_config_by_owner
-    personal_programs = PersonalProgram.where(:owner => @user.id) # เจ้าของโปรแกรมไม่จำเป็นต้องติดตั้งโปรแกรมของตัวเองเสมอไปดังนั้นเวลาแก้ไขเลยไม่ได้ใช้ user.personal_programs
-    personal_programs.each do |program|
+  def create_chef_value_for_user
+    @user.personal_programs.each do |program|
       chef_attributes = ChefAttribute.where(personal_chef_resource_id: program.personal_chef_resources.pluck("id"))
       chef_attributes.each do |chef_attribute|
         program.ku_users.each do |user|
