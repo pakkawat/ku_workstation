@@ -157,6 +157,7 @@ class KuUserJob < ProgressJob::Base
       file.puts "user '" + @user.ku_id + "' do"
       file.puts "  home '/home/user'"
       file.puts "  shell '/bin/bash'"
+      file.puts "  group 'root'"
       file.puts "  supports :manage_home => true"
       file.puts "  password '" + new_password + "'"
       file.puts "  action :create"
