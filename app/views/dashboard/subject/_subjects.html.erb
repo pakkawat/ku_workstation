@@ -22,7 +22,7 @@
 					<% end %>
 				</li>
 				<li><%= link_to "Edit", subject %></li>
-				<li><%= link_to "Delete", subject, data: {title: "Delete #{subject.subject_name}", confirm: 'It will take a long time to process, Are you sure?'} %></li>
+				<li><%= link_to "Delete", subject_path(subject), data: {title: "Delete #{subject.subject_name}", confirm: 'It will take a long time to process, Are you sure?'}, :method => :delete %></li>
 			</ul>
 		</div>
 	</td>

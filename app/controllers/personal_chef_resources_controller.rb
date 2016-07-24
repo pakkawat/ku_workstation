@@ -371,11 +371,11 @@ class PersonalChefResourcesController < ApplicationController
       else # จะเข้า else นี้ก็ต่อเมื่อ @personal_chef_resource เป็นตัวแรกสุด หรือ เกิดจากการ diff จะทำให้ gen personal_chef_resource อีกตัวขึ้นมา
         if personal_chef_resource.resource_type != "Config_file" # chef_file ของ config_file จะถูกสร้างก็ต่อเมื่อ file ได้ถูก donwload ครั้งแรกที่ personal_program edit
           #personal_chef_resource.create_chef_file(content: file_content)
-          if @personal_chef_resource.chef_file.nil? # @personal_chef_resource ที่เป็น new value
+          if personal_chef_resource.status == "install" # @personal_chef_resource ที่เป็น new value
             chef_file = ChefFile.new(content: file_content)
             chef_file.save
-            @personal_chef_resource.update_attribute(:chef_file, chef_file)
-          else # source_file เกิด diff ดังนั้นต้องสร้างความสัมพันธ์ของ chef_file ให้กับ personal_chef_resource ตัวใหม่
+            personal_chef_resource.update_attribute(:chef_file, chef_file)
+          else # source_file เกิด diff ดังนั้นต้องสร้างความสัมพันธ์ของ chef_file ให้กับ personal_chef_resource ตัวใหม่ที่มี status = diff
             personal_chef_resource.update_attribute(:chef_file, @personal_chef_resource.chef_file)
           end
         end

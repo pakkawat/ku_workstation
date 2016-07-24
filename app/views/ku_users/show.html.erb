@@ -82,8 +82,9 @@
             </div>
           <% end %>
 
-          <hr>
+        </div><!-- col-sm-6 -->
 
+        <div class="col-md-6">
           <% if @result.any? %>
             <% progress=0 %>
             <% if @user_job.progress_max != 0 %>
@@ -138,11 +139,14 @@
           <% if !@kuuser.user_error.nil? %>
             <%= render partial: "user_error" %>
           <% end %>
-
         </div><!-- col-sm-6 -->
 
-        <div class="col-md-6">
+      </div><!-- row -->
 
+<hr>
+
+      <div class="row">
+        <div class="col-sm-12">
           <div class="panel panel-primary">
             <!-- Default panel contents -->
             <div class="panel-heading">Programs</div>
@@ -240,9 +244,9 @@
             </div><!-- /.modal-dialog -->
           </div><!-- /.modal -->
 
-        </div><!-- col-sm-6 -->
-
+        </div><!-- col-sm-12 -->
       </div><!-- row -->
+
     </div><!-- col-sm-12 -->
   </div><!-- row -->
 </div>
