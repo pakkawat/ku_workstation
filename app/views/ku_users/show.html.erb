@@ -90,7 +90,6 @@
             <% if @user_job.progress_max != 0 %>
             	<% progress = ((@user_job.progress_current.to_f / @user_job.progress_max) * 100).round %>
             <% end %>
-            <hr>
             <div class="thumbnail" style="padding: 0">
               <div class="caption">
                 <div class="row">
