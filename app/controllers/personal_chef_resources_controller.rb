@@ -166,7 +166,9 @@ class PersonalChefResourcesController < ApplicationController
             if chef_property.value != value[:value]
               diff_program_name = find_diff_program_name(chef_property.value, value[:value])
               #add_remove_resource(diff_program_name, "program")
-              create_remove_resource_for_repo(diff_program_name)
+              if diff_program_name != ""
+                create_remove_resource_for_repo(diff_program_name)
+              end
             end
           end
         end
