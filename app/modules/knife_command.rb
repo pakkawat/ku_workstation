@@ -93,6 +93,8 @@ module KnifeCommand
 			error_msg = get_error_msg_extract(text)
 		when "Execute_command"
 			error_msg = get_error_msg_execute_command(text)
+		when "Bash_script"
+			error_msg = get_error_msg_bash_script(text)
 		end
 		user.user_error.update_attribute(:error_message,error_msg)
 	end
@@ -197,6 +199,15 @@ module KnifeCommand
 					return nil
 				end
 			end
+		end
+	end
+
+	def self.get_error_msg_bash_script(text)
+		array_msg = text.grep(/STDERR/)
+		if array_msg.any?
+			return array_msg.first.split(' ', 2).last
+		else
+			return nil
 		end
 	end
 
