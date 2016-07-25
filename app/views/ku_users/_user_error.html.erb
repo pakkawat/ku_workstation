@@ -1,5 +1,5 @@
 <div class="panel panel-danger">
-<% if @kuuser.user_error.chef_resource_id.nil? %>
+<% if !@kuuser.user_error.personal_chef_resource_id.nil? %>
   <% pcr = PersonalChefResource.find(@kuuser.user_error.personal_chef_resource_id) %>
   <% @personal_program = pcr.personal_programs.first %>
 <!-- เกิดจากที่ว่า personal_chef_resources ที่ error นั้นถูกเปลี่ยนสถานะจาก install เป็น delete ซึ่งทำให้ความสัมพันธ์ระหว่าง personal_program กับ personal_chef_resources ถูก destroy จึงทำให้ personal_program เป็น nil -->
@@ -11,12 +11,11 @@
   <div class="panel-heading">
     <h4><%= @personal_program.program_name %> error!</h4>
   </div>
-
   <div class="panel-body">
     <div class="col-md-4">
       <%= render partial: "ku_users/personal_program/personal_program" %>
     </div>
-<% else %>
+<% elsif !@kuuser.user_error.chef_resource_id.nil? %>
   <% cr = ChefResource.find(@kuuser.user_error.chef_resource_id) %>
   <% @program = cr.programs.first %>
   <% @chef_resources = @program.chef_resources.where(status: "install") %>
@@ -24,11 +23,15 @@
   <div class="panel-heading">
     <h4><%= @program.program_name %> error!</h4>
   </div>
-
   <div class="panel-body">
     <div class="col-md-4">
       <%= render partial: "ku_users/program/program" %>
     </div>
+<% else %>
+  <div class="panel-heading">
+    <h4>Code error!</h4>
+  </div>
+  <div class="panel-body">
 <% end %>
 
 <% log = `tail -n #{@kuuser.user_error.line_number} #{@kuuser.user_error.log_path}` %>

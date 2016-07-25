@@ -61,18 +61,22 @@ module KnifeCommand
 
 		text.lines.grep(/(personal_)?chef_resource=[0-9]*/){|x| line_number = text.lines.find_index(x)+1; str_temp = x;}
 		str_temp = str_temp[/(personal_)?chef_resource=[0-9]*/]
-		id = str_temp[/\d+/]
-		chef = str_temp[/\D+/]
-    line_number = text.lines.count - line_number
+		if str_temp == nil
+			cookbook_error_msg(user, text, log_path)
+		else
+			id = str_temp[/\d+/]
+			chef = str_temp[/\D+/]
+	    line_number = text.lines.count - line_number
 
-		if chef == "chef_resource="
-			user.create_user_error(:chef_resource_id => id, :line_number => line_number, :log_path => log_path)
-			chef_resource = ChefResource.find(id)
-			create_user_error_msg(user, chef_resource, line_number, log_path)
-		else # "personal_chef_resource="
-			user.create_user_error(:personal_chef_resource_id => id, :line_number => line_number, :log_path => log_path)
-			personal_chef_resource = PersonalChefResource.find(id)
-			create_user_error_msg(user, personal_chef_resource, line_number, log_path)
+			if chef == "chef_resource="
+				user.create_user_error(:chef_resource_id => id, :line_number => line_number, :log_path => log_path)
+				chef_resource = ChefResource.find(id)
+				create_user_error_msg(user, chef_resource, line_number, log_path)
+			else # "personal_chef_resource="
+				user.create_user_error(:personal_chef_resource_id => id, :line_number => line_number, :log_path => log_path)
+				personal_chef_resource = PersonalChefResource.find(id)
+				create_user_error_msg(user, personal_chef_resource, line_number, log_path)
+			end
 		end
 	end
 
@@ -209,6 +213,17 @@ module KnifeCommand
 		else
 			return nil
 		end
+	end
+
+	def self.cookbook_error_msg(user, text, log_path)
+		line_number = 0
+		str_temp = ""
+
+		text.lines.grep(/================================================================================/){|x| line_number = text.lines.find_index(x)+1;}
+		str_temp = IO.readlines(log_path)[line_number+11]
+		line_number = text.lines.count - line_number
+		user.create_user_error(:line_number => line_number, :log_path => log_path)
+		user.user_error.update_attribute(:error_message,str_temp.split(' ', 2).last)
 	end
 
 end
