@@ -31,19 +31,12 @@
                             Actions <span class="caret"></span>
                           </button>
                           <ul class="dropdown-menu">
-                            <li>
-                              <% if @all_pass %>
-                                <a href='<%= "http://" + @public_dns_name + ":8080/guacamole" %>'>Connect</a>
-                              <% else %>
-                                <a href='#'>Connect</a>
-                              <% end %>
-                            </li>
-
                             <% if @all_pass %>
                               <li>
-                                <% if @result.any? %>
-                                  <a href='#'>Apply change</a>
-                                <% else %>
+                                <a href='<%= "http://" + @public_dns_name + ":8080/guacamole" %>'>Connect</a>
+                              </li>
+                              <li>
+                                <% if !@result.any? %>
                                   <%= link_to apply_change_ku_user_path(@kuuser), data: {title: "Apply change", confirm: 'It will take a long time to process, Are you sure?'} do %>
                                     Apply change
                                     <% if @was_updated != 0 %>
