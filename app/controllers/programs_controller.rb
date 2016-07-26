@@ -41,7 +41,7 @@ class ProgramsController < ApplicationController
           flash[:danger] = "Error can not create program #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
         end
       else
-        flash[:danger] = "Create program error."
+        flash[:danger] = program.errors.full_messages.first
       end
     else
       flash[:danger] = "Program name cannot be null or empty."

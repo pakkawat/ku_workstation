@@ -205,7 +205,7 @@ class KuUsersController < ApplicationController
           format.html { redirect_to @kuuser, :flash => { :success => personal_program.program_name + " was successfully created." } }
           format.json { render :show, status: :created, location: @kuuser }
         else
-          format.html { redirect_to @kuuser, :flash => { :danger => "Create personal program error." } }
+          format.html { redirect_to @kuuser, :flash => { :danger => personal_program.errors.full_messages.first } }
         end
       end
     else
