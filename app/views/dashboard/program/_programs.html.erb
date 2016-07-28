@@ -1,5 +1,6 @@
 <tr>
 	<td><%= program.program_name %></td>
+	<td><%= program.ku_user.firstname %></td>
 	<td>
 		<div style="display:inline-block;">
 			<%= button_to 'Edit', edit_program_path(program), :class => "btn btn-primary", :method => :get  %>

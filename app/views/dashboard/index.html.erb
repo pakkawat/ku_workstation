@@ -65,10 +65,11 @@
         <div class="panel panel-primary">
           <!-- Default panel contents -->
           <div class="panel-heading">Programs</div>
-            <table class="datatable_display table table-striped">
+            <table id="programs" class="datatable_display table table-striped">
               <thead>
                 <tr>
                   <th>Program Name</th>
+                  <th>Owner</th>
                   <th>Action</th>
                 </tr>
               </thead>
@@ -150,3 +151,4 @@
   </div><!-- row -->
 
 </div>
+<%= javascript_include_tag "dashboard/datatable_program.js" %>

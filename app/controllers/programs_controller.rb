@@ -28,17 +28,21 @@ class ProgramsController < ApplicationController
     if params[:program_name] != ""
       program = Program.new(program_name: params[:program_name], note: params[:note])
       if program.save
-        if create_file(program)
-          #check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
-          #if check_error
-            flash[:success] = "Program was created"
-            #redirect_to programs_path
-          #else
-            #flash[:danger] = "Error can not upload cookbook to server"
-            #redirect_to programs_path
-          #end
+        if program.update_attribute(:ku_user_id, current_user.id)
+          if create_file(program)
+            #check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
+            #if check_error
+              flash[:success] = "Program was created"
+              #redirect_to programs_path
+            #else
+              #flash[:danger] = "Error can not upload cookbook to server"
+              #redirect_to programs_path
+            #end
+          else
+            flash[:danger] = "Error can not create program #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+          end
         else
-          flash[:danger] = "Error can not create program #{ActionController::Base.helpers.link_to 'system.log', '/logs/system_log'}"
+          flash[:danger] = "Error update program owner with user:" + current_user.firstname
         end
       else
         flash[:danger] = program.errors.full_messages.first

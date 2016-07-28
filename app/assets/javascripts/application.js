@@ -21,15 +21,16 @@
 //= require bootstrap/collapse
 //= require data-confirm-modal
 
-$(document).ready(function() 
-    { 
+$(document).ready(function()
+    {
         $("table.datatable_display").dataTable({
-            sPaginationType: "full_numbers"
+            sPaginationType: "full_numbers",
+            "bDestroy": true
         });
-    } 
+    }
 );
 
 dataConfirmModal.setDefaults({
   commitClass: 'btn-success',
   cancelClass: 'btn-danger'
-}); 
+});
