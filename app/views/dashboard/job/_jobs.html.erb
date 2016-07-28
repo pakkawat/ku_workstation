@@ -7,7 +7,7 @@
   <td><%= job.description %></td>
 	<td>
 		<% if job.progress_stage.nil? %>
-			<b>Waitting</b>
+			<b>Waiting</b>
 		<% else %>
 			<% if !job.last_error.nil? %>
 				<b>Error</b>
