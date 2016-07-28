@@ -8,7 +8,7 @@ $(document).ready(function() {
             this.api().columns().every( function () {
                 var column = this;
                 if(i == 1){
-                  var select = $('<select id="program_owner_name"><option value=""></option></select>')
+                  var select = $('<select id="program_owner_name" class="form-control input-sm"><option value=""></option></select>')
                       .appendTo( $(column.footer()).empty() )
                       .on( 'change', function () {
                           var val = $.fn.dataTable.util.escapeRegex(

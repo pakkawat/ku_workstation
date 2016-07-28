@@ -1,3 +1,4 @@
+<%= include_gon %>
 <div class="container-fluid">
   <div class="row">
     <div class="col-sm-12">
@@ -73,6 +74,13 @@
                   <th>Action</th>
                 </tr>
               </thead>
+              <tfoot>
+                <tr>
+                  <th>Program Name</th>
+                  <th>Owner</th>
+                  <th>Action</th>
+                </tr>
+              </tfoot>
               <tbody>
                 <%= render partial: "dashboard/program/programs", collection: @programs, as: :program %>
               </tbody>
