@@ -1,5 +1,7 @@
 source 'https://rubygems.org'
 
+gem 'gon'
+
 gem 'data-confirm-modal'
 
 gem 'humanize-bytes'
