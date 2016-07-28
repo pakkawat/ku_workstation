@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160712105559) do
+ActiveRecord::Schema.define(version: 20160728095514) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -186,7 +186,10 @@ ActiveRecord::Schema.define(version: 20160712105559) do
     t.text     "note"
     t.datetime "created_at",   null: false
     t.datetime "updated_at",   null: false
+    t.integer  "ku_user_id"
   end
+
+  add_index "programs", ["ku_user_id"], name: "index_programs_on_ku_user_id", using: :btree
 
   create_table "programs_subjects", force: :cascade do |t|
     t.integer "program_id"
@@ -284,6 +287,7 @@ ActiveRecord::Schema.define(version: 20160712105559) do
 
   add_foreign_key "chef_properties", "personal_chef_resources"
   add_foreign_key "program_files", "programs"
+  add_foreign_key "programs", "ku_users"
   add_foreign_key "remove_resources", "programs"
   add_foreign_key "user_remove_resources", "ku_users"
 end
