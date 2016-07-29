@@ -114,24 +114,12 @@ class ProgramsController < ApplicationController
     end
   end
 
-  def destroy# not delete user run_list
+  def destroy
     @program = Program.find(params[:id])
-    #------- Testtttttttttttttttttttttttttttttttttt
-    #check_error, error_msg = KnifeCommand.run("knife cookbook upload " + program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb")
-    check_error, error_msg = KnifeCommand.run("knife cookbook delete " + @program.program_name + " -y -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-    #if check_error
-      #@job = Delayed::Job.enqueue ProgramJob.new(@program,"delete")
-      #str_des = "Delete Program:"+@program.program_name
-      #@job.update_attributes(:program_id => @program.id, :description => str_des, :owner => current_user.id)
-      #flash[:success] = str_des+" with Job ID:"+@job.id.to_s
-      #redirect_to programs_path
-    #else
-      #flash[:danger] = error_msg
-      #redirect_to program_path(program)
-    #end
-    #-------- Testttttttttttttttttttttttt
-    FileUtils.rm_rf("/home/ubuntu/chef-repo/cookbooks/"+@program.program_name)
-    @program.destroy
+    @job = Delayed::Job.enqueue ProgramJob.new(@program,"delete")
+    str_des = "Delete Program:"+@program.program_name
+    @job.update_attributes(:program_id => @program.id, :description => str_des, :owner => current_user.id)
+    flash[:success] = str_des+" with Job ID:"+@job.id.to_s
     redirect_to dashboard_index_path
   end
 

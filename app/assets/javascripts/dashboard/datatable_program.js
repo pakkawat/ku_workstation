@@ -24,7 +24,9 @@ $(document).ready(function() {
                       if(gon.ku_user_name == d){
                         select.append( '<option value="'+d+'" selected>'+d+'</option>' )
                       }else{
-                        select.append( '<option value="'+d+'">'+d+'</option>' )
+                        if(d != ""){
+                          select.append( '<option value="'+d+'">'+d+'</option>' )
+                        }
                       }
                   } );
                 }else{

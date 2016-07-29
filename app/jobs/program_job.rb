@@ -40,7 +40,7 @@ class ProgramJob < ProgressJob::Base
     if @type == "delete"
       if KnifeCommand.run("knife cookbook delete " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb -y", nil)
         #chef_attributes = ChefAttribute.where(chef_resource_id: @program.chef_resources.pluck("chef_resource_id")).pluck("id")
-        users = UsersProgram.where(:program_id => @program.id).pluck("ku_user_id")
+        #users = UsersProgram.where(:program_id => @program.id).pluck("ku_user_id")
         #ChefValue.where(chef_attribute_id: chef_attributes, ku_user_id: users).destroy_all
         @program.chef_resources.destroy_all
 
