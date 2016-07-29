@@ -1,6 +1,9 @@
 <tr>
 	<td><%= program.program_name %></td>
-	<td><%= program.ku_user.firstname %></td>
+	<td>
+		<% owner = KuUser.where(:id => program.owner).first %>
+		<%= owner.firstname if !owner.nil? %>
+	</td>
 	<td>
 		<div style="display:inline-block;">
 			<%= button_to 'Edit', edit_program_path(program), :class => "btn btn-primary", :method => :get  %>

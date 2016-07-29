@@ -1,7 +1,6 @@
 class KuUser < ActiveRecord::Base
   #attr_accessible :ku_id, :username, :password, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :campus, :major_field, :status
   attr_accessor :remember_token
-  has_many :programs
   has_one :user_error, dependent: :destroy
   has_many :user_remove_resources, dependent: :destroy
   has_many :personal_chef_resources, through: :user_remove_resources

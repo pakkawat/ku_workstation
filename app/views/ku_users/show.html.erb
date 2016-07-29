@@ -163,7 +163,7 @@
           </button>
           <!-- Modal -->
           <div class="modal fade" id="personal_program_Modal" tabindex="-1" role="dialog" aria-labelledby="personal_program_Modal_Label" aria-hidden="true">
-            <div class="modal-dialog">
+            <div class="modal-dialog" style="width: 70%">
               <div class="modal-content">
                 <div class="modal-header">
                   <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
@@ -185,6 +185,7 @@
                             <thead>
                               <tr>
                                 <th>Program name</th>
+                                <th>Owner</th>
                                 <th>Edit</th>
                                 <th>Add</th>
                                 <th>Destroy</th>
@@ -194,6 +195,10 @@
                               <% @all_personal_programs.each do |program| %>
                                 <tr>
                                   <td><%= program.program_name %></td>
+                                  <td>
+                                    <% owner = KuUser.where(:id => program.owner).first %>
+                                    <%= owner.firstname if !owner.nil? %>
+                                  </td>
                                   <td><%= button_to "Edit", edit_personal_program_path(program), :class => "btn btn-primary", :method => :get %></td>
                                   <td><%= button_to 'Add', ku_user_add_personal_program_path(@kuuser, program), :class => "btn btn-success", :method => :post %></td>
                                   <td>

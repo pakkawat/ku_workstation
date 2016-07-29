@@ -6,7 +6,6 @@ class Program < ActiveRecord::Base
 	has_many :users_programs, dependent: :destroy
 	has_many :program_chefs, dependent: :destroy
 	has_many :chef_resources, through: :program_chefs
-	belongs_to :ku_user
 	validates :program_name, format: { without: /\s/, message: "can't contain spaces" },
 	                         uniqueness: { case_sensitive: false }
 end
