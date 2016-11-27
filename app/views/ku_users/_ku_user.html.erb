@@ -1,8 +1,11 @@
 <tr>
-	<th scope="row"><%= link_to ku_user.ku_id, ku_user %></th>
+	<th scope="row"><%= ku_user.ku_id %></th>
 	<th><%= ku_user.firstname %></th>
 	<th><%= ku_user.lastname %></th>
 	<th>
+		<div style="display:inline-block;">
+			<%= button_to 'Instance', ku_user_path(ku_user), :class => "btn btn-sucess", :method => :get  %>
+		</div>
 		<div style="display:inline-block;">
 			<%= button_to 'Edit', edit_ku_user_path(ku_user), :class => "btn btn-primary", :method => :get  %>
 		</div>

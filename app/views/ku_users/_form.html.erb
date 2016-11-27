@@ -13,6 +13,16 @@
                 </legend>
         </div>
 
+        <% if current_user.admin? %>
+          <div class="control-group">
+                  <%= f.label :status,'Status', class: "control-label" %>
+                  <div class="controls">
+                          <%= f.select :admin, [['Student',false],['Teacher', true]], {}, {class: "form-control input-lg"} %>
+                  </div>
+          </div>
+          <br>
+        <% end %>
+
         <div class="control-group">
                 <%= f.label :ku_id,'Ku ID', class: "control-label" %>
                 <div class="controls">
@@ -38,7 +48,7 @@
                         <p class="help-block">Password should be at least 6 characters</p>
                 </div>
         </div>
-        
+
         <div class="control-group">
                 <%= f.label :password_confirmation,'Password confirmation', class: "control-label" %>
                 <div class="controls">
@@ -46,7 +56,7 @@
                         <p class="help-block">Please confirm password</p>
                 </div>
         </div>
-        
+
         <div class="control-group">
                 <%= f.label :firstname,'Firstname', class: "control-label" %>
                 <div class="controls">
@@ -54,7 +64,7 @@
                         <p class="help-block">Please provide your Firstname</p>
                 </div>
         </div>
-        
+
         <div class="control-group">
                 <%= f.label :lastname,'Lastname', class: "control-label" %>
                 <div class="controls">
@@ -106,13 +116,6 @@
                 </div>
         </div><br>
 
-        <div class="control-group">
-                <%= f.label :status,'Status', class: "control-label" %>
-                <div class="controls">
-                        <%= f.select :status, [['Currently studying','1'],['Female','2']], {}, {class: "form-control input-lg"} %>
-                </div>
-        </div>
-        <br>
         <div class="control-group" align="center">
         <!-- Button -->
                 <div class="controls">

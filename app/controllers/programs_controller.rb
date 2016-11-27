@@ -28,7 +28,7 @@ class ProgramsController < ApplicationController
     if params[:program_name] != ""
       program = Program.new(program_name: params[:program_name], note: params[:note])
       if program.save
-        if program.update_attribute(:ku_user_id, current_user.id)
+        if program.update_attribute(:owner, current_user.id)
           if create_file(program)
             #check_error = system "knife cookbook upload " + @program.program_name + " -c /home/ubuntu/chef-repo/.chef/knife.rb"
             #if check_error

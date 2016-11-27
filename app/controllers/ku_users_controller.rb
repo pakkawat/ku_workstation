@@ -341,7 +341,7 @@ class KuUsersController < ApplicationController
 
   private
     def ku_user_params
-      params.require(:ku_user).permit(:ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :status, :campus, chef_value: [ :id, :chef_attribute_id, :value ])
+      params.require(:ku_user).permit(:admin, :ku_id, :username, :password, :password_confirmation, :firstname, :lastname, :sex, :email, :degree_level, :faculty, :major_field, :campus, chef_value: [ :id, :chef_attribute_id, :value ])
     end
 
     # Before filters
