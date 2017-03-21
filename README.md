@@ -1,4 +1,3 @@
-# ระบบการติดตั้งและบริหารซอฟต์แวร์อัตโนมัติในห้องปฏิบัตกิารเสมือนบนคลาวด์ 
 # Software Installation and Management Automation System for Virtual Laboratory on Cloud 
 
   This independent research aimed to solve the problem for the Department of Computer Science due to the different softwares used for learning each subject. Therefore, the developer has made a decision to solve the problem by utilizing Chef program to automatically install and manage software on Amazon EC2 Virtual Machines. Chef manages these machines through a command line issued from Chef Workstation. 
