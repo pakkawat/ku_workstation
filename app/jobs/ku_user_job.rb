@@ -305,19 +305,25 @@ class KuUserJob < ProgressJob::Base
     update_progress_max(users.count)
     KnifeCommand.create_empty_log(users)
     arr_error = Array.new
+    require 'chef'
+    Chef::Config.from_file("/home/ubuntu/chef-repo/.chef/knife.rb")
 
     users.each do |user|
       user.user_error.destroy if !user.user_error.nil?
       #generate_chef_resource_for_personal_program(user)
-      only_delete_this_personal_program_from_users(user, personal_program)
-      delete_user_config(user, personal_program)
+      only_delete_this_personal_program_from_users(user, @personal_program)
+      delete_user_config(user, @personal_program)
 
-      if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
-        arr_error.push("System error please contact admin, ")
-      end
+      query = Chef::Search::Query.new
+      nodes = query.search('node', 'name:' + user.ku_id).first rescue []
+      if !nodes.first.nil?
+        if !KnifeCommand.run("knife cookbook upload " + user.ku_id + " -c /home/ubuntu/chef-repo/.chef/knife.rb", nil)
+          arr_error.push("System error please contact admin, ")
+        end
 
-      if !KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
-        arr_error.push("#{ActionController::Base.helpers.link_to user.ku_id, '/ku_users/'+user.id.to_s}, ")
+        if !KnifeCommand.run("knife ssh 'name:" + user.ku_id + "' 'sudo chef-client' -x ubuntu -c /home/ubuntu/chef-repo/.chef/knife.rb", user)
+          arr_error.push("#{ActionController::Base.helpers.link_to user.ku_id, '/ku_users/'+user.id.to_s}, ")
+        end
       end
       update_progress
     end
@@ -332,6 +338,7 @@ class KuUserJob < ProgressJob::Base
   end
 
   def only_delete_this_personal_program_from_users(user, personal_program)
+    if File.directory?("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id)
     File.open("/home/ubuntu/chef-repo/cookbooks/" + user.ku_id + "/recipes/user_personal_program_list.rb", 'w') do |f|
       f.write("include_recipe '#{user.ku_id}::#{personal_program.program_name}'\n")
     end
@@ -354,6 +361,7 @@ class KuUserJob < ProgressJob::Base
       user.personal_chef_resources.where.not("personal_chef_resources.resource_type = 'Source' AND user_remove_resources.personal_program_id = #{personal_program.id}").each do |remove_resource|
         f.write(UserResourceGenerator.remove_disuse_resource(remove_resource, user))
       end
+    end
     end
 
   end

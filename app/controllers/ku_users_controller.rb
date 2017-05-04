@@ -384,6 +384,8 @@ class KuUsersController < ApplicationController
     end
 
     def calculate_ec2_cost(uptime_seconds, network_tx_bytes)
+      @running_cost = instance_running_cost(uptime_seconds)
+      @tx_cost = data_tranfer_calculate_cost(network_tx_bytes)
       return instance_running_cost(uptime_seconds) + data_tranfer_calculate_cost(network_tx_bytes) + instance_stopped_cost
     end
 
@@ -460,6 +462,8 @@ class KuUsersController < ApplicationController
       end
       if @instance_state == "running"
         @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds + @node.uptime_seconds, @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes.to_i)
+        #@running_cost = @kuuser.instance.uptime_seconds + @node.uptime_seconds
+        #@tx_cost = @kuuser.instance.network_tx + @node.counters.network.interfaces.eth0.tx.bytes.to_i
       elsif @instance_state == "stopped"
         @ec2_cost = calculate_ec2_cost(@kuuser.instance.uptime_seconds, @kuuser.instance.network_tx)
       end

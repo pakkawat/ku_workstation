@@ -33,16 +33,16 @@ module KnifeCommand
 			end
 
 			if wait_thr.value.success?
-				user.log.update(error: false) if !user.nil?
+				user.log.update(error: false) if !user.nil? && !user.log.nil?
 				check_error = true
 			else
-				user.log.update(error: true) if !user.nil?
+				user.log.update(error: true) if !user.nil? && !user.log.nil?
 				check_error = false
 			end
 		end
 		log.info("------------------------------------ End ---------------------------------------\n\n")
 		log.close
-		if check_error == false && !user.nil?
+		if check_error == false && !user.nil? && !user.log.nil?
 			create_user_errors(user, log_path)
 		end
 		return check_error
